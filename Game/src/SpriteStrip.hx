@@ -11,7 +11,7 @@ class SpriteStrip {
     public var height:Int;
     var rows:Int;
     var columns:Int;
-
+    public var totalFrames:Int;
     var xMin:Float;
     var xDelta:Float;
     var yMin:Float;
@@ -25,7 +25,7 @@ class SpriteStrip {
      * @param r: Rows of sprite pieces
      * @param c: Columns of sprite pieces
      */
-    public function new(name:String, sx:Int, sy:Int, w:Int, h:Int, r:Int, c:Int) {
+    public function new(name:String, sx:Int, sy:Int, w:Int, h:Int, r:Int, c:Int, frames:Int) {
         this.name = name;
         sourceX = sx;
         sourceY = sy;
@@ -33,12 +33,13 @@ class SpriteStrip {
         height = h;
         rows = r;
         columns = c;
+        totalFrames = frames;
     }
     
     public function computeTrueCoords(tWidth:Int, tHeight:Int) {
         xMin = sourceX / tWidth;
         xDelta = width / tWidth;
-        yMin = sourceX / tHeight;
+        yMin = sourceY / tHeight;
         yDelta = height / tHeight;
     }
     
