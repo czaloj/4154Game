@@ -1,5 +1,6 @@
 package;
 
+import openfl.Assets;
 import openfl.events.MouseEvent;
 import openfl.geom.Rectangle;
 import openfl.Lib;
@@ -11,13 +12,6 @@ import starling.display.Image;
 import starling.textures.Texture;
 import flash.display.BitmapData;
 
-@:bitmap("assets/Sprites.png")
-class TestImage extends BitmapData {
-    public function new () {
-        super(0, 0);
-    }
-}
-
 class Game extends Sprite {
     var sheet:SpriteSheet;
     
@@ -28,16 +22,25 @@ class Game extends Sprite {
         openfl.Lib.current.stage.addEventListener(MouseEvent.CLICK, add);
     }
     
+    private function randomAnimation():String {
+        switch(Std.int(Math.random() * 2.0)) {
+        case 0:
+            return "Walking";
+        default:
+            return "Idle";
+        }
+    }
+    
     private function load(e:Event = null):Void {
-        var atlas:Texture = Texture.fromBitmapData(new TestImage());
-        sheet = new SpriteSheet(atlas, [
-            new SpriteStrip("Walking", 0, 0, 180, 250, 2, 5)
+        sheet = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/Man.png")), [
+            new SpriteStrip("Walking", 0, 0, 48, 90, 1, 12, 12),
+            new SpriteStrip("Idle", 0, 90, 48, 90, 1, 7, 7)
             ]);
         
-        addChild(new Animated(sheet, "Walking"));
+        addChild(new Animated(sheet, randomAnimation(), 3));
     }
     private function add(e:MouseEvent = null):Void {
-        var a:Animated = new Animated(sheet, "Walking");
+        var a:Animated = new Animated(sheet, randomAnimation(), 3);
         a.x = e.stageX - a.width * 0.5;
         a.y = e.stageY - a.height * 0.5;
         addChild(a);
