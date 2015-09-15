@@ -17,8 +17,6 @@ class Main extends Sprite {
         s.baseValue *= 2;
         trace(s.value);
         
-        
-        
         var d:Array<PartName> = [
             new PartName("Noun", PartNameType.NOUN)
         ];
