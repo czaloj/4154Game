@@ -25,11 +25,11 @@ class Game extends Sprite {
     private function randomAnimation():Animated {
         switch(Std.int(Math.random() * 3.0)) {
         case 0:
-            return new Animated(sheet, "Walking", 2);
+            return new Animated(sheet, "Walking", 4);
         case 1:
-            return new Animated(sheet, "Backflip", 1);
+            return new Animated(sheet, "Backflip", 2);
         default:
-            return new Animated(sheet, "Idle", 3);
+            return new Animated(sheet, "Idle", 5);
         }
     }
     

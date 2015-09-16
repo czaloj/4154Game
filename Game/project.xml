@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	<meta title="CS4154 Game" package="org.cs4154" version="1.0.0" company="OpenFL" />
-	<app main="Main" path="Export" file="SimpleOpenGLView" swf-version="11.8" />
+	<meta title="Cardboard Joe Game" package="org.cs4154" version="1.0.0" company="OpenFL" />
+	<app main="Main" path="Export" file="App" swf-version="11.8" />
+	<window width="800" height="450" fps="60" />
 	<haxelib name="openfl" />
 	
 	<source path="src" />
