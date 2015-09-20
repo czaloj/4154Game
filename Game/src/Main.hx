@@ -21,7 +21,7 @@ class Main extends Sprite {
             new PartName("Noun", PartNameType.NOUN)
         ];
         
-        engine = new Starling(Game, Lib.current.stage);
+        engine = new Starling(ScreenController, Lib.current.stage);
         engine.start();
     }
 }
