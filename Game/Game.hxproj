@@ -11,7 +11,7 @@
     <movie version="0" />
     <movie minorVersion="0" />
     <movie platform="Custom" />
-    <movie background="#ffffff" />
+    <movie background="#FFFFFF" />
     <movie preferredSDK="C:\HaxeToolkit" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
