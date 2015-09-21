@@ -12,7 +12,7 @@ import starling.display.Image;
 import starling.textures.Texture;
 import flash.display.BitmapData;
 
-class Game extends Sprite {
+class ScreenController extends Sprite {
     var sheet:SpriteSheet;
     
     public function new() {
