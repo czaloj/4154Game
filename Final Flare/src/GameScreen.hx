@@ -28,6 +28,7 @@ class GameScreen {
         keys = inputController.keysDown;
         gameplayController.playerController.player.left = keys[Keyboard.A];
         gameplayController.playerController.player.right = keys[Keyboard.D];
+        gameplayController.playerController.player.canJump = keys[Keyboard.W];
     }
 
     public function update(gameTime:GameTime):Void
