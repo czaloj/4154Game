@@ -18,8 +18,8 @@ class GameplayScreen extends IGameScreen {
         inputController = new InputController();
         renderer = new Renderer(screenController.stage);
         gameplayController = new GameplayController(state);
-        sc.stage.addEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
-        sc.stage.addEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);
+        openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
+        openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);
     }
 
     private function checkKeysDown() {
