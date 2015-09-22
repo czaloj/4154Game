@@ -15,9 +15,7 @@ class PlayerController extends GameplayController
 	//{ Fields 
 	
 	
-	//}
-
-	
+	//}	
 	
 	
 	//{ Initialization
@@ -27,8 +25,7 @@ class PlayerController extends GameplayController
 		
 	}
 	//}
-
-
+	
 	
 	//{ Game Loop
 	
