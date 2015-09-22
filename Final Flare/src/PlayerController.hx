@@ -13,8 +13,8 @@ package;
 class PlayerController extends GameplayController
 {
 	//{ Fields 
-	
-	
+	var player:ObjectModel;
+	var START_POS:Point;
 	//}	
 	
 	
@@ -22,7 +22,15 @@ class PlayerController extends GameplayController
 	public function new() 
 	{
 		super();
+		player = new ObjectModel();
+		player.setID("player");
+		START_POS=new Point (150, 800);
+		player.setPosition(START_POS);
+		player.setGrounded(true);
 		
+
+
+
 	}
 	//}
 	
@@ -34,6 +42,14 @@ class PlayerController extends GameplayController
 		throw "abstract";
 	}
 	
+
+
+
+
+
+
+
+
 	//}
 	
 
