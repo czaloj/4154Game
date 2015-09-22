@@ -9,7 +9,7 @@ package;
 //}
 
 
-class GameplayController extends GameScreen
+class GameplayController
 {
     //{ Fields
 
@@ -19,10 +19,9 @@ class GameplayController extends GameScreen
 
 
     //{ Initialization
-    public function new()
+    public function new(state:GameState)
     {
-        playerController = new PlayerController();
-
+        playerController = new PlayerController(state);
     }
     //}
 
@@ -30,9 +29,9 @@ class GameplayController extends GameScreen
 
     //{ Game Loop
 
-    public function update(gameTime:GameTime):Void
+    public function update(state:GameState, gameTime:GameTime):Void
     {
-        playerController.update(gameTime);
+        playerController.update(state, gameTime);
     }
 
     //}

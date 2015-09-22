@@ -10,11 +10,11 @@ package;
 //}
 
 /** Handlers for input events **/
-class InputController extends GameScreen
+class InputController
 {
     // Array of booleans, indexed by key code.
     // Element is true when corresponding key is pressed. False otherwise.
-    keysDown = [];
+    public var keysDown:Array<Bool> = [];
 
     // KeyDown handler. Given event e, flips key code element in keysDown to true.
     public function keyDown(e:flash.events.KeyboardEvent):Void 
@@ -31,8 +31,7 @@ class InputController extends GameScreen
     //{ Initialization
     public function new() 
     {
-        super();
-        
+        //Empty
     }
     //}
 

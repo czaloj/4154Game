@@ -5,33 +5,33 @@
 //{ Import Statements
 package;
 
-import box2D.dynamics.B2Body;
-import box2D.dynamics.B2BodyType;
+//import box2D.dynamics.B2Body;
+//import box2D.dynamics.B2BodyType;
 import openfl.geom.Point;
 //}
 
 
-class ObjectModel extends GameScreen
+class ObjectModel
 {
     //{ Fields
 
-    public static var MAX_SPEED:Float;
+    public static var MAX_SPEED:Float = 8;
 
-    private var id:String;          //Identifying tag
+    public var id:String;          //Identifying tag
 
     //Box2D Fields
-    private var body:B2Body;
-    privatevar bodyType:B2BodyType;
+//    private var body:B2Body;
+//    private var bodyType:B2BodyType;
 
     //Phsyics data
-    private var position Point;     //Object position
-    private var velocity:Point;     //Object velocity
-    private var rotation:Float;     //Rotation
+    public var position:Point = new Point();     //Object position
+    public var velocity:Point = new Point();     //Object velocity
+    public var rotation:Float;     //Rotation
 
     //Drawing Fields
-    private var textureSize:Point;  //Texture Size
-    private var dimension:Point;    //Dimensions of box, for drawing purposes
-    private var scale:Point;        //Used to scale texture
+    public var textureSize:Point = new Point();  //Texture Size
+    public var dimension:Point = new Point();    //Dimensions of box, for drawing purposes
+    public var scale:Point = new Point();        //Used to scale texture
 
     //Input Flags
 
@@ -41,93 +41,13 @@ class ObjectModel extends GameScreen
     public var canJump:Bool;
     public var left:Bool;          //Can move left
     public var right:Bool;         //Can move right
-    private var grounded:Bool;      //True if touching a platform
+    public var grounded:Bool;      //True if touching a platform
 
     //}
-
-
-    //{Getters and Setters
-    public function getId()
-    {
-        return id;
-    }
-
-    public function setId(s:String)
-    {
-        id = s;
-    }
-
-    public function getPosition()
-    {
-        return position;
-    }
-    public function setPosition(p:Point)
-    {
-        position = p;
-    }
-
-    public function getVelocity()
-    {
-        return velocity;
-    }
-    public function setVelocity(v:Point)
-    {
-        velocity = v;
-    }
-
-    public function getRotation()
-    {
-        return rotation;
-    }
-    public function setRotation(r:Float)
-    {
-        rotation = r;
-    }
-
-    public function getGrounded()
-    {
-        return rotation;
-    }
-    public function setGrounded(b:Bool)
-    {
-        grounded = b;
-    }
-
-    public function getTextureSize()
-    {
-        return textureSize;
-    }
-    public function setTextureSize(p:Point)
-    {
-        textureSize = p;
-    }
-
-    public function getDimension()
-    {
-        return dimension;
-    }
-    public function setDimension(p:Point)
-    {
-        dimension = p;
-    }
-
-    public function getScale()
-    {
-    return scale;
-    }
-    public function Scale(p:Point)
-    {
-        scale = p;
-    }
-
-    //}
-
 
     //{ Initialization
     public function new()
     {
-        //THERE SHOULDN'T BE ANYTHING HERE
-        super();
     }
     //}
-
+}

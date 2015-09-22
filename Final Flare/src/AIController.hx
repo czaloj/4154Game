@@ -4,7 +4,7 @@ package;
  * ...
  * @author Mark
  */
-class AIController extends GameScreen
+class AIController extends GameplayScreen
 {
 
 	public function new() 

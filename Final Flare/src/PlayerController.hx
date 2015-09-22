@@ -1,88 +1,61 @@
 package;
+
 import openfl.geom.Point;
 
-/**
- * ...
- * @author Mark
- */
-//{ Import Statements
-
-
-//}
-
-
-class PlayerController extends GameplayController
+class PlayerController
 {
-    //{ Fields
-    var player:ObjectModel;
-    //}
-
-
     //{ Initialization
-    public function new()
+    public function new(state:GameState)
     {
-        super();
-        player.MAX_SPEED = 8;
-        player = new ObjectModel();
-        player.setID("player");
-        player.setPosition(new Point(100, 100);
-        player.setGrounded(false);
-        player.setRotation(0);
-        player.setVelocity(0);
-        player.left = false;
-        player.right = false;
+        state.player = new ObjectModel();
+        state.player.id = "player";
+        state.player.position.setTo(0, 0);
+        state.player.grounded = false;
+        state.player.rotation = 0;
+        state.player.velocity.setTo(0, 0);
+        state.player.left = false;
+        state.player.right = false;
     }
     //}
 
 
     //{ Game Loop
 
-    public function update(gameTime:GameTime):Void
+    public function update(state:GameState, gameTime:GameTime):Void
     {
-        if (player.IsGrounded)
+        if (state.player.grounded)
         {
-            if (player.left)
+            if (state.player.left)
             {
-                player.setVelocity(new Point(Math.min(Player.MAX_SPEED, (player.getVelocity()).x + .55f), player.getVelocity().y));
+                state.player.velocity.setTo(Math.min(ObjectModel.MAX_SPEED, (state.player.velocity).x + .55), state.player.velocity.y);
             }
-            else if (player.right)
+            else if (state.player.right)
             {
-                player.setVelocity(new Point(Math.max( -Player.MAX_SPEED, (player.getVelocity()).x - .55f), player.getVelocity().y);
+                state.player.velocity.setTo(Math.max( -ObjectModel.MAX_SPEED, (state.player.velocity).x - .55), state.player.velocity.y);
             }
             else
             {
-              player.setVelocity(new Point(player.getVelocity().x * .3f, player.getVelocity().y));
+              state.player.velocity.setTo(state.player.velocity.x * .3, state.player.velocity.y);
             }
         }
         //Mid-air movement
         else
         {
-            if (player.left)
+            if (state.player.left)
             {
-                player.setVelocity(new Point(Math.min(Player.MAX_SPEED, (player.getVelocity()).x + .35f), player.getVelocity().y));
+                state.player.velocity.setTo(Math.min(ObjectModel.MAX_SPEED, (state.player.velocity).x + .35), state.player.velocity.y);
             }
-            else if (player.right)
+            else if (state.player.right)
             {
-                player.setVelocity(new Point(Math.max( -Player.MAX_SPEED, (player.getVelocity()).x - .35f), player.getVelocity().y);
+                state.player.velocity.setTo(Math.max( -ObjectModel.MAX_SPEED, (state.player.velocity).x - .35), state.player.velocity.y);
             }
             else
             {
-              player.setVelocity(new Point(player.getVelocity().x * .9995f, player.getVelocity().y));
+              state.player.velocity.setTo(state.player.velocity.x * .9995, state.player.velocity.y);
             }
         }
-
-
     }
-
-
-
-
-
-
-
-
-
-	//}
+//}
 
 
 }

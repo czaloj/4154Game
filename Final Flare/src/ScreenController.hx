@@ -14,11 +14,12 @@ import flash.display.BitmapData;
 
 class ScreenController extends Sprite
 {
+    public static var FRAME_TIME:Float = 1.0 / 60.0;
 
     public var sheet:SpriteSheet;
     public var dt:GameTime;
 
-
+    private var activeScreen:IGameScreen;
 
     public function new()
     {
@@ -26,7 +27,11 @@ class ScreenController extends Sprite
 
         addEventListener(Event.ADDED_TO_STAGE, load);
         openfl.Lib.current.stage.addEventListener(MouseEvent.CLICK, add);
+        openfl.Lib.current.stage.addEventListener(Event.ENTER_FRAME, update);
         dt = new GameTime();
+
+        // Start on the splash screen
+        activeScreen = new GameplayScreen(this);
     }
 
     private function randomAnimation():Animated
@@ -60,6 +65,15 @@ class ScreenController extends Sprite
         a.x = e.stageX - a.width * 0.5;
         a.y = e.stageY - a.height * 0.5;
         addChild(a);
+    }
+
+    private function update(e:Event = null):Void {
+        dt.elapsed = FRAME_TIME;
+        dt.total += dt.elapsed;
+        dt.frame++;
+        
+        activeScreen.update(dt);
+        activeScreen.draw(dt);
     }
 
 }
