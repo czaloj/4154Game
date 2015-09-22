@@ -1,0 +1,5 @@
+package gun;
+
+class GunGenerator {
+
+}

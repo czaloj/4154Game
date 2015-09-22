@@ -1,5 +1,0 @@
-package gun;
-
-class GunStats {
-    
-}

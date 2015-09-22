@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<meta title="Cardboard Joe Game" package="Final Flare" version="1.0.0" company="Cardboard Joe" />
+	<app main="Main" path="bin" file="FinalFlare" swf-version="11.8" />
+	<window width="800" height="450" fps="60" />
+	<haxelib name="openfl" />
+	
+	<source path="src" />
+	
+	<assets path="assets" />
+</project>
+
+
+
