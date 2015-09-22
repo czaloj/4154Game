@@ -18,6 +18,7 @@
   <classpaths>
     <class path="C:\HaxeToolkit\haxe\lib\openfl\3,3,4" />
     <class path="C:\HaxeToolkit\haxe\lib\lime\2,6,3" />
+    <class path="C:\HaxeToolkit\haxe\lib\box2d\1,2,3" />
     <class path="src" />
     <class path="bin\flash\haxe" />
   </classpaths>
