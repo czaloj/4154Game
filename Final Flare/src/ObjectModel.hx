@@ -12,7 +12,7 @@ import openfl.geom.Point;
 //}
 
  
-class GameplayController extends GameScreen
+class ObjectModel extends GameScreen
 {
 	//{ Fields 
 	
