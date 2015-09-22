@@ -3,6 +3,7 @@ package;
 import openfl.Lib;
 import openfl.events.KeyboardEvent;
 import openfl.events.Event;
+import openfl.ui.Keyboard
 
 class GameScreen {
 
@@ -25,8 +26,8 @@ class GameScreen {
 
     private function checkKeysDown() {
         keys = inputController.keysDown;
-        gameplayController.playerController.player.left = keys[inputController.MOVE_LEFT];
-        gameplayController.playerController.player.right = keys[inputController.MOVE_RIGHT];
+        gameplayController.playerController.player.left = keys[A];
+        gameplayController.playerController.player.right = keys[D];
     }
 
     public function update(gameTime:GameTime):Void
