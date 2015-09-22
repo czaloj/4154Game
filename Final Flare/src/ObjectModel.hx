@@ -15,7 +15,9 @@ class ObjectModel extends GameScreen
 {
     //{ Fields
 
-    var id:String;          //Identifying tag
+    public static var MAX_SPEED:Float;
+
+    private var id:String;          //Identifying tag
 
     //Box2D Fields
     private var body:B2Body;
