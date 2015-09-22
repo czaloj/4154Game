@@ -14,6 +14,8 @@ import flash.display.BitmapData;
 
 class ScreenController extends Sprite {
     var sheet:SpriteSheet;
+
+
     
     public function new() 
 	{
@@ -42,8 +44,10 @@ class ScreenController extends Sprite {
             new SpriteStrip("Walking", 0, 180, 48, 90, 1, 12, 12),
             new SpriteStrip("Idle", 0, 270, 48, 90, 1, 7, 7)
             ]);
-        
-        addChild(randomAnimation());
+      
+        var a:Animated = new Animated(sheet, "Walking", 4);
+    
+        addChild(a);
     }
 	
     private function add(e:MouseEvent = null):Void 
