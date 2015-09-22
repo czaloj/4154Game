@@ -24,7 +24,7 @@ class GameplayController extends GameScreen
     //{ Initialization
     public function new()
     {
-        super();
+        playerController = new PlayerController();
 
     }
     //}
@@ -35,7 +35,7 @@ class GameplayController extends GameScreen
 
     public function update(gameTime:GameTime):Void
     {
-        throw "abstract";
+        playerController.update();
     }
 
     //}

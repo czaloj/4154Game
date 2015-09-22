@@ -25,12 +25,21 @@ class ObjectModel extends GameScreen
     private var position Point;     //Object position
     private var velocity:Point;     //Object velocity
     private var rotation:Float;     //Rotation
-    private var grounded:Bool;      //True if touching a platform
 
     //Drawing Fields
     private var textureSize:Point;  //Texture Size
     private var dimension:Point;    //Dimensions of box, for drawing purposes
     private var scale:Point;        //Used to scale texture
+
+    //Input Flags
+
+    //TODO write getters and setters
+    public var direction:Int;      //-1 for left, 1 for right, 0 otherwise
+    public var canShoot:Bool;
+    public var canJump:Bool;
+    public var left:Bool;          //Can move left
+    public var right:Bool;         //Can move right
+    private var grounded:Bool;      //True if touching a platform
 
     //}
 

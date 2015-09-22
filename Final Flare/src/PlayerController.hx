@@ -14,7 +14,6 @@ class PlayerController extends GameplayController
 {
     //{ Fields
     var player:ObjectModel;
-    var START_POS:Point;
     //}
 
 
@@ -24,12 +23,10 @@ class PlayerController extends GameplayController
         super();
         player = new ObjectModel();
         player.setID("player");
-        START_POS=new Point (150, 800);
-        player.setPosition(START_POS);
-        player.setGrounded(true);
-
-
-
+        player.setPosition(new Point(100, 100);
+        player.setGrounded(false);
+        player.setRotation(0);
+        player.setVelocity(0);
 
     }
     //}
@@ -39,7 +36,7 @@ class PlayerController extends GameplayController
 
     public function update(gameTime:GameTime):Void
     {
-        throw "abstract";
+
     }
 
 
