@@ -67,7 +67,7 @@ class ScreenController extends Sprite
         addChild(a);
     }
 
-    private function update(e:Event = null):Void {
+    private function update(e:Dynamic = null):Void {
         dt.elapsed = FRAME_TIME;
         dt.total += dt.elapsed;
         dt.frame++;
