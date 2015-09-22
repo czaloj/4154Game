@@ -25,8 +25,8 @@ class GameScreen {
 
     private function checkKeysDown() {
         keys = inputController.keysDown;
-        gameplayController.playerController.player.left = keys[65];
-        gameplayController.playerController.player.right = keys[68];
+        gameplayController.playerController.player.left = keys[inputController.MOVE_LEFT];
+        gameplayController.playerController.player.right = keys[inputController.MOVE_RIGHT];
     }
 
     public function update(gameTime:GameTime):Void
