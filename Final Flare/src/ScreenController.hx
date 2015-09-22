@@ -15,14 +15,16 @@ import flash.display.BitmapData;
 class ScreenController extends Sprite {
     var sheet:SpriteSheet;
     
-    public function new() {
+    public function new() 
+	{
         super();
         
         addEventListener(Event.ADDED_TO_STAGE, load);
         openfl.Lib.current.stage.addEventListener(MouseEvent.CLICK, add);
     }
     
-    private function randomAnimation():Animated {
+    private function randomAnimation():Animated 
+	{
         switch(Std.int(Math.random() * 3.0)) {
         case 0:
             return new Animated(sheet, "Walking", 4);
@@ -33,7 +35,8 @@ class ScreenController extends Sprite {
         }
     }
     
-    private function load(e:Event = null):Void {
+    private function load(e:Event = null):Void 
+	{
         sheet = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Man.png")), [
             new SpriteStrip("Backflip", 0, 0, 48, 90, 2, 42, 80),
             new SpriteStrip("Walking", 0, 180, 48, 90, 1, 12, 12),
@@ -42,7 +45,9 @@ class ScreenController extends Sprite {
         
         addChild(randomAnimation());
     }
-    private function add(e:MouseEvent = null):Void {
+	
+    private function add(e:MouseEvent = null):Void 
+	{
         var a:Animated = randomAnimation();
         a.x = e.stageX - a.width * 0.5;
         a.y = e.stageY - a.height * 0.5;
