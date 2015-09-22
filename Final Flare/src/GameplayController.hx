@@ -6,7 +6,6 @@ package;
  */
 //{ Import Statements
 
-
 //}
 
 
@@ -17,8 +16,6 @@ class GameplayController extends GameScreen
     private var playerController:PlayerController;
 
     //}
-
-
 
 
     //{ Initialization
@@ -35,7 +32,7 @@ class GameplayController extends GameScreen
 
     public function update(gameTime:GameTime):Void
     {
-        playerController.update();
+        playerController.update(gameTime);
     }
 
     //}

@@ -12,8 +12,11 @@ import starling.display.Image;
 import starling.textures.Texture;
 import flash.display.BitmapData;
 
-class ScreenController extends Sprite {
-    var sheet:SpriteSheet;
+class ScreenController extends Sprite
+{
+
+    public var sheet:SpriteSheet;
+    public var dt:GameTime;
 
 
 
@@ -23,6 +26,7 @@ class ScreenController extends Sprite {
 
         addEventListener(Event.ADDED_TO_STAGE, load);
         openfl.Lib.current.stage.addEventListener(MouseEvent.CLICK, add);
+        dt = new GameTime();
     }
 
     private function randomAnimation():Animated

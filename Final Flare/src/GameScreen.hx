@@ -31,7 +31,7 @@ class GameScreen {
 
     public function update(gameTime:GameTime):Void
     {
-        gameplayController.update();
+        gameplayController.update(screenController.dt);
     }
     public function draw(gameTime:GameTime):Void
     {
