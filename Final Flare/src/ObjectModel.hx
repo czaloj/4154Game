@@ -20,8 +20,8 @@ class ObjectModel
     public var id:String;          //Identifying tag
 
     //Box2D Fields
-//    private var body:B2Body;
-//    private var bodyType:B2BodyType;
+    //private var body:B2Body;
+    //private var bodyType:B2BodyType;
 
     //Phsyics data
     public var position:Point = new Point();     //Object position
@@ -43,7 +43,7 @@ class ObjectModel
     public var right:Bool;         //Can move right
     public var grounded:Bool;      //True if touching a platform
 
-    //}
+    //}6
 
     //{ Initialization
     public function new()

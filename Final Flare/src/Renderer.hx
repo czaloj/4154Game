@@ -1,10 +1,10 @@
 package;
 
 import openfl.Lib;
-import starling.display.Stage;
+import starling.display.DisplayObject;
 
 class Renderer {
-    public function new(s:Stage) {
+    public function new(stage:DisplayObject) {
         // Empty
     }
     
