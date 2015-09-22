@@ -29,7 +29,8 @@ class PlayerController extends GameplayController
         player.setGrounded(false);
         player.setRotation(0);
         player.setVelocity(0);
-
+        player.left = false;
+        player.right = false;
     }
     //}
 

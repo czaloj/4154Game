@@ -8,6 +8,7 @@ class GameScreen {
 
     private var screenController:ScreenController;
     private var gameplayController:GameplayController;
+    public var inputController:InputController;
 
     public function new(sc: ScreenController) {
 
@@ -20,6 +21,12 @@ class GameScreen {
 
     public function setParentController(sc:ScreenController):Void {
         screenController = sc;
+    }
+
+    private function checkKeysDown() {
+        keys = inputController.keysDown;
+        gameplayController.playerController.player.left = keys[65];
+        gameplayController.playerController.player.right = keys[68];
     }
 
     public function update(gameTime:GameTime):Void
