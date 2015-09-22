@@ -2,7 +2,9 @@ package;
 
 import openfl.Lib;
 
-class GameScreen {
+class GameScreen
+{
+
     private var screenController:ScreenController;
 
     public function new() {
