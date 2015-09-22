@@ -7,6 +7,9 @@ class GameScreen {
 
     public function new() {
         screenController = null;
+        inputController = InputController.new()
+        stage.addEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
+        stage.addEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);
     }
 
     public function setParentController(sc:ScreenController):Void {
