@@ -14,7 +14,7 @@ class InputController
 {
     // Array of booleans, indexed by key code.
     // Element is true when corresponding key is pressed. False otherwise.
-    public var keysDown:Array<Bool> = [];
+    public var keysDown:Array<Bool>;
 
     // KeyDown handler. Given event e, flips key code element in keysDown to true.
     public function keyDown(e:flash.events.KeyboardEvent):Void 
@@ -31,7 +31,7 @@ class InputController
     //{ Initialization
     public function new() 
     {
-        //Empty
+        keysDown = [];
     }
     //}
 
