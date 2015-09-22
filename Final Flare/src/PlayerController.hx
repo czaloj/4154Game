@@ -14,7 +14,7 @@ import openfl.geom.Point;
 class PlayerController extends GameplayController
 {
     //{ Fields
-    var player:ObjectModel;
+    public var player:ObjectModel;
     //}
 
 
@@ -22,10 +22,10 @@ class PlayerController extends GameplayController
     public function new()
     {
         super();
-        player.MAX_SPEED = 8;
         player = new ObjectModel();
+        player.MAX_SPEED = 8;
         player.setID("player");
-        player.setPosition(new Point(100, 100);
+        player.setPosition(new Point(100, 100));
         player.setGrounded(false);
         player.setRotation(0);
         player.setVelocity(0);

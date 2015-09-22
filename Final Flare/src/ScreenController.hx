@@ -17,6 +17,7 @@ class ScreenController extends Sprite
 
     public var sheet:SpriteSheet;
     public var dt:GameTime;
+    public var gs:GameScreen;
 
 
 
@@ -24,9 +25,11 @@ class ScreenController extends Sprite
     {
         super();
 
-        addEventListener(Event.ADDED_TO_STAGE, load);
-        openfl.Lib.current.stage.addEventListener(MouseEvent.CLICK, add);
+        //addEventListener(Event.ADDED_TO_STAGE, load);
+        //openfl.Lib.current.stage.addEventListener(MouseEvent.CLICK, add);
         dt = new GameTime();
+        gs = new GameScreen();
+        stage.addChild(gs);
     }
 
     private function randomAnimation():Animated

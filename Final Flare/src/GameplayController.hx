@@ -13,7 +13,7 @@ class GameplayController extends GameScreen
 {
     //{ Fields
 
-    private var playerController:PlayerController;
+    public var playerController:PlayerController;
 
     //}
 
