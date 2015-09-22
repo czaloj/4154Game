@@ -31,6 +31,8 @@ class PlayerController extends GameplayController
         player.setVelocity(0);
         player.left = false;
         player.right = false;
+        player.canJump = false;
+        player.canShoot = false;
     }
     //}
 
@@ -39,6 +41,11 @@ class PlayerController extends GameplayController
 
     public function update(gameTime:GameTime):Void
     {
+        if (player.canJump)
+        {
+            player.setVelocity(new Point(player.getPosition().x, -4));
+        }
+
         if (player.IsGrounded)
         {
             if (player.left)

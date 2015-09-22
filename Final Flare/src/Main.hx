@@ -13,10 +13,10 @@ class Main extends Sprite {
     public function new () {
         super();
 
-        /*var s:Statistic<Float>  = new Statistic<Float>(2.5);
-        trace(s.value);
-        s.baseValue *= 2;
-        trace(s.value);*/
+        //var s:Statistic<Float>  = new Statistic<Float>(2.5);
+        //trace(s.value);
+        //s.baseValue *= 2;
+        //trace(s.value);
 
         var d:Array<PartName> = [
             new PartName("Noun", PartNameType.NOUN)
