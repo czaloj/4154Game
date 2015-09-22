@@ -5,39 +5,40 @@ package;
  * @author Mark
  */
 //{ Import Statements
-	
-	
+
+
 //}
 
- 
+
 class GameplayController extends GameScreen
 {
-	//{ Fields 
-	
-	
-	//}
+    //{ Fields
 
-	
-	
-	
-	//{ Initialization
-	public function new() 
-	{
-		super();
-		
-	}
-	//}
+    private var playerController:PlayerController;
+
+    //}
 
 
-	
-	//{ Game Loop
-	
-	public function update(gameTime:GameTime):Void 
-	{
-		throw "abstract";
-	}
-	
-	//}
-	
+
+
+    //{ Initialization
+    public function new()
+    {
+        super();
+
+    }
+    //}
+
+
+
+    //{ Game Loop
+
+    public function update(gameTime:GameTime):Void
+    {
+        throw "abstract";
+    }
+
+    //}
+
 
 }
