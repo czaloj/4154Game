@@ -21,10 +21,10 @@ class ObjectModel extends GameScreen
 
     //Box2D Fields
     private var body:B2Body;
-    privatevar bodyType:B2BodyType;
+    private var bodyType:B2BodyType;
 
     //Phsyics data
-    private var position Point;     //Object position
+    private var position:Point;     //Object position
     private var velocity:Point;     //Object velocity
     private var rotation:Float;     //Rotation
 
@@ -131,3 +131,4 @@ class ObjectModel extends GameScreen
     }
     //}
 
+}
