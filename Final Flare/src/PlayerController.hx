@@ -69,6 +69,8 @@ class PlayerController extends GameplayController
               player.setVelocity(new Point(player.getVelocity().x * .9995f, player.getVelocity().y));
             }
         }
+
+
     }
 
 

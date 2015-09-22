@@ -7,9 +7,7 @@ package;
 class GameState
 {
 
-	public function new() 
-	{
-		
-	}
-	
+    public function new()
+    {
+    }
 }
