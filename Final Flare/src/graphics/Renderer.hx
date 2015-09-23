@@ -1,11 +1,14 @@
-package;
+package graphics;
 
 import openfl.Lib;
-import starling.display.DisplayObject;
+import starling.display.Sprite;
 
 class Renderer {
-    public function new(stage:DisplayObject) {
-        // TODO
+    private var hierarchy:RenderHierarchy = new RenderHierarchy();
+    
+    public function new(stage:Sprite) {
+        // Everything will be rendered inside the hierarchy
+        stage.addChild(hierarchy);
     }
     
     public function onEntityAdded(o:ObjectModel):Void {

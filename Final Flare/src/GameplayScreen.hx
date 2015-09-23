@@ -1,5 +1,6 @@
 package;
 
+import graphics.Renderer;
 import openfl.Lib;
 import openfl.events.KeyboardEvent;
 import openfl.events.Event;
@@ -26,12 +27,11 @@ class GameplayScreen extends IGameScreen {
     override function onEntry(gameTime:GameTime):Void {
         state = new GameState();
         inputController = new InputController();
-        renderer = new Renderer(screenController);
         gameplayController = new GameplayController(state);
+        renderer = new Renderer(screenController);
+        
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);
-        
-        screenController.addChild(new Quad(100, 100, 0xff00ff));
     }
     override function onExit(gameTime:GameTime):Void {
         // Empty
