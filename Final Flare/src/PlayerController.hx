@@ -2,11 +2,8 @@ package;
 
 import openfl.geom.Point;
 
-class PlayerController
-{
-    //{ Initialization
-    public function new(state:GameState)
-    {
+class PlayerController {
+    public function new(state:GameState) {
         state.player = new ObjectModel();
         state.player.id = "player";
         state.player.position.setTo(0, 0);
@@ -16,46 +13,20 @@ class PlayerController
         state.player.left = false;
         state.player.right = false;
     }
-    //}
 
-
-    //{ Game Loop
-
-    public function update(state:GameState, gameTime:GameTime):Void
-    {
-        if (state.player.grounded)
-        {
-            if (state.player.left)
-            {
-                state.player.velocity.setTo(Math.min(ObjectModel.MAX_SPEED, (state.player.velocity).x + .55), state.player.velocity.y);
-            }
-            else if (state.player.right)
-            {
-                state.player.velocity.setTo(Math.max( -ObjectModel.MAX_SPEED, (state.player.velocity).x - .55), state.player.velocity.y);
-            }
-            else
-            {
-              state.player.velocity.setTo(state.player.velocity.x * .3, state.player.velocity.y);
-            }
+    public function update(state:GameState, gameTime:GameTime):Void {
+        // Move the player on conditional speed
+        var moveSpeed = state.player.grounded ? .55 : .35;
+        if (state.player.left) state.player.velocity.x -= moveSpeed;
+        if (state.player.right) state.player.velocity.x += moveSpeed;
+        
+        // It seems we want to do conditional friction?
+        if (!state.player.left && !state.player.right) {
+            var friction = state.player.grounded ? .3 : .9995;
+            state.player.velocity.x *= friction;
         }
-        //Mid-air movement
-        else
-        {
-            if (state.player.left)
-            {
-                state.player.velocity.setTo(Math.min(ObjectModel.MAX_SPEED, (state.player.velocity).x + .35), state.player.velocity.y);
-            }
-            else if (state.player.right)
-            {
-                state.player.velocity.setTo(Math.max( -ObjectModel.MAX_SPEED, (state.player.velocity).x - .35), state.player.velocity.y);
-            }
-            else
-            {
-              state.player.velocity.setTo(state.player.velocity.x * .9995, state.player.velocity.y);
-            }
-        }
+        
+        // Clamp speed to a maximum value
+        state.player.velocity.x = Math.min(ObjectModel.MAX_SPEED, Math.max(-ObjectModel.MAX_SPEED, state.player.velocity.x));
     }
-//}
-
-
 }
