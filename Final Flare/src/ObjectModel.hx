@@ -5,8 +5,8 @@
 //{ Import Statements
 package;
 
-//import box2D.dynamics.B2Body;
-//import box2D.dynamics.B2BodyType;
+import box2D.dynamics.B2Body;
+import box2D.dynamics.B2BodyType;
 import openfl.geom.Point;
 //}
 
@@ -20,8 +20,8 @@ class ObjectModel
     public var id:String;          //Identifying tag
 
     //Box2D Fields
-    //private var body:B2Body;
-    //private var bodyType:B2BodyType;
+    private var body:B2Body;
+    private var bodyType:B2BodyType;
 
     //Phsyics data
     public var position:Point = new Point();     //Object position

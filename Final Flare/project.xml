@@ -4,6 +4,7 @@
 	<app main="Main" path="bin" file="FinalFlare" swf-version="11.8" />
 	<window width="800" height="450" fps="60" />
 	<haxelib name="openfl" />
+	<haxelib name="box2d" />
 	
 	<source path="src" />
 	
