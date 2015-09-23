@@ -46,9 +46,9 @@ class TileRegion {
     }
     
     public function setToTile(i:Image) {
-        i.setTexCoordsTo(0, xMin, yMin);
-        i.setTexCoordsTo(1, xMax, yMin);
-        i.setTexCoordsTo(2, xMin, yMax);
-        i.setTexCoordsTo(3, xMax, yMax);
+        i.setTexCoordsTo(0, xMin, yMax);
+        i.setTexCoordsTo(1, xMax, yMax);
+        i.setTexCoordsTo(2, xMin, yMin);
+        i.setTexCoordsTo(3, xMax, yMin);
     }
 }
