@@ -7,10 +7,10 @@ package;
 class AIController extends GameplayScreen
 {
 
-	public function new() 
-	{
-		super();
-		
-	}
-	
+    public function new() 
+    {
+        super();
+        
+    }
+    
 }

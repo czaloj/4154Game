@@ -20,7 +20,7 @@ class ScreenController extends Sprite
     public var sheet:SpriteSheet;
     public var dt:GameTime;
 
-	private var screens:Array<IGameScreen>; 
+    private var screens:Array<IGameScreen>; 
     private var activeScreen:IGameScreen;
 
     public function new()
@@ -33,9 +33,9 @@ class ScreenController extends Sprite
         dt = new GameTime();
 
         // Start on the splash screen
-		screens = [
-			new GameplayScreen(this)
-		];
+        screens = [
+            new GameplayScreen(this)
+        ];
         activeScreen = screens[0];
     }
 
@@ -62,9 +62,9 @@ class ScreenController extends Sprite
         var a:Animated = new Animated(sheet, "Walking", 4);
 
         addChild(a);
-		
-		for(screen in screens) screen.build();
-		activeScreen.onEntry(dt);
+        
+        for(screen in screens) screen.build();
+        activeScreen.onEntry(dt);
     }
 
     private function add(e:MouseEvent = null):Void

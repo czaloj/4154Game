@@ -1,10 +1,10 @@
 // =================================================================================================
 //
-//	Starling Framework
-//	Copyright 2011-2014 Gamua. All Rights Reserved.
+//    Starling Framework
+//    Copyright 2011-2014 Gamua. All Rights Reserved.
 //
-//	This program is free software. You can redistribute and/or modify it
-//	in accordance with the terms of the accompanying license agreement.
+//    This program is free software. You can redistribute and/or modify it
+//    in accordance with the terms of the accompanying license agreement.
 //
 // =================================================================================================
 
@@ -24,6 +24,6 @@ package starling.animation;
  */
 interface IAnimatable 
 {
-	/** Advance the time by a number of seconds. @param time in seconds. */
-	function advanceTime(time:Float):Void;
+    /** Advance the time by a number of seconds. @param time in seconds. */
+    function advanceTime(time:Float):Void;
 }

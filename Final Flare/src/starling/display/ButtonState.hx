@@ -1,10 +1,10 @@
 // =================================================================================================
 //
-//	Starling Framework
-//	Copyright 2014 Gamua GmbH. All Rights Reserved.
+//    Starling Framework
+//    Copyright 2014 Gamua GmbH. All Rights Reserved.
 //
-//	This program is free software. You can redistribute and/or modify it
-//	in accordance with the terms of the accompanying license agreement.
+//    This program is free software. You can redistribute and/or modify it
+//    in accordance with the terms of the accompanying license agreement.
 //
 // =================================================================================================
 
@@ -15,18 +15,18 @@ import starling.errors.AbstractClassError;
 /** A class that provides constant values for the states of the Button class. */
 class ButtonState
 {
-	/** @private */
-	public function new() { throw new AbstractClassError(); }
+    /** @private */
+    public function new() { throw new AbstractClassError(); }
 
-	/** The button's default state. */
-	public static var UP:String = "up";
+    /** The button's default state. */
+    public static var UP:String = "up";
 
-	/** The button is pressed. */
-	public static var DOWN:String = "down";
+    /** The button is pressed. */
+    public static var DOWN:String = "down";
 
-	/** The mouse hovers over the button. */
-	public static var OVER:String = "over";
+    /** The mouse hovers over the button. */
+    public static var OVER:String = "over";
 
-	/** The button was disabled altogether. */
-	public static var DISABLED:String = "disabled";
+    /** The button was disabled altogether. */
+    public static var DISABLED:String = "disabled";
 }

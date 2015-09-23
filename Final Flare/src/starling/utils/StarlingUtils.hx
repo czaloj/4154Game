@@ -6,12 +6,12 @@ import openfl.geom.Point;
 class StarlingUtils
 {
 
-	public function new() 
-	{
-		
-	}
-	
-	/** Replaces a string's "master string" — the string it was built from —
+    public function new() 
+    {
+        
+    }
+    
+    /** Replaces a string's "master string" — the string it was built from —
      *  with a single character to save memory. Find more information about this AS3 oddity
      *  <a href="http://jacksondunstan.com/articles/2260">here</a>.
      *
@@ -23,39 +23,39 @@ class StarlingUtils
     {
         return ("_" + str).substr(1);
     }
-	
-	/** Converts an angle from degrees into radians. */
+    
+    /** Converts an angle from degrees into radians. */
     public static function deg2rad(deg:Float):Float
     {
         return deg / 180.0 * Math.PI;   
     }
-	
-	/** Executes a function with the specified arguments. If the argument count does not match
+    
+    /** Executes a function with the specified arguments. If the argument count does not match
      *  the function, the argument list is cropped / filled up with <code>null</code> values. */
     public static function execute(func:Dynamic, args:Array<Dynamic>):Void
     {
-		if (func != null)
+        if (func != null)
         {
-			var i:Int;
-			var length:Int = Reflect.getProperty(func, "length");
-			
-			#if flash
-				var maxNumArgs:Int = func.length;
-			#else 
-				var maxNumArgs:Int = args.length; //var maxNumArgs:Int = func.length;
-			#end
-			
-			for (i in args.length...maxNumArgs)
+            var i:Int;
+            var length:Int = Reflect.getProperty(func, "length");
+            
+            #if flash
+                var maxNumArgs:Int = func.length;
+            #else 
+                var maxNumArgs:Int = args.length; //var maxNumArgs:Int = func.length;
+            #end
+            
+            for (i in args.length...maxNumArgs)
                 args[i] = null;
-			
+            
             // In theory, the 'default' case would always work,
             // but we want to avoid the 'slice' allocations.
-			
-			/*var fields = Reflect.fields(func);
-			for (propertyName in fields) {
-				trace(Reflect.getProperty(func, propertyName));
-			}*/
-			
+            
+            /*var fields = Reflect.fields(func);
+            for (propertyName in fields) {
+                trace(Reflect.getProperty(func, propertyName));
+            }*/
+            
             switch (maxNumArgs)
             {
                 case 0:  func();
@@ -70,31 +70,31 @@ class StarlingUtils
             }
         }
     }
-	
-	// TODO: add number formatting options
+    
+    // TODO: add number formatting options
     
     /** Formats a String in .Net-style, with curly braces ("{0}"). Does not support any 
      *  number formatting options yet. */
     public static function formatString(format:String, args:Array<Dynamic>):String
     {
-		trace("CHECK");
+        trace("CHECK");
         for (i in 0...args.length) {
-			
-			var r = new EReg("\\{" + i + "\\}", "g");
-			format = r.replace(format, args[i]);
+            
+            var r = new EReg("\\{" + i + "\\}", "g");
+            format = r.replace(format, args[i]);
             //format = format.replace(new RegExp("\\{" + i + "\\}", "g"), args[i]);
-		}
+        }
         
         return format;
     }
-	
-	/** Returns the next power of two that is equal to or bigger than the specified number. */
+    
+    /** Returns the next power of two that is equal to or bigger than the specified number. */
     public static function getNextPowerOfTwo(number:Float):Int
     {
-		var c1 = Std.is(number, Int);
-		var c2 = number > 0;
-		var c3 = ((cast number) & (cast number - 1)) == 0;
-		
+        var c1 = Std.is(number, Int);
+        var c2 = number > 0;
+        var c3 = ((cast number) & (cast number - 1)) == 0;
+        
         if (c1 && c2 && c3) // see: http://goo.gl/D9kPj
             return Std.int(number);
         else
@@ -106,17 +106,17 @@ class StarlingUtils
             return result;
         }
     }
-	
-	/** Converts an angle from radians into degrees. */
+    
+    /** Converts an angle from radians into degrees. */
     public static function rad2deg(rad:Float):Float
     {
         return rad / Math.PI * 180.0;            
     }
-	
-	
+    
+    
 
-	private static var deprecationNotified:Bool = false;
-	
+    private static var deprecationNotified:Bool = false;
+    
     /** Uses a matrix to transform 2D coordinates into a different space. If you pass a 
      *  'resultPoint', the result will be stored in this point instead of creating a new object.*/
     public static function transformCoords(matrix:Matrix, x:Float, y:Float, resultPoint:Point=null):Point

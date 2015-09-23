@@ -3,9 +3,9 @@ package gun;
 class GunLayer 
 {
 
-	public function new() 
-	{
-		
-	}
-	
+    public function new() 
+    {
+        
+    }
+    
 }

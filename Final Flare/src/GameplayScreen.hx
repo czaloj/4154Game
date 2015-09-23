@@ -21,32 +21,32 @@ class GameplayScreen extends IGameScreen {
         state.player.right = inputController.keysDown[Keyboard.D];
     }
 
-	override function build():Void
-	{
-		
-	}
-	override function destroy():Void
-	{
-		
-	}
-	
-	override function onEntry(gameTime:GameTime):Void
-	{
-		state = new GameState();
+    override function build():Void
+    {
+        
+    }
+    override function destroy():Void
+    {
+        
+    }
+    
+    override function onEntry(gameTime:GameTime):Void
+    {
+        state = new GameState();
         inputController = new InputController();
         renderer = new Renderer(screenController);
         gameplayController = new GameplayController(state);
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);
-		
-		screenController.addChild(new Quad(100, 100, 0xff00ff));
-	}
-	override function onExit(gameTime:GameTime):Void
-	{
-		
-	}
-	
-	
+        
+        screenController.addChild(new Quad(100, 100, 0xff00ff));
+    }
+    override function onExit(gameTime:GameTime):Void
+    {
+        
+    }
+    
+    
     override function update(gameTime:GameTime):Void
     {
         gameplayController.update(state, gameTime);

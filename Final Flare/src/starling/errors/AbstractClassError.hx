@@ -1,10 +1,10 @@
 // =================================================================================================
 //
-//	Starling Framework
-//	Copyright 2011-2014 Gamua. All Rights Reserved.
+//    Starling Framework
+//    Copyright 2011-2014 Gamua. All Rights Reserved.
 //
-//	This program is free software. You can redistribute and/or modify it
-//	in accordance with the terms of the accompanying license agreement.
+//    This program is free software. You can redistribute and/or modify it
+//    in accordance with the terms of the accompanying license agreement.
 //
 // =================================================================================================
 
@@ -16,9 +16,9 @@ import openfl.errors.Error;
  *  class. */
 class AbstractClassError extends Error
 {
-	/** Creates a new AbstractClassError object. */
-	public function new(message:Dynamic="Cannot instantiate abstract class", id:Dynamic=0)
-	{
-		super(message, id);
-	}
+    /** Creates a new AbstractClassError object. */
+    public function new(message:Dynamic="Cannot instantiate abstract class", id:Dynamic=0)
+    {
+        super(message, id);
+    }
 }

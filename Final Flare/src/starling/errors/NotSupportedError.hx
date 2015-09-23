@@ -1,10 +1,10 @@
 // =================================================================================================
 //
-//	Starling Framework
-//	Copyright 2011-2015 Gamua. All Rights Reserved.
+//    Starling Framework
+//    Copyright 2011-2015 Gamua. All Rights Reserved.
 //
-//	This program is free software. You can redistribute and/or modify it
-//	in accordance with the terms of the accompanying license agreement.
+//    This program is free software. You can redistribute and/or modify it
+//    in accordance with the terms of the accompanying license agreement.
 //
 // =================================================================================================
 
@@ -16,9 +16,9 @@ import openfl.errors.Error;
  *  on the current platform. */
 class NotSupportedError extends Error
 {
-	/** Creates a new NotSupportedError object. */
-	public function new(message:Dynamic = "", id:Dynamic = 0)
-	{
-		super(message, id);
-	}
+    /** Creates a new NotSupportedError object. */
+    public function new(message:Dynamic = "", id:Dynamic = 0)
+    {
+        super(message, id);
+    }
 }
