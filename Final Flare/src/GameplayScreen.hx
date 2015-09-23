@@ -3,7 +3,7 @@ package;
 import graphics.Renderer;
 import graphics.RenderPack;
 import graphics.SpriteSheet;
-import graphics.SpriteStrip;
+import graphics.StripRegion;
 import openfl.display.Graphics;
 import openfl.Lib;
 import openfl.Assets;
@@ -38,9 +38,9 @@ class GameplayScreen extends IGameScreen {
         // TODO: Remove this test code
         var pack:RenderPack = new RenderPack();
         pack.characters = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Man.png")), [        
-            new SpriteStrip("Man.Backflip", 0, 0, 48, 90, 2, 42, 80),        
-            new SpriteStrip("Man.Run", 0, 180, 48, 90, 1, 12, 12),        
-            new SpriteStrip("Man.Idle", 0, 270, 48, 90, 1, 7, 7)        
+            new StripRegion("Man.Backflip", 0, 0, 48, 90, 2, 42, 80),        
+            new StripRegion("Man.Run", 0, 180, 48, 90, 1, 12, 12),        
+            new StripRegion("Man.Idle", 0, 270, 48, 90, 1, 7, 7)        
         ]);
         
         renderer = new Renderer(screenController, pack);

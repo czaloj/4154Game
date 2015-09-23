@@ -13,7 +13,7 @@ class Renderer {
         pack = p;
         
         // TODO: Remove this test code
-        hierarchy.player.addChild(new Animated(pack.characters, "Man.Run", 3));
+        hierarchy.player.addChild(new AnimatedSprite(pack.characters, "Man.Run", 3));
     }
     
     public function onEntityAdded(o:ObjectModel):Void {

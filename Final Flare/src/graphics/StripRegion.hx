@@ -2,7 +2,7 @@ package graphics;
 
 import starling.display.Image;
 
-class SpriteStrip {
+class StripRegion {
     // Name of the strip
     public var name:String;
 
