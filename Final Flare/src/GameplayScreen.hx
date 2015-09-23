@@ -16,22 +16,14 @@ class GameplayScreen extends IGameScreen {
         super(sc);
     }
 
-    private function checkKeysDown() {
-        state.player.left = inputController.keysDown[Keyboard.A];
-        state.player.right = inputController.keysDown[Keyboard.D];
+    override function build():Void {
+        // Empty
     }
-
-    override function build():Void
-    {
-        
-    }
-    override function destroy():Void
-    {
-        
+    override function destroy():Void {
+        // Empty        
     }
     
-    override function onEntry(gameTime:GameTime):Void
-    {
+    override function onEntry(gameTime:GameTime):Void {
         state = new GameState();
         inputController = new InputController();
         renderer = new Renderer(screenController);
@@ -41,18 +33,18 @@ class GameplayScreen extends IGameScreen {
         
         screenController.addChild(new Quad(100, 100, 0xff00ff));
     }
-    override function onExit(gameTime:GameTime):Void
-    {
-        
+    override function onExit(gameTime:GameTime):Void {
+        // Empty
     }
     
-    
-    override function update(gameTime:GameTime):Void
-    {
+    override function update(gameTime:GameTime):Void {
+        // Update input first
+        inputController.update(state);
+        
+        // Update game logic
         gameplayController.update(state, gameTime);
     }
-    override function draw(gameTime:GameTime):Void
-    {
+    override function draw(gameTime:GameTime):Void {
         renderer.update();
     }
 }

@@ -13,11 +13,13 @@ class Animated extends Image {
     
     public function new(s:SpriteSheet, strip:String, delay:Int = 1) {
         super(s.texture);
+        
         ss = s;
         this.strip = ss.getStrip(strip);
         width = this.strip.width;
         height = this.strip.height;
         this.delay = delay;
+        
         addEventListener(Event.ENTER_FRAME, update);
     }
     

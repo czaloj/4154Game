@@ -1,11 +1,7 @@
 package gun;
 
-class GunLayer 
-{
-
-    public function new() 
-    {
-        
+class GunLayer {
+    public function new() {
+        // Empty
     }
-    
 }

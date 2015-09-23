@@ -5,7 +5,7 @@ import starling.display.DisplayObject;
 
 class Renderer {
     public function new(stage:DisplayObject) {
-        // Empty
+        // TODO
     }
     
     public function onEntityAdded(o:ObjectModel):Void {
@@ -19,4 +19,3 @@ class Renderer {
         // Update sprite positions from entities
     }
 }
-

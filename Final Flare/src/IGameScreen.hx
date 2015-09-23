@@ -12,30 +12,24 @@ class IGameScreen {
         screenController = sc;
     }
     
-    public function build():Void
-    {
+    public function build():Void {
         throw "abstract";
     }
-    public function destroy():Void
-    {
-        throw "abstract";
-    }
-    
-    public function onEntry(gameTime:GameTime):Void
-    {
-        throw "abstract";
-    }
-    public function onExit(gameTime:GameTime):Void
-    {
+    public function destroy():Void {
         throw "abstract";
     }
     
-    public function update(gameTime:GameTime):Void
-    {
+    public function onEntry(gameTime:GameTime):Void {
         throw "abstract";
     }
-    public function draw(gameTime:GameTime):Void
-    {
+    public function onExit(gameTime:GameTime):Void {
+        throw "abstract";
+    }
+    
+    public function update(gameTime:GameTime):Void {
+        throw "abstract";
+    }
+    public function draw(gameTime:GameTime):Void {
         throw "abstract";
     }
 }

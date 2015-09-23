@@ -9,7 +9,6 @@ enum PartNameType {
 }
 
 class PartName {
-    
     public var string:String;
     public var type:PartNameType;
     

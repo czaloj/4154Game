@@ -1,39 +1,29 @@
 package;
 
-/**
- * ...
- * @author Mark
- */
-//{ Import Statements
-    
-    
-//}
+import flash.events.KeyboardEvent;
+import openfl.ui.Keyboard;
 
 /** Handlers for input events **/
-class InputController
-{
+class InputController {
     // Array of booleans, indexed by key code.
     // Element is true when corresponding key is pressed. False otherwise.
-    public var keysDown:Array<Bool>;
+    private var keysDown:Array<Bool> = [];
+
+    public function new() {
+        // Empty
+    }
 
     // KeyDown handler. Given event e, flips key code element in keysDown to true.
-    public function keyDown(e:flash.events.KeyboardEvent):Void 
-    {
+    public function keyDown(e:KeyboardEvent):Void {
         keysDown[e.keyCode] = true;
     }
-
     // KeyUp handler. Given even e, flips key code element in keysDown to false
-    public function keyUp(e:flash.events.KeyboardEvent):Void 
-    {
+    public function keyUp(e:KeyboardEvent):Void {
         keysDown[e.keyCode] = false;
     }
-
-    //{ Initialization
-    public function new() 
-    {
-        keysDown = [];
+    
+    public function update(state:GameState):Void {
+        state.player.left = keysDown[Keyboard.A];
+        state.player.right = keysDown[Keyboard.D];
     }
-    //}
-
-
 }

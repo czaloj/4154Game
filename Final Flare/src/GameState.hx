@@ -1,15 +1,10 @@
 package;
 
-/**
- * ...
- * @author Mark
- */
-class GameState
-{
+class GameState {
     public var player:ObjectModel;
     public var entities:Array<ObjectModel> = [];
 
-    public function new()
-    {
+    public function new() {
+        // Empty
     }
 }
