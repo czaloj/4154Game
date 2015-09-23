@@ -1,8 +1,8 @@
-package;
+package graphics;
 
 import starling.display.Image;
 
-class SpriteStrip {
+class StripRegion {
     // Name of the strip
     public var name:String;
 
@@ -64,9 +64,9 @@ class SpriteStrip {
         var y1:Float = yMin + yDelta * y;
         var y2:Float = y1 + yDelta;
 
-        i.setTexCoordsTo(0, x1, y1);
-        i.setTexCoordsTo(1, x2, y1);
-        i.setTexCoordsTo(2, x1, y2);
-        i.setTexCoordsTo(3, x2, y2);
+        i.setTexCoordsTo(0, x1, y2);
+        i.setTexCoordsTo(1, x2, y2);
+        i.setTexCoordsTo(2, x1, y1);
+        i.setTexCoordsTo(3, x2, y1);
     }
 }

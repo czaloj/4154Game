@@ -1,12 +1,12 @@
-package;
+package graphics;
 
 import starling.events.Event;
 import starling.display.Image;
 import starling.textures.Texture;
 
-class Animated extends Image {
+class AnimatedSprite extends Image {
     private var ss:SpriteSheet;
-    private var strip:SpriteStrip;
+    private var strip:StripRegion;
     private var f:Int = 0;
     private var fDelay:Int = 1;
     private var delay:Int = 0;
