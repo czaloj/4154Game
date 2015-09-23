@@ -1,4 +1,4 @@
-package;
+package graphics;
 
 import starling.events.Event;
 import starling.display.Image;

@@ -1,4 +1,4 @@
-package;
+package graphics;
 
 import starling.textures.Texture;
 import haxe.ds.StringMap;
