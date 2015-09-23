@@ -1,11 +1,17 @@
 package;
 
 import graphics.Renderer;
+import graphics.RenderPack;
+import graphics.SpriteSheet;
+import graphics.SpriteStrip;
+import openfl.display.Graphics;
 import openfl.Lib;
+import openfl.Assets;
 import openfl.events.KeyboardEvent;
 import openfl.events.Event;
 import openfl.ui.Keyboard;
 import starling.display.Quad;
+import starling.textures.Texture;
 
 class GameplayScreen extends IGameScreen {
     private var state:GameState;
@@ -28,7 +34,16 @@ class GameplayScreen extends IGameScreen {
         state = new GameState();
         inputController = new InputController();
         gameplayController = new GameplayController(state);
-        renderer = new Renderer(screenController);
+        
+        // TODO: Remove this test code
+        var pack:RenderPack = new RenderPack();
+        pack.characters = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Man.png")), [        
+            new SpriteStrip("Man.Backflip", 0, 0, 48, 90, 2, 42, 80),        
+            new SpriteStrip("Man.Run", 0, 180, 48, 90, 1, 12, 12),        
+            new SpriteStrip("Man.Idle", 0, 270, 48, 90, 1, 7, 7)        
+        ]);
+        
+        renderer = new Renderer(screenController, pack);
         
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);
