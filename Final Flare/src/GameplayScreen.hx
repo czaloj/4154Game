@@ -4,6 +4,7 @@ import graphics.Renderer;
 import graphics.RenderPack;
 import graphics.SpriteSheet;
 import graphics.StripRegion;
+import graphics.TileRegion;
 import openfl.display.Graphics;
 import openfl.Lib;
 import openfl.Assets;
@@ -41,6 +42,9 @@ class GameplayScreen extends IGameScreen {
             new StripRegion("Man.Backflip", 0, 0, 48, 90, 2, 42, 80),        
             new StripRegion("Man.Run", 0, 180, 48, 90, 1, 12, 12),        
             new StripRegion("Man.Idle", 0, 270, 48, 90, 1, 7, 7)        
+        ]);
+        pack.environment = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Factory.png")), [
+            new TileRegion("Brick", 0, 0, 16, 16)
         ]);
         
         renderer = new Renderer(screenController, pack);

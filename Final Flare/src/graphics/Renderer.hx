@@ -14,6 +14,15 @@ class Renderer {
         
         // TODO: Remove this test code
         hierarchy.player.addChild(new AnimatedSprite(pack.characters, "Man.Run", 3));
+        function fAddBrick(x:Float, y:Float):Void {
+            var brick:StaticSprite = new StaticSprite(pack.environment, "Brick");
+            brick.x = x;
+            brick.y = y;
+            hierarchy.foreground.addChild(brick);            
+        };
+        for (i in 0...10) {
+            fAddBrick(i * pack.environment.getTile("Brick").width, 84);
+        }
     }
     
     public function onEntityAdded(o:ObjectModel):Void {
