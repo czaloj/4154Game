@@ -27,11 +27,14 @@ class ScreenController extends Sprite {
         addEventListener(Event.ADDED_TO_STAGE, load);
         openfl.Lib.current.stage.addEventListener(Event.ENTER_FRAME, update);
 
-        // Start on the splash screen
+        // TODO: Start on the splash screen
         screens = [
-            new GameplayScreen(this)
+            new SplashScreen(this),
+            new MenuScreen(this),
+            new GameplayScreen(this),
+            new LevelEditorScreen(this)
         ];
-        activeScreen = screens[0];
+        activeScreen = screens[2];
     }
 
     private function load(e:Event = null):Void {
