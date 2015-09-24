@@ -1,6 +1,7 @@
 package ui;
 
 import graphics.SpriteSheet;
+import graphics.StripRegion;
 import graphics.TileRegion;
 import starling.textures.Texture;
 
@@ -54,10 +55,24 @@ class UISpriteFactory {
             
             // Checkbox
             new TileRegion("Checkbox", , , , ),
-            new TileRegion("Checkbox.Checked", , , , )
+            new TileRegion("Checkbox.Checked", , , , ),
             
             // Unique UI pieces
             
+            
+            // Game pieces
+            new StripRegion("Health.BarMain", , , , , , 1, 6),
+            new StripRegion("Health.BarTip", , , , , , 1, 6),
+            new TileRegion("Health.Background", , , , ),
+            new TileRegion("Health.Overlay", , , , ),
+            new TileRegion("Flare", , , , ),
+            new TileRegion("Points", , , , ),
+            new TileRegion("Combo", , , , ),
+            new StripRegion("Combo.Animated", , , , , , 1, 20),
+            new StripRegion("Combo.Bar", , , , , , 1, 20),
+            new TileRegion("Menu", , , , ),
+            new TileRegion("Time", , , , ),
+            new TileRegion("Character", , , , ) // Healthbars over the character tiles will be Quads
         ]);
     }
 }
