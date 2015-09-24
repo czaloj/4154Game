@@ -44,7 +44,8 @@ class GameplayScreen extends IGameScreen {
             new StripRegion("Man.Idle", 0, 270, 48, 90, 1, 7, 7)        
         ]);
         pack.environment = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Factory.png")), [
-            new TileRegion("Brick", 0, 0, 16, 16)
+            new TileRegion("Brick", 0, 0, 16, 16),
+            new TileRegion("PurpleMetal", 16, 0, 32, 32)
         ]);
         
         renderer = new Renderer(screenController, pack);

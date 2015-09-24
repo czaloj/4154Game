@@ -30,22 +30,24 @@ class Renderer {
         // Default camera
         cameraX = 0;
         cameraY = -16;
-        cameraScale = 8;
+        cameraScale = 2;
         
         // What to do when screen changes size
         Lib.current.stage.addEventListener(Event.RESIZE, onWindowResize);
         
         // TODO: Remove this test code
         hierarchy.player.addChild(new AnimatedSprite(pack.characters, "Man.Run", 3));
-        function fAddBrick(x:Float, y:Float):Void {
-            var brick:StaticSprite = new StaticSprite(pack.environment, "Brick");
+        function fAdd(x:Float, y:Float, n:String):Void {
+            var brick:StaticSprite = new StaticSprite(pack.environment, n);
             brick.x = x;
             brick.y = y;
             hierarchy.foreground.addChild(brick);            
         };
         for (i in 0...10) {
-            fAddBrick(i * pack.environment.getTile("Brick").width, -16);
+            fAdd(i * pack.environment.getTile("Brick").width, -16, "Brick");
         }
+        fAdd( -32, 0, "PurpleMetal");
+        fAdd( -32, -32, "PurpleMetal");
     }
     
     public function get_cameraX():Float {
