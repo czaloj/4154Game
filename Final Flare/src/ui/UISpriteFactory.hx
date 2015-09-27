@@ -54,8 +54,8 @@ class UISpriteFactory {
             new TileRegion("Scrollbar.Horizontal.Bottom", 72, 0, 10, 10),
             
             // Checkbox
-            new TileRegion("Checkbox", , , , ),
-            new TileRegion("Checkbox.Checked", , , , ),
+            new TileRegion("Checkbox", 82, 0, 8, 8),
+            new TileRegion("Checkbox.Checked", 90, 0, 8, 8),
             
             // Unique UI pieces
             
