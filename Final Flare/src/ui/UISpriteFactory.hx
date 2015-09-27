@@ -44,14 +44,14 @@ class UISpriteFactory {
             new TileRegion("Region.Press.BottomRight", 43, 9, 8, 8),
 
             // Scrollbar
-            new TileRegion("Scrollbar.Vertical", , , , ),            
-            new TileRegion("Scrollbar.Vertical.Top", , , , ),            
-            new TileRegion("Scrollbar.Vertical.Center", , , , ),            
-            new TileRegion("Scrollbar.Vertical.Bottom", , , , ),            
-            new TileRegion("Scrollbar.Horizontal", , , , ),            
-            new TileRegion("Scrollbar.Horizontal.Top", , , , ),            
-            new TileRegion("Scrollbar.Horizontal.Center", , , , ),            
-            new TileRegion("Scrollbar.Horizontal.Bottom", , , , ),            
+            new TileRegion("Scrollbar.Vertical", 61, 10, 8, 11),
+            new TileRegion("Scrollbar.Vertical.Top", 51, 0, 10, 10),
+            new TileRegion("Scrollbar.Vertical.Center", 51, 10, 10, 1),
+            new TileRegion("Scrollbar.Vertical.Bottom", 51, 11, 10, 10),
+            new TileRegion("Scrollbar.Horizontal", 69, 10, 11, 8),
+            new TileRegion("Scrollbar.Horizontal.Top", 61, 0, 10, 10),
+            new TileRegion("Scrollbar.Horizontal.Center", 71, 0, 1, 10),
+            new TileRegion("Scrollbar.Horizontal.Bottom", 72, 0, 10, 10),
             
             // Checkbox
             new TileRegion("Checkbox", , , , ),
