@@ -10,8 +10,9 @@ class AnimatedSprite extends Image {
     private var f:Int = 0;
     private var fDelay:Int = 1;
     private var delay:Int = 0;
+    private var flippedTexture:Bool;
     
-    public function new(s:SpriteSheet, strip:String, delay:Int = 1) {
+    public function new(s:SpriteSheet, strip:String, delay:Int = 1, flipTexture:Bool = true) {
         super(s.texture);
         
         ss = s;
@@ -19,6 +20,7 @@ class AnimatedSprite extends Image {
         width = this.strip.width;
         height = this.strip.height;
         this.delay = delay;
+        flippedTexture = flipTexture;
         
         addEventListener(Event.ENTER_FRAME, update);
     }
@@ -29,7 +31,7 @@ class AnimatedSprite extends Image {
             fDelay = delay;
             f++;
             f %= strip.totalFrames;
-            strip.setToFrame(this, f);
+            strip.setToFrame(this, f, flippedTexture);
         }
     }
 }

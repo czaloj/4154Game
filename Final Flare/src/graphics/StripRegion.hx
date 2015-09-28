@@ -56,7 +56,7 @@ class StripRegion {
         yDelta = height / tHeight;
     }
     
-    public function setToFrame(i:Image, frame:Int) {
+    public function setToFrame(i:Image, frame:Int, flipTexture:Bool) {
         var x:Int = Std.int(frame % columns);
         var x1:Float = xMin + xDelta * x;
         var x2:Float = x1 + xDelta;
@@ -64,9 +64,17 @@ class StripRegion {
         var y1:Float = yMin + yDelta * y;
         var y2:Float = y1 + yDelta;
 
-        i.setTexCoordsTo(0, x1, y2);
-        i.setTexCoordsTo(1, x2, y2);
-        i.setTexCoordsTo(2, x1, y1);
-        i.setTexCoordsTo(3, x2, y1);
+        if (flipTexture) {
+            i.setTexCoordsTo(0, x1, y2);
+            i.setTexCoordsTo(1, x2, y2);
+            i.setTexCoordsTo(2, x1, y1);
+            i.setTexCoordsTo(3, x2, y1);
+        }
+        else {
+            i.setTexCoordsTo(0, x1, y1);
+            i.setTexCoordsTo(1, x2, y1);
+            i.setTexCoordsTo(2, x1, y2);
+            i.setTexCoordsTo(3, x2, y2);            
+        }
     }
 }
