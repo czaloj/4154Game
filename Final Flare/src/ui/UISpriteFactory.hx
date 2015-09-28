@@ -1,6 +1,8 @@
 package ui;
 
+import graphics.AnimatedSprite;
 import graphics.SpriteSheet;
+import graphics.StaticSprite;
 import graphics.StripRegion;
 import graphics.TileRegion;
 import starling.textures.Texture;
@@ -61,18 +63,26 @@ class UISpriteFactory {
             
             
             // Game pieces
-            new StripRegion("Health.BarMain", , , , , , 1, 6),
-            new StripRegion("Health.BarTip", , , , , , 1, 6),
-            new TileRegion("Health.Background", , , , ),
-            new TileRegion("Health.Overlay", , , , ),
-            new TileRegion("Flare", , , , ),
-            new TileRegion("Points", , , , ),
-            new TileRegion("Combo", , , , ),
-            new StripRegion("Combo.Animated", , , , , , 1, 20),
-            new StripRegion("Combo.Bar", , , , , , 1, 20),
-            new TileRegion("Menu", , , , ),
-            new TileRegion("Time", , , , ),
-            new TileRegion("Character", , , , ) // Healthbars over the character tiles will be Quads
+            //new StripRegion("Health.BarMain", , , , , , 1, 6),
+            //new StripRegion("Health.BarTip", , , , , , 1, 6),
+            new TileRegion("Health.Background", 794, 0, 230, 30) //,
+            //new TileRegion("Health.Overlay", , , , ),
+            //new TileRegion("Flare", , , , ),
+            //new TileRegion("Points", , , , ),
+            //new TileRegion("Combo", , , , ),
+            //new StripRegion("Combo.Animated", , , , , , 1, 20),
+            //new StripRegion("Combo.Bar", , , , , , 1, 20),
+            //new TileRegion("Menu", , , , ),
+            //new TileRegion("Time", , , , ),
+            //new TileRegion("Character", , , , ) // Healthbars over the character tiles will be Quads
         ]);
+    }
+    
+    // TODO: Remove these two functions
+    public function getTile(s:String):StaticSprite {
+        return new StaticSprite(sheet, s, false);
+    }
+    public function getAnimation(s:String, delay:Int = 1):AnimatedSprite {
+        return new AnimatedSprite(sheet, s, delay, false);
     }
 }
