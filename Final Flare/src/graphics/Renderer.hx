@@ -1,5 +1,6 @@
 package graphics;
 
+import openfl.Assets;
 import openfl.events.Event;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
@@ -7,6 +8,8 @@ import openfl.Lib;
 import starling.core.Starling;
 import starling.display.Sprite;
 import starling.display.Stage;
+import starling.textures.Texture;
+import ui.UISpriteFactory;
 
 class Renderer {
     private var stageHalfSize:Point = new Point();
@@ -30,7 +33,7 @@ class Renderer {
         // Default camera
         cameraX = 0;
         cameraY = -16;
-        cameraScale = 2;
+        cameraScale = 1;
         
         // What to do when screen changes size
         Lib.current.stage.addEventListener(Event.RESIZE, onWindowResize);
@@ -48,8 +51,15 @@ class Renderer {
         }
         fAdd( -32, 0, "PurpleMetal");
         fAdd( -32, -32, "PurpleMetal");
-    }
+        
+
+        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
+        var hb:StaticSprite = uif.getTile("Health.Background");
+        hb.scaleX *= 2;
+        hb.scaleY *= 2;
+        stage3D.addChild(hb);
     
+    }
     public function get_cameraX():Float {
         return hierarchy.origin.x;
     }
