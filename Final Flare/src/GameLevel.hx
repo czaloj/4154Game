@@ -17,7 +17,8 @@ class GameLevel {
     public var playerPt:Point; // Initial spawn point for the player
 
     public var parallax:Array<String>; // List of parallax image files
-    public var environmentSprites:String; // Sprite sheet identifier for the environment
+    public var environmentSprites:String; // Sprite sheet file for the environment
+    public var environmentType:String; // Sprite sheet identifier for the environment
 
     public function new() {
         foreground = [];
