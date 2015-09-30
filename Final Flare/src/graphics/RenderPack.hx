@@ -4,9 +4,11 @@ package graphics;
 class RenderPack {
     public var characters:SpriteSheet;
     public var enemies:SpriteSheet;
-    
+
     public var environment:SpriteSheet;
-    
+
+    public var parallax:Array<SpriteSheet>;
+
     public function new() {
         // Empty
     }
