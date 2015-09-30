@@ -7,7 +7,9 @@ class SpriteSheetRegistry {
         switch (type) {
             case "Simple":
                 return new SpriteSheet(t, [
-                    // TODO: Fill out regions
+                    // TODO: Fill out with correct regions
+                    new TileRegion("Half", 0, 0, 16, 16),
+                    new TileRegion("Full", 16, 0, 32, 32)
                 ]);
             case "Complex":
                 return new SpriteSheet(t, [
