@@ -44,10 +44,6 @@ class LevelCreator {
             new StripRegion("Man.Run", 0, 180, 48, 90, 1, 12, 12),
             new StripRegion("Man.Idle", 0, 270, 48, 90, 1, 7, 7)
         ]);
-        renderPack.environment = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Factory.png")), [
-            new TileRegion("Brick", 0, 0, 16, 16),
-            new TileRegion("PurpleMetal", 16, 0, 32, 32)
-        ]);
     }
     
     public function new() {
