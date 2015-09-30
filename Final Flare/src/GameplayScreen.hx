@@ -6,6 +6,9 @@ import graphics.SpriteSheet;
 import graphics.StaticSprite;
 import graphics.StripRegion;
 import graphics.TileRegion;
+import gun.GunGenerator;
+import gun.GunGenParams;
+import gun.Gun;
 import openfl.display.Graphics;
 import openfl.Lib;
 import openfl.Assets;
@@ -62,7 +65,10 @@ class GameplayScreen extends IGameScreen {
         hb.scaleX *= 2;
         hb.scaleY *= 2;
         screenController.addChild(hb);
-
+        var ggp:GunGenParams = new GunGenParams();
+        var gunData = GunGenerator.generate(ggp);
+        var gun:Gun = new Gun(gunData);
+        
     }
     override function onExit(gameTime:GameTime):Void {
         // Empty

@@ -13,13 +13,16 @@ import flash.display.BitmapData;
 class GunPart {
     public var names(default, null):Array<PartName>;
     
+    
     public function new(var def:Array<Dynamic>) {
         names = [];
         
         for(i in def) {
             switch Type.getClass(i) {
             case PartName:
-                names.append(i);
+                names.push(i);
+            case Array<PartName>:
+                names.concat(i);
             default:
                 trace("Unknown argument");
             }
