@@ -9,9 +9,10 @@ import starling.core.Starling;
 import starling.display.Sprite;
 import starling.display.Stage;
 import starling.textures.Texture;
-import ui.UISpriteFactory;
 
 class Renderer {
+    public static inline var TILE_HALF_WIDTH:Float = 16;
+    
     private var stageHalfSize:Point = new Point();
     private var hierarchy:RenderHierarchy = new RenderHierarchy();
     private var pack:RenderPack;
@@ -32,36 +33,15 @@ class Renderer {
 
         // Default camera
         cameraX = 0;
-        cameraY = -16;
+        cameraY = 0;
         cameraScale = 1;
 
         // What to do when screen changes size
         Lib.current.stage.addEventListener(Event.RESIZE, onWindowResize);
 
-        // TODO: Remove this test code
-        //hierarchy.player.addChild(new AnimatedSprite(pack.characters, "Man.Run", 3));
-        //function fAdd(x:Float, y:Float, n:String):Void {
-            //var brick:StaticSprite = new StaticSprite(pack.environment, n);
-            //brick.x = x;
-            //brick.y = y;
-            //hierarchy.foreground.addChild(brick);
-        //};
-        //for (i in 0...10) {
-            //fAdd(i * pack.environment.getTile("Brick").width, -16, "Brick");
-        //}
-        //fAdd( -32, 0, "PurpleMetal");
-        //fAdd( -32, -32, "PurpleMetal");
-
-
-        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
-        var hb:StaticSprite = uif.getTile("Health.Background");
-        hb.scaleX *= 2;
-        hb.scaleY *= 2;
-        stage3D.addChild(hb);
-
         load(state);
-
     }
+    
     public function get_cameraX():Float {
         return hierarchy.origin.x;
     }
@@ -110,7 +90,7 @@ class Renderer {
         // Update sprite positions from entities
     }
 
-    public function load(state:GameState):Void {
+    private function load(state:GameState):Void {
         // TODO: Remove this test code
         var man = new AnimatedSprite(pack.characters, "Man.Run", 3);
         man.x = state.player.position.x;
@@ -123,14 +103,14 @@ class Renderer {
             hierarchy.foreground.addChild(brick);
         };
         for (i in 0...state.foreground.length) {
-
+            var x:Float = (i % state.width) * TILE_HALF_WIDTH;
+            var y:Float = (state.height -  (Std.int(i / state.width) + 1)) * TILE_HALF_WIDTH;
             if (state.foreground[i] == 1) {
-                trace(state.width);
-
-                fAdd((i % state.width) * pack.environment.getTile("Brick").width, (Math.floor(i/state.width)) * pack.environment.getTile("Brick").height -16, "Brick");
+                fAdd(x, y, "Half");
             }
             if (state.foreground[i] == 2) {
-                fAdd((i%state.width) * pack.environment.getTile("Brick").width, (Math.floor(i/state.width)) * pack.environment.getTile("PurpleMetal").height-32, "PurpleMetal");
+                // TODO: This why it won't work quite yet... need better data structure
+                fAdd(x, y, "Full");
             }
         }
     }
