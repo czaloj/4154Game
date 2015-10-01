@@ -31,8 +31,16 @@ class PlayerController {
             player.velocity.x *= friction;
         }
         
-        // Clamp speed to a maximum value
-        player.velocity.x = Math.min(ObjectModel.MAX_SPEED, Math.max(-ObjectModel.MAX_SPEED, player.velocity.x));
+        // Clamp speed to a maximum value		
+        player.velocity.x = Math.min(ObjectModel.MAX_SPEED, Math.max( -ObjectModel.MAX_SPEED, player.velocity.x));
+
+		
+		var tempPos:B2Vec2 = new B2Vec2(player.position.x, player.position.y);
+		player.body.setPosition(tempPos);
+		
+		//var tempVelocity:B2Vec2 = new B2Vec2(player.velocity.x, player.velocity.y);
+		//player.body.setLinearVelocity(tempVelocity);
+
     }
 	
 	
@@ -40,7 +48,6 @@ class PlayerController {
 	{		
 		
 		//ALL THE MAGIC NUMBERS. REMEMBER TO FIX.
-		player = new ObjectModel();
         player.id = "player";
         player.position.setTo(0, 0);
         player.grounded = false;
@@ -51,6 +58,7 @@ class PlayerController {
 		player.dimension = new Point(32, 64);
 		player.height = 64;
 		player.width - 32;
+		initPhysics(player, world);
 	}
 	
 	private function initPhysics (player:ObjectModel, world:B2World):Void 
