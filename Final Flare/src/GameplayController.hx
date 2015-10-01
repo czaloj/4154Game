@@ -13,6 +13,7 @@ class GameplayController {
 	public function init(state:GameState):Void 
 	{
 		physicsController = new PhysicsController();
+		state.player = new ObjectModel();
 		playerController = new PlayerController(state.player, physicsController.world);
 	}
 
