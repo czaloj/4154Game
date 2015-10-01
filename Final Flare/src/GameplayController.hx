@@ -19,5 +19,6 @@ class GameplayController {
 
     public function update(state:GameState, gameTime:GameTime):Void {
         playerController.update(state.player, gameTime);
+		physicsController.update();
     }
 }
