@@ -17,6 +17,8 @@ class Renderer {
     private var hierarchy:RenderHierarchy = new RenderHierarchy();
     private var pack:RenderPack;
     private var stage3D:Stage;
+	private var myState:GameState;
+	public var sprites:Array<Sprite> = [];
 
     public var cameraX(get,set):Float;
     public var cameraY(get,set):Float;
@@ -25,7 +27,8 @@ class Renderer {
     public function new(stage:Sprite, p:RenderPack, state:GameState) {
         pack = p;
         stage3D = stage.stage;
-
+	
+		myState = state;
         // Everything will be rendered inside the hierarchy
         stage.stage.color = 0x808080;
         stage.addChild(hierarchy);
@@ -80,14 +83,35 @@ class Renderer {
     }
 
     public function onEntityAdded(o:ObjectModel):Void {
-        // Add a corresponding sprite to stage and track this entity
+        var newSprite:Sprite = new Sprite();
+		sprites.push(newSprite);
+		stage3D.addChild(newSprite);	
+		
+		// Add a corresponding sprite to stage and track this entity
+		
+		//what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
     }
     public function onEntityRemoved(o:ObjectModel):Void {
+		//idk about this function the implementation i was thinking of was sketchy. 
+		//i need to figure out the mapping between objectModels and sprites
+		
         // Remove this entity from the stage
+		
+		
     }
 
     public function update():Void {
         // Update sprite positions from entities
+		hierarchy.player.x = myState.player.position.x;
+		hierarchy.player.y = myState.player.position.y;
+		var count:Int = 0;
+		for (i in myState.entities) {
+			count++;
+		    sprites[count].x = i.position.x;
+			sprites[count].y = i.position.x;
+		}
+		
+		
     }
 
     private function load(state:GameState):Void {
