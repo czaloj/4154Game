@@ -37,8 +37,8 @@ class PlayerController {
 		//player.velocity.y -= 2;
 		//player.position.y = player.body.getPosition().y;
 		//var pos:B2Vec2 = player.body.getPosition();
-		if (pos.x > 100) pos = new B2Vec2(100.0,pos.y);
-		if (pos.x < -100) pos = new B2Vec2(-100.0,pos.y);
+		if (player.position.x > 100) player.position = new B2Vec2(100.0,player.position.y);
+		if (player.position.x < -100) player.position = new B2Vec2(-100.0,player.position.y);
 		//if (pos.y > 10) pos = new B2Vec2(pos.x,10.0);
 		//if (pos.y < -10) pos = new B2Vec2(pos.x,-10.0);
 		//player.position = pos;
