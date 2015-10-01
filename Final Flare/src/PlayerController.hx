@@ -73,8 +73,9 @@ class PlayerController {
 	 
 		player.fixtureDef = new B2FixtureDef();
 		player.fixtureDef.shape = polygon;		
-		player.body = new B2Body(player.bodyDef, world);		
-		player.body.createFixture(player.fixtureDef);	
+		player.body = world.createBody(player.bodyDef);	
+		player.body.createFixture(player.fixtureDef);
+		
 
 	}
 	
