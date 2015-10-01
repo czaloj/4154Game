@@ -52,7 +52,7 @@ class PlayerController {
 	{		
 		
 		//ALL THE MAGIC NUMBERS. REMEMBER TO FIX.
-        player.id = "player";
+        player.id = "platform";
         player.position.set(0, 0);
         player.grounded = false;
         player.rotation = 0;
@@ -77,7 +77,7 @@ class PlayerController {
 	 
 		player.fixtureDef = new B2FixtureDef();
 		player.fixtureDef.shape = polygon;
-		player.fixtureDef.density = 10; 
+		player.fixtureDef.density = .001; 
 		player.body = world.createBody(player.bodyDef);
 		player.body.createFixture(player.fixtureDef);
 		player.body.setUserData(player.id);
@@ -86,6 +86,6 @@ class PlayerController {
 	
 	public function handleCollision():Void 
 	{
-		//TODO
+		pla
 	}
 }
