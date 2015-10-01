@@ -24,6 +24,9 @@ class PlayerController {
         var moveSpeed = 3;//player.grounded ? .55 : .35;
         if (player.left) player.velocity.x -= moveSpeed;
         if (player.right) player.velocity.x += moveSpeed;
+
+       	if (player.down) player.velocity.y -= moveSpeed;
+        if (player.up) player.velocity.y += moveSpeed;
         
         // It seems we want to do conditional friction?
         if (!player.left && !player.right) {
@@ -37,10 +40,11 @@ class PlayerController {
 		//player.velocity.y -= 2;
 		//player.position.y = player.body.getPosition().y;
 		//var pos:B2Vec2 = player.body.getPosition();
-		if (player.position.x > 100) player.position = new B2Vec2(100.0,player.position.y);
-		if (player.position.x < -100) player.position = new B2Vec2(-100.0,player.position.y);
-		//if (pos.y > 10) pos = new B2Vec2(pos.x,10.0);
-		//if (pos.y < -10) pos = new B2Vec2(pos.x,-10.0);
+		if (player.position.x > 400) player.position = new B2Vec2(400.0,player.position.y);
+		if (player.position.x < -400) player.position = new B2Vec2(-400.0,player.position.y);		
+		if (player.position.y > 250) player.position = new B2Vec2(player.position.x,250);
+		if (player.position.y < -250) player.position = new B2Vec2(player.position.x,-250);
+	
 		//player.position = pos;
 		
 		//player.body.setLinearVelocity(player.velocity);
