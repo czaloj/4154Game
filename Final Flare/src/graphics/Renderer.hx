@@ -12,7 +12,7 @@ import starling.textures.Texture;
 
 class Renderer {
     public static inline var TILE_HALF_WIDTH:Float = 16;
-    
+
     private var stageHalfSize:Point = new Point();
     private var hierarchy:RenderHierarchy = new RenderHierarchy();
     private var pack:RenderPack;
@@ -27,7 +27,7 @@ class Renderer {
     public function new(stage:Sprite, p:RenderPack, state:GameState) {
         pack = p;
         stage3D = stage.stage;
-	
+
 		myState = state;
         // Everything will be rendered inside the hierarchy
         stage.stage.color = 0x808080;
@@ -44,7 +44,7 @@ class Renderer {
 
         load(state);
     }
-    
+
     public function get_cameraX():Float {
         return hierarchy.origin.x;
     }
@@ -85,19 +85,19 @@ class Renderer {
     public function onEntityAdded(o:ObjectModel):Void {
         var newSprite:Sprite = new Sprite();
 		sprites.push(newSprite);
-		stage3D.addChild(newSprite);	
-		
+		stage3D.addChild(newSprite);
+
 		// Add a corresponding sprite to stage and track this entity
-		
+
 		//what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
     }
     public function onEntityRemoved(o:ObjectModel):Void {
-		//idk about this function the implementation i was thinking of was sketchy. 
+		//idk about this function the implementation i was thinking of was sketchy.
 		//i need to figure out the mapping between objectModels and sprites
-		
+
         // Remove this entity from the stage
-		
-		
+
+
     }
 
     public function update():Void {
@@ -110,8 +110,8 @@ class Renderer {
 		    sprites[count].x = i.position.x;
 			sprites[count].y = i.position.x;
 		}
-		
-		
+
+
     }
 
     private function load(state:GameState):Void {
@@ -127,8 +127,8 @@ class Renderer {
             hierarchy.foreground.addChild(brick);
         };
         for (i in 0...state.foreground.length) {
-            var x:Float = (i % state.width) * TILE_HALF_WIDTH;
-            var y:Float = (state.height -  (Std.int(i / state.width) + 1)) * TILE_HALF_WIDTH;
+            var x:Float = (i % state.width) * TILE_HALF_WIDTH - state.width * TILE_HALF_WIDTH * 0.5;
+            var y:Float = (state.height -  (Std.int(i / state.width) + 1)) * TILE_HALF_WIDTH - state.height * TILE_HALF_WIDTH * 0.5;
             if (state.foreground[i] == 1) {
                 fAdd(x, y, "Half");
             }
