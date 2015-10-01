@@ -67,6 +67,6 @@ class LevelEditorScreen extends IGameScreen {
         gameplayController.update(state, gameTime);
     }
     override public function draw(gameTime:GameTime):Void {
-        renderer.update();
+        renderer.update(state);
     }
 }

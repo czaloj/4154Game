@@ -38,8 +38,8 @@ class PlayerController {
 		var tempPos:B2Vec2 = new B2Vec2(player.position.x, player.position.y);
 		player.body.setPosition(tempPos);
 		
-		//var tempVelocity:B2Vec2 = new B2Vec2(player.velocity.x, player.velocity.y);
-		//player.body.setLinearVelocity(tempVelocity);
+		var tempVelocity:B2Vec2 = new B2Vec2(player.velocity.x, player.velocity.y);
+		player.body.setLinearVelocity(tempVelocity);
 
     }
 	
@@ -73,8 +73,9 @@ class PlayerController {
 	 
 		player.fixtureDef = new B2FixtureDef();
 		player.fixtureDef.shape = polygon;		
-		player.body = new B2Body(player.bodyDef, world);		
-		player.body.createFixture(player.fixtureDef);	
+		player.body = world.createBody(player.bodyDef);	
+		player.body.createFixture(player.fixtureDef);
+		
 
 	}
 	
