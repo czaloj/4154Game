@@ -21,7 +21,7 @@ class PlayerController {
 
     public function update(player:ObjectModel, gameTime:GameTime):Void {
         // Move the player on conditional speed
-        var moveSpeed = player.grounded ? .55 : .35;
+        var moveSpeed = 3;//player.grounded ? .55 : .35;
         if (player.left) player.velocity.x -= moveSpeed;
         if (player.right) player.velocity.x += moveSpeed;
         
@@ -34,17 +34,18 @@ class PlayerController {
         // Clamp speed to a maximum value		
         player.velocity.x = Math.min(ObjectModel.MAX_SPEED, Math.max( -ObjectModel.MAX_SPEED, player.velocity.x));
 		
-		player.position = player.body.getPosition();
-		var pos:B2Vec2 = player.body.getPosition();
-		if (pos.x > 10) pos = new B2Vec2(10.0,pos.y);
-		if (pos.x < -10) pos = new B2Vec2(-10.0,pos.y);
-		if (pos.y > 10) pos = new B2Vec2(pos.x,10.0);
-		if (pos.y < -10) pos = new B2Vec2(pos.x,-10.0);
-		player.position = pos;
+		//player.position = player.body.getPosition();
+		//var pos:B2Vec2 = player.body.getPosition();
+		//if (pos.x > 10) pos = new B2Vec2(10.0,pos.y);
+		//if (pos.x < -10) pos = new B2Vec2(-10.0,pos.y);
+		//if (pos.y > 10) pos = new B2Vec2(pos.x,10.0);
+		//if (pos.y < -10) pos = new B2Vec2(pos.x,-10.0);
+		//player.position = pos;
 		
-		player.body.setLinearVelocity(player.velocity);
+		//player.body.setLinearVelocity(player.velocity);
 		//var vector:B2Vec2 = new B2Vec2(10,10);
 		//player.position = vector;
+    	player.position = new B2Vec2(player.position.x+player.velocity.y,player.velocity.y);
     }
 	
 	
