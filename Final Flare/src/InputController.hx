@@ -30,5 +30,6 @@ class InputController {
         state.player.left = keysDown[Keyboard.A];
         state.player.right = keysDown[Keyboard.D];
 		state.player.up = keysDown[Keyboard.W];
+        state.player.down = keysDown[Keyboard.S];
     }
 }
