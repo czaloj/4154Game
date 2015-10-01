@@ -29,7 +29,7 @@ class PlayerController {
         if (player.up) player.velocity.y += moveSpeed;
         
         // It seems we want to do conditional friction?
-        if (!player.left && !player.right) {
+        if (!player.left && !player.right && !player.up && !player.down) {
             var friction = player.grounded ? .3 : .85;
             player.velocity.x *= friction;
         }
