@@ -8,8 +8,16 @@ import graphics.RenderPack;
 import graphics.Renderer;
 
 class LevelEditorScreen extends IGameScreen {
+    private static var BORDER_START = 0;
+
+    public static var MIN_LEVEL_WIDTH:Int = 1600;
+    public static var MIN_LEVEL_HEIGHT:Int = 900;
+
     private var state:GameState;
     private var renderer:Renderer;
+    private var gameplayController:GameplayController;
+
+    public var tileMap:TileMap;
 
     public function new(sc:ScreenController) {
         super(sc);
@@ -24,20 +32,39 @@ class LevelEditorScreen extends IGameScreen {
     
     override public function onEntry(gameTime:GameTime):Void {
         state = new GameState();
+        gameplayController = new GameplayController(state);
         var pack:RenderPack = new RenderPack();
+
+        // set up startup level
+        var level = new GameLevel();
+        level.height = Std.int(MIN_LEVEL_HEIGHT/16);
+        level.width = Std.int(MIN_LEVEL_WIDTH/16);
+        level.environmentType = "Simple";
+        level.environmentSprites = "assets/img/Factory.png";
+
+        tileMap = new TileMap(level.height,level.width);
+        level.foreground = tileMap.toIDArray();
+        LevelCreator.createFromLevel(level, state, pack);
         renderer = new Renderer(screenController, pack, state);
 
-        //TODO: remove this test code
-        screenController.addChild(Tile.RED_TILE);
-        screenController.addChild(new starling.display.Quad(Renderer.TILE_HALF_WIDTH,Renderer.TILE_HALF_WIDTH,0xff0000));
-        screenController.addChild(new starling.display.Quad(10,10,0xffffff));
+        for (i in 0...state.width) {
+            screenController.addChild(tileMap.getTileByIndex(i).setTileTexture(Tile.BLUE).tile);
+        }
+        for (i in 0...state.height) {
+            screenController.addChild(tileMap.getTileByIndex((i+1)*(state.width-1)).setTileTexture(Tile.BLUE).tile);
+            screenController.addChild(tileMap.getTileByIndex(i*(state.width)).setTileTexture(Tile.BLUE).tile);
+        }
+        // end set up
+        
+
     }
     override public function onExit(gameTime:GameTime):Void {
         // Empty
     }
     
     override public function update(gameTime:GameTime):Void {
-        // Empty
+        state.foreground = tileMap.toIDArray();
+        gameplayController.update(state, gameTime);
     }
     override public function draw(gameTime:GameTime):Void {
         renderer.update();
