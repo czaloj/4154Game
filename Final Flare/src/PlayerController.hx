@@ -27,7 +27,7 @@ class PlayerController {
         
         // It seems we want to do conditional friction?
         if (!player.left && !player.right) {
-            var friction = player.grounded ? .3 : .9995;
+            var friction = player.grounded ? .3 : .85;
             player.velocity.x *= friction;
         }
         
@@ -36,6 +36,7 @@ class PlayerController {
 
 		player.position.x += player.velocity.x;
 		player.velocity.y += player.velocity.y;
+		
 		
 		var tempPos:B2Vec2 = new B2Vec2(player.position.x, player.position.y);
 		player.body.getPosition().x;
@@ -55,7 +56,7 @@ class PlayerController {
         player.position.setTo(0, 0);
         player.grounded = false;
         player.rotation = 0;
-        player.velocity.setTo(100, 100);
+        player.velocity.setTo(0,0);
         player.left = false;
         player.right = false;
 		player.dimension = new Point(32, 64);
