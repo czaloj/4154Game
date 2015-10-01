@@ -63,4 +63,7 @@ class GameplayController {
         playerController.update(state.player, gameTime);
 		physicsController.update();
     }
+	
+
+	
 }

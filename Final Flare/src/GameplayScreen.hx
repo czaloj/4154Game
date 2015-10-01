@@ -99,4 +99,10 @@ class GameplayScreen extends IGameScreen {
     override function draw(gameTime:GameTime):Void {
         renderer.update(state);
     }
+	
+	public function handlePlayerCollision():Void 
+	{
+		state.player.velocity.y = 0;
+	}
+	
 }

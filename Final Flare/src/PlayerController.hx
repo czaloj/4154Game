@@ -37,6 +37,8 @@ class PlayerController {
 		
 		player.position = player.body.getPosition();
 		player.body.setLinearVelocity(player.velocity);
+		
+		trace(player.position.y);
 
     }
 	
@@ -74,11 +76,8 @@ class PlayerController {
 		player.body = world.createBody(player.bodyDef);
 		player.body.createFixture(player.fixtureDef);
 		player.body.setUserData(player.id);
+		player.body.setPosition(player.position);
 
-	}
-	
-	public function handleCollision():Void 
-	{
-		pla
-	}
+	}	
+
 }
