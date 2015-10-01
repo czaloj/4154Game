@@ -4,6 +4,7 @@ import box2D.dynamics.B2Body;
 import box2D.dynamics.B2BodyDef;
 import box2D.dynamics.B2BodyType;
 import box2D.dynamics.B2FixtureDef;
+import box2D.common.math.B2Vec2;
 import box2D.collision.shapes.B2Shape;
 import box2D.collision.shapes.B2PolygonShape;
 import openfl.geom.Point;
@@ -13,7 +14,7 @@ class ObjectModel {
 
     public var id:String;          //Identifying tag
 
-    //Box2D Fields
+    //Phsyics data
     public var body:B2Body;
     public var bodyType:B2BodyType;
 	public var bodyDef:B2BodyDef;
@@ -21,10 +22,8 @@ class ObjectModel {
 	public var gravityScale:Float;
 	public var width:Float;        //In case body dimensions are different from the sprite dimensions
 	public var height:Float;       //In case body dimensions are different from the sprite dimensions
-	
-    //Phsyics data
-    public var position:Point = new Point();     //Object position
-    public var velocity:Point = new Point();     //Object velocity
+    public var position:B2Vec2 = new B2Vec2();     //Object position
+    public var velocity:B2Vec2 = new B2Vec2();     //Object velocity
     public var rotation:Float;                   //Rotation
 
     //Drawing Fields

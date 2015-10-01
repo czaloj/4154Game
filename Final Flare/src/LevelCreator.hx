@@ -22,7 +22,7 @@ class LevelCreator {
         state.foreground = level.foreground; // TODO: Better data structure
         state.background = level.background; // TODO: Better data structure
         state.spawners = level.spawners;
-        state.player.position.setTo(level.playerPt.x, level.playerPt.y);
+        state.player.position.set(level.playerPt.x, level.playerPt.y);
         
         // Load the environment texture
         var environmentTexture:Texture = Texture.fromBitmapData(Assets.getBitmapData(level.environmentSprites, false));
