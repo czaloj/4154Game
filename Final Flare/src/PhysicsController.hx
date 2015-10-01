@@ -9,7 +9,7 @@ import box2D.dynamics.B2World;
 class PhysicsController extends B2ContactListener
 {
 	private static var DT:Float = 1 / 60;
-	public static var GRAVITY = new B2Vec2(0, -10);	
+	public static var GRAVITY = new B2Vec2(0, -9.8);
 	
 	public var world:B2World;
 	

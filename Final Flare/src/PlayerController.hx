@@ -70,7 +70,7 @@ class PlayerController {
 	 
 		player.fixtureDef = new B2FixtureDef();
 		player.fixtureDef.shape = polygon;
-		player.fixtureDef.density = 10; 
+		player.fixtureDef.density = .001; 
 		player.body = world.createBody(player.bodyDef);
 		player.body.createFixture(player.fixtureDef);
 		player.body.setUserData(player.id);

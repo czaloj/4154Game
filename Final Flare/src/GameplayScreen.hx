@@ -67,7 +67,7 @@ class GameplayScreen extends IGameScreen {
         //trace(haxe.Serializer.run(level));
         //TODO: Load Level
         //LevelCreator.createFromLevel(level, state, pack);
-        LevelCreator.createFromFile("assets/level/cross", state, pack);
+        LevelCreator.createFromFile("assets/level/basic", state, pack);
 
         renderer = new Renderer(screenController, pack, state);
 
