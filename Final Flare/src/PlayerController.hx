@@ -34,16 +34,9 @@ class PlayerController {
         // Clamp speed to a maximum value		
         player.velocity.x = Math.min(ObjectModel.MAX_SPEED, Math.max( -ObjectModel.MAX_SPEED, player.velocity.x));
 
-		player.position.x += player.velocity.x;
-		player.velocity.y += player.velocity.y;
 		
-		
-		var tempPos:B2Vec2 = new B2Vec2(player.position.x, player.position.y);
-		player.body.getPosition().x;
-		trace(player.position);
-		
-		var tempVelocity:B2Vec2 = new B2Vec2(player.velocity.x, player.velocity.y);
-		player.body.setLinearVelocity(tempVelocity);
+		player.position = player.body.getPosition();
+		player.body.setLinearVelocity(player.velocity);
 
     }
 	
@@ -53,10 +46,10 @@ class PlayerController {
 		
 		//ALL THE MAGIC NUMBERS. REMEMBER TO FIX.
         player.id = "player";
-        player.position.setTo(0, 0);
+        player.position.set(0, 0);
         player.grounded = false;
         player.rotation = 0;
-        player.velocity.setTo(0,0);
+        player.velocity.set(0,0);
         player.left = false;
         player.right = false;
 		player.dimension = new Point(32, 64);
@@ -76,8 +69,9 @@ class PlayerController {
 		polygon.setAsBox ((player.width / 2) * PHYSICS_SCALE, (player.height / 2) * PHYSICS_SCALE);
 	 
 		player.fixtureDef = new B2FixtureDef();
-		player.fixtureDef.shape = polygon;		
-		player.body = world.createBody(player.bodyDef);	
+		player.fixtureDef.shape = polygon;
+		player.fixtureDef.density = 10; 
+		player.body = world.createBody(player.bodyDef);
 		player.body.createFixture(player.fixtureDef);
 		player.body.setUserData(player.id);
 
