@@ -27,16 +27,20 @@ class PlayerController {
         
         // It seems we want to do conditional friction?
         if (!player.left && !player.right) {
-            var friction = player.grounded ? .3 : .9995;
+            var friction = player.grounded ? .3 : .85;
             player.velocity.x *= friction;
         }
         
         // Clamp speed to a maximum value		
         player.velocity.x = Math.min(ObjectModel.MAX_SPEED, Math.max( -ObjectModel.MAX_SPEED, player.velocity.x));
 
+		player.position.x += player.velocity.x;
+		player.velocity.y += player.velocity.y;
+		
 		
 		var tempPos:B2Vec2 = new B2Vec2(player.position.x, player.position.y);
-		player.body.setPosition(tempPos);
+		player.body.getPosition().x;
+		trace(player.position);
 		
 		var tempVelocity:B2Vec2 = new B2Vec2(player.velocity.x, player.velocity.y);
 		player.body.setLinearVelocity(tempVelocity);
@@ -52,7 +56,7 @@ class PlayerController {
         player.position.setTo(0, 0);
         player.grounded = false;
         player.rotation = 0;
-        player.velocity.setTo(0, 0);
+        player.velocity.setTo(0,0);
         player.left = false;
         player.right = false;
 		player.dimension = new Point(32, 64);
@@ -75,8 +79,12 @@ class PlayerController {
 		player.fixtureDef.shape = polygon;		
 		player.body = world.createBody(player.bodyDef);	
 		player.body.createFixture(player.fixtureDef);
-		
+		player.body.setUserData(player.id);
 
 	}
 	
+	public function handleCollision():Void 
+	{
+		//TODO
+	}
 }
