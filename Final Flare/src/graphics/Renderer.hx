@@ -100,12 +100,12 @@ class Renderer {
 
     }
 
-    public function update():Void {
+    public function update(s:GameState):Void {
         // Update sprite positions from entities
 		hierarchy.player.x = myState.player.position.x;
 		hierarchy.player.y = myState.player.position.y;
 		var count:Int = 0;
-		for (i in myState.entities) {
+		for (i in s.entities) {
 			count++;
 		    sprites[count].x = i.position.x;
 			sprites[count].y = i.position.x;

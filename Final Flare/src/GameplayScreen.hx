@@ -82,6 +82,6 @@ class GameplayScreen extends IGameScreen {
         gameplayController.update(state, gameTime);
     }
     override function draw(gameTime:GameTime):Void {
-        renderer.update();
+        renderer.update(state);
     }
 }
