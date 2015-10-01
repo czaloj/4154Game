@@ -33,11 +33,18 @@ class PlayerController {
         
         // Clamp speed to a maximum value		
         player.velocity.x = Math.min(ObjectModel.MAX_SPEED, Math.max( -ObjectModel.MAX_SPEED, player.velocity.x));
-
 		
 		player.position = player.body.getPosition();
+		var pos:B2Vec2 = player.body.getPosition();
+		if (pos.x > 10) pos = new B2Vec2(10.0,pos.y);
+		if (pos.x < -10) pos = new B2Vec2(-10.0,pos.y);
+		if (pos.y > 10) pos = new B2Vec2(pos.x,10.0);
+		if (pos.y < -10) pos = new B2Vec2(pos.x,-10.0);
+		player.position = pos;
+		
 		player.body.setLinearVelocity(player.velocity);
-
+		//var vector:B2Vec2 = new B2Vec2(10,10);
+		//player.position = vector;
     }
 	
 	
