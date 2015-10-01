@@ -45,7 +45,7 @@ class PlayerController {
 		//player.body.setLinearVelocity(player.velocity);
 		//var vector:B2Vec2 = new B2Vec2(10,10);
 		//player.position = vector;
-    	player.position = new B2Vec2(player.position.x+player.velocity.y,player.velocity.y);
+    	player.position = new B2Vec2(player.position.x+player.velocity.x,player.position.y+player.velocity.y);
     }
 	
 	
