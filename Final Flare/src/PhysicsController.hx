@@ -33,22 +33,13 @@ class PhysicsController extends B2ContactListener
 		var entity1 = contact.getFixtureA().getBody().getUserData(); 
 		var entity2 = contact.getFixtureB().getBody().getUserData();
 
-		if (entity1 == "player" && entity2 == "enemy") 
+		if (entity1 == "player" && entity2 == "platform") 
 		{
 			//PlayerController.handleCollision((Item*)model1, (Pedestrian*)model2);
 		}
-		else if (entity1 == "enemy" && entity2 == "player") 
+		else if (entity1 == "platform" && entity2 == "player") 
 		{
 			//PlayerController.handleCollision((Item*)model1, (Pedestrian*)model2);
-		}
-		else if (entity1 == "enemy" && entity2 == "bullet") 
-		{
-			//TODO
-		}
-		
-		else if (entity1 == "bullet" && entity2 == "enemy") 
-		{
-			//TODO
 		}
 	}
 	

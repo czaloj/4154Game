@@ -45,7 +45,7 @@ class PlayerController {
 	{		
 		
 		//ALL THE MAGIC NUMBERS. REMEMBER TO FIX.
-        player.id = "player";
+        player.id = "platform";
         player.position.set(0, 0);
         player.grounded = false;
         player.rotation = 0;
@@ -79,6 +79,6 @@ class PlayerController {
 	
 	public function handleCollision():Void 
 	{
-		//TODO
+		pla
 	}
 }

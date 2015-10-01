@@ -31,9 +31,9 @@ class GameplayController {
 		physicsController = new PhysicsController();	
 		playerController = new PlayerController(state.player, physicsController.world);
 		
-		
+		//Makes bottom platform. I'm unsure of the actual sizes
 		var bottomPlatform = new ObjectModel();
-		bottomPlatform.id = "player";
+		bottomPlatform.id = "platform";
         bottomPlatform.position.set(-400, -225);
         bottomPlatform.grounded = false;
         bottomPlatform.rotation = 0;
