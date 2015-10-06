@@ -6,6 +6,7 @@ import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.Lib;
 import starling.core.Starling;
+import starling.display.Image;
 import starling.display.Sprite;
 import starling.display.Stage;
 import starling.textures.Texture;
@@ -88,6 +89,15 @@ class Renderer {
 
     public function update():Void {
         // Update sprite positions from entities
+        
+        // Update parallax layers
+        // TODO: Compute camera ratio in level
+        var rx:Float = 0.0;
+        var ry:Float = 0.0;
+        for (layer in hierarchy.parallax.children) {
+            var pLayer:ParallaxSprite = cast (layer, ParallaxSprite);
+            pLayer.update(rx, ry);
+        }
     }
 
     private function load(state:GameState):Void {
@@ -112,6 +122,17 @@ class Renderer {
                 // TODO: This why it won't work quite yet... need better data structure
                 fAdd(x, y, "Full");
             }
+        }
+        
+        
+        // Add the parallax layers in a sorted order by their width
+        pack.parallax.sort(function (t1:Texture, t2:Texture):Int {
+            if (t1.width == t2.width) return 0;
+            else if (t1.width < t2.width) return -1;
+            else return 1;
+        });
+        for (texture in pack.parallax) {
+            hierarchy.parallax.addChild(new ParallaxSprite(texture, state.width * TILE_HALF_WIDTH, state.height * TILE_HALF_WIDTH, ScreenController.SCREEN_WIDTH, ScreenController.SCREEN_HEIGHT));
         }
     }
 }
