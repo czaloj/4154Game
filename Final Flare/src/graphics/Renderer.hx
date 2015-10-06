@@ -114,8 +114,8 @@ class Renderer {
         
         // Update parallax layers
         // TODO: Compute camera ratio in level
-        var rx:Float = 0.0;
-        var ry:Float = 0.0;
+        var rx:Float = 0.5;
+        var ry:Float = 0.5;
         for (layer in hierarchy.parallax.children) {
             var pLayer:ParallaxSprite = cast (layer, ParallaxSprite);
             pLayer.update(rx, ry);

@@ -12,8 +12,6 @@ class ParallaxSprite extends Image {
     public function new(t:Texture, mapWidth:Float, mapHeight:Float, screenWidth:Float, screenHeight:Float) {
         super(t);
 		
-        scaleY = -scaleY;
-        
         sizeX = t.width - screenWidth;
         sizeY = t.height - screenHeight;
         ratioX = t.width / mapWidth;
@@ -21,7 +19,7 @@ class ParallaxSprite extends Image {
     }
     
     public function update(rx:Float, ry:Float):Void {
-        x = rx * sizeX;
-        y = ry * sizeY;
+        x = -rx * sizeX;
+        y = -ry * sizeY;
     }
 }

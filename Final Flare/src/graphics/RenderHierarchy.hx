@@ -26,11 +26,11 @@ class RenderHierarchy extends Sprite {
         super();
 
         // Transforms
+        addChild(parallax);
         addChild(camera);
         camera.addChild(origin);
 
         // Setup layer order (bottom to top)
-        origin.addChild(parallax);
         origin.addChild(background);
         origin.addChild(backgroundDetail);
         origin.addChild(dead);
