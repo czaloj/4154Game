@@ -38,6 +38,7 @@ class ObjectModel {
     public var left:Bool;          //Can move left
     public var right:Bool;         //Can move right
 	public var up:Bool;            //up is being pressed
+    public var down:Bool;  
     public var grounded:Bool;      //True if touching a platform
 
     public function new() {
