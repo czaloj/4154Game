@@ -1,7 +1,12 @@
 package;
 
+import flash.display.Sprite;
+
 class GameState {
     //dimension of map in tiles
+
+    public static var world_sprite:Sprite;
+
     public var width = 0;
     public var height = 0;
 
@@ -12,6 +17,7 @@ class GameState {
 
     public var player:ObjectModel;
     public var entities:Array<ObjectModel> = [];
+
 
 
 

@@ -10,7 +10,6 @@ class InputController {
     private var keysDown:Array<Bool> = [];
 
     public function new() {
-        trace("inputcontroller new");
         // Empty
     }
 
@@ -18,14 +17,14 @@ class InputController {
     public function keyDown(e:KeyboardEvent):Void {
         keysDown[e.keyCode] = true;
     }
-    
-    
-    
+
+
+
     // KeyUp handler. Given even e, flips key code element in keysDown to false
     public function keyUp(e:KeyboardEvent):Void {
         keysDown[e.keyCode] = false;
     }
-    
+
     public function update(state:GameState):Void {
         state.player.left = keysDown[Keyboard.A];
         state.player.right = keysDown[Keyboard.D];
