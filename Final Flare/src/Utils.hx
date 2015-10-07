@@ -2,29 +2,29 @@ package  {
     import flash.display.DisplayObject;
     import flash.display.MovieClip;
     import flash.display.Sprite;
-	import flash.net.SharedObject;
+    import flash.net.SharedObject;
     import flash.text.TextField;
     import flash.utils.Dictionary;
-	import physics.PhysBox;
-	import ui.LevelsInfo;
-	import Vector2;
-	import Vector2i;
-	import pyrokid.entities.*;
+    import physics.PhysBox;
+    import ui.LevelsInfo;
+    import Vector2;
+    import Vector2i;
+    import pyrokid.entities.*;
     import pyrokid.*;
     
     import flash.display.*;
     import flash.geom.*;
-	import ui.playstates.BasePlayState;
+    import ui.playstates.BasePlayState;
     import pyrokid.tools.HashSet;
     
     public class Utils {
         
-		private static var directNeighbors:Array = [
-			new Vector2i(0, -1),
-			new Vector2i(0, 1),
-			new Vector2i(-1, 0),
-			new Vector2i(1, 0)
-		];
+        private static var directNeighbors:Array = [
+            new Vector2i(0, -1),
+            new Vector2i(0, 1),
+            new Vector2i(-1, 0),
+            new Vector2i(1, 0)
+        ];
 
         /**
          * Converts a coordinate from pixel-space to cell space,
@@ -87,9 +87,9 @@ package  {
                 return;
             }
             for (var i:int = obj.numChildren - 1; i >= 0; i--) {
-				if (obj.getChildAt(i) is BasePlayState) {
-					BasePlayState(obj.getChildAt(i)).removeAllEventListeners();
-				}
+                if (obj.getChildAt(i) is BasePlayState) {
+                    BasePlayState(obj.getChildAt(i)).removeAllEventListeners();
+                }
                 obj.removeChildAt(i);
             }
         }
@@ -109,14 +109,14 @@ package  {
             }
             return bools;
         }
-		
-		public static function sizeOfDict(dict:Object):int {
-			var count:int = 0;
-			for (var key:* in dict) {
-				count++;
-			}
-			return count;
-		}
+        
+        public static function sizeOfDict(dict:Object):int {
+            var count:int = 0;
+            for (var key:* in dict) {
+                count++;
+            }
+            return count;
+        }
         
         /** Performs BFS on an array of size height by width, starting at start.
          *  It considers an element in the array a neighbor if it is
@@ -221,13 +221,13 @@ package  {
          * coors, if provided, is an existing array of coordinates onto
          * which the neighboring coordinates are appended. */
         public static function getNeighborCoors(x:int, y:int, coors:Array = null):Array {
-			if (coors == null) {
+            if (coors == null) {
                 coors = [];
             }
             for each (var direction:Vector2i in directNeighbors) {
                 coors.push(new Vector2i(x + direction.x, y + direction.y));
             }
-			return coors;
+            return coors;
         }
         
         /* Returns a new 2D array with dimensions width and height.
@@ -253,15 +253,15 @@ package  {
         }
         
         /* Returns true iff (x, y) is a valid index in the 2D array. */
-		public static function inBounds(array:Array, x:int, y:int):Boolean {
+        public static function inBounds(array:Array, x:int, y:int):Boolean {
             return inBoundsWH(getW(array), getH(array), x, y);
-		}
+        }
         
         /* Returns true iff (x, y) is a valid index in a 2D array of width by height. */
-		public static function inBoundsWH(width:int, height:int, x:int, y:int):Boolean {
-			return y >= 0 && x >= 0 && y < height && x < width;
-		}
-		
+        public static function inBoundsWH(width:int, height:int, x:int, y:int):Boolean {
+            return y >= 0 && x >= 0 && y < height && x < width;
+        }
+        
         /* Returns the item at (x, y) in the 2D array if it exists,
          * or null if (x, y) is out of bounds. */
         public static function index(array:Array, x:int, y:int) {
@@ -344,11 +344,11 @@ package  {
             seconds = seconds % 60;
             return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
         }
-		
-		// -------------------- Coordinate Conversion Functions --------------------- //
-		public static function cellToPixel(cellCoor:int):int {
-			return cellCoor * Constants.CELL;
-		}
+        
+        // -------------------- Coordinate Conversion Functions --------------------- //
+        public static function cellToPixel(cellCoor:int):int {
+            return cellCoor * Constants.CELL;
+        }
     
         public static function clampI(v:int, min:int, max:int):int { 
             if (v < min) return min;
@@ -377,51 +377,51 @@ package  {
             LevelsInfo.currLevel = oldCurrLevel;
             return generateMinimap(level);
         }
-		
-		// ------------------- Shared Object Functions -------------------------------//
-		
-		public static function loadSavedData():void {
-			if (Constants.START_FRESH_GAME) return;
-			
-			var levelSO:SharedObject = SharedObject.getLocal("pyrokid_levelData_kongregate");
-			if (levelSO != undefined) {
-				if (levelSO.data.hasOwnProperty("maxUnlockedLevel")) {
-					LevelsInfo.maxUnlockedLevel = levelSO.data.maxUnlockedLevel;
-					//trace(LevelsInfo.maxUnlockedLevel);
-				}
-				
-				//Completed levels and creating dictionary of pages to levels
-				if (levelSO.data.hasOwnProperty("completedLevels")) {
-					LevelsInfo.restoreCompletedLevels(levelSO.data.completedLevels);
-					//for (var key:* in levelSO.data.completedLevels) {
-						//trace(key);
-					//}
-					//trace("done loading completed levels /n");
-				} else {
-					//trace("does not have completedLevels property");
-					//for (var key:* in LevelsInfo.completedLevels) {
-						//trace(key);
-					//}
-				}
+        
+        // ------------------- Shared Object Functions -------------------------------//
+        
+        public static function loadSavedData():void {
+            if (Constants.START_FRESH_GAME) return;
+            
+            var levelSO:SharedObject = SharedObject.getLocal("pyrokid_levelData_kongregate");
+            if (levelSO != undefined) {
+                if (levelSO.data.hasOwnProperty("maxUnlockedLevel")) {
+                    LevelsInfo.maxUnlockedLevel = levelSO.data.maxUnlockedLevel;
+                    //trace(LevelsInfo.maxUnlockedLevel);
+                }
+                
+                //Completed levels and creating dictionary of pages to levels
+                if (levelSO.data.hasOwnProperty("completedLevels")) {
+                    LevelsInfo.restoreCompletedLevels(levelSO.data.completedLevels);
+                    //for (var key:* in levelSO.data.completedLevels) {
+                        //trace(key);
+                    //}
+                    //trace("done loading completed levels /n");
+                } else {
+                    //trace("does not have completedLevels property");
+                    //for (var key:* in LevelsInfo.completedLevels) {
+                        //trace(key);
+                    //}
+                }
 
-				if (levelSO.data.hasOwnProperty("bestLevelCompletionTimes")) {
-					LevelsInfo.bestLevelCompletionTimes = levelSO.data.bestLevelCompletionTimes;
-				}
-			}
-		}
-		public static function saveLevelData():void {
-			var levelSO:SharedObject = SharedObject.getLocal("pyrokid_levelData_kongregate");
-			levelSO.data.maxUnlockedLevel = LevelsInfo.maxUnlockedLevel;
-			levelSO.data.completedLevels = LevelsInfo.completedLevels;
-			levelSO.data.bestLevelCompletionTimes = LevelsInfo.bestLevelCompletionTimes;
-			levelSO.flush();
-			//trace("saved data");
-			//trace("completedLevels looks like: ");
-			//for (var key:* in levelSO.data.completedLevels) {
-				//trace(key);
-			//}
-		}
-		
+                if (levelSO.data.hasOwnProperty("bestLevelCompletionTimes")) {
+                    LevelsInfo.bestLevelCompletionTimes = levelSO.data.bestLevelCompletionTimes;
+                }
+            }
+        }
+        public static function saveLevelData():void {
+            var levelSO:SharedObject = SharedObject.getLocal("pyrokid_levelData_kongregate");
+            levelSO.data.maxUnlockedLevel = LevelsInfo.maxUnlockedLevel;
+            levelSO.data.completedLevels = LevelsInfo.completedLevels;
+            levelSO.data.bestLevelCompletionTimes = LevelsInfo.bestLevelCompletionTimes;
+            levelSO.flush();
+            //trace("saved data");
+            //trace("completedLevels looks like: ");
+            //for (var key:* in levelSO.data.completedLevels) {
+                //trace(key);
+            //}
+        }
+        
         
         public static function findTextFieldInFlashBTN(btn:DisplayObjectContainer):TextField {
             
