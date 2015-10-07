@@ -19,46 +19,11 @@ class PlayerController {
         init(player, world);
     }
 
-    public function update(player:ObjectModel, gameTime:GameTime):Void {
-        // Move the player on conditional speed
-        var moveSpeed = 3;//player.grounded ? .55 : .35;
-        if (player.left) player.velocity.x -= moveSpeed;
-        if (player.right) player.velocity.x += moveSpeed;
-
-       	if (player.down) player.velocity.y -= moveSpeed;
-        if (player.up) player.velocity.y += moveSpeed;
-        
-        // It seems we want to do conditional friction?
-        if (!player.left && !player.right && !player.up && !player.down) {
-            var friction = player.grounded ? .3 : .85;
-            player.velocity.x *= friction;
-        }
-        
-        // Clamp speed to a maximum value		
-        player.velocity.x = Math.min(ObjectModel.MAX_SPEED, Math.max( -ObjectModel.MAX_SPEED, player.velocity.x));
-		
-		//player.velocity.y -= 2;
-		//player.position.y = player.body.getPosition().y;
-		//var pos:B2Vec2 = player.body.getPosition();
-		if (player.position.x > 400) player.position = new B2Vec2(400.0,player.position.y);
-		if (player.position.x < -400) player.position = new B2Vec2(-400.0,player.position.y);		
-		if (player.position.y > 250) player.position = new B2Vec2(player.position.x,250);
-		if (player.position.y < -250) player.position = new B2Vec2(player.position.x,-250);
-	
-		//player.position = pos;
-		
-		//player.body.setLinearVelocity(player.velocity);
-		//var vector:B2Vec2 = new B2Vec2(10,10);
-		//player.position = vector;
-    	player.position = new B2Vec2(player.position.x+player.velocity.x,player.position.y+player.velocity.y);
-    }
-	
-	
 	private function init(player:ObjectModel, world:B2World):Void 
 	{		
 		
 		//ALL THE MAGIC NUMBERS. REMEMBER TO FIX.
-        player.id = "platform";
+        player.id = "player";
         player.position.set(0, 0);
         player.grounded = false;
         player.rotation = 0;
@@ -86,12 +51,49 @@ class PlayerController {
 		player.fixtureDef.density = .001; 
 		player.body = world.createBody(player.bodyDef);
 		player.body.createFixture(player.fixtureDef);
-		player.body.setUserData(player.id);
+		player.body.setUserData("player");
+		player.body.setPosition(player.position);
 
-	}
+	}	
 	
-	// public function handleCollision():Void 
-	// {
-	// 	pla
-	// }
+	    public function update(player:ObjectModel, gameTime:GameTime):Void {
+        // Move the player on conditional speed
+        var moveSpeed = 3;//player.grounded ? .55 : .35;
+        if (player.left) player.velocity.x -= moveSpeed;
+        if (player.right) player.velocity.x += moveSpeed;
+
+       	if (player.down) player.velocity.y -= moveSpeed;
+        if (player.up) player.velocity.y += moveSpeed;
+        
+        // It seems we want to do conditional friction?
+        if (!player.left && !player.right && !player.up && !player.down) {
+            var friction = player.grounded ? .3 : .85;
+            player.velocity.x *= friction;
+        }
+        
+        // Clamp speed to a maximum value		
+        player.velocity.x = Math.min(8, Math.max( 8, player.velocity.x));
+
+		player.position = player.body.getPosition();
+		player.body.setLinearVelocity(player.velocity);
+		
+
+
+		//player.velocity.y -= 2;
+		//player.position.y = player.body.getPosition().y;
+		//var pos:B2Vec2 = player.body.getPosition();
+		if (player.position.x > 400) player.position = new B2Vec2(400.0,player.position.y);
+		if (player.position.x < -400) player.position = new B2Vec2(-400.0,player.position.y);		
+		if (player.position.y > 250) player.position = new B2Vec2(player.position.x,250);
+		if (player.position.y < -250) player.position = new B2Vec2(player.position.x,-250);
+	
+		//player.position = pos;
+		
+		//player.body.setLinearVelocity(player.velocity);
+		//var vector:B2Vec2 = new B2Vec2(10,10);
+		//player.position = vector;
+    	player.position = new B2Vec2(player.position.x+player.velocity.x,player.position.y+player.velocity.y);
+    }
+	
+	
 }
