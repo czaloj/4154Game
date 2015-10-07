@@ -2,7 +2,7 @@ package physics {
     import flash.display.Sprite;
     import pyrokid.Connector;
     import pyrokid.Constants;
-	/**
+    /**
      * ...
      * @author Cristian Zaloj
      */
