@@ -16,8 +16,8 @@ class GameplayController {
 	public static var GRAVITY = new B2Vec2(0, -9.8);    
 	private static var PHYSICS_SCALE:Float = 1 / 30;	
 	public static var PLAYER_MAX_SPEED:Float = 5;
-	public static var PLAYER_GROUND_ACCEL:Float = .55;
-	public static var PLAYER_AIR_ACCEL:Float = .35;
+	public static var PLAYER_GROUND_ACCEL:Float = .99;
+	public static var PLAYER_AIR_ACCEL:Float = .99;
 	public static var PLAYER_GROUND_FRICTION:Float = .3;
 	public static var PLAYER_AIR_FRICTION:Float = .9;
 	public static inline var TILE_HALF_WIDTH:Float = 16;
@@ -106,10 +106,17 @@ class GameplayController {
         
 	//UPDATES VELOCITY		
 		state.player.velocity = state.player.body.getLinearVelocity(); //Just in case -__-
-		
+		state.player.grounded = false;	
+		if (state.player.position.y < -200) {
+			state.player.grounded = true;	
+		}
+		//state.player.grounded = (state.player.position.y < 395);
 		//Ground Movement
         if (state.player.grounded)
         {
+			if (state.player.up) {
+                state.player.velocity.y = 10;
+            }
             if (state.player.left) {
                 state.player.velocity.x = Math.max(-PLAYER_MAX_SPEED, state.player.velocity.x - PLAYER_GROUND_ACCEL);
             }
@@ -136,6 +143,7 @@ class GameplayController {
 		state.player.body.setLinearVelocity(state.player.velocity); //So that the velocity actually does something
 		
 	//UPDATE POSITION
+		state.player.velocity = state.player.body.getLinearVelocity();
 		//state.player.position = state.player.body.getPosition();
 		state.player.position = new B2Vec2(state.player.position.x + state.player.velocity.x, state.player.position.y + state.player.velocity.y);
 
