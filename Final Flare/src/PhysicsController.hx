@@ -1,10 +1,12 @@
 package;
 
+import box2D.dynamics.B2DebugDraw;
 import openfl.geom.Point;
 import box2D.dynamics.contacts.B2Contact;
 import box2D.dynamics.B2ContactListener;
 import box2D.common.math.B2Vec2;
 import box2D.dynamics.B2World;
+import openfl.display.Sprite;
 
 class PhysicsController extends B2ContactListener
 {
@@ -12,6 +14,8 @@ class PhysicsController extends B2ContactListener
     public static var GRAVITY = new B2Vec2(0,-10);
     
     public var world:B2World;
+    public var debugger: B2DebugDraw;
+    public static var debug_sprite:Sprite;
     
 
     public function new() 
@@ -23,7 +27,17 @@ class PhysicsController extends B2ContactListener
     private function init():Void 
     {
         world = new B2World(GRAVITY, true);
-        world.setContactListener(this);        
+        world.setContactListener(this);
+        // set debug draw
+        var dbgDraw:B2DebugDraw = new B2DebugDraw();
+        var dbgSprite:Sprite = new Sprite();
+        dbgDraw.setSprite(debug_sprite);
+        dbgDraw.setDrawScale(30.0);
+        dbgDraw.setFillAlpha(0.3);
+        dbgDraw.setLineThickness(1.0);
+        dbgDraw.setFlags(B2DebugDraw.e_shapeBit | B2DebugDraw.e_jointBit);
+        world.setDebugDraw(dbgDraw);
+		dbgDraw.
     }
     
     public function BeginContact(contact:B2Contact): Void 
@@ -49,5 +63,6 @@ class PhysicsController extends B2ContactListener
     {
         world.step(DT, 8, 5);
         world.clearForces();
+		dbgD
     }
 }
