@@ -1,7 +1,8 @@
-package gun;
+package game;
+
 import openfl.geom.Rectangle;
 
-class GunColorScheme{
+class ColorScheme{
     public var primary:UInt;
     public var secondary:UInt;
     public var tertiary:UInt;

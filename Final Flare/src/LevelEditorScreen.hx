@@ -1,6 +1,7 @@
 package;
 
 import openfl.Lib;
+import openfl.events.MouseEvent;
 import openfl.events.KeyboardEvent;
 import openfl.Assets;
 import haxe.Serializer;
@@ -51,17 +52,17 @@ class LevelEditorScreen extends IGameScreen {
             screenController.addChild(tileMap.getTileByIndex(i).setTileTexture(Tile.BLUE).tile);
         }
         for (i in 0...state.height) {
-            screenController.addChild(tileMap.getTileByIndex((i+1)*(state.width-1)).setTileTexture(Tile.BLUE).tile);
-            screenController.addChild(tileMap.getTileByIndex(i*(state.width)).setTileTexture(Tile.BLUE).tile);
+            screenController.addChild(tileMap.getTileByIndex((i+1)*state.width-1).setTileTexture(Tile.BLUE).tile);
+            screenController.addChild(tileMap.getTileByIndex(i*state.width).setTileTexture(Tile.BLUE).tile);
         }
         // end set up
         
-
+        
     }
+
     override public function onExit(gameTime:GameTime):Void {
         // Empty
     }
-    
     override public function update(gameTime:GameTime):Void {
         state.foreground = tileMap.toIDArray();
         gameplayController.update(state, gameTime);

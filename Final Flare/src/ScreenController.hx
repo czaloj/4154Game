@@ -15,6 +15,8 @@ import flash.display.BitmapData;
 
 class ScreenController extends Sprite {
     public static var FRAME_TIME:Float = 1.0 / 60.0;
+    public static inline var SCREEN_WIDTH:Int = 800;
+    public static inline var SCREEN_HEIGHT:Int = 450;
 
     public var dt:GameTime = new GameTime();
 

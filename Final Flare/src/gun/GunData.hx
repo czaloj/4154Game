@@ -1,8 +1,10 @@
 package gun;
 
+import game.ColorScheme;
+
 class GunData {
     public var name:String;
-    public var colorScheme:GunColorScheme;
+    public var colorScheme:ColorScheme;
     
     public var evolutionCost:Int;
     public var historicalCost:Int;

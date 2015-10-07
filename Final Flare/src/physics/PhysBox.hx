@@ -1,5 +1,5 @@
 package physics {
-	/**
+    /**
      * A Simple Collidable Box Implementation
      * @author Cristian Zaloj
      */
@@ -10,15 +10,15 @@ package physics {
             new PhysEdge(Cardinal.NY, 0.5, 0, 1),
             new PhysEdge(Cardinal.PY, 0.5, 1, 1)
         ];
-		
-		public var id:int;
+        
+        public var id:int;
         
         public var fallingType:Boolean;
         private var connectorBools:Array;
         
         public function PhysBox(connectorBools:Array, isFalling:Boolean = false) {
             fallingType = isFalling;
-			this.connectorBools = connectorBools;
+            this.connectorBools = connectorBools;
         }
 
         public function ProvideEdgesSpecial(edges:Array, offset:Vector2):void {
@@ -41,11 +41,11 @@ package physics {
             return !fallingType;
         }
         public function CanBind(side:int, neighbor:IPhysTile):Boolean {
-			if (neighbor is PhysBox) {
+            if (neighbor is PhysBox) {
                 return connectorBools[side];
-			} else {
-				return false;
-			}
+            } else {
+                return false;
+            }
         }
     }
 }

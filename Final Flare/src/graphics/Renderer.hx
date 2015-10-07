@@ -2,10 +2,12 @@ package graphics;
 
 import openfl.Assets;
 import openfl.events.Event;
+import openfl.events.MouseEvent;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.Lib;
 import starling.core.Starling;
+import starling.display.Image;
 import starling.display.Sprite;
 import starling.display.Stage;
 import starling.textures.Texture;
@@ -17,18 +19,21 @@ class Renderer {
     private var hierarchy:RenderHierarchy = new RenderHierarchy();
     private var pack:RenderPack;
     private var stage3D:Stage;
-	//private var myState:GameState;
-	public var sprites:Array<Sprite> = [];
+    //private var myState:GameState;
+    public var sprites:Array<Sprite> = [];
 
     public var cameraX(get,set):Float;
     public var cameraY(get,set):Float;
     public var cameraScale(get,set):Float;
 
+    private var crX:Float;
+    private var crY:Float;
+    
     public function new(stage:Sprite, p:RenderPack, state:GameState) {
         pack = p;
         stage3D = stage.stage;
 
-		//myState = state;
+        //myState = state;
         // Everything will be rendered inside the hierarchy
         stage.stage.color = 0x808080;
         stage.addChild(hierarchy);
@@ -41,6 +46,10 @@ class Renderer {
 
         // What to do when screen changes size
         Lib.current.stage.addEventListener(Event.RESIZE, onWindowResize);
+        Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, function (e:MouseEvent = null):Void {
+            crX = e.stageX / ScreenController.SCREEN_WIDTH;
+            crY = e.stageY / ScreenController.SCREEN_HEIGHT;
+        });
 
         load(state);
     }
@@ -84,34 +93,39 @@ class Renderer {
 
     public function onEntityAdded(o:ObjectModel):Void {
         var newSprite:Sprite = new Sprite();
-		sprites.push(newSprite);
-		stage3D.addChild(newSprite);
+        sprites.push(newSprite);
+        stage3D.addChild(newSprite);
 
-		// Add a corresponding sprite to stage and track this entity
+        // Add a corresponding sprite to stage and track this entity
 
-		//what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
+        //what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
     }
     public function onEntityRemoved(o:ObjectModel):Void {
-		//idk about this function the implementation i was thinking of was sketchy.
-		//i need to figure out the mapping between objectModels and sprites
+        //idk about this function the implementation i was thinking of was sketchy.
+        //i need to figure out the mapping between objectModels and sprites
 
         // Remove this entity from the stage
-
-
     }
 
     public function update(s:GameState):Void {
         // Update sprite positions from entities
-		hierarchy.player.x = s.player.position.x;
-		hierarchy.player.y = s.player.position.y;
-		var count:Int = 0;
-		for (i in s.entities) {
-			count++;
-		    sprites[count].x = i.position.x;
-			sprites[count].y = i.position.x;
-		}
-
-
+        hierarchy.player.x = s.player.body.getPosition().x;
+        hierarchy.player.y = s.player.body.getPosition().y;
+        var count:Int = 0;
+        for (i in s.entities) {
+            count++;
+            sprites[count].x = i.position.x;
+            sprites[count].y = i.position.x;
+        }
+        
+        // Update parallax layers
+        // TODO: Compute camera ratio in level
+        var rx:Float = crX;
+        var ry:Float = crY;
+        for (layer in hierarchy.parallax.children) {
+            var pLayer:ParallaxSprite = cast (layer, ParallaxSprite);
+            pLayer.update(rx, ry);
+        }
     }
 
     private function load(state:GameState):Void {
@@ -136,6 +150,17 @@ class Renderer {
                 // TODO: This why it won't work quite yet... need better data structure
                 fAdd(x, y, "Full");
             }
+        }
+        
+        
+        // Add the parallax layers in a sorted order by their width
+        pack.parallax.sort(function (t1:Texture, t2:Texture):Int {
+            if (t1.width == t2.width) return 0;
+            else if (t1.width < t2.width) return -1;
+            else return 1;
+        });
+        for (texture in pack.parallax) {
+            hierarchy.parallax.addChild(new ParallaxSprite(texture, state.width * TILE_HALF_WIDTH, state.height * TILE_HALF_WIDTH, ScreenController.SCREEN_WIDTH, ScreenController.SCREEN_HEIGHT));
         }
     }
 }

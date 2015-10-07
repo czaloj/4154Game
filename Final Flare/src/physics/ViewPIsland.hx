@@ -1,9 +1,9 @@
 package physics {
-	import flash.display.Sprite;
+    import flash.display.Sprite;
     import pyrokid.Constants;
     import pyrokid.Island;
-	import Utils;
-	/**
+    import Utils;
+    /**
      * ...
      * @author Cristian Zaloj
      */

@@ -2,8 +2,8 @@ package physics {
     import flash.display.Sprite;
     import pyrokid.Constants;
     import pyrokid.entities.FreeEntity;
-	import Utils;
-	/**
+    import Utils;
+    /**
      * ...
      * @author Cristian Zaloj
      */
@@ -37,7 +37,7 @@ package physics {
             CollisionResolver.Resolve(phys, islands, accumCallback, collisionCallback);
             
             sprite.x = (phys.center.x - phys.halfSize.x) * Constants.CELL;
-			sprite.y = (phys.center.y - phys.halfSize.y) * Constants.CELL;
+            sprite.y = (phys.center.y - phys.halfSize.y) * Constants.CELL;
             sprite.velocity.x = phys.velocity.x * Constants.CELL;
             sprite.velocity.y = phys.velocity.y * Constants.CELL;
         }

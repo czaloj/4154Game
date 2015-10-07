@@ -8,7 +8,6 @@ class RenderPack {
     public var enemies:SpriteSheet;
 
     public var environment:SpriteSheet;
-
     public var parallax:Array<Texture> = []; ///< Images of the different parallax layers
 
     public function new() {

@@ -1,5 +1,6 @@
 package gun;
 
+import game.ColorScheme;
 import openfl.Assets;
 import openfl.Lib;
 import starling.display.Sprite;
@@ -12,7 +13,7 @@ import flash.display.BitmapData;
 
 class GunPart {
     public var names(default, null):Array<PartName>;
-    public var schemes(default, null):Array<GunColorScheme>;
+    public var schemes(default, null):Array<ColorScheme>;
     public var properties(default, null):Array<GunProperty>;
     
     public function new(var def:Array<Dynamic>) {
@@ -26,9 +27,9 @@ class GunPart {
                 names.push(i);
             case Array<PartName>:
                 names.concat(i);
-            case GunColorScheme:
+            case ColorScheme:
                 schemes.push(i);
-            case Array<GunColorScheme>:
+            case Array<ColorScheme>:
                 schemes.concat(i);
             case GunProperty:
                 properties.push(i);

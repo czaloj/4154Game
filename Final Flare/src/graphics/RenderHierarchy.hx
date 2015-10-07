@@ -12,6 +12,7 @@ class RenderHierarchy extends Sprite {
     public var backgroundDetail:Sprite = new Sprite();
     public var foreground:Sprite = new Sprite();
     public var foregroundDetail:Sprite = new Sprite();
+    public var parallax:Sprite = new Sprite();
     
     // Entity layers
     public var dead:Sprite = new Sprite();
@@ -25,6 +26,7 @@ class RenderHierarchy extends Sprite {
         super();
 
         // Transforms
+        addChild(parallax);
         addChild(camera);
         camera.addChild(origin);
 
