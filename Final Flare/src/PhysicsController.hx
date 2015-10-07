@@ -7,6 +7,7 @@ import box2D.dynamics.B2ContactListener;
 import box2D.common.math.B2Vec2;
 import box2D.dynamics.B2World;
 import flash.display.Sprite;
+import openfl.Lib;
 
 class PhysicsController extends B2ContactListener
 {
@@ -32,13 +33,11 @@ class PhysicsController extends B2ContactListener
     }
 
     // set debug draw
-    private function initDebug(world_sprite:Sprite)
+    public function initDebug(world_sprite:openfl.display.Sprite)
     {
         var dbgDraw:B2DebugDraw = new B2DebugDraw();
-        debug_sprite = new Sprite();
-        world_sprite.addChild(debug_sprite);
         dbgDraw.setSprite(world_sprite);
-        dbgDraw.setDrawScale(30.0);
+        dbgDraw.setDrawScale(1.0);
         dbgDraw.setFillAlpha(0.3);
         dbgDraw.setLineThickness(1.0);
         dbgDraw.setFlags(B2DebugDraw.e_shapeBit | B2DebugDraw.e_jointBit);

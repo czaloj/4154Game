@@ -1,5 +1,6 @@
 package;
 
+import openfl.display.Sprite;
 import openfl.geom.Point;
 import box2D.dynamics.B2Body;
 import box2D.dynamics.B2BodyDef;
@@ -10,6 +11,7 @@ import box2D.common.math.B2Vec2;
 import box2D.dynamics.B2DebugDraw;
 import box2D.common.B2Color;
 import box2D.dynamics.B2World;
+import openfl.Lib;
 
 class GameplayController {
 
@@ -33,10 +35,14 @@ class GameplayController {
 
     public function init(state:GameState):Void
     {
-        debugDraw = new B2DebugDraw();
-
         state.player = new ObjectModel();
         physicsController = new PhysicsController();
+        var ws:Sprite = new Sprite();
+        Lib.current.stage.addChild(ws);
+        ws.x = ScreenController.SCREEN_WIDTH / 2;
+        ws.y = ScreenController.SCREEN_HEIGHT / 2;
+        ws.scaleY = -ws.scaleY;
+        physicsController.initDebug(ws);
         state.player = createPlayer(physicsController.world);
 
         //Makes bottom platform. I'm unsure of the actual sizes
@@ -56,7 +62,7 @@ class GameplayController {
         platform.bodyDef.type = B2Body.b2_staticBody;
 
         var polygon = new B2PolygonShape ();
-        polygon.setAsBox ((platform.width*PHYSICS_SCALE)/2, (platform.height*PHYSICS_SCALE)/2);
+        polygon.setAsBox ((platform.width)/2, (platform.height)/2);
 
         platform.fixtureDef = new B2FixtureDef();
         platform.fixtureDef.shape = polygon;
@@ -117,7 +123,7 @@ class GameplayController {
         player.bodyDef.type = B2Body.b2_dynamicBody;
 
         player.shape = new B2PolygonShape();
-        player.shape.setAsBox ((player.width*PHYSICS_SCALE)/2, (player.height*PHYSICS_SCALE)/2);
+        player.shape.setAsBox ((player.width)/2, (player.height)/2);
 
         player.fixtureDef = new B2FixtureDef();
         player.fixtureDef.shape = player.shape;
