@@ -10,7 +10,6 @@ import box2D.collision.shapes.B2PolygonShape;
 import openfl.geom.Point;
 
 class ObjectModel {
-    public static var MAX_SPEED:Float = 8.0;
 
     public var id:String;          //Identifying tag
 
