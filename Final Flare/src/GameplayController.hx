@@ -45,7 +45,7 @@ class GameplayController {
 		platform.left = false;
 		platform.right = false;
 		platform.height = 32;
-		platform.width = 10000;
+		platform.width = 1000;
 		
 		platform.bodyDef = new B2BodyDef();
 		platform.bodyDef.position.set(platform.position.x, platform.position.y);
@@ -160,6 +160,10 @@ class GameplayController {
             }
         }
 		
+		if (state.player.up) {
+                state.player.velocity.y = 6;
+        }
+		
 		state.player.body.setLinearVelocity(state.player.velocity); //So that the velocity actually does something
 		
 	//UPDATE POSITION
@@ -169,8 +173,8 @@ class GameplayController {
 		//var pos:B2Vec2 = player.body.getPosition();
 		//if (state.player.position.x > 400) state.player.position = new B2Vec2(400.0, state.player.position.y);
 		//if (state.player.position.x < -400) state.player.position = new B2Vec2(-400.0, state.player.position.y);		
-		//if (state.player.position.y > 250) state.player.position = new B2Vec2(state.player.position.x,250);
-		//if (state.player.position.y < -250) state.player.position = new B2Vec2(state.player.position.x, -250);
+		if (state.player.position.y > 250) state.player.position = new B2Vec2(state.player.position.x,250);
+		if (state.player.position.y < -250) state.player.position = new B2Vec2(state.player.position.x, -250);
 		
 		physicsController.update();
 		
