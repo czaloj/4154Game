@@ -36,7 +36,35 @@ class GameplayController {
 		state.player = createPlayer(physicsController.world);
 
 		//Makes bottom platform. I'm unsure of the actual sizes
-         for (i in 0...state.foreground.length) {
+        var platform = new ObjectModel();
+		platform.id = "platform";
+		platform.grounded = false;
+		platform.rotation = 0;
+		platform.position.set(-1000 -200);
+		platform.velocity.set(0,0);
+		platform.left = false;
+		platform.right = false;
+		platform.height = 32;
+		platform.width = 10000;
+		
+		platform.bodyDef = new B2BodyDef();
+		platform.bodyDef.position.set(platform.position.x, platform.position.y);
+		platform.bodyDef.type = B2Body.b2_staticBody;
+
+		var polygon = new B2PolygonShape ();
+		polygon.setAsBox (platform.width, platform.height);
+
+		platform.fixtureDef = new B2FixtureDef();
+		platform.fixtureDef.shape = polygon;
+		platform.body = physicsController.world.createBody(platform.bodyDef);
+		platform.body.createFixture(platform.fixtureDef);
+		platform.body.setUserData(platform.id);
+		platform.body.setPosition(platform.position);
+
+		
+		
+		
+		/* for (i in 0...state.foreground.length) {
             var x:Float = (i % state.width) * TILE_HALF_WIDTH - state.width * TILE_HALF_WIDTH * 0.5;
             var y:Float = (state.height -  (Std.int(i / state.width) + 1)) * TILE_HALF_WIDTH - state.height * TILE_HALF_WIDTH * 0.5;
             if (state.foreground[i] != 0) {
@@ -56,8 +84,7 @@ class GameplayController {
                 platform.bodyDef.type = B2Body.b2_staticBody;
 
                 var polygon = new B2PolygonShape ();
-                polygon.setAsBox ((platform.width / 2) * PHYSICS_SCALE, (platform.height / 2) * PHYSICS_SCALE);
-                //trace(polygon.getVertices());
+                polygon.setAsBox (platform.width * PHYSICS_SCALE, platform.height * PHYSICS_SCALE);
 
                 platform.fixtureDef = new B2FixtureDef();
                 platform.fixtureDef.shape = polygon;
@@ -65,7 +92,7 @@ class GameplayController {
                 platform.body.createFixture(platform.fixtureDef);
                 platform.body.setUserData(platform.id);
             }
-         }
+         }*/
 
 	}
 	
@@ -85,15 +112,15 @@ class GameplayController {
 		player.height = 64;
 		
 		player.bodyDef = new B2BodyDef();
-		player.bodyDef.position.set(player.position.x * PHYSICS_SCALE, player.position.y * PHYSICS_SCALE);
+		player.bodyDef.position.set(player.position.x, player.position.y);
 		player.bodyDef.type = B2Body.b2_dynamicBody;
 	 
 		var polygon = new B2PolygonShape ();
-		polygon.setAsBox ((player.width / 2) * PHYSICS_SCALE, (player.height / 2) * PHYSICS_SCALE);
+		polygon.setAsBox (player.width, player.height);
 	 
 		player.fixtureDef = new B2FixtureDef();
 		player.fixtureDef.shape = polygon;
-		player.fixtureDef.density = .001; 
+		player.fixtureDef.density = .005; 
 		player.body = world.createBody(player.bodyDef);
 		player.body.createFixture(player.fixtureDef);
 		player.body.setUserData("player");
@@ -136,14 +163,14 @@ class GameplayController {
 		state.player.body.setLinearVelocity(state.player.velocity); //So that the velocity actually does something
 		
 	//UPDATE POSITION
-		//state.player.position = state.player.body.getPosition();
 		state.player.position = new B2Vec2(state.player.position.x + state.player.velocity.x, state.player.position.y + state.player.velocity.y);
+		trace(state.player.position.y);
 
 		//var pos:B2Vec2 = player.body.getPosition();
-		if (state.player.position.x > 400) state.player.position = new B2Vec2(400.0, state.player.position.y);
-		if (state.player.position.x < -400) state.player.position = new B2Vec2(-400.0, state.player.position.y);		
-		if (state.player.position.y > 250) state.player.position = new B2Vec2(state.player.position.x,250);
-		if (state.player.position.y < -250) state.player.position = new B2Vec2(state.player.position.x, -250);
+		//if (state.player.position.x > 400) state.player.position = new B2Vec2(400.0, state.player.position.y);
+		//if (state.player.position.x < -400) state.player.position = new B2Vec2(-400.0, state.player.position.y);		
+		//if (state.player.position.y > 250) state.player.position = new B2Vec2(state.player.position.x,250);
+		//if (state.player.position.y < -250) state.player.position = new B2Vec2(state.player.position.x, -250);
 		
 		physicsController.update();
 		
