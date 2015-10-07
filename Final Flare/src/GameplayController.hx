@@ -7,7 +7,8 @@ import box2D.dynamics.B2Fixture;
 import box2D.dynamics.B2FixtureDef;
 import box2D.collision.shapes.B2PolygonShape;
 import box2D.common.math.B2Vec2;
-
+import box2D.dynamics.B2DebugDraw;
+import box2D.common.B2Color;
 import box2D.dynamics.B2World;
 
 class GameplayController {
@@ -24,6 +25,7 @@ class GameplayController {
 
     private var playerController:PlayerController;
 	private var physicsController:PhysicsController;
+	private var debugDraw:B2DebugDraw;
 
     public function new(state:GameState) {
         init(state);
@@ -31,6 +33,8 @@ class GameplayController {
 
 	public function init(state:GameState):Void
 	{
+		debugDraw = new B2DebugDraw();
+		
 		state.player = new ObjectModel();
 		physicsController = new PhysicsController();
 		state.player = createPlayer(physicsController.world);
@@ -115,14 +119,14 @@ class GameplayController {
 		player.bodyDef.position.set(player.position.x, player.position.y);
 		player.bodyDef.type = B2Body.b2_dynamicBody;
 	 
-		var polygon = new B2PolygonShape ();
-		polygon.setAsBox (player.width, player.height);
+		player.shape = new B2PolygonShape();
+		player.shape.setAsBox (player.width, player.height);
 	 
 		player.fixtureDef = new B2FixtureDef();
-		player.fixtureDef.shape = polygon;
+		player.fixtureDef.shape = player.shape;
 		player.fixtureDef.density = .005; 
 		player.body = world.createBody(player.bodyDef);
-		player.body.createFixture(player.fixtureDef);
+		player.fixture = player.body.createFixture(player.fixtureDef);
 		player.body.setUserData("player");
 		player.body.setPosition(player.position);
 		
@@ -171,15 +175,20 @@ class GameplayController {
 		trace(state.player.position.y);
 
 		//var pos:B2Vec2 = player.body.getPosition();
-		//if (state.player.position.x > 400) state.player.position = new B2Vec2(400.0, state.player.position.y);
-		//if (state.player.position.x < -400) state.player.position = new B2Vec2(-400.0, state.player.position.y);		
+		if (state.player.position.x > 400) state.player.position = new B2Vec2(400.0, state.player.position.y);
+		if (state.player.position.x < -400) state.player.position = new B2Vec2(-400.0, state.player.position.y);		
 		if (state.player.position.y > 250) state.player.position = new B2Vec2(state.player.position.x,250);
 		if (state.player.position.y < -250) state.player.position = new B2Vec2(state.player.position.x, -250);
 		
 		physicsController.update();
 		
 		
-		//SORRY
+		//CHRISTIAN* LOOK HERE
+		var color = new B2Color(1, 0, 0);
+		//debugDraw.drawPolygon(state.player.shape.getVertices(), state.player.shape.getVertexCount(), color);
+		
+		
+		//SORRY CHRISTIAN*
 		/*var moveSpeed = 3;//player.grounded ? .55 : .35;
         if (player.left) player.velocity.x -= moveSpeed;
         if (player.right) player.velocity.x += moveSpeed;
@@ -193,13 +202,7 @@ class GameplayController {
         // Clamp speed to a maximum value		
         player.velocity.x = Math.min(ObjectModel.MAX_SPEED, Math.max( -ObjectModel.MAX_SPEED, player.velocity.x));*/
 		
-    }	
-		
-        
-		
-
-		
-
+    }
 	
 
 	
