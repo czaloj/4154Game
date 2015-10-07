@@ -1,5 +1,7 @@
 package;
 
+import graphics.Renderer;
+import openfl.display.Graphics;
 import openfl.geom.Point;
 
 class Spawner {
@@ -11,11 +13,12 @@ class Spawner {
     public function new() {
     }
 
-    public function spawn(state: GameState) {
+    public static function spawn(state: GameState, renderer:Renderer) {
         for (spawner in state.spawners) {
             var enemy = new ObjectModel();
             enemy.position.set(spawner.position.x, spawner.position.y);
             state.entities.push(enemy);
+            renderer.onEntityAdded(enemy);
         }
     }
 }

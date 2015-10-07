@@ -23,21 +23,25 @@ class LevelCreator {
         state.background = level.background; // TODO: Better data structure
         state.spawners = level.spawners;
         state.player.position.set(level.playerPt.x, level.playerPt.y);
-        
+
         // Load the environment texture
         var environmentTexture:Texture = Texture.fromBitmapData(Assets.getBitmapData(level.environmentSprites, false));
         renderPack.environment = SpriteSheetRegistry.getEnvironment(environmentTexture, level.environmentType);
-        
+
         // TODO: Load/stitch enemies from spawner information
         renderPack.enemies = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Pixel.png", false)), [
             // TODO: Add hardcoded enemies
         ]);
-        
+
+        renderPack.enemies = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Robot.png")), [
+            new StripRegion("Robot.Run", 0, 0, 36, 64, 1, 10, 10),
+        ]);
+
         // Load parallax layers
         for (f in level.parallax) {
             renderPack.parallax.push(Texture.fromBitmapData(Assets.getBitmapData(f, false)));
         }
-        
+
         //TODO: unhardcode
         renderPack.characters = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Man.png")), [
             new StripRegion("Man.Backflip", 0, 0, 48, 90, 2, 42, 80),
@@ -45,7 +49,7 @@ class LevelCreator {
             new StripRegion("Man.Idle", 0, 270, 48, 90, 1, 7, 7)
         ]);
     }
-    
+
     public function new() {
         // Empty
     }

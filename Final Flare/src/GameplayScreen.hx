@@ -67,7 +67,7 @@ class GameplayScreen extends IGameScreen {
         //trace(haxe.Serializer.run(level));
         //TODO: Load Level
         //LevelCreator.createFromLevel(level, state, pack);
-        LevelCreator.createFromFile("assets/level/basic", state, pack);
+        LevelCreator.createFromFile("assets/level/valley", state, pack);
 
         renderer = new Renderer(screenController, pack, state);
 
@@ -95,6 +95,9 @@ class GameplayScreen extends IGameScreen {
 
         // Update game logic
         gameplayController.update(state, gameTime);
+        if (gameTime.frame%120 ==0) {
+           Spawner.spawn(state, renderer);
+        }
     }
     override function draw(gameTime:GameTime):Void {
         renderer.update(state);
