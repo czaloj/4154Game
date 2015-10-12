@@ -32,7 +32,7 @@ class GameplayController {
     public function init(state:GameState):Void
     {
         state.player = new ObjectModel();
-        physicsController = new PhysicsController();
+        physicsController = new PhysicsController(state);
         var ws:Sprite = new Sprite();
         Lib.current.stage.addChild(ws);
         ws.x = ScreenController.SCREEN_WIDTH / 2;

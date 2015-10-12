@@ -13,11 +13,14 @@ class PhysicsController extends B2ContactListener {
     public static var GRAVITY = new B2Vec2(0,-10);
 
     public var world:B2World;
+    private var state:GameState;
     public var debugger: B2DebugDraw;
 
-    public function new() {
+    public function new(s:GameState) {
         super();
 
+        state = s;
+        
         world = new B2World(GRAVITY, true);
         world.setContactListener(this);
         world.setWarmStarting(true);
@@ -43,13 +46,8 @@ class PhysicsController extends B2ContactListener {
         var entity2 = contact.getFixtureB().getBody().getUserData();
         trace(entity1);
         trace(entity2);
-
-        if (entity1 == "player" && entity2 == "platform") {
-            //GameplayScreen.handlePlayerCollision();
-        }
-        else if (entity1 == "platform" && entity2 == "player") {
-            //GameplayScreen.handlePlayerCollision();
-        }
+        
+        // TODO: Just enqueue a collision in the appropriate location for state
     }
 
     public function update(dt:Float) {
