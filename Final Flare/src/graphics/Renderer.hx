@@ -57,10 +57,10 @@ class Renderer {
     }
 
     public function get_cameraX():Float {
-        return hierarchy.origin.x;
+        return -hierarchy.origin.x;
     }
     public function set_cameraX(v:Float):Float {
-        hierarchy.origin.x = v;
+        hierarchy.origin.x = -v;
         return v;
     }
     public function get_cameraY():Float {
@@ -106,10 +106,7 @@ class Renderer {
     }
 
     public function update(s:GameState):Void {
-        var levelHalfWidth = s.width * TILE_HALF_WIDTH / 2;
-        var levelHalfHeight = (s.height) * TILE_HALF_WIDTH / 2 + TILE_HALF_WIDTH + PLAYER_HEIGHT;
-
-        // Update sprite positions from entities
+        // TODO: Update sprite positions from entities
         var count:Int = 0;
         for (i in s.entities) {
             count++;
@@ -118,13 +115,16 @@ class Renderer {
         }
 
         // Center camera on player and constrict to level bounds
-        cameraX = Math.min(levelHalfWidth - Lib.current.stage.stageWidth / 2, Math.max( -levelHalfWidth + Lib.current.stage.stageWidth / 2, s.player.position.x));
-        cameraY = Math.min(levelHalfHeight - Lib.current.stage.stageHeight / 2, Math.max( -levelHalfHeight + Lib.current.stage.stageHeight / 2, s.player.position.y));
+        var levelWidth = s.width * TILE_HALF_WIDTH;
+        var levelHeight = s.height * TILE_HALF_WIDTH;
+        var cameraHalfWidth = stage3D.stageWidth / (2 * cameraScale);
+        var cameraHalfHeight = stage3D.stageHeight / (2 * cameraScale);
+        cameraX = Math.min((levelWidth) - cameraHalfWidth, Math.max((0) + cameraHalfWidth, s.player.position.x));
+        cameraY = Math.min((levelHeight) - cameraHalfHeight, Math.max((0) + cameraHalfHeight, s.player.position.y));
 
         // Update parallax layers
-        // TODO: Compute camera ratio in level
-        crX = cameraX / stageHalfSize.x;
-        crY = cameraY / stageHalfSize.y;
+        crX = (cameraX - cameraHalfWidth) / (levelWidth - 2 * cameraHalfWidth);
+        crY = (cameraY - cameraHalfHeight) / (levelHeight - 2 * cameraHalfHeight);
         for (layer in hierarchy.parallax.children) {
             var pLayer:ParallaxSprite = cast (layer, ParallaxSprite);
             pLayer.update(crX, crY);
@@ -135,8 +135,8 @@ class Renderer {
         // TODO: Remove this test code
         var man = new AnimatedSprite(pack.characters, "Man.Run", 3);
         //TODO: remove magic number: player dimension
-        man.x = state.player.position.x - PLAYER_WIDTH;
-        man.y = state.player.position.y + PLAYER_HEIGHT;
+        man.x = state.player.position.x - PLAYER_WIDTH * 0.5;
+        man.y = state.player.position.y - PLAYER_HEIGHT * 0.5;
         hierarchy.player.addChild(man);
         function fAdd(x:Float, y:Float, n:String):Void {
             var brick:StaticSprite = new StaticSprite(pack.environment, n);
@@ -145,8 +145,8 @@ class Renderer {
             hierarchy.foreground.addChild(brick);
         };
         for (i in 0...state.foreground.length) {
-            var x:Float = (i % state.width) * TILE_HALF_WIDTH - state.width * TILE_HALF_WIDTH * 0.5;
-            var y:Float = (state.height -  (Std.int(i / state.width) + 1)) * TILE_HALF_WIDTH - state.height * TILE_HALF_WIDTH * 0.5;
+            var x:Float = (i % state.width) * TILE_HALF_WIDTH;
+            var y:Float = (state.height -  (Std.int(i / state.width) + 1)) * TILE_HALF_WIDTH;
             if (state.foreground[i] == 1) {
                 fAdd(x, y, "Half");
             }
@@ -155,7 +155,6 @@ class Renderer {
                 fAdd(x, y, "Full");
             }
         }
-
 
         // Add the parallax layers in a sorted order by their width
         pack.parallax.sort(function (t1:Texture, t2:Texture):Int {

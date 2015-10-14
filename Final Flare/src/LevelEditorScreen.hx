@@ -33,7 +33,7 @@ class LevelEditorScreen extends IGameScreen {
 
     override public function onEntry(gameTime:GameTime):Void {
         state = new GameState();
-        gameplayController = new GameplayController(state);
+        gameplayController = new GameplayController();
         var pack:RenderPack = new RenderPack();
 
         // set up startup level

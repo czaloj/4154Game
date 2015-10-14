@@ -14,9 +14,9 @@ import box2D.dynamics.B2World;
 import openfl.Lib;
 
 class GameplayController {
-    public static var PLAYER_MAX_SPEED:Float = 5;
-    public static var PLAYER_GROUND_ACCEL:Float = .55;
-    public static var PLAYER_AIR_ACCEL:Float = .35;
+    public static var PLAYER_MAX_SPEED:Float = 80;
+    public static var PLAYER_GROUND_ACCEL:Float = 8.5;
+    public static var PLAYER_AIR_ACCEL:Float = 6.5;
     public static var PLAYER_GROUND_FRICTION:Float = .3;
     public static var PLAYER_AIR_FRICTION:Float = .9;
     public static inline var TILE_HALF_WIDTH:Float = 16;
@@ -25,8 +25,8 @@ class GameplayController {
     private var physicsController:PhysicsController;
     private var debugPhysicsView:Sprite;
 
-    public function new(state:GameState) {
-        init(state);
+    public function new() {
+        physicsController = new PhysicsController();
     }
 
     public function initDebug(debugPhysicsView:Sprite):Void {
@@ -38,43 +38,13 @@ class GameplayController {
     }
     
     public function init(state:GameState):Void {
-        state.player = new ObjectModel();
-        physicsController = new PhysicsController();
-        
-        state.player = createPlayer(physicsController.world);
+        createPlayer(physicsController.world, state.player);
 
-        LevelCreator.createStateFromFile("assets/level/valley", state);
-
-        ////Makes bottom platform. I'm unsure of the actual sizes
-        //platform = new ObjectModel();
-        //platform.id = "platform";
-        //platform.grounded = false;
-        //platform.rotation = 0;
-        //platform.position.set(-100, -150);
-        //platform.velocity.set(0,0);
-        //platform.left = false;
-        //platform.right = false;
-        //platform.height = 32;
-        //platform.width = 20000;
-//
-        //platform.bodyDef = new B2BodyDef();
-        //platform.bodyDef.position.set(platform.position.x, platform.position.y);
-        //platform.bodyDef.type = B2Body.b2_staticBody;
-//
-        //var polygon = new B2PolygonShape ();
-        //polygon.setAsBox ((platform.width)/2, (platform.height)/2);
-//
-        //platform.fixtureDef = new B2FixtureDef();
-        //platform.fixtureDef.shape = polygon;
-        //platform.body = physicsController.world.createBody(platform.bodyDef);
-        //platform.body.createFixture(platform.fixtureDef);
-        //platform.body.setUserData(platform.id);
-
-
-        for (i in 0...state.foreground.length) {
-            var x:Float = (i % state.width) * TILE_HALF_WIDTH - (state.width-1) * TILE_HALF_WIDTH * 0.5;
-            var y:Float = (state.height -  (Std.int(i / state.width) + 1)) * TILE_HALF_WIDTH - (state.height-1) * TILE_HALF_WIDTH * 0.5;
+        for (i in 0...(state.width * state.height)) {
+            var x:Float = (i % state.width) * TILE_HALF_WIDTH + (TILE_HALF_WIDTH * 0.5);
+            var y:Float = (state.height -  (Std.int(i / state.width) + 1)) * TILE_HALF_WIDTH + (TILE_HALF_WIDTH * 0.5);
             if (state.foreground[i] != 0) {
+                // TODO: Platforms are not ObjectModels
                 var platform = new ObjectModel();
                 platform.id = "platform";
                 platform.position.set(x, y);
@@ -100,14 +70,12 @@ class GameplayController {
                 platform.body.setUserData(platform.id);
             }
          }
-
     }
 
-    public function createPlayer(world:B2World):ObjectModel {
+    // TODO: Remove this function from here
+    public function createPlayer(world:B2World, player:ObjectModel):Void {
         //ALL THE MAGIC NUMBERS. REMEMBER TO FIX.
-        var player:ObjectModel = new ObjectModel();
         player.id = "player";
-        player.position.set(0, 0);
         player.velocity.set(0,0);
         player.grounded = true;
         player.rotation = 0;
@@ -131,8 +99,6 @@ class GameplayController {
         player.body = world.createBody(player.bodyDef);
         player.fixture = player.body.createFixture(player.fixtureDef);
         player.body.setUserData("player");
-
-        return player;
     }
 
     public function update(state:GameState, gameTime:GameTime):Void {
@@ -152,24 +118,23 @@ class GameplayController {
         state.player.velocity.x = Math.min(PLAYER_MAX_SPEED, Math.max(-PLAYER_MAX_SPEED, state.player.velocity.x));
 
         if (state.player.up) {
-                state.player.velocity.y = 6;
+                state.player.velocity.y = 70;
         }
 
         state.player.body.setLinearVelocity(state.player.velocity); //So that the velocity actually does something
 
         //UPDATE POSITION
-        state.player.body.setPosition(new B2Vec2(state.player.position.x + state.player.velocity.x, state.player.position.y + state.player.velocity.y));
-        state.player.position = state.player.body.getPosition();
 
-        //var pos:B2Vec2 = player.body.getPosition();
-        var levelHalfWidth = state.width * TILE_HALF_WIDTH / 2 - state.player.width;
-        var levelHalfHeight = state.height * TILE_HALF_WIDTH / 2;
-        if (state.player.position.x > levelHalfWidth + state.player.width /2) state.player.position = new B2Vec2(levelHalfWidth + state.player.width / 2, state.player.position.y);
-        if (state.player.position.x < -levelHalfWidth) state.player.position = new B2Vec2(-levelHalfWidth, state.player.position.y);
+        var levelWidth = state.width * TILE_HALF_WIDTH;
+        var levelHeight = state.height * TILE_HALF_WIDTH;
+        if (state.player.position.x > levelWidth - state.player.width / 2) state.player.position.x = levelWidth - state.player.width / 2;
+        if (state.player.position.x < state.player.width / 2) state.player.position.x = state.player.width / 2;
         //if (state.player.position.y > 250) state.player.position = new B2Vec2(state.player.position.x,250);
         //if (state.player.position.y < -250) state.player.position = new B2Vec2(state.player.position.x, -250);
 
         physicsController.update(gameTime.elapsed);
+        state.player.position = state.player.body.getPosition();       
         
+        trace(state.player.position.x, state.player.position.y);
     }
 }

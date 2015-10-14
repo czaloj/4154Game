@@ -10,7 +10,7 @@ import flash.display.Sprite;
 import openfl.Lib;
 
 class PhysicsController extends B2ContactListener {
-    public static var GRAVITY = new B2Vec2(0,-10);
+    public static var GRAVITY = new B2Vec2(0,-160);
 
     public var world:B2World;
     public var debugger: B2DebugDraw;
