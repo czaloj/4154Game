@@ -44,12 +44,7 @@ class PhysicsController extends B2ContactListener {
         trace(entity1);
         trace(entity2);
 
-        if (entity1 == "player" && entity2 == "platform") {
-            //GameplayScreen.handlePlayerCollision();
-        }
-        else if (entity1 == "platform" && entity2 == "player") {
-            //GameplayScreen.handlePlayerCollision();
-        }
+        // TODO: Just enqueue something into the state for the GameplayController to process
     }
 
     public function update(dt:Float) {
