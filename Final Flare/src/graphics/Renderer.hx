@@ -108,11 +108,13 @@ class Renderer {
     }
 
     public function update(s:GameState):Void {
+        var levelHalfWidth = s.width * TILE_HALF_WIDTH / 2;
+        var levelHalfHeight = s.height * TILE_HALF_WIDTH / 2;
         // Update sprite positions from entities
         hierarchy.player.x = s.player.body.getPosition().x;
         hierarchy.player.y = s.player.body.getPosition().y;
-        set_cameraX(-hierarchy.player.x);
-        set_cameraY(hierarchy.player.y);
+        set_cameraX(Math.min(levelHalfWidth - Lib.current.stage.stageWidth / 2, Math.max(-levelHalfWidth + Lib.current.stage.stageWidth / 2, -hierarchy.player.x)));
+        set_cameraY(Math.min(levelHalfHeight - Lib.current.stage.stageHeight / 2, Math.max(-levelHalfHeight + Lib.current.stage.stageHeight / 2, hierarchy.player.y)));
         var count:Int = 0;
         for (i in s.entities) {
             count++;
