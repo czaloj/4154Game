@@ -14,10 +14,6 @@ import box2D.dynamics.B2World;
 import openfl.Lib;
 
 class GameplayController {
-
-    private static var DT:Float = 1 / 60;
-    public static var GRAVITY = new B2Vec2(0, -9.8);
-    private static var PHYSICS_SCALE:Float = 1 / 30;
     public static var PLAYER_MAX_SPEED:Float = 5;
     public static var PLAYER_GROUND_ACCEL:Float = .55;
     public static var PLAYER_AIR_ACCEL:Float = .35;
@@ -137,7 +133,7 @@ class GameplayController {
     }
 
     public function update(state:GameState, gameTime:GameTime):Void {
-
+        
         //UPDATES VELOCITY
         state.player.velocity = state.player.body.getLinearVelocity(); //Just in case -__-
         var moveSpeed = state.player.grounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
@@ -169,21 +165,6 @@ class GameplayController {
         //if (state.player.position.y > 250) state.player.position = new B2Vec2(state.player.position.x,250);
         //if (state.player.position.y < -250) state.player.position = new B2Vec2(state.player.position.x, -250);
 
-        physicsController.update();
-
-
-        //CHRISTIAN* LOOK HERE
-        //var color = new B2Color(1, 0, 0);
-        //debugDraw.drawPolygon(state.player.shape.getVertices(), state.player.shape.getVertexCount(), color);
-
-        trace(platform.body.getPosition().y);
-        trace(state.player.body.getPosition().y);
-
-
-
-
+        physicsController.update(gameTime.elapsed);
     }
-
-
-
 }
