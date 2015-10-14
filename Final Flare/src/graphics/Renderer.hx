@@ -112,11 +112,8 @@ class Renderer {
     public function update(s:GameState):Void {
         var levelHalfWidth = s.width * TILE_HALF_WIDTH / 2;
         var levelHalfHeight = (s.height) * TILE_HALF_WIDTH / 2 + TILE_HALF_WIDTH + PLAYER_HEIGHT;
+
         // Update sprite positions from entities
-        hierarchy.player.x = s.player.body.getPosition().x;
-        hierarchy.player.y = s.player.body.getPosition().y;
-        set_cameraX(Math.min(levelHalfWidth - Lib.current.stage.stageWidth / 2, Math.max(-levelHalfWidth + Lib.current.stage.stageWidth / 2, -hierarchy.player.x)));
-        set_cameraY(Math.min(levelHalfHeight - Lib.current.stage.stageHeight / 2, Math.max(-levelHalfHeight + Lib.current.stage.stageHeight / 2, hierarchy.player.y)));
         var count:Int = 0;
         for (i in s.entities) {
             count++;
@@ -124,12 +121,17 @@ class Renderer {
             sprites[count].y = i.position.y;
         }
 
+        // Center camera on player and constrict to level bounds
+        cameraX = Math.min(levelHalfWidth - Lib.current.stage.stageWidth / 2, Math.max( -levelHalfWidth + Lib.current.stage.stageWidth / 2, s.player.position.x));
+        cameraY = Math.min(levelHalfHeight - Lib.current.stage.stageHeight / 2, Math.max( -levelHalfHeight + Lib.current.stage.stageHeight / 2, s.player.position.y));
+
         // Update parallax layers
         // TODO: Compute camera ratio in level
+        crX = cameraX / stageHalfSize.x;
+        crY = cameraY / stageHalfSize.y;
         for (layer in hierarchy.parallax.children) {
             var pLayer:ParallaxSprite = cast (layer, ParallaxSprite);
-
-            pLayer.update(-get_cameraX()/stageHalfSize.x,-get_cameraY()/stageHalfSize.y);
+            pLayer.update(crX, crY);
         }
     }
 
