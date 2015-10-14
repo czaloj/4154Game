@@ -162,9 +162,9 @@ class GameplayController {
         state.player.position = state.player.body.getPosition();
 
         //var pos:B2Vec2 = player.body.getPosition();
-        var levelHalfWidth = state.width * TILE_HALF_WIDTH / 2;
+        var levelHalfWidth = state.width * TILE_HALF_WIDTH / 2 - state.player.width;
         var levelHalfHeight = state.height * TILE_HALF_WIDTH / 2;
-        if (state.player.position.x > levelHalfWidth) state.player.position = new B2Vec2(levelHalfWidth, state.player.position.y);
+        if (state.player.position.x > levelHalfWidth + state.player.width /2) state.player.position = new B2Vec2(levelHalfWidth + state.player.width / 2, state.player.position.y);
         if (state.player.position.x < -levelHalfWidth) state.player.position = new B2Vec2(-levelHalfWidth, state.player.position.y);
         //if (state.player.position.y > 250) state.player.position = new B2Vec2(state.player.position.x,250);
         //if (state.player.position.y < -250) state.player.position = new B2Vec2(state.player.position.x, -250);

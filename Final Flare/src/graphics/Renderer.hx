@@ -14,6 +14,8 @@ import starling.textures.Texture;
 
 class Renderer {
     public static inline var TILE_HALF_WIDTH:Float = 16;
+    public static inline var PLAYER_WIDTH:Float = 32;
+    public static inline var PLAYER_HEIGHT:Float = 64;
 
     private var stageHalfSize:Point = new Point();
     private var hierarchy:RenderHierarchy = new RenderHierarchy();
@@ -109,7 +111,7 @@ class Renderer {
 
     public function update(s:GameState):Void {
         var levelHalfWidth = s.width * TILE_HALF_WIDTH / 2;
-        var levelHalfHeight = s.height * TILE_HALF_WIDTH / 2;
+        var levelHalfHeight = (s.height) * TILE_HALF_WIDTH / 2 + TILE_HALF_WIDTH + PLAYER_HEIGHT;
         // Update sprite positions from entities
         hierarchy.player.x = s.player.body.getPosition().x;
         hierarchy.player.y = s.player.body.getPosition().y;
@@ -124,19 +126,19 @@ class Renderer {
 
         // Update parallax layers
         // TODO: Compute camera ratio in level
-        var rx:Float = crX;
-        var ry:Float = crY;
         for (layer in hierarchy.parallax.children) {
             var pLayer:ParallaxSprite = cast (layer, ParallaxSprite);
-            pLayer.update(rx, ry);
+
+            pLayer.update(-get_cameraX()/stageHalfSize.x,-get_cameraY()/stageHalfSize.y);
         }
     }
 
     private function load(state:GameState):Void {
         // TODO: Remove this test code
         var man = new AnimatedSprite(pack.characters, "Man.Run", 3);
-        man.x = state.player.position.x - 32;
-        man.y = state.player.position.y + 64;
+        //TODO: remove magic number: player dimension
+        man.x = state.player.position.x - PLAYER_WIDTH;
+        man.y = state.player.position.y + PLAYER_HEIGHT;
         hierarchy.player.addChild(man);
         function fAdd(x:Float, y:Float, n:String):Void {
             var brick:StaticSprite = new StaticSprite(pack.environment, n);
