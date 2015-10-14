@@ -28,7 +28,7 @@ class Renderer {
 
     private var crX:Float;
     private var crY:Float;
-    
+
     public function new(stage:Sprite, p:RenderPack, state:GameState) {
         pack = p;
         stage3D = stage.stage;
@@ -117,7 +117,7 @@ class Renderer {
             sprites[count].x = i.position.x;
             sprites[count].y = i.position.x;
         }
-        
+
         // Update parallax layers
         // TODO: Compute camera ratio in level
         var rx:Float = crX;
@@ -131,8 +131,8 @@ class Renderer {
     private function load(state:GameState):Void {
         // TODO: Remove this test code
         var man = new AnimatedSprite(pack.characters, "Man.Run", 3);
-        man.x = state.player.position.x;
-        man.y = state.player.position.y;
+        man.x = state.player.position.x - 32;
+        man.y = state.player.position.y + 64;
         hierarchy.player.addChild(man);
         function fAdd(x:Float, y:Float, n:String):Void {
             var brick:StaticSprite = new StaticSprite(pack.environment, n);
@@ -151,8 +151,8 @@ class Renderer {
                 fAdd(x, y, "Full");
             }
         }
-        
-        
+
+
         // Add the parallax layers in a sorted order by their width
         pack.parallax.sort(function (t1:Texture, t2:Texture):Int {
             if (t1.width == t2.width) return 0;

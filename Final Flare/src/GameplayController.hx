@@ -41,38 +41,41 @@ class GameplayController {
         physicsController.initDebug(ws);
         state.player = createPlayer(physicsController.world);
 
-        //Makes bottom platform. I'm unsure of the actual sizes
-        platform = new ObjectModel();
-        platform.id = "platform";
-        platform.grounded = false;
-        platform.rotation = 0;
-        platform.position.set(-100, -150);
-        platform.velocity.set(0,0);
-        platform.left = false;
-        platform.right = false;
-        platform.height = 32;
-        platform.width = 20000;
+        LevelCreator.createStateFromFile("assets/level/valley", state);
 
-        platform.bodyDef = new B2BodyDef();
-        platform.bodyDef.position.set(platform.position.x, platform.position.y);
-        platform.bodyDef.type = B2Body.b2_staticBody;
+        ////Makes bottom platform. I'm unsure of the actual sizes
+        //platform = new ObjectModel();
+        //platform.id = "platform";
+        //platform.grounded = false;
+        //platform.rotation = 0;
+        //platform.position.set(-100, -150);
+        //platform.velocity.set(0,0);
+        //platform.left = false;
+        //platform.right = false;
+        //platform.height = 32;
+        //platform.width = 20000;
+//
+        //platform.bodyDef = new B2BodyDef();
+        //platform.bodyDef.position.set(platform.position.x, platform.position.y);
+        //platform.bodyDef.type = B2Body.b2_staticBody;
+//
+        //var polygon = new B2PolygonShape ();
+        //polygon.setAsBox ((platform.width)/2, (platform.height)/2);
+//
+        //platform.fixtureDef = new B2FixtureDef();
+        //platform.fixtureDef.shape = polygon;
+        //platform.body = physicsController.world.createBody(platform.bodyDef);
+        //platform.body.createFixture(platform.fixtureDef);
+        //platform.body.setUserData(platform.id);
 
-        var polygon = new B2PolygonShape ();
-        polygon.setAsBox ((platform.width)/2, (platform.height)/2);
 
-        platform.fixtureDef = new B2FixtureDef();
-        platform.fixtureDef.shape = polygon;
-        platform.body = physicsController.world.createBody(platform.bodyDef);
-        platform.body.createFixture(platform.fixtureDef);
-        platform.body.setUserData(platform.id);
-
-
-        /* for (i in 0...state.foreground.length) {
-            var x:Float = (i % state.width) * TILE_HALF_WIDTH - state.width * TILE_HALF_WIDTH * 0.5;
-            var y:Float = (state.height -  (Std.int(i / state.width) + 1)) * TILE_HALF_WIDTH - state.height * TILE_HALF_WIDTH * 0.5;
+        for (i in 0...state.foreground.length) {
+            var x:Float = (i % state.width) * TILE_HALF_WIDTH - (state.width-1) * TILE_HALF_WIDTH * 0.5;
+            var y:Float = (state.height -  (Std.int(i / state.width) + 1)) * TILE_HALF_WIDTH - (state.height-1) * TILE_HALF_WIDTH * 0.5;
             if (state.foreground[i] != 0) {
                 var platform = new ObjectModel();
                 platform.id = "platform";
+                trace(x);
                 platform.position.set(x, y);
                 platform.grounded = false;
                 platform.rotation = 0;
@@ -83,11 +86,11 @@ class GameplayController {
                 platform.width = TILE_HALF_WIDTH;
 
                 platform.bodyDef = new B2BodyDef();
-                platform.bodyDef.position.set(platform.position.x * PHYSICS_SCALE, platform.position.y * PHYSICS_SCALE);
+                platform.bodyDef.position.set(platform.position.x, platform.position.y);
                 platform.bodyDef.type = B2Body.b2_staticBody;
 
                 var polygon = new B2PolygonShape ();
-                polygon.setAsBox (platform.width * PHYSICS_SCALE, platform.height * PHYSICS_SCALE);
+                polygon.setAsBox ((platform.width)/2, (platform.height)/2);
 
                 platform.fixtureDef = new B2FixtureDef();
                 platform.fixtureDef.shape = polygon;
@@ -95,7 +98,7 @@ class GameplayController {
                 platform.body.createFixture(platform.fixtureDef);
                 platform.body.setUserData(platform.id);
             }
-         }*/
+         }
 
     }
 
@@ -133,7 +136,7 @@ class GameplayController {
     }
 
     public function update(state:GameState, gameTime:GameTime):Void {
-        
+
         //UPDATES VELOCITY
         state.player.velocity = state.player.body.getLinearVelocity(); //Just in case -__-
         var moveSpeed = state.player.grounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;

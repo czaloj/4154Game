@@ -23,14 +23,14 @@ class LevelEditorScreen extends IGameScreen {
     public function new(sc:ScreenController) {
         super(sc);
     }
-    
+
     override public function build():Void {
         // Empty
     }
     override public function destroy():Void {
         // Empty
     }
-    
+
     override public function onEntry(gameTime:GameTime):Void {
         state = new GameState();
         gameplayController = new GameplayController(state);
@@ -45,7 +45,8 @@ class LevelEditorScreen extends IGameScreen {
 
         tileMap = new TileMap(level.height,level.width);
         level.foreground = tileMap.toIDArray();
-        LevelCreator.createFromLevel(level, state, pack);
+        LevelCreator.createStateFromLevel(level, state);
+        LevelCreator.createPackFromLevel(level, pack);
         renderer = new Renderer(screenController, pack, state);
 
         for (i in 0...state.width) {
@@ -56,8 +57,8 @@ class LevelEditorScreen extends IGameScreen {
             screenController.addChild(tileMap.getTileByIndex(i*state.width).setTileTexture(Tile.BLUE).tile);
         }
         // end set up
-        
-        
+
+
     }
 
     override public function onExit(gameTime:GameTime):Void {

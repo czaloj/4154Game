@@ -10,20 +10,27 @@ import starling.textures.Texture;
 import openfl.Assets;
 
 class LevelCreator {
-    public static function createFromFile(file:String, state:GameState, renderPack:RenderPack):Void {
+    public static function createStateFromFile(file:String, state:GameState):Void {
         var value = Assets.getText(file);
         var level = haxe.Unserializer.run(value);
-        createFromLevel(level, state, renderPack);
+        createStateFromLevel(level, state);
     }
 
-    public static function createFromLevel(level:GameLevel, state:GameState, renderPack:RenderPack):Void {
+        public static function createPackFromFile(file:String, renderPack:RenderPack):Void {
+        var value = Assets.getText(file);
+        var level = haxe.Unserializer.run(value);
+        createPackFromLevel(level, renderPack);
+    }
+    public static function createStateFromLevel(level:GameLevel, state:GameState):Void {
         state.width = level.width;
         state.height = level.height;
         state.foreground = level.foreground; // TODO: Better data structure
         state.background = level.background; // TODO: Better data structure
         state.spawners = level.spawners;
         state.player.position.set(level.playerPt.x, level.playerPt.y);
+    }
 
+    public static function createPackFromLevel(level:GameLevel, renderPack:RenderPack):Void {
         // Load the environment texture
         var environmentTexture:Texture = Texture.fromBitmapData(Assets.getBitmapData(level.environmentSprites, false));
         renderPack.environment = SpriteSheetRegistry.getEnvironment(environmentTexture, level.environmentType);

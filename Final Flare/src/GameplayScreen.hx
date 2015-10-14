@@ -39,7 +39,7 @@ class GameplayScreen extends IGameScreen {
     override function onEntry(gameTime:GameTime):Void {
         state = new GameState();
         inputController = new InputController();
-        gameplayController = new GameplayController(state);
+
 
         // TODO: Remove this test code
         var pack:RenderPack = new RenderPack();
@@ -67,8 +67,8 @@ class GameplayScreen extends IGameScreen {
         //trace(haxe.Serializer.run(level));
         //TODO: Load Level
         //LevelCreator.createFromLevel(level, state, pack);
-        LevelCreator.createFromFile("assets/level/valley", state, pack);
-
+        LevelCreator.createPackFromFile("assets/level/valley", pack);
+        gameplayController = new GameplayController(state);
         renderer = new Renderer(screenController, pack, state);
 
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
@@ -96,16 +96,16 @@ class GameplayScreen extends IGameScreen {
         // Update game logic
         gameplayController.update(state, gameTime);
         if (gameTime.frame%120 ==0) {
-           Spawner.spawn(state, renderer);
+           //Spawner.spawn(state, renderer);
         }
     }
     override function draw(gameTime:GameTime):Void {
         renderer.update(state);
     }
-    
-    public function handlePlayerCollision():Void 
+
+    public function handlePlayerCollision():Void
     {
         state.player.velocity.y = 0;
     }
-    
+
 }
