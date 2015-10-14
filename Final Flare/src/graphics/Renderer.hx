@@ -111,11 +111,13 @@ class Renderer {
         // Update sprite positions from entities
         hierarchy.player.x = s.player.body.getPosition().x;
         hierarchy.player.y = s.player.body.getPosition().y;
+        set_cameraX(-hierarchy.player.x);
+        set_cameraY(hierarchy.player.y);
         var count:Int = 0;
         for (i in s.entities) {
             count++;
             sprites[count].x = i.position.x;
-            sprites[count].y = i.position.x;
+            sprites[count].y = i.position.y;
         }
 
         // Update parallax layers

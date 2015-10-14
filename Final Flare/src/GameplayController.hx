@@ -75,7 +75,6 @@ class GameplayController {
             if (state.foreground[i] != 0) {
                 var platform = new ObjectModel();
                 platform.id = "platform";
-                trace(x);
                 platform.position.set(x, y);
                 platform.grounded = false;
                 platform.rotation = 0;
