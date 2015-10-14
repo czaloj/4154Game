@@ -20,6 +20,6 @@ class ParallaxSprite extends Image {
     
     public function update(rx:Float, ry:Float):Void {
         x = -rx * sizeX;
-        y = -ry * sizeY;
+        y = (ry - 1) * sizeY;
     }
 }
