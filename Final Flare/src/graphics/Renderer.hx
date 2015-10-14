@@ -94,10 +94,6 @@ class Renderer {
     }
 
     public function onEntityAdded(o:ObjectModel):Void {
-        var newSprite:Sprite = new Sprite();
-        sprites.push(newSprite);
-        stage3D.addChild(newSprite);
-
         // Add a corresponding sprite to stage and track this entity
 
         //what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
