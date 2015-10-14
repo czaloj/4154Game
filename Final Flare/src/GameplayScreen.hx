@@ -10,6 +10,7 @@ import gun.GunGenerator;
 import gun.GunGenParams;
 import gun.Gun;
 import openfl.display.Graphics;
+import openfl.display.Sprite;
 import openfl.Lib;
 import openfl.Assets;
 import openfl.events.KeyboardEvent;
@@ -24,6 +25,7 @@ class GameplayScreen extends IGameScreen {
     private var gameplayController:GameplayController;
     private var renderer:Renderer;
     public var inputController:InputController;
+    private var debugPhysicsView:Sprite;
 
     public function new(sc: ScreenController) {
         super(sc);
@@ -74,6 +76,12 @@ class GameplayScreen extends IGameScreen {
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);
 
+        // Debug view of physics
+        debugPhysicsView = new Sprite();
+        gameplayController.initDebug(debugPhysicsView);
+        Lib.current.stage.addChild(debugPhysicsView);
+
+        
         // TODO: Remove this test code
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         var hb:StaticSprite = uif.getTile("Health.Background");
@@ -83,7 +91,6 @@ class GameplayScreen extends IGameScreen {
         var ggp:GunGenParams = new GunGenParams();
         var gunData = GunGenerator.generate(ggp);
         var gun:Gun = new Gun(gunData);
-
     }
     override function onExit(gameTime:GameTime):Void {
         // Empty
@@ -101,6 +108,10 @@ class GameplayScreen extends IGameScreen {
     }
     override function draw(gameTime:GameTime):Void {
         renderer.update(state);
+        
+        // Update the view for the debug physics
+        debugPhysicsView.x = -renderer.cameraX + ScreenController.SCREEN_WIDTH / 2;
+        debugPhysicsView.y = renderer.cameraY + ScreenController.SCREEN_HEIGHT / 2;
     }
 
     public function handlePlayerCollision():Void

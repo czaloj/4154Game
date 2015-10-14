@@ -23,22 +23,24 @@ class GameplayController {
 
     private var platform:ObjectModel;
     private var physicsController:PhysicsController;
-    private var debugDraw:B2DebugDraw;
+    private var debugPhysicsView:Sprite;
 
     public function new(state:GameState) {
         init(state);
     }
 
-    public function init(state:GameState):Void
-    {
+    public function initDebug(debugPhysicsView:Sprite):Void {
+        // Create a debug view of the physics world
+        debugPhysicsView.x = ScreenController.SCREEN_WIDTH / 2;
+        debugPhysicsView.y = ScreenController.SCREEN_HEIGHT / 2;
+        debugPhysicsView.scaleY = -debugPhysicsView.scaleY;
+        physicsController.initDebug(debugPhysicsView);
+    }
+    
+    public function init(state:GameState):Void {
         state.player = new ObjectModel();
         physicsController = new PhysicsController();
-        var ws:Sprite = new Sprite();
-        Lib.current.stage.addChild(ws);
-        ws.x = ScreenController.SCREEN_WIDTH / 2;
-        ws.y = ScreenController.SCREEN_HEIGHT / 2;
-        ws.scaleY = -ws.scaleY;
-        physicsController.initDebug(ws);
+        
         state.player = createPlayer(physicsController.world);
 
         LevelCreator.createStateFromFile("assets/level/valley", state);
@@ -101,8 +103,7 @@ class GameplayController {
 
     }
 
-    public function createPlayer(world:B2World):ObjectModel
-    {
+    public function createPlayer(world:B2World):ObjectModel {
         //ALL THE MAGIC NUMBERS. REMEMBER TO FIX.
         var player:ObjectModel = new ObjectModel();
         player.id = "player";
@@ -135,7 +136,6 @@ class GameplayController {
     }
 
     public function update(state:GameState, gameTime:GameTime):Void {
-
         //UPDATES VELOCITY
         state.player.velocity = state.player.body.getLinearVelocity(); //Just in case -__-
         var moveSpeed = state.player.grounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
@@ -170,5 +170,6 @@ class GameplayController {
         //if (state.player.position.y < -250) state.player.position = new B2Vec2(state.player.position.x, -250);
 
         physicsController.update(gameTime.elapsed);
+        
     }
 }
