@@ -1,5 +1,6 @@
 package graphics;
 
+import haxe.ds.ObjectMap;
 import openfl.Assets;
 import openfl.events.Event;
 import openfl.events.MouseEvent;
@@ -23,6 +24,7 @@ class Renderer {
     private var stage3D:Stage;
     //private var myState:GameState;
     public var sprites:Array<Sprite> = [];
+    public var enemyTbl:ObjectMap<ObjectModel, AnimatedSprite> = new ObjectMap<ObjectModel, AnimatedSprite>();
 
     public var cameraX(get,set):Float;
     public var cameraY(get,set):Float;
@@ -95,25 +97,30 @@ class Renderer {
 
     public function onEntityAdded(o:ObjectModel):Void {
         // Add a corresponding sprite to stage and track this entity
-
+        var enemy = new AnimatedSprite(pack.enemies, "Robot.Run", 3);
+        enemy.x = o.position.x - o.width * 0.5;
+        enemy.y = o.position.y - o.height * 0.5;
+        //trace(enemy.x, enemy.y);
+        hierarchy.enemy.addChild(enemy);
+        enemyTbl.set(o,enemy);
         //what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
     }
     public function onEntityRemoved(o:ObjectModel):Void {
         //idk about this function the implementation i was thinking of was sketchy.
         //i need to figure out the mapping between objectModels and sprites
-
+        hierarchy.enemy.removeChild(enemyTbl.get(o));
+        enemyTbl.remove(o);
         // Remove this entity from the stage
     }
 
     public function update(s:GameState):Void {
         // TODO: Update sprite positions from entities
-        var count:Int = 0;
-        for (i in s.entities) {
-            count++;
-            sprites[count].x = i.position.x;
-            sprites[count].y = i.position.y;
+        for (o in enemyTbl.keys()) {
+            enemyTbl.get(o).x = o.position.x - o.width * 0.5;
+            enemyTbl.get(o).y = o.position.y - o.height * 0.5;
+            //trace(o.position.x,  o.position.y);
+            //trace(enemyTbl.get(o).x,  enemyTbl.get(o).y);
         }
-
         // Center camera on player and constrict to level bounds
         var levelWidth = s.width * TILE_HALF_WIDTH;
         var levelHeight = s.height * TILE_HALF_WIDTH;
@@ -138,6 +145,7 @@ class Renderer {
         man.x = state.player.position.x - PLAYER_WIDTH * 0.5;
         man.y = state.player.position.y - PLAYER_HEIGHT * 0.5;
         hierarchy.player.addChild(man);
+        //enemyTbl.set(state.player,man);
         function fAdd(x:Float, y:Float, n:String):Void {
             var brick:StaticSprite = new StaticSprite(pack.environment, n);
             brick.x = x;

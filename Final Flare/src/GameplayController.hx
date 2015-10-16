@@ -36,7 +36,7 @@ class GameplayController {
         debugPhysicsView.scaleY = -debugPhysicsView.scaleY;
         physicsController.initDebug(debugPhysicsView);
     }
-    
+
     public function init(state:GameState):Void {
         createPlayer(physicsController.world, state.player);
 
@@ -101,6 +101,35 @@ class GameplayController {
         player.body.setUserData("player");
     }
 
+        public function createEnemy( enemy:ObjectModel):Void {
+        //ALL THE MAGIC NUMBERS. REMEMBER TO FIX.
+        var world = physicsController.world;
+        enemy.id = "enemy";
+        enemy.velocity.set(0,0);
+        enemy.grounded = true;
+        enemy.rotation = 0;
+        enemy.left = false;
+        enemy.right = false;
+        enemy.dimension = new Point(32, 64);
+        enemy.width = 32;
+        enemy.height = 64;
+
+        enemy.bodyDef = new B2BodyDef();
+        enemy.bodyDef.position.set(enemy.position.x, enemy.position.y);
+        enemy.bodyDef.linearVelocity.set(enemy.velocity.x, enemy.velocity.y);
+        enemy.bodyDef.type = B2Body.b2_dynamicBody;
+
+        enemy.shape = new B2PolygonShape();
+        enemy.shape.setAsBox ((enemy.width)/2, (enemy.height)/2);
+
+        enemy.fixtureDef = new B2FixtureDef();
+        enemy.fixtureDef.shape = enemy.shape;
+        enemy.fixtureDef.friction = 1;
+        enemy.fixtureDef.density = 1;
+        enemy.body = world.createBody(enemy.bodyDef);
+        enemy.fixture = enemy.body.createFixture(enemy.fixtureDef);
+        enemy.body.setUserData("enemy");
+    }
     public function update(state:GameState, gameTime:GameTime):Void {
         //UPDATES VELOCITY
         state.player.velocity = state.player.body.getLinearVelocity(); //Just in case -__-
@@ -133,8 +162,13 @@ class GameplayController {
         //if (state.player.position.y < -250) state.player.position = new B2Vec2(state.player.position.x, -250);
 
         physicsController.update(gameTime.elapsed);
-        state.player.position = state.player.body.getPosition();       
-        
-        trace(state.player.position.x, state.player.position.y);
+        state.player.position = state.player.body.getPosition();
+
+        for (entity in state.entities) {
+            entity.position = entity.body.getPosition();
+            //trace(entity.body.getLinearVelocity().x);
+            //trace(entity.position.x);
+        }
+        //trace(state.player.position.x, state.player.position.y);
     }
 }

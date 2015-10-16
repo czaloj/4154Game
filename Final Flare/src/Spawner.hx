@@ -13,11 +13,12 @@ class Spawner {
     public function new() {
     }
 
-    public static function spawn(state: GameState, renderer:Renderer) {
+    public static function spawn(gameplayController:GameplayController, state: GameState, renderer:Renderer) {
         for (spawner in state.spawners) {
             var enemy = new ObjectModel();
             enemy.position.set(spawner.position.x, spawner.position.y);
             state.entities.push(enemy);
+            gameplayController.createEnemy(enemy);
             renderer.onEntityAdded(enemy);
         }
     }

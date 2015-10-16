@@ -11,38 +11,21 @@ import box2D.common.math.B2Vec2;
 
 class AIController {
     public var entities:Array<ObjectModel>;
-    public var ai:Pathfinder;
 
-    public function new(state:GameState, world:B2World) {
-        entities = state.entities;
-        for (entity in entities) {
-            // TODO: this should be initialized elsewhere?
-            entity.grounded = false;
-            entity.rotation = 0;
-            entity.velocity.set(0,0);
-            entity.left = false;
-            entity.right = false;
-            entity.dimension = new Point(32, 64);
-               entity.height = 64;
-            entity.width = 32;
-            initPhysics(entity, world);
-        }
-        ai = new Pathfinder(entities,state);
-
+    public function new() {
     }
-
     private function initPhysics (entity:ObjectModel, world:B2World):Void {
 
         entity.bodyDef = new B2BodyDef();
-        entity.bodyDef.position.set(entity.position.x * PHYSICS_SCALE, entity.position.y * PHYSICS_SCALE);
+        entity.bodyDef.position.set(entity.position.x, entity.position.y);
         entity.bodyDef.type = B2Body.b2_dynamicBody;
-     
+
         var polygon = new B2PolygonShape ();
-        polygon.setAsBox ((entity.width / 2) * PHYSICS_SCALE, (entity.height / 2) * PHYSICS_SCALE);
-     
+        polygon.setAsBox ((entity.width / 2), (entity.height / 2));
+
         entity.fixtureDef = new B2FixtureDef();
         entity.fixtureDef.shape = polygon;
-        entity.fixtureDef.density = .001; 
+        entity.fixtureDef.density = .001;
         entity.body = world.createBody(entity.bodyDef);
         entity.body.createFixture(entity.fixtureDef);
         entity.body.setUserData(entity.id);
@@ -50,21 +33,21 @@ class AIController {
     }
 
     public function update(state:GameState):Void {
-        for (entity in entities) {
+        for (entity in state.entities) {
             // Move the entity on conditional speed
             var moveSpeed = entity.grounded ? .55 : .35;
             if (entity.left) entity.velocity.x -= moveSpeed;
             if (entity.right) entity.velocity.x += moveSpeed;
-        
+
             // It seems we want to do conditional friction?
             if (!entity.left && !entity.right) {
                 var friction = entity.grounded ? .3 : .85;
                 entity.velocity.x *= friction;
             }
-        
-            // Clamp speed to a maximum value        
-            entity.velocity.x = Math.min(ObjectModel.MAX_SPEED, Math.max( -ObjectModel.MAX_SPEED, entity.velocity.x));
-        
+
+            // Clamp speed to a maximum value
+            //entity.velocity.x = Math.min(ObjectModel.MAX_SPEED, Math.max( -ObjectModel.MAX_SPEED, entity.velocity.x));
+
             entity.position = entity.body.getPosition();
             var pos:B2Vec2 = entity.body.getPosition();
             if (pos.x > 10) pos = new B2Vec2(10.0,pos.y);
@@ -72,9 +55,8 @@ class AIController {
             if (pos.y > 10) pos = new B2Vec2(pos.x,10.0);
             if (pos.y < -10) pos = new B2Vec2(pos.x,-10.0);
             entity.position = pos;
-        
+
             entity.body.setLinearVelocity(entity.velocity);
         }
-        state.entities = entities;
     }
 }
