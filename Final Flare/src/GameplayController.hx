@@ -39,7 +39,7 @@ class GameplayController {
 
     public function init(state:GameState):Void {
         createPlayer(physicsController.world, state.player);
-
+        state.entities.push(state.player);
         for (i in 0...(state.width * state.height)) {
             var x:Float = (i % state.width) * TILE_HALF_WIDTH + (TILE_HALF_WIDTH * 0.5);
             var y:Float = (state.height -  (Std.int(i / state.width) + 1)) * TILE_HALF_WIDTH + (TILE_HALF_WIDTH * 0.5);
@@ -88,6 +88,7 @@ class GameplayController {
         player.bodyDef = new B2BodyDef();
         player.bodyDef.position.set(player.position.x, player.position.y);
         player.bodyDef.type = B2Body.b2_dynamicBody;
+        player.bodyDef.fixedRotation = true;
 
         player.shape = new B2PolygonShape();
         player.shape.setAsBox ((player.width)/2, (player.height)/2);
@@ -118,6 +119,7 @@ class GameplayController {
         enemy.bodyDef.position.set(enemy.position.x, enemy.position.y);
         enemy.bodyDef.linearVelocity.set(enemy.velocity.x, enemy.velocity.y);
         enemy.bodyDef.type = B2Body.b2_dynamicBody;
+        enemy.bodyDef.fixedRotation = true;
 
         enemy.shape = new B2PolygonShape();
         enemy.shape.setAsBox ((enemy.width)/2, (enemy.height)/2);
@@ -131,40 +133,38 @@ class GameplayController {
         enemy.body.setUserData("enemy");
     }
     public function update(state:GameState, gameTime:GameTime):Void {
-        //UPDATES VELOCITY
-        state.player.velocity = state.player.body.getLinearVelocity(); //Just in case -__-
-        var moveSpeed = state.player.grounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
-        if (state.player.left) state.player.velocity.x -= moveSpeed;
-        if (state.player.right) state.player.velocity.x += moveSpeed;
-
-        //Apply friction if there is no input command
-        if (!state.player.left && !state.player.right) {
-            var friction = state.player.grounded ? PLAYER_GROUND_FRICTION : PLAYER_AIR_FRICTION;
-            state.player.velocity.x *= friction;
-        }
-
-        // Clamp speed to a maximum value
-        state.player.velocity.x = Math.min(PLAYER_MAX_SPEED, Math.max(-PLAYER_MAX_SPEED, state.player.velocity.x));
-
-        if (state.player.up) {
-                state.player.velocity.y = 70;
-        }
-
-        state.player.body.setLinearVelocity(state.player.velocity); //So that the velocity actually does something
-
-        //UPDATE POSITION
-
-        var levelWidth = state.width * TILE_HALF_WIDTH;
-        var levelHeight = state.height * TILE_HALF_WIDTH;
-        if (state.player.position.x > levelWidth - state.player.width / 2) state.player.position.x = levelWidth - state.player.width / 2;
-        if (state.player.position.x < state.player.width / 2) state.player.position.x = state.player.width / 2;
-        //if (state.player.position.y > 250) state.player.position = new B2Vec2(state.player.position.x,250);
-        //if (state.player.position.y < -250) state.player.position = new B2Vec2(state.player.position.x, -250);
-
-        physicsController.update(gameTime.elapsed);
-        state.player.position = state.player.body.getPosition();
-
         for (entity in state.entities) {
+            //UPDATES VELOCITY
+            entity.velocity = entity.body.getLinearVelocity(); //Just in case -__-
+            var moveSpeed = entity.grounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
+            if (entity.left) entity.velocity.x -= moveSpeed;
+            if (entity.right) entity.velocity.x += moveSpeed;
+
+            //Apply friction if there is no input command
+            if (!entity.left && !entity.right) {
+                var friction = entity.grounded ? PLAYER_GROUND_FRICTION : PLAYER_AIR_FRICTION;
+                entity.velocity.x *= friction;
+            }
+
+            // Clamp speed to a maximum value
+            entity.velocity.x = Math.min(PLAYER_MAX_SPEED, Math.max(-PLAYER_MAX_SPEED, entity.velocity.x));
+
+            if (entity.up) {
+                    entity.velocity.y = 70;
+            }
+
+            entity.body.setLinearVelocity(entity.velocity); //So that the velocity actually does something
+
+            //UPDATE POSITION
+
+            var levelWidth = state.width * TILE_HALF_WIDTH;
+            var levelHeight = state.height * TILE_HALF_WIDTH;
+            if (entity.position.x > levelWidth - entity.width / 2) entity.position.x = levelWidth - entity.width / 2;
+            if (entity.position.x < entity.width / 2) entity.position.x = entity.width / 2;
+            //if (entity.position.y > 250) entity.position = new B2Vec2(entity.position.x,250);
+            //if (entity.position.y < -250) entity.position = new B2Vec2(entity.position.x, -250);
+
+            physicsController.update(gameTime.elapsed);
             entity.position = entity.body.getPosition();
             //trace(entity.body.getLinearVelocity().x);
             //trace(entity.position.x);

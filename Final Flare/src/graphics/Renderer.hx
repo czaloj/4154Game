@@ -24,7 +24,7 @@ class Renderer {
     private var stage3D:Stage;
     //private var myState:GameState;
     public var sprites:Array<Sprite> = [];
-    public var enemyTbl:ObjectMap<ObjectModel, AnimatedSprite> = new ObjectMap<ObjectModel, AnimatedSprite>();
+    public var entityTbl:ObjectMap<ObjectModel, AnimatedSprite> = new ObjectMap<ObjectModel, AnimatedSprite>();
 
     public var cameraX(get,set):Float;
     public var cameraY(get,set):Float;
@@ -102,24 +102,24 @@ class Renderer {
         enemy.y = o.position.y - o.height * 0.5;
         //trace(enemy.x, enemy.y);
         hierarchy.enemy.addChild(enemy);
-        enemyTbl.set(o,enemy);
+        entityTbl.set(o,enemy);
         //what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
     }
     public function onEntityRemoved(o:ObjectModel):Void {
         //idk about this function the implementation i was thinking of was sketchy.
         //i need to figure out the mapping between objectModels and sprites
-        hierarchy.enemy.removeChild(enemyTbl.get(o));
-        enemyTbl.remove(o);
+        hierarchy.enemy.removeChild(entityTbl.get(o));
+        entityTbl.remove(o);
         // Remove this entity from the stage
     }
 
     public function update(s:GameState):Void {
         // TODO: Update sprite positions from entities
-        for (o in enemyTbl.keys()) {
-            enemyTbl.get(o).x = o.position.x - o.width * 0.5;
-            enemyTbl.get(o).y = o.position.y - o.height * 0.5;
+        for (o in entityTbl.keys()) {
+            entityTbl.get(o).x = o.position.x - o.width * 0.5;
+            entityTbl.get(o).y = o.position.y - o.height * 0.5;
             //trace(o.position.x,  o.position.y);
-            //trace(enemyTbl.get(o).x,  enemyTbl.get(o).y);
+            //trace(entityTbl.get(o).x,  entityTbl.get(o).y);
         }
         // Center camera on player and constrict to level bounds
         var levelWidth = s.width * TILE_HALF_WIDTH;
@@ -145,7 +145,7 @@ class Renderer {
         man.x = state.player.position.x - PLAYER_WIDTH * 0.5;
         man.y = state.player.position.y - PLAYER_HEIGHT * 0.5;
         hierarchy.player.addChild(man);
-        //enemyTbl.set(state.player,man);
+        entityTbl.set(state.player,man);
         function fAdd(x:Float, y:Float, n:String):Void {
             var brick:StaticSprite = new StaticSprite(pack.environment, n);
             brick.x = x;
