@@ -84,7 +84,7 @@ class GameplayScreen extends IGameScreen {
         gameplayController.initDebug(debugPhysicsView);
         Lib.current.stage.addChild(debugPhysicsView);
 
-        
+
         // TODO: Remove this test code
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         var hb:StaticSprite = uif.getTile("Health.Background");
@@ -106,12 +106,12 @@ class GameplayScreen extends IGameScreen {
         // Update game logic
         gameplayController.update(state, gameTime);
         if (gameTime.frame%120 ==0) {
-           //Spawner.spawn(state, renderer);
+           Spawner.spawn(gameplayController, state, renderer);
         }
     }
     override function draw(gameTime:GameTime):Void {
         renderer.update(state);
-        
+
         // Update the view for the debug physics
         debugPhysicsView.x = -renderer.cameraX + ScreenController.SCREEN_WIDTH / 2;
         debugPhysicsView.y = renderer.cameraY + ScreenController.SCREEN_HEIGHT / 2;

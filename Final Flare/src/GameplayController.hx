@@ -21,8 +21,7 @@ class GameplayController {
     public static var PLAYER_AIR_FRICTION:Float = .9;
     public static inline var TILE_HALF_WIDTH:Float = 16;
 
-    private var platform:ObjectModel;
-    private var physicsController:PhysicsController;
+    public var physicsController:PhysicsController;
     private var debugPhysicsView:Sprite;
 
     public function new() {
@@ -36,10 +35,10 @@ class GameplayController {
         debugPhysicsView.scaleY = -debugPhysicsView.scaleY;
         physicsController.initDebug(debugPhysicsView);
     }
-    
+
     public function init(state:GameState):Void {
         createPlayer(physicsController.world, state.player);
-
+        state.entities.push(state.player);
         for (i in 0...(state.width * state.height)) {
             var x:Float = (i % state.width) * TILE_HALF_WIDTH + (TILE_HALF_WIDTH * 0.5);
             var y:Float = (state.height -  (Std.int(i / state.width) + 1)) * TILE_HALF_WIDTH + (TILE_HALF_WIDTH * 0.5);
@@ -88,7 +87,7 @@ class GameplayController {
         player.bodyDef = new B2BodyDef();
         player.bodyDef.position.set(player.position.x, player.position.y);
         player.bodyDef.type = B2Body.b2_dynamicBody;
-		player.bodyDef.fixedRotation = true;
+        player.bodyDef.fixedRotation = true;
 
         player.shape = new B2PolygonShape();
         player.shape.setAsBox ((player.width)/2, (player.height)/2);
@@ -104,7 +103,7 @@ class GameplayController {
 	
 	//TODO ADD ARGUMENTS FROM PARSER SO THAT RIGHT INFO IS USED
 	public function createEnemy(world:B2World, enemy:ObjectModel) {
-		enemy.id = "player";
+		enemy.id = "enemy";
         enemy.velocity.set(0,0);
         enemy.grounded = false;
         enemy.rotation = 0;
@@ -131,14 +130,7 @@ class GameplayController {
         enemy.body.setUserData(enemy);
 		
 	}
-	/*
-	 * <code>function Callback(fixture:B2Fixture,    // The fixture hit by the ray
-	 * point:B2Vec2,         // The point of initial intersection
-	 * normal:B2Vec2,        // The normal vector at the point of intersection
-	 * fraction:Float       // The fractional length along the ray of the intersection
-	 * ):Float
-	 * </code>
-	 */
+	
 	public dynamic function raycastReporter(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
 		if (fixture.getBody().getUserData() != null)
 		{
@@ -178,56 +170,58 @@ class GameplayController {
 		
 		return false;
 	}
-
+	
     public function update(state:GameState, gameTime:GameTime):Void {
-        //UPDATES VELOCITY
-        state.player.velocity = state.player.body.getLinearVelocity(); //Just in case -__-
-        var moveSpeed = state.player.grounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
-        if (state.player.left) state.player.velocity.x -= moveSpeed;
-        if (state.player.right) state.player.velocity.x += moveSpeed;
+        for (entity in state.entities) {
+            //UPDATES VELOCITY
+            entity.velocity = entity.body.getLinearVelocity(); //Just in case -__-
+            var moveSpeed = entity.grounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
+            if (entity.left) entity.velocity.x -= moveSpeed;
+            if (entity.right) entity.velocity.x += moveSpeed;
 
-        //Apply friction if there is no input command
-        if (!state.player.left && !state.player.right) {
-            var friction = state.player.grounded ? PLAYER_GROUND_FRICTION : PLAYER_AIR_FRICTION;
-            state.player.velocity.x *= friction;
+            //Apply friction if there is no input command
+            if (!entity.left && !entity.right) {
+                var friction = entity.grounded ? PLAYER_GROUND_FRICTION : PLAYER_AIR_FRICTION;
+                entity.velocity.x *= friction;
+            }
+
+            // Clamp speed to a maximum value
+            entity.velocity.x = Math.min(PLAYER_MAX_SPEED, Math.max(-PLAYER_MAX_SPEED, entity.velocity.x));
+
+            if (entity.up && entity.leftFootGrounded) {
+                    entity.velocity.y = 70;
+            }
+
+            entity.body.setLinearVelocity(entity.velocity); //So that the velocity actually does something
+
+            //UPDATE POSITION
+
+            var levelWidth = state.width * TILE_HALF_WIDTH;
+            var levelHeight = state.height * TILE_HALF_WIDTH;
+            if (entity.position.x > levelWidth - entity.width / 2) entity.position.x = levelWidth - entity.width / 2;
+            if (entity.position.x < entity.width / 2) entity.position.x = entity.width / 2;
+            //if (entity.position.y > 250) entity.position = new B2Vec2(entity.position.x,250);
+            //if (entity.position.y < -250) entity.position = new B2Vec2(entity.position.x, -250);
+
+			physicsController.update(gameTime.elapsed);
+			entity.position = entity.body.getPosition();
+			
+			//Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
+			//Update left Ray
+			state.player.leftRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
+			state.player.leftRayEnd = new B2Vec2(state.player.leftRayStart.x, state.player.leftRayStart.y + 3);
+
+			//Update right ray
+			state.player.leftRayStart = new B2Vec2(state.player.position.x + state.player.width, state.player.position.y + state.player.height);
+			state.player.rightRayEnd = new B2Vec2(state.player.rightRayStart.x, state.player.rightRayStart.y + 3);
+
+			//Update left wall Ray
+			state.player.leftWallRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
+			state.player.leftWallRayEnd = new B2Vec2(state.player.leftWallRayStart.x -3, state.player.leftWallRayStart.y);
+
+			//Update right wall ray
+			state.player.rightWallRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
+			state.player.rightWallRayEnd = new B2Vec2(state.player.rightWallRayStart.x + 3, state.player.rightWallRayStart.y);
         }
-
-        // Clamp speed to a maximum value
-        state.player.velocity.x = Math.min(PLAYER_MAX_SPEED, Math.max(-PLAYER_MAX_SPEED, state.player.velocity.x));
-
-        if (state.player.up && state.player.leftFootGrounded) {
-                state.player.velocity.y = 70;
-        }
-
-        state.player.body.setLinearVelocity(state.player.velocity); //So that the velocity actually does something
-
-        //UPDATE POSITION
-
-        var levelWidth = state.width * TILE_HALF_WIDTH;
-        var levelHeight = state.height * TILE_HALF_WIDTH;
-        if (state.player.position.x > levelWidth - state.player.width / 2) state.player.position.x = levelWidth - state.player.width / 2;
-        if (state.player.position.x < state.player.width / 2) state.player.position.x = state.player.width / 2;
-        //if (state.player.position.y > 250) state.player.position = new B2Vec2(state.player.position.x,250);
-        //if (state.player.position.y < -250) state.player.position = new B2Vec2(state.player.position.x, -250);
-
-        physicsController.update(gameTime.elapsed);
-        state.player.position = state.player.body.getPosition();
-		
-		//Update Raycast Rays
-         //Update left Ray
-		state.player.leftRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
-		state.player.leftRayEnd = new B2Vec2(state.player.leftRayStart.x, state.player.leftRayStart.y + 3);
-
-		//Update right ray
-		state.player.leftRayStart = new B2Vec2(state.player.position.x + state.player.width, state.player.position.y + state.player.height);
-		state.player.rightRayEnd = new B2Vec2(state.player.rightRayStart.x, state.player.rightRayStart.y + 3);
-
-		//Update left wall Ray
-		state.player.leftWallRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
-		state.player.leftWallRayEnd = new B2Vec2(state.player.leftWallRayStart.x -3, state.player.leftWallRayStart.y);
-
-		//Update right wall ray
-		state.player.rightWallRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
-		state.player.rightWallRayEnd = new B2Vec2(state.player.rightWallRayStart.x + 3, state.player.rightWallRayStart.y);
     }
 }
