@@ -131,13 +131,33 @@ class GameplayController {
 		
 	}
 	
-	public dynamic function raycastReporter(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
+	public function updatePlayerRays(state:GameState):Void 
+	{
+		//Update left Ray
+		state.player.leftRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
+		state.player.leftRayEnd = new B2Vec2(state.player.leftRayStart.x, state.player.leftRayStart.y + 3);
+
+		//Update right ray
+		state.player.leftRayStart = new B2Vec2(state.player.position.x + state.player.width, state.player.position.y + state.player.height);
+		state.player.rightRayEnd = new B2Vec2(state.player.rightRayStart.x, state.player.rightRayStart.y + 3);
+
+		//Update left wall Ray
+		state.player.leftWallRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
+		state.player.leftWallRayEnd = new B2Vec2(state.player.leftWallRayStart.x -3, state.player.leftWallRayStart.y);
+
+		//Update right wall ray
+		state.player.rightWallRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
+		state.player.rightWallRayEnd = new B2Vec2(state.player.rightWallRayStart.x + 3, state.player.rightWallRayStart.y);
+	}
+	
+	public dynamic function raycastLeftCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
 		if (fixture.getBody().getUserData() != null)
 		{
 			var o = fixture.getBody().getUserData();
 			cast(o, ObjectModel);
 			if (o.id == "platform")
 			{
+				o.leftFootGrounded= true;
 				return fraction;
 			}
 			else
@@ -148,17 +168,70 @@ class GameplayController {
 		return -1;
 	}
 	
-	public function Raycast(world:B2World, o:ObjectModel):Void {
-	//Left foot raycast
-	o.leftFootGrounded = false;
-	//o.rightFootGrounded = false;
-	//o.leftTouchingWall  = false;
-	//o.rightTouchingWall =  false;	
-	world.rayCast(raycastReporter, o.leftRayStart, o.leftRayEnd);
-	//world.rayCast(raycastReporter, o.rightRayStart, o.rightRayEnd);
-	//world.rayCast(raycastReporter, o.leftWallRayStart, o.leftWallRayEnd);
-	//world.rayCast(raycastReporter, o.rightWallRayStart, o.rightWallRayEnd);
+	public dynamic function raycastRightCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
+		if (fixture.getBody().getUserData() != null)
+		{
+			var o = fixture.getBody().getUserData();
+			cast(o, ObjectModel);
+			if (o.id == "platform")
+			{
+				o.rightFootGrounded= true;
+				return fraction;
+			}
+			else
+			{
+				return 0;
+			}
+		}	
+		return -1;
+	}
 	
+	public dynamic function raycastLeftWallCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
+		if (fixture.getBody().getUserData() != null)
+		{
+			var o = fixture.getBody().getUserData();
+			cast(o, ObjectModel);
+			if (o.id == "platform")
+			{
+				o.leftTouchingWall= true;
+				return fraction;
+			}
+			else
+			{
+				return 0;
+			}
+		}	
+		return -1;
+	}
+	
+	public dynamic function raycastRightWallCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
+		if (fixture.getBody().getUserData() != null)
+		{
+			var o = fixture.getBody().getUserData();
+			cast(o, ObjectModel);
+			if (o.id == "platform")
+			{
+				o.rightTouchingWall= true;
+				return fraction;
+			}
+			else
+			{
+				return 0;
+			}
+		}	
+		return -1;
+	}
+	
+	
+	public function Raycast(world:B2World, o:ObjectModel):Void {
+		o.leftFootGrounded = false;
+		o.rightFootGrounded = false;
+		o.leftTouchingWall  = false;
+		o.rightTouchingWall =  false;	
+		world.rayCast(raycastLeftCallback, o.leftRayStart, o.leftRayEnd);
+		world.rayCast(raycastRightCallback, o.rightRayStart, o.rightRayEnd);
+		world.rayCast(raycastLeftWallCallback, o.leftWallRayStart, o.leftWallRayEnd);
+		world.rayCast(raycastRightWallCallback, o.rightWallRayStart, o.rightWallRayEnd);
 	}	
 	
 	public function handleCollisions(entity1: ObjectModel, entity2: ObjectModel) :Bool
@@ -207,21 +280,9 @@ class GameplayController {
 			entity.position = entity.body.getPosition();
 			
 			//Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
-			//Update left Ray
-			state.player.leftRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
-			state.player.leftRayEnd = new B2Vec2(state.player.leftRayStart.x, state.player.leftRayStart.y + 3);
-
-			//Update right ray
-			state.player.leftRayStart = new B2Vec2(state.player.position.x + state.player.width, state.player.position.y + state.player.height);
-			state.player.rightRayEnd = new B2Vec2(state.player.rightRayStart.x, state.player.rightRayStart.y + 3);
-
-			//Update left wall Ray
-			state.player.leftWallRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
-			state.player.leftWallRayEnd = new B2Vec2(state.player.leftWallRayStart.x -3, state.player.leftWallRayStart.y);
-
-			//Update right wall ray
-			state.player.rightWallRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
-			state.player.rightWallRayEnd = new B2Vec2(state.player.rightWallRayStart.x + 3, state.player.rightWallRayStart.y);
+			updatePlayerRays(state);
+			Raycast(physicsController.world, state.player);
+			trace(state.player.leftFootGrounded);
         }
     }
 }
