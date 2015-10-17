@@ -19,6 +19,10 @@ import openfl.ui.Keyboard;
 import starling.display.Quad;
 import starling.textures.Texture;
 import ui.UISpriteFactory;
+import flash.events.KeyboardEvent;
+import flash.events.MouseEvent;
+import openfl.ui.Keyboard;
+import openfl.ui.Mouse;
 
 class GameplayScreen extends IGameScreen {
     private var state:GameState;
@@ -79,6 +83,8 @@ class GameplayScreen extends IGameScreen {
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);
 
+		openfl.Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, inputController.mouseDown);
+        openfl.Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, inputController.mouseUp);
         // Debug view of physics
         debugPhysicsView = new Sprite();
         gameplayController.initDebug(debugPhysicsView);
