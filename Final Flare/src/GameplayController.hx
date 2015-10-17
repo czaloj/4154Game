@@ -21,7 +21,7 @@ class GameplayController {
     public static var PLAYER_AIR_FRICTION:Float = .9;
     public static inline var TILE_HALF_WIDTH:Float = 16;
 
-	public var state:GameState;
+    public var state:GameState;
     public var physicsController:PhysicsController;
     private var debugPhysicsView:Sprite;
 
@@ -38,7 +38,7 @@ class GameplayController {
     }
 
     public function init(s:GameState):Void {
-		state = s;
+        state = s;
         createPlayer(physicsController.world, state.player);
         state.entities.push(state.player);
         for (i in 0...(state.width * state.height)) {
@@ -102,10 +102,10 @@ class GameplayController {
         player.fixture = player.body.createFixture(player.fixtureDef);
         player.body.setUserData(player);
     }
-	
-	//TODO ADD ARGUMENTS FROM PARSER SO THAT RIGHT INFO IS USED
-	public function createEnemy(world:B2World, enemy:ObjectModel) {
-		enemy.id = "enemy";
+    
+    //TODO ADD ARGUMENTS FROM PARSER SO THAT RIGHT INFO IS USED
+    public function createEnemy(world:B2World, enemy:ObjectModel) {
+        enemy.id = "enemy";
         enemy.velocity.set(0,0);
         enemy.grounded = false;
         enemy.rotation = 0;
@@ -118,7 +118,7 @@ class GameplayController {
         enemy.bodyDef = new B2BodyDef();
         enemy.bodyDef.position.set(enemy.position.x, enemy.position.y);
         enemy.bodyDef.type = B2Body.b2_dynamicBody;
-		enemy.bodyDef.fixedRotation = true;
+        enemy.bodyDef.fixedRotation = true;
 
         enemy.shape = new B2PolygonShape();
         enemy.shape.setAsBox ((enemy.width)/2, (enemy.height)/2);
@@ -130,129 +130,129 @@ class GameplayController {
         enemy.body = world.createBody(enemy.bodyDef);
         enemy.fixture = enemy.body.createFixture(enemy.fixtureDef);
         enemy.body.setUserData(enemy);
-		
-	}
-	
-	public function updatePlayerRays(state:GameState):Void 
-	{
-		//Update left Ray
-		state.player.leftRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
-		state.player.leftRayEnd = new B2Vec2(state.player.leftRayStart.x, state.player.leftRayStart.y + 3);
+        
+    }
+    
+    public function updatePlayerRays(state:GameState):Void 
+    {
+        //Update left Ray
+        state.player.leftRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
+        state.player.leftRayEnd = new B2Vec2(state.player.leftRayStart.x, state.player.leftRayStart.y + 3);
 
-		//Update right ray
-		state.player.rightRayStart = new B2Vec2(state.player.position.x + state.player.width, state.player.position.y + state.player.height);
-		state.player.rightRayEnd = new B2Vec2(state.player.rightRayStart.x, state.player.rightRayStart.y + 3);
+        //Update right ray
+        state.player.rightRayStart = new B2Vec2(state.player.position.x + state.player.width, state.player.position.y + state.player.height);
+        state.player.rightRayEnd = new B2Vec2(state.player.rightRayStart.x, state.player.rightRayStart.y + 3);
 
-		//Update left wall Ray
-		state.player.leftWallRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
-		state.player.leftWallRayEnd = new B2Vec2(state.player.leftWallRayStart.x -3, state.player.leftWallRayStart.y);
+        //Update left wall Ray
+        state.player.leftWallRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
+        state.player.leftWallRayEnd = new B2Vec2(state.player.leftWallRayStart.x -3, state.player.leftWallRayStart.y);
 
-		//Update right wall ray
-		state.player.rightWallRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
-		state.player.rightWallRayEnd = new B2Vec2(state.player.rightWallRayStart.x + 3, state.player.rightWallRayStart.y);
-	}
-	
-	public dynamic function raycastLeftCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
-		trace("here");
-		if (fixture.getBody().getUserData() != null)
-		{
-			trace("we");
-			var o = fixture.getBody().getUserData();
-			cast(o, ObjectModel);
-			trace(o.id);
-			if (o.id == "platform")
-			{
-				trace("go");
-				state.player.leftFootGrounded= true;
-				return fraction;
-			}
-			else
-			{
-				return 0;
-			}
-		}
-		return -1;
-	}
-	
-	public dynamic function raycastRightCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
-		if (fixture.getBody().getUserData() != null)
-		{
-			var o = fixture.getBody().getUserData();
-			cast(o, ObjectModel);
-			if (o.id == "platform")
-			{
-				state.player.rightFootGrounded= true;
-				return fraction;
-			}
-			else
-			{
-				return 0;
-			}
-		}	
-		return -1;
-	}
-	
-	public dynamic function raycastLeftWallCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
-		if (fixture.getBody().getUserData() != null)
-		{
-			var o = fixture.getBody().getUserData();
-			cast(o, ObjectModel);
-			if (o.id == "platform")
-			{
-				state.player.leftTouchingWall= true;
-				return fraction;
-			}
-			else
-			{
-				return 0;
-			}
-		}	
-		return -1;
-	}
-	
-	public dynamic function raycastRightWallCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
-		if (fixture.getBody().getUserData() != null)
-		{
-			var o = fixture.getBody().getUserData();
-			cast(o, ObjectModel);
-			if (o.id == "platform")
-			{
-				state.player.rightTouchingWall= true;
-				return fraction;
-			}
-			else
-			{
-				return 0;
-			}
-		}	
-		return -1;
-	}
-	
-	
-	public function Raycast(world:B2World, o:ObjectModel):Void {
-		o.leftFootGrounded = false;
-		o.rightFootGrounded = false;
-		o.leftTouchingWall  = false;
-		o.rightTouchingWall =  false;	
-		world.rayCast(raycastLeftCallback, o.leftRayStart, o.leftRayEnd);
-		trace("hi");
-		world.rayCast(raycastRightCallback, o.rightRayStart, o.rightRayEnd);
-		world.rayCast(raycastLeftWallCallback, o.leftWallRayStart, o.leftWallRayEnd);
-		world.rayCast(raycastRightWallCallback, o.rightWallRayStart, o.rightWallRayEnd);
-	}	
-	
-	public function handleCollisions(entity1: ObjectModel, entity2: ObjectModel) :Bool
-	{
-		//You can walk through enemies
-		if (entity1.id == "player" && entity2.id == "enemy" || entity1.id == "enemy" && entity2.id == "player") {		
-			return false;
-		}
-		
-		return false;
-	}
-	
+        //Update right wall ray
+        state.player.rightWallRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
+        state.player.rightWallRayEnd = new B2Vec2(state.player.rightWallRayStart.x + 3, state.player.rightWallRayStart.y);
+    }
+    
+    public dynamic function raycastLeftCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
+        trace("here");
+        if (fixture.getBody().getUserData() != null)
+        {
+            trace("we");
+            var o = fixture.getBody().getUserData();
+            cast(o, ObjectModel);
+            trace(o.id);
+            if (o.id == "platform")
+            {
+                trace("go");
+                state.player.leftFootGrounded= true;
+                return fraction;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        return -1;
+    }
+    
+    public dynamic function raycastRightCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
+        if (fixture.getBody().getUserData() != null)
+        {
+            var o = fixture.getBody().getUserData();
+            cast(o, ObjectModel);
+            if (o.id == "platform")
+            {
+                state.player.rightFootGrounded= true;
+                return fraction;
+            }
+            else
+            {
+                return 0;
+            }
+        }    
+        return -1;
+    }
+    
+    public dynamic function raycastLeftWallCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
+        if (fixture.getBody().getUserData() != null)
+        {
+            var o = fixture.getBody().getUserData();
+            cast(o, ObjectModel);
+            if (o.id == "platform")
+            {
+                state.player.leftTouchingWall= true;
+                return fraction;
+            }
+            else
+            {
+                return 0;
+            }
+        }    
+        return -1;
+    }
+    
+    public dynamic function raycastRightWallCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
+        if (fixture.getBody().getUserData() != null)
+        {
+            var o = fixture.getBody().getUserData();
+            cast(o, ObjectModel);
+            if (o.id == "platform")
+            {
+                state.player.rightTouchingWall= true;
+                return fraction;
+            }
+            else
+            {
+                return 0;
+            }
+        }    
+        return -1;
+    }
+    
+    
+    public function Raycast(world:B2World, o:ObjectModel):Void {
+        o.leftFootGrounded = false;
+        o.rightFootGrounded = false;
+        o.leftTouchingWall  = false;
+        o.rightTouchingWall =  false;    
+        world.rayCast(raycastLeftCallback, o.leftRayStart, o.leftRayEnd);
+        trace("hi");
+        world.rayCast(raycastRightCallback, o.rightRayStart, o.rightRayEnd);
+        world.rayCast(raycastLeftWallCallback, o.leftWallRayStart, o.leftWallRayEnd);
+        world.rayCast(raycastRightWallCallback, o.rightWallRayStart, o.rightWallRayEnd);
+    }    
+    
+    public function handleCollisions(entity1: ObjectModel, entity2: ObjectModel) :Bool
+    {
+        //You can walk through enemies
+        if (entity1.id == "player" && entity2.id == "enemy" || entity1.id == "enemy" && entity2.id == "player") {        
+            return false;
+        }
+        
+        return false;
+    }
+    
     public function update(s:GameState, gameTime:GameTime):Void {
-		state = s;
+        state = s;
         for (entity in state.entities) {
             //UPDATES VELOCITY
             entity.velocity = entity.body.getLinearVelocity(); //Just in case -__-
@@ -284,12 +284,12 @@ class GameplayController {
             //if (entity.position.y > 250) entity.position = new B2Vec2(entity.position.x,250);
             //if (entity.position.y < -250) entity.position = new B2Vec2(entity.position.x, -250);
 
-			physicsController.update(gameTime.elapsed);
-			entity.position = entity.body.getPosition();
-			
-			//Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
-			updatePlayerRays(state);
-			Raycast(physicsController.world, state.player);
+            physicsController.update(gameTime.elapsed);
+            entity.position = entity.body.getPosition();
+            
+            //Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
+            updatePlayerRays(state);
+            Raycast(physicsController.world, state.player);
         }
     }
 }
