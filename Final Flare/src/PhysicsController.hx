@@ -39,10 +39,10 @@ class PhysicsController extends B2ContactListener {
 
     public function BeginContact(contact:B2Contact):Void {
         // Check what was in collision
-        var entity1 = contact.getFixtureA().getBody().getUserData();
-        var entity2 = contact.getFixtureB().getBody().getUserData();
-        trace(entity1);
-        trace(entity2);
+        var entity1 = cast(contact.getFixtureA().getBody().getUserData(), ObjectModel);
+        var entity2 = cast(contact.getFixtureB().getBody().getUserData(), ObjectModel);		
+		var id1 = entity1.id;
+		var id2 = entity2.id;
 
         // TODO: Just enqueue something into the state for the GameplayController to process
     }
