@@ -21,6 +21,7 @@ class GameplayController {
     public static var PLAYER_AIR_FRICTION:Float = .9;
     public static inline var TILE_HALF_WIDTH:Float = 16;
 
+	public var state:GameState;
     public var physicsController:PhysicsController;
     private var debugPhysicsView:Sprite;
 
@@ -36,7 +37,8 @@ class GameplayController {
         physicsController.initDebug(debugPhysicsView);
     }
 
-    public function init(state:GameState):Void {
+    public function init(s:GameState):Void {
+		state = s;
         createPlayer(physicsController.world, state.player);
         state.entities.push(state.player);
         for (i in 0...(state.width * state.height)) {
@@ -138,7 +140,7 @@ class GameplayController {
 		state.player.leftRayEnd = new B2Vec2(state.player.leftRayStart.x, state.player.leftRayStart.y + 3);
 
 		//Update right ray
-		state.player.leftRayStart = new B2Vec2(state.player.position.x + state.player.width, state.player.position.y + state.player.height);
+		state.player.rightRayStart = new B2Vec2(state.player.position.x + state.player.width, state.player.position.y + state.player.height);
 		state.player.rightRayEnd = new B2Vec2(state.player.rightRayStart.x, state.player.rightRayStart.y + 3);
 
 		//Update left wall Ray
@@ -151,13 +153,17 @@ class GameplayController {
 	}
 	
 	public dynamic function raycastLeftCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
+		trace("here");
 		if (fixture.getBody().getUserData() != null)
 		{
+			trace("we");
 			var o = fixture.getBody().getUserData();
 			cast(o, ObjectModel);
+			trace(o.id);
 			if (o.id == "platform")
 			{
-				o.leftFootGrounded= true;
+				trace("go");
+				state.player.leftFootGrounded= true;
 				return fraction;
 			}
 			else
@@ -175,7 +181,7 @@ class GameplayController {
 			cast(o, ObjectModel);
 			if (o.id == "platform")
 			{
-				o.rightFootGrounded= true;
+				state.player.rightFootGrounded= true;
 				return fraction;
 			}
 			else
@@ -193,7 +199,7 @@ class GameplayController {
 			cast(o, ObjectModel);
 			if (o.id == "platform")
 			{
-				o.leftTouchingWall= true;
+				state.player.leftTouchingWall= true;
 				return fraction;
 			}
 			else
@@ -211,7 +217,7 @@ class GameplayController {
 			cast(o, ObjectModel);
 			if (o.id == "platform")
 			{
-				o.rightTouchingWall= true;
+				state.player.rightTouchingWall= true;
 				return fraction;
 			}
 			else
@@ -229,6 +235,7 @@ class GameplayController {
 		o.leftTouchingWall  = false;
 		o.rightTouchingWall =  false;	
 		world.rayCast(raycastLeftCallback, o.leftRayStart, o.leftRayEnd);
+		trace("hi");
 		world.rayCast(raycastRightCallback, o.rightRayStart, o.rightRayEnd);
 		world.rayCast(raycastLeftWallCallback, o.leftWallRayStart, o.leftWallRayEnd);
 		world.rayCast(raycastRightWallCallback, o.rightWallRayStart, o.rightWallRayEnd);
@@ -244,7 +251,8 @@ class GameplayController {
 		return false;
 	}
 	
-    public function update(state:GameState, gameTime:GameTime):Void {
+    public function update(s:GameState, gameTime:GameTime):Void {
+		state = s;
         for (entity in state.entities) {
             //UPDATES VELOCITY
             entity.velocity = entity.body.getLinearVelocity(); //Just in case -__-
@@ -282,7 +290,6 @@ class GameplayController {
 			//Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
 			updatePlayerRays(state);
 			Raycast(physicsController.world, state.player);
-			trace(state.player.leftFootGrounded);
         }
     }
 }
