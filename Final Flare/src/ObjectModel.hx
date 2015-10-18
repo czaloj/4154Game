@@ -42,6 +42,24 @@ class ObjectModel {
     public var up:Bool;            //up is being pressed
     public var down:Bool;  
     public var grounded:Bool;      //True if touching a platform
+    public var isDead:Bool; //True is player is dead
+    
+    //Raycast flags
+    public var leftFootGrounded:Bool;
+    public var rightFootGrounded:Bool;
+    public var leftTouchingWall:Bool;
+    public var rightTouchingWall:Bool;
+    
+    //Raycast rays
+    public var leftRayStart:B2Vec2 = new B2Vec2();
+    public var leftRayEnd:B2Vec2 = new B2Vec2();
+    public var rightRayStart:B2Vec2 = new B2Vec2();
+    public var rightRayEnd:B2Vec2 = new B2Vec2();
+    public var leftWallRayStart:B2Vec2 = new B2Vec2();
+    public var leftWallRayEnd:B2Vec2 = new B2Vec2();
+    public var rightWallRayStart:B2Vec2 = new B2Vec2();
+    public var rightWallRayEnd:B2Vec2 = new B2Vec2();
+    
 
     public function new() {
         // Empty
