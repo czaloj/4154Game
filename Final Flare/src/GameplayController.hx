@@ -26,7 +26,7 @@ class GameplayController {
     private var debugPhysicsView:Sprite;
 
     public function new() {
-        physicsController = new PhysicsController();
+        // Empty
     }
 
     public function initDebug(debugPhysicsView:Sprite):Void {
@@ -39,6 +39,7 @@ class GameplayController {
 
     public function init(s:GameState):Void {
         state = s;
+        physicsController = new PhysicsController(state);
         createPlayer(physicsController.world, state.player);
         state.entities.push(state.player);
         for (i in 0...(state.width * state.height)) {
