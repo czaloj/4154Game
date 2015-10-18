@@ -37,7 +37,7 @@ class InputController {
 		y = e.stageY;
     }
 	
-	public function mouseUp(e:KeyboardEvent):Void {
+	public function mouseUp(e:MouseEvent):Void {
         click = false;
     }
 
@@ -46,9 +46,9 @@ class InputController {
         state.player.right = keysDown[Keyboard.D];
         state.player.up = keysDown[Keyboard.W];
         state.player.down = keysDown[Keyboard.S];
-		state.player.targetX = x;
-		state.player.targetY = y;
-		state.player.click = click;
+		//state.player.targetX = x;
+		//state.player.targetY = y;
+		//state.player.click = click;
 		
     }
 }
