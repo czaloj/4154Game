@@ -16,11 +16,11 @@ import box2D.dynamics.B2ContactFilter;
 import openfl.Lib;
 
 class GameplayController {
-    public static var PLAYER_MAX_SPEED:Float = 10000000;
-    public static var PLAYER_GROUND_ACCEL:Float = 10000000;
-    public static var PLAYER_AIR_ACCEL:Float = 10000000;
-    public static var PLAYER_GROUND_FRICTION:Float = .3;
-    public static var PLAYER_AIR_FRICTION:Float = .9;
+    public static var PLAYER_MAX_SPEED:Float = 100;
+    public static var PLAYER_GROUND_ACCEL:Float = 100;
+    public static var PLAYER_AIR_ACCEL:Float = 100;
+    public static var PLAYER_GROUND_FRICTION:Float = .8;
+    public static var PLAYER_AIR_FRICTION:Float = .95;
     public static inline var TILE_HALF_WIDTH:Float = 16;
 
     public var state:GameState;
@@ -207,27 +207,25 @@ class GameplayController {
     public function updatePlayerRays(state:GameState):Void 
     {
         //Update left Ray
-        state.player.leftRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
-        state.player.leftRayEnd = new B2Vec2(state.player.leftRayStart.x, state.player.leftRayStart.y + 3);
+        state.player.leftRayStart = new B2Vec2(state.player.position.x - (state.player.width/2), state.player.position.y - (state.player.height/2));
+        state.player.leftRayEnd = new B2Vec2(state.player.leftRayStart.x, state.player.leftRayStart.y - 3);
 
         //Update right ray
-        state.player.rightRayStart = new B2Vec2(state.player.position.x + state.player.width, state.player.position.y + state.player.height);
-        state.player.rightRayEnd = new B2Vec2(state.player.rightRayStart.x, state.player.rightRayStart.y + 3);
+        state.player.rightRayStart = new B2Vec2(state.player.position.x + (state.player.width/2), state.player.position.y - (state.player.height/2));
+        state.player.rightRayEnd = new B2Vec2(state.player.rightRayStart.x, state.player.rightRayStart.y - 3);
 
         //Update left wall Ray
-        state.player.leftWallRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
+        state.player.leftWallRayStart = new B2Vec2(state.player.position.x - (state.player.width/2), state.player.position.y + (state.player.height/2));
         state.player.leftWallRayEnd = new B2Vec2(state.player.leftWallRayStart.x - 3, state.player.leftWallRayStart.y);
 
         //Update right wall ray
-        state.player.rightWallRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
+        state.player.rightWallRayStart = new B2Vec2(state.player.position.x - (state.player.width/2), state.player.position.y + (state.player.height/2));
         state.player.rightWallRayEnd = new B2Vec2(state.player.rightWallRayStart.x + 3, state.player.rightWallRayStart.y);
     }
     
     public function raycastLeftCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
-        ("here");
         if (fixture.getBody().getUserData() != null)
         {
-            trace("we");
             var o = fixture.getBody().getUserData();
             cast(o, ObjectModel);
             trace(o.id);
@@ -301,6 +299,7 @@ class GameplayController {
     
     
     public function Raycast(world:B2World, o:ObjectModel):Void {
+
         o.leftFootGrounded = false;
         o.rightFootGrounded = false;
         o.leftTouchingWall  = false;
@@ -315,35 +314,37 @@ class GameplayController {
     {
         for (contact in state.contactList) {
             // Check what was in collision
-            var entity1 = cast(contact.getFixtureA().getBody().getUserData(), ObjectModel);
-            var entity2 = cast(contact.getFixtureB().getBody().getUserData(), ObjectModel);
-            var id1 = entity1.id;
-            var id2 = entity2.id;
-            
-            /*
-            //When a player is hit by normal bullet
-            if ((id1 == "player" && id2 == "bullet") || (id2 == "player" && id1 == "bullet")) {
-                //player takes damage;
-                //mark bullet for destreuction
-            }
-            //If player is hit by melee
-            }
-            if ((id1 == "player" && id2 == "melee") || (id2 == "player" && id1 == "melee")) {
-                //player takes damage;
-            }
-            if ((id1 == "player" && id2 == "piercing") || (id2 == "player" && id1 == "piercing")) {
-                //player takes damage;
-            }
-            if ((id1 == "player" && id2 == "radialBullet") || (id2 == "player" && id1 == "radialBullet")) {
-                //player takes damage;
-                //mark bullet for destreuction;
-                //spawn radial burst;
-            }
-            if ((id1 == "player" && id2 == "radialBurst") || (id2 == "player" && id1 == "radialBurst")) {
-                //player takes damage;
-                //burst disappears on its own so nothing else needed
-            }
-            */
+			if (contact != null) {
+				var entity1 = cast(contact.getFixtureA().getBody().getUserData(), ObjectModel);
+				var entity2 = cast(contact.getFixtureB().getBody().getUserData(), ObjectModel);
+				var id1 = entity1.id;
+				var id2 = entity2.id;
+				
+				/*
+				//When a player is hit by normal bullet
+				if ((id1 == "player" && id2 == "bullet") || (id2 == "player" && id1 == "bullet")) {
+					//player takes damage;
+					//mark bullet for destreuction
+				}
+				//If player is hit by melee
+				}
+				if ((id1 == "player" && id2 == "melee") || (id2 == "player" && id1 == "melee")) {
+					//player takes damage;
+				}
+				if ((id1 == "player" && id2 == "piercingBullet") || (id2 == "player" && id1 == "piercingBullet")) {
+					//player takes damage;
+				}
+				if ((id1 == "player" && id2 == "explosiveBullet") || (id2 == "player" && id1 == "explosiveBullet")) {
+					//player takes damage;
+					//mark bullet for destreuction;
+					//spawn radial burst;
+				}
+				if ((id1 == "player" && id2 == "bulletBurst") || (id2 == "player" && id1 == "bulletBurst")) {
+					//player takes damage;
+					//burst disappears on its own so nothing else needed
+				}
+				*/
+			}
         }
         
         return true;
@@ -356,7 +357,7 @@ class GameplayController {
         physicsController.update(gameTime.elapsed);
         for (entity in state.entities) {
             //UPDATES VELOCITY
-            //entity.velocity = entity.body.getLinearVelocity(); //Just in case -__-
+            entity.velocity = entity.body.getLinearVelocity().copy(); //Just in case -__-
             var moveSpeed = entity.grounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
             if (entity.left) entity.velocity.x -= moveSpeed;
             if (entity.right) entity.velocity.x += moveSpeed;
@@ -367,18 +368,16 @@ class GameplayController {
                 entity.velocity.x *= friction;
             }
             
-			trace(state.player.velocity.x);
-			trace(state.player.velocity.y);
-			trace(state.player.body.getLinearVelocity().x);
-			trace(state.player.body.getLinearVelocity().y);
             // Clamp speed to a maximum value
             entity.velocity.x = Math.min(PLAYER_MAX_SPEED, Math.max(-PLAYER_MAX_SPEED, entity.velocity.x));
 
             if (entity.up && entity.leftFootGrounded) {
-                    entity.velocity.y = 7000000000;
+                    entity.velocity.y = 1000000000;
             }
-
-            entity.body.setLinearVelocity(entity.velocity); //So that the velocity actually does something
+			
+			trace(entity.body.getLinearVelocity().x);
+			trace(entity.body.getLinearVelocity().y);
+            entity.body.setLinearVelocity(entity.velocity.copy()); //So that the velocity actually does something
 
             //UPDATE POSITION
             entity.position = entity.body.getPosition();   
