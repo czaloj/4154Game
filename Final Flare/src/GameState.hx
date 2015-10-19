@@ -20,7 +20,7 @@ class GameState {
     public var entities:Array<ObjectModel> = [];
 	
 	public var contactList:List<B2Contact> = new List();
-
+	public var bullets:Array<Projectile> = [];
 
 
 

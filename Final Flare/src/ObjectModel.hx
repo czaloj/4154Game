@@ -13,6 +13,8 @@ import openfl.geom.Point;
 class ObjectModel {
 
     public var id:String;          //Identifying tag
+//bullet type of current gun
+	public var bulletType:Int; //0 = bullet, 1 = piercing, 2 = explosive
 
     //Phsyics data
     public var shape:B2PolygonShape; 
@@ -43,7 +45,10 @@ class ObjectModel {
     public var down:Bool;  
     public var grounded:Bool;      //True if touching a platform
     public var isDead:Bool; //True is player is dead
-    
+	public var click:Bool;
+    public var targetX:Float;
+    public var targetY:Float;
+	 
     //Raycast flags
     public var leftFootGrounded:Bool;
     public var rightFootGrounded:Bool;
