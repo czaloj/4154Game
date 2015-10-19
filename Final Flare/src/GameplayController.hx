@@ -16,9 +16,9 @@ import box2D.dynamics.B2ContactFilter;
 import openfl.Lib;
 
 class GameplayController {
-    public static var PLAYER_MAX_SPEED:Float = 1000000000;
+    public static var PLAYER_MAX_SPEED:Float = 10000000;
     public static var PLAYER_GROUND_ACCEL:Float = 10000000;
-    public static var PLAYER_AIR_ACCEL:Float = 10;
+    public static var PLAYER_AIR_ACCEL:Float = 10000000;
     public static var PLAYER_GROUND_FRICTION:Float = .3;
     public static var PLAYER_AIR_FRICTION:Float = .9;
     public static inline var TILE_HALF_WIDTH:Float = 16;
@@ -50,37 +50,37 @@ class GameplayController {
             if (state.foreground[i] != 0) {
                 // TODO: Platforms are not ObjectModels
                 var platform = new ObjectModel();
-				createPlatform(physicsController.world, platform, x, y);
+                createPlatform(physicsController.world, platform, x, y);
             }
          }
     }
 
-	public function createPlatform(world:B2World, platform:ObjectModel, x:Float, y:Float):Void {
-		// TODO: Platforms are not ObjectModels
-		var platform = new ObjectModel();
-		platform.id = "platform";
-		platform.position.set(x, y);
-		platform.grounded = false;
-		platform.rotation = 0;
-		platform.velocity.set(0,0);
-		platform.left = false;
-		platform.right = false;
-		platform.height = TILE_HALF_WIDTH;
-		platform.width = TILE_HALF_WIDTH;
+    public function createPlatform(world:B2World, platform:ObjectModel, x:Float, y:Float):Void {
+        // TODO: Platforms are not ObjectModels
+        var platform = new ObjectModel();
+        platform.id = "platform";
+        platform.position.set(x, y);
+        platform.grounded = false;
+        platform.rotation = 0;
+        platform.velocity.set(0,0);
+        platform.left = false;
+        platform.right = false;
+        platform.height = TILE_HALF_WIDTH;
+        platform.width = TILE_HALF_WIDTH;
 
-		platform.bodyDef = new B2BodyDef();
-		platform.bodyDef.position.set(platform.position.x, platform.position.y);
-		platform.bodyDef.type = B2Body.b2_staticBody;
+        platform.bodyDef = new B2BodyDef();
+        platform.bodyDef.position.set(platform.position.x, platform.position.y);
+        platform.bodyDef.type = B2Body.b2_staticBody;
 
-		var polygon = new B2PolygonShape ();
-		polygon.setAsBox ((platform.width)/2, (platform.height)/2);
+        var polygon = new B2PolygonShape ();
+        polygon.setAsBox ((platform.width)/2, (platform.height)/2);
 
-		platform.fixtureDef = new B2FixtureDef();
-		platform.fixtureDef.shape = polygon;
-		platform.body = physicsController.world.createBody(platform.bodyDef);
-		platform.body.createFixture(platform.fixtureDef);
-		platform.body.setUserData(platform);
-	}
+        platform.fixtureDef = new B2FixtureDef();
+        platform.fixtureDef.shape = polygon;
+        platform.body = physicsController.world.createBody(platform.bodyDef);
+        platform.body.createFixture(platform.fixtureDef);
+        platform.body.setUserData(platform);
+    }
 
     // TODO: Remove this function from here
     public function createPlayer(world:B2World, player:ObjectModel):Void {
@@ -98,7 +98,7 @@ class GameplayController {
         player.bodyDef = new B2BodyDef();
         player.bodyDef.position.set(player.position.x, player.position.y);
         player.bodyDef.type = B2Body.b2_dynamicBody;
-		player.bodyDef.allowSleep = false;
+        player.bodyDef.allowSleep = false;
         player.bodyDef.fixedRotation = true;
 
         player.shape = new B2PolygonShape();
@@ -162,7 +162,7 @@ class GameplayController {
         state.player.rightWallRayEnd = new B2Vec2(state.player.rightWallRayStart.x + 3, state.player.rightWallRayStart.y);
     }
     
-    public function raycastLeftCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
+    public function raycastLeftCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
         trace("here");
         if (fixture.getBody().getUserData() != null)
         {
@@ -184,7 +184,7 @@ class GameplayController {
         return -1;
     }
     
-    public dynamic function raycastRightCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
+    public function raycastRightCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
         if (fixture.getBody().getUserData() != null)
         {
             var o = fixture.getBody().getUserData();
@@ -202,7 +202,7 @@ class GameplayController {
         return -1;
     }
     
-    public dynamic function raycastLeftWallCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
+    public function raycastLeftWallCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
         if (fixture.getBody().getUserData() != null)
         {
             var o = fixture.getBody().getUserData();
@@ -220,7 +220,7 @@ class GameplayController {
         return -1;
     }
     
-    public dynamic function raycastRightWallCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
+    public function raycastRightWallCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
         if (fixture.getBody().getUserData() != null)
         {
             var o = fixture.getBody().getUserData();
@@ -252,44 +252,45 @@ class GameplayController {
     
     public function handleCollisions():Bool
     {
-		for (contact in state.contactList) {
-			// Check what was in collision
-			var entity1 = cast(contact.getFixtureA().getBody().getUserData(), ObjectModel);
-			var entity2 = cast(contact.getFixtureB().getBody().getUserData(), ObjectModel);
-			var id1 = entity1.id;
-			var id2 = entity2.id;
-			
-			/*
-			//When a player is hit by normal bullet
-			if ((id1 == "player" && id2 == "bullet") || (id2 == "player" && id1 == "bullet")) {
-				//player takes damage;
-				//mark bullet for destreuction
-			}
-			//If player is hit by melee
-			}
-			if ((id1 == "player" && id2 == "melee") || (id2 == "player" && id1 == "melee")) {
-				//player takes damage;
-			}
-			if ((id1 == "player" && id2 == "piercing") || (id2 == "player" && id1 == "piercing")) {
-				//player takes damage;
-			}
-			if ((id1 == "player" && id2 == "radialBullet") || (id2 == "player" && id1 == "radialBullet")) {
-				//player takes damage;
-				//mark bullet for destreuction;
-				//spawn radial burst;
-			}
-			if ((id1 == "player" && id2 == "radialBurst") || (id2 == "player" && id1 == "radialBurst")) {
-				//player takes damage;
-				//burst disappears on its own so nothing else needed
-			}
-			*/
-		}
-		
-		return true;
+        for (contact in state.contactList) {
+            // Check what was in collision
+            var entity1 = cast(contact.getFixtureA().getBody().getUserData(), ObjectModel);
+            var entity2 = cast(contact.getFixtureB().getBody().getUserData(), ObjectModel);
+            var id1 = entity1.id;
+            var id2 = entity2.id;
+            
+            /*
+            //When a player is hit by normal bullet
+            if ((id1 == "player" && id2 == "bullet") || (id2 == "player" && id1 == "bullet")) {
+                //player takes damage;
+                //mark bullet for destreuction
+            }
+            //If player is hit by melee
+            }
+            if ((id1 == "player" && id2 == "melee") || (id2 == "player" && id1 == "melee")) {
+                //player takes damage;
+            }
+            if ((id1 == "player" && id2 == "piercing") || (id2 == "player" && id1 == "piercing")) {
+                //player takes damage;
+            }
+            if ((id1 == "player" && id2 == "radialBullet") || (id2 == "player" && id1 == "radialBullet")) {
+                //player takes damage;
+                //mark bullet for destreuction;
+                //spawn radial burst;
+            }
+            if ((id1 == "player" && id2 == "radialBurst") || (id2 == "player" && id1 == "radialBurst")) {
+                //player takes damage;
+                //burst disappears on its own so nothing else needed
+            }
+            */
+        }
+        
+        return true;
     }
     
     public function update(s:GameState, gameTime:GameTime):Void {
-        state = s;
+        state = s;     
+		physicsController.update(gameTime.elapsed);
         for (entity in state.entities) {
             //UPDATES VELOCITY
             entity.velocity = entity.body.getLinearVelocity(); //Just in case -__-
@@ -307,18 +308,19 @@ class GameplayController {
             entity.velocity.x = Math.min(PLAYER_MAX_SPEED, Math.max(-PLAYER_MAX_SPEED, entity.velocity.x));
 
             if (entity.up && entity.leftFootGrounded) {
-                    entity.velocity.y = 70;
+                    entity.velocity.y = 7000000000;
             }
 
             //entity.body.setLinearVelocity(entity.velocity); //So that the velocity actually does something
 
             //UPDATE POSITION
-            entity.position = entity.body.getPosition();
-            
-            //Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
-            updatePlayerRays(state);
-            Raycast(physicsController.world, state.player);			
-            physicsController.update(gameTime.elapsed);
+            entity.position = entity.body.getPosition();           
         }
+		
+		
+		//Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
+        updatePlayerRays(state);
+        Raycast(physicsController.world, state.player);
+		trace(state.player.position.x);
     }
 }

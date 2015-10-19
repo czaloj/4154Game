@@ -83,7 +83,7 @@ class GameplayScreen extends IGameScreen {
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);
 
-		openfl.Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, inputController.mouseDown);
+        openfl.Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, inputController.mouseDown);
         openfl.Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, inputController.mouseUp);
         // Debug view of physics
         debugPhysicsView = new Sprite();
@@ -112,7 +112,7 @@ class GameplayScreen extends IGameScreen {
         // Update game logic
         gameplayController.update(state, gameTime);
         if (gameTime.frame%120 ==0) {
-           //Spawner.spawn(gameplayController, state, renderer);
+           Spawner.spawn(gameplayController, state, renderer);
         }
     }
     override function draw(gameTime:GameTime):Void {

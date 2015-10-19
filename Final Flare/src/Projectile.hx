@@ -13,17 +13,17 @@ import openfl.geom.Point;
 
 class Projectile {
     
-	private static var BULLET_SPEED:Float = 15;
+    private static var BULLET_SPEED:Float = 15;
     private static var PHYSICS_SCALE:Float = 1 / 30;
     public var id:String;
-	
-	public var targetX:Float;
+    
+    public var targetX:Float;
     public var targetY:Float;
-	public var playerX:Float;
+    public var playerX:Float;
     public var playerY:Float;
-	
-	
-	public var shape:B2PolygonShape; 
+    
+    
+    public var shape:B2PolygonShape; 
     public var body:B2Body;
     public var bodyType:B2BodyType;
     public var bodyDef:B2BodyDef;
@@ -35,14 +35,14 @@ class Projectile {
     public var position:B2Vec2 = new B2Vec2();     //Object position
     public var velocity:B2Vec2 = new B2Vec2();     //Object velocity
     public var rotation:Float;                   //Rotation
-	
-	
-	public var textureSize:Point = new Point();  //Texture Size
+    
+    
+    public var textureSize:Point = new Point();  //Texture Size
     public var dimension:Point = new Point();    //Dimensions of box, for drawing purposes
     public var scale:Point = new Point();        //Used to scale texture
-	
-	
-	
+    
+    
+    
     public function new() 
     {
        

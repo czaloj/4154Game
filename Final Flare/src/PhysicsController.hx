@@ -11,27 +11,27 @@ import flash.display.Sprite;
 import openfl.Lib;
 
 class PhysicsController {
-    public static var GRAVITY = new B2Vec2(0,-160);
+    public static var GRAVITY = new B2Vec2(0, -9800);
 
     public var world:B2World;
     private var state:GameState;
-	private var contactListener:ContactListener;
-	private var contactFilter:ContactFilter;
+    private var contactListener:ContactListener;
+    private var contactFilter:ContactFilter;
     public var debugger: B2DebugDraw;
 
     public function new(s:GameState) {
-		init(s);
-	}
-	
-	public function init(s:GameState) {
-		state = s;
+        init(s);
+    }
+    
+    public function init(s:GameState) {
+        state = s;
         world = new B2World(GRAVITY, true);
-		contactListener = new ContactListener(state);
+        contactListener = new ContactListener(state);
         world.setContactListener(contactListener);
-		contactFilter = new ContactFilter(state);
-		world.setContactFilter(contactFilter);
+        contactFilter = new ContactFilter(state);
+        world.setContactFilter(contactFilter);
         world.setWarmStarting(true);
-	}
+    }
 
     /**
      * Setup debugging information
@@ -44,7 +44,7 @@ class PhysicsController {
         dbgDraw.setFillAlpha(0.3);
         dbgDraw.setLineThickness(1.0);
         dbgDraw.setFlags(B2DebugDraw.e_shapeBit | B2DebugDraw.e_jointBit);
-        //world.setDebugDraw(dbgDraw);
+        world.setDebugDraw(dbgDraw);
     }
 
     public function update(dt:Float) {

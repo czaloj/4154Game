@@ -11,9 +11,9 @@ class InputController {
     // Array of booleans, indexed by key code.
     // Element is true when corresponding key is pressed. False otherwise.
     private var keysDown:Array<Bool> = [];
-	private var click:Bool;
-	private var x:Float;
-	private var y:Float;
+    private var click:Bool;
+    private var x:Float;
+    private var y:Float;
 
     public function new() {
         // Empty
@@ -30,14 +30,14 @@ class InputController {
     public function keyUp(e:KeyboardEvent):Void {
         keysDown[e.keyCode] = false;
     }
-	
-	public function mouseDown(e:MouseEvent):Void {
-		click = true;
+    
+    public function mouseDown(e:MouseEvent):Void {
+        click = true;
         x = e.stageX;
-		y = e.stageY;
+        y = e.stageY;
     }
-	
-	public function mouseUp(e:MouseEvent):Void {
+    
+    public function mouseUp(e:MouseEvent):Void {
         click = false;
     }
 
@@ -46,9 +46,9 @@ class InputController {
         state.player.right = keysDown[Keyboard.D];
         state.player.up = keysDown[Keyboard.W];
         state.player.down = keysDown[Keyboard.S];
-		//state.player.targetX = x;
-		//state.player.targetY = y;
-		//state.player.click = click;
-		
+        //state.player.targetX = x;
+        //state.player.targetY = y;
+        //state.player.click = click;
+        
     }
 }
