@@ -106,7 +106,6 @@ class GameplayController {
 
         player.fixtureDef = new B2FixtureDef();
         player.fixtureDef.shape = player.shape;
-        player.fixtureDef.friction = 1;
         player.fixtureDef.density = 1;
         player.body = world.createBody(player.bodyDef);
         player.fixture = player.body.createFixture(player.fixtureDef);
@@ -123,7 +122,6 @@ class GameplayController {
         enemy.right = false;
         enemy.width = 0.9;
         enemy.height = 1.9;
-
         enemy.bodyDef = new B2BodyDef();
         enemy.bodyDef.position.set(enemy.position.x, enemy.position.y);
         enemy.bodyDef.type = B2Body.b2_dynamicBody;
@@ -213,7 +211,7 @@ class GameplayController {
 
         //Update left wall Ray
         state.player.leftWallRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
-        state.player.leftWallRayEnd = new B2Vec2(state.player.leftWallRayStart.x -3, state.player.leftWallRayStart.y);
+        state.player.leftWallRayEnd = new B2Vec2(state.player.leftWallRayStart.x - 3, state.player.leftWallRayStart.y);
 
         //Update right wall ray
         state.player.rightWallRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
@@ -221,16 +219,13 @@ class GameplayController {
     }
     
     public function raycastLeftCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
-        trace("here");
         if (fixture.getBody().getUserData() != null)
         {
-            trace("we");
             var o = fixture.getBody().getUserData();
             cast(o, ObjectModel);
             trace(o.id);
             if (o.id == "platform")
             {
-                trace("go");
                 state.player.leftFootGrounded= true;
                 return fraction;
             }
@@ -323,7 +318,7 @@ class GameplayController {
         physicsController.update(gameTime.elapsed);
         for (entity in state.entities) {
             //UPDATES VELOCITY
-            entity.velocity = entity.body.getLinearVelocity(); //Just in case -__-
+            //entity.velocity = entity.body.getLinearVelocity(); //Just in case -__-
             var moveSpeed = entity.grounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
             if (entity.left) entity.velocity.x -= moveSpeed;
             if (entity.right) entity.velocity.x += moveSpeed;
@@ -334,19 +329,6 @@ class GameplayController {
                 entity.velocity.x *= friction;
             }
             
-            
-            if (entity.click) {
-                var bullet:Projectile = new Projectile();
-                createBullet(physicsController.world, entity, bullet);
-                bullet.targetX = entity.targetX;
-                bullet.targetY = entity.targetY;
-                bullet.setVelocity();
-                //bullet.body.setLinearVelocity(bullet.velocity);
-                state.bullets.push(bullet);
-                //push bullet onto gamestate bullets
-                
-            }
-
             // Clamp speed to a maximum value
             entity.velocity.x = Math.min(PLAYER_MAX_SPEED, Math.max(-PLAYER_MAX_SPEED, entity.velocity.x));
 
@@ -354,19 +336,30 @@ class GameplayController {
                     entity.velocity.y = 7000000000;
             }
 
-            //entity.body.setLinearVelocity(entity.velocity); //So that the velocity actually does something
+            entity.body.setLinearVelocity(entity.velocity); //So that the velocity actually does something
 
             //UPDATE POSITION
-            entity.position = entity.body.getPosition();           
+            entity.position = entity.body.getPosition();   
+            
+            //TODO This should be its own function
+            /*if (entity.click) {
+                var bullet:Projectile = new Projectile();
+                createBullet(physicsController.world, entity, bullet);
+                bullet.targetX = entity.targetX;
+                bullet.targetY = entity.targetY;
+                bullet.setVelocity();
+                state.bullets.push(bullet);  //push bullet onto gamestate bullets
+            }*/
+        }
+        
+        for (bullet in state.bullets) {
+            bullet.body.setLinearVelocity(bullet.velocity);
         }
         
         //Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
         updatePlayerRays(state);
         Raycast(physicsController.world, state.player);
-        trace(state.player.position.x);
         
-        for (bullet in state.bullets) {
-            bullet.body.setLinearVelocity(bullet.velocity);
-        }
+
     }
 }
