@@ -16,9 +16,9 @@ import box2D.dynamics.B2ContactFilter;
 import openfl.Lib;
 
 class GameplayController {
-    public static var PLAYER_MAX_SPEED:Float = 100;
-    public static var PLAYER_GROUND_ACCEL:Float = 100;
-    public static var PLAYER_AIR_ACCEL:Float = 100;
+    public static var PLAYER_MAX_SPEED:Float = 900;
+    public static var PLAYER_GROUND_ACCEL:Float = 400;
+    public static var PLAYER_AIR_ACCEL:Float = 300;
     public static var PLAYER_GROUND_FRICTION:Float = .8;
     public static var PLAYER_AIR_FRICTION:Float = .95;
     public static inline var TILE_HALF_WIDTH:Float = 16;
@@ -351,7 +351,9 @@ class GameplayController {
         physicsController.update(gameTime.elapsed);
         for (entity in state.entities) {
             //UPDATES VELOCITY
-            entity.velocity = entity.body.getLinearVelocity().copy(); //Just in case -__-
+            entity.velocity = entity.body.getLinearVelocity().copy();
+			
+			//Just in case -__-
             var moveSpeed = entity.grounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
             if (entity.left) entity.velocity.x -= moveSpeed;
             if (entity.right) entity.velocity.x += moveSpeed;
@@ -364,15 +366,18 @@ class GameplayController {
             
             // Clamp speed to a maximum value
             entity.velocity.x = Math.min(PLAYER_MAX_SPEED, Math.max(-PLAYER_MAX_SPEED, entity.velocity.x));
-
+//trace(entity.velocity.y);
             if (entity.up && entity.leftFootGrounded) {
-                    entity.velocity.y = 1000000000;
+                    entity.velocity.y = 600;
+					
             }
+		
 			
             entity.body.setLinearVelocity(entity.velocity.copy()); //So that the velocity actually does something
-
+//trace(entity.velocity.y);
             //UPDATE POSITION
             entity.position = entity.body.getPosition();   
+
             
             //TODO This should be its own function
             /*if (entity.click) {
