@@ -1,5 +1,6 @@
 package;
 
+import box2D.dynamics.contacts.B2Contact;
 import openfl.display.Sprite;
 import openfl.geom.Point;
 import box2D.dynamics.B2Body;
@@ -90,6 +91,7 @@ class GameplayController {
         player.bodyDef = new B2BodyDef();
         player.bodyDef.position.set(player.position.x, player.position.y);
         player.bodyDef.type = B2Body.b2_dynamicBody;
+		player.bodyDef.allowSleep = false;
         player.bodyDef.fixedRotation = true;
 
         player.shape = new B2PolygonShape();
@@ -112,7 +114,7 @@ class GameplayController {
         enemy.rotation = 0;
         enemy.left = false;
         enemy.right = false;
-        enemy.dimension = new Point(32, 32);
+        enemy.dimension = new Point(32, 64);
         enemy.width = 32;
         enemy.height = 32;
 
@@ -153,7 +155,7 @@ class GameplayController {
         state.player.rightWallRayEnd = new B2Vec2(state.player.rightWallRayStart.x + 3, state.player.rightWallRayStart.y);
     }
     
-    public dynamic function raycastLeftCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
+    public function raycastLeftCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Float {
         trace("here");
         if (fixture.getBody().getUserData() != null)
         {
@@ -236,20 +238,61 @@ class GameplayController {
         o.leftTouchingWall  = false;
         o.rightTouchingWall =  false;    
         world.rayCast(raycastLeftCallback, o.leftRayStart, o.leftRayEnd);
-        trace("hi");
         world.rayCast(raycastRightCallback, o.rightRayStart, o.rightRayEnd);
         world.rayCast(raycastLeftWallCallback, o.leftWallRayStart, o.leftWallRayEnd);
         world.rayCast(raycastRightWallCallback, o.rightWallRayStart, o.rightWallRayEnd);
     }    
     
-    public function handleCollisions(entity1: ObjectModel, entity2: ObjectModel) :Bool
+    public function handleCollisions():Bool
     {
-        //You can walk through enemies
-        if (entity1.id == "player" && entity2.id == "enemy" || entity1.id == "enemy" && entity2.id == "player") {        
-            return false;
-        }
-        
-        return false;
+		for (contact in state.contactList) {
+			// Check what was in collision
+			var entity1 = cast(contact.getFixtureA().getBody().getUserData(), ObjectModel);
+			var entity2 = cast(contact.getFixtureB().getBody().getUserData(), ObjectModel);
+			var id1 = entity1.id;
+			var id2 = entity2.id;
+			
+			if ((id1 == "Player" || id2 == "Player") && !state.player.isDead) {
+				return false;
+			}
+			
+			if ((id1 == "player" && id2 == "enemy") 
+			|| (id2 == "player" && id1 == "enemy") 
+			|| (id1 == "Floor" && id2 == "Floor")) {
+				return false;
+			}
+			
+			if (id1 == "Floor" && id2 == "Floor") {
+				return false;
+			}
+			
+			/*
+			//When a player is hit by normal bullet
+			if ((id1 == "player" && id2 == "bullet") || (id2 == "player" && id1 == "bullet")) {
+				//player takes damage;
+				//mark bullet for destreuction
+			}
+			//If player is hit by melee
+			}
+			if ((id1 == "player" && id2 == "melee") || (id2 == "player" && id1 == "melee")) {
+				//player takes damage;
+			}
+			if ((id1 == "player" && id2 == "piercing") || (id2 == "player" && id1 == "piercing")) {
+				//player takes damage;
+			}
+			if ((id1 == "player" && id2 == "radialBullet") || (id2 == "player" && id1 == "radialBullet")) {
+				//player takes damage;
+				//mark bullet for destreuction;
+				//spawn radial burst;
+			}
+			if ((id1 == "player" && id2 == "radialBurst") || (id2 == "player" && id1 == "radialBurst")) {
+				//player takes damage;
+				//burst disappears on its own so nothing else needed
+			}
+			*/
+		}
+		
+		return true;
     }
     
     public function update(s:GameState, gameTime:GameTime):Void {

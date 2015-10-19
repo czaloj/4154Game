@@ -1,6 +1,7 @@
 package;
 
 import flash.display.Sprite;
+import box2D.dynamics.contacts.B2Contact;
 
 class GameState {
     //dimension of map in tiles
@@ -17,6 +18,8 @@ class GameState {
 
     public var player:ObjectModel;
     public var entities:Array<ObjectModel> = [];
+	
+	public var contactList:List<B2Contact> = new List();
 
 
 
