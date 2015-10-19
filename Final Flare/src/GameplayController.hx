@@ -351,7 +351,9 @@ class GameplayController {
     }
     
     public function update(s:GameState, gameTime:GameTime):Void {
-        state = s;     
+        state = s;
+        Spawner.spawn(gameTime, state);
+        
         physicsController.update(gameTime.elapsed);
         for (entity in state.entities) {
             //UPDATES VELOCITY

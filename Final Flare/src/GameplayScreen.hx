@@ -96,7 +96,7 @@ class GameplayScreen extends IGameScreen {
         var hb:StaticSprite = uif.getTile("Health.Background");
         hb.scaleX *= 2;
         hb.scaleY *= 2;
-        //screenController.addChild(hb);
+        screenController.addChild(hb);
         var ggp:GunGenParams = new GunGenParams();
         var gunData = GunGenerator.generate(ggp);
         var gun:Gun = new Gun(gunData);
@@ -111,9 +111,6 @@ class GameplayScreen extends IGameScreen {
 
         // Update game logic
         gameplayController.update(state, gameTime);
-        if (gameTime.frame%120 ==0) {
-           Spawner.spawn(gameplayController, state, renderer);
-        }
     }
     override function draw(gameTime:GameTime):Void {
         renderer.update(state);
