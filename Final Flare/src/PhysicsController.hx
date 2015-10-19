@@ -30,7 +30,7 @@ class PhysicsController {
         world.setContactListener(contactListener);
 		contactFilter = new ContactFilter(state);
 		world.setContactFilter(contactFilter);
-        world.setWarmStarting(true);
+        //world.setWarmStarting(true);
 	}
 
     /**
@@ -44,7 +44,7 @@ class PhysicsController {
         dbgDraw.setFillAlpha(0.3);
         dbgDraw.setLineThickness(1.0);
         dbgDraw.setFlags(B2DebugDraw.e_shapeBit | B2DebugDraw.e_jointBit);
-        world.setDebugDraw(dbgDraw);
+        //world.setDebugDraw(dbgDraw);
     }
 
     public function update(dt:Float) {
