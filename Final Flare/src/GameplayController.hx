@@ -91,9 +91,8 @@ class GameplayController {
         player.rotation = 0;
         player.left = false;
         player.right = false;
-        player.dimension = new Point(32, 64);
-        player.width = 32;
-        player.height = 64;
+        player.width = 0.9;
+        player.height = 1.9;
         player.bulletType = 1;
         
         player.bodyDef = new B2BodyDef();
@@ -122,9 +121,8 @@ class GameplayController {
         enemy.rotation = 0;
         enemy.left = false;
         enemy.right = false;
-        enemy.dimension = new Point(32, 64);
-        enemy.width = 32;
-        enemy.height = 32;
+        enemy.width = 0.9;
+        enemy.height = 1.9;
 
         enemy.bodyDef = new B2BodyDef();
         enemy.bodyDef.position.set(enemy.position.x, enemy.position.y);
@@ -141,7 +139,6 @@ class GameplayController {
         enemy.body = world.createBody(enemy.bodyDef);
         enemy.fixture = enemy.body.createFixture(enemy.fixtureDef);
         enemy.body.setUserData(enemy);
-        
     }
     
     public function createBullet(world:B2World, entity:ObjectModel,bullet:Projectile):Void {
@@ -205,8 +202,7 @@ class GameplayController {
         bullet.body.setUserData(bullet.id);
     }
     
-    public function updatePlayerRays(state:GameState):Void 
-    {
+    public function updatePlayerRays(state:GameState):Void {
         //Update left Ray
         state.player.leftRayStart = new B2Vec2(state.player.position.x - state.player.width, state.player.position.y + state.player.height);
         state.player.leftRayEnd = new B2Vec2(state.player.leftRayStart.x, state.player.leftRayStart.y + 3);
@@ -312,39 +308,9 @@ class GameplayController {
         world.rayCast(raycastRightWallCallback, o.rightWallRayStart, o.rightWallRayEnd);
     }    
     
-    public function handleCollisions():Bool
-    {
+    public function handleCollisions():Bool {
         for (contact in state.contactList) {
-            // Check what was in collision
-            var entity1 = cast(contact.getFixtureA().getBody().getUserData(), ObjectModel);
-            var entity2 = cast(contact.getFixtureB().getBody().getUserData(), ObjectModel);
-            var id1 = entity1.id;
-            var id2 = entity2.id;
-            
-            /*
-            //When a player is hit by normal bullet
-            if ((id1 == "player" && id2 == "bullet") || (id2 == "player" && id1 == "bullet")) {
-                //player takes damage;
-                //mark bullet for destreuction
-            }
-            //If player is hit by melee
-            }
-            if ((id1 == "player" && id2 == "melee") || (id2 == "player" && id1 == "melee")) {
-                //player takes damage;
-            }
-            if ((id1 == "player" && id2 == "piercing") || (id2 == "player" && id1 == "piercing")) {
-                //player takes damage;
-            }
-            if ((id1 == "player" && id2 == "radialBullet") || (id2 == "player" && id1 == "radialBullet")) {
-                //player takes damage;
-                //mark bullet for destreuction;
-                //spawn radial burst;
-            }
-            if ((id1 == "player" && id2 == "radialBurst") || (id2 == "player" && id1 == "radialBurst")) {
-                //player takes damage;
-                //burst disappears on its own so nothing else needed
-            }
-            */
+            // TODO: Contact list should be a special tuple of <GameObjectType, Dynamic> to get correct casting results
         }
         
         return true;

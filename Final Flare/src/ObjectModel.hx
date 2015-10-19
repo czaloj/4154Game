@@ -11,29 +11,26 @@ import box2D.collision.shapes.B2PolygonShape;
 import openfl.geom.Point;
 
 class ObjectModel {
-
-    public var id:String;          //Identifying tag
-//bullet type of current gun
+    public var id:String; // Identifying tag
+    
+    // TODO: OMG, we need a real "Gun" class
+    // bullet type of current gun
     public var bulletType:Int; //0 = bullet, 1 = piercing, 2 = explosive
 
-    //Phsyics data
+    // Gameplay data
+    public var width:Float;        //In case body dimensions are different from the sprite dimensions
+    public var height:Float;       //In case body dimensions are different from the sprite dimensions
+    public var position:B2Vec2 = new B2Vec2();     //Object position
+    public var velocity:B2Vec2 = new B2Vec2();     //Object velocity
+    public var rotation:Float;                   //Rotation
+    
+    //Physics data
     public var shape:B2PolygonShape; 
     public var body:B2Body;
     public var bodyType:B2BodyType;
     public var bodyDef:B2BodyDef;
     public var fixture:B2Fixture;
     public var fixtureDef:B2FixtureDef;
-    public var gravityScale:Float;
-    public var width:Float;        //In case body dimensions are different from the sprite dimensions
-    public var height:Float;       //In case body dimensions are different from the sprite dimensions
-    public var position:B2Vec2 = new B2Vec2();     //Object position
-    public var velocity:B2Vec2 = new B2Vec2();     //Object velocity
-    public var rotation:Float;                   //Rotation
-
-    //Drawing Fields
-    public var textureSize:Point = new Point();  //Texture Size
-    public var dimension:Point = new Point();    //Dimensions of box, for drawing purposes
-    public var scale:Point = new Point();        //Used to scale texture
 
     //Input Flags
     public var direction:Int;      //-1 for left, 1 for right, 0 otherwise
@@ -64,7 +61,6 @@ class ObjectModel {
     public var leftWallRayEnd:B2Vec2 = new B2Vec2();
     public var rightWallRayStart:B2Vec2 = new B2Vec2();
     public var rightWallRayEnd:B2Vec2 = new B2Vec2();
-    
 
     public function new() {
         // Empty
