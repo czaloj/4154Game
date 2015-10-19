@@ -12,6 +12,7 @@ import box2D.common.math.B2Vec2;
 import box2D.dynamics.B2DebugDraw;
 import box2D.common.B2Color;
 import box2D.dynamics.B2World;
+import box2D.dynamics.B2ContactFilter;
 import openfl.Lib;
 
 class GameplayController {
@@ -70,7 +71,7 @@ class GameplayController {
                 platform.fixtureDef.shape = polygon;
                 platform.body = physicsController.world.createBody(platform.bodyDef);
                 platform.body.createFixture(platform.fixtureDef);
-                platform.body.setUserData(platform.id);
+                platform.body.setUserData(platform);
             }
          }
     }
@@ -251,20 +252,6 @@ class GameplayController {
 			var entity2 = cast(contact.getFixtureB().getBody().getUserData(), ObjectModel);
 			var id1 = entity1.id;
 			var id2 = entity2.id;
-			
-			if ((id1 == "Player" || id2 == "Player") && !state.player.isDead) {
-				return false;
-			}
-			
-			if ((id1 == "player" && id2 == "enemy") 
-			|| (id2 == "player" && id1 == "enemy") 
-			|| (id1 == "Floor" && id2 == "Floor")) {
-				return false;
-			}
-			
-			if (id1 == "Floor" && id2 == "Floor") {
-				return false;
-			}
 			
 			/*
 			//When a player is hit by normal bullet
