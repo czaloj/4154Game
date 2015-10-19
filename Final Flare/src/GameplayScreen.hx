@@ -19,6 +19,10 @@ import openfl.ui.Keyboard;
 import starling.display.Quad;
 import starling.textures.Texture;
 import ui.UISpriteFactory;
+import flash.events.KeyboardEvent;
+import flash.events.MouseEvent;
+import openfl.ui.Keyboard;
+import openfl.ui.Mouse;
 
 class GameplayScreen extends IGameScreen {
     private var state:GameState;
@@ -79,12 +83,14 @@ class GameplayScreen extends IGameScreen {
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);
 
+		openfl.Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, inputController.mouseDown);
+        openfl.Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, inputController.mouseUp);
         // Debug view of physics
         debugPhysicsView = new Sprite();
         gameplayController.initDebug(debugPhysicsView);
         Lib.current.stage.addChild(debugPhysicsView);
 
-        
+
         // TODO: Remove this test code
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         var hb:StaticSprite = uif.getTile("Health.Background");
@@ -106,12 +112,12 @@ class GameplayScreen extends IGameScreen {
         // Update game logic
         gameplayController.update(state, gameTime);
         if (gameTime.frame%120 ==0) {
-           //Spawner.spawn(state, renderer);
+           Spawner.spawn(gameplayController, state, renderer);
         }
     }
     override function draw(gameTime:GameTime):Void {
         renderer.update(state);
-        
+
         // Update the view for the debug physics
         debugPhysicsView.x = -renderer.cameraX + ScreenController.SCREEN_WIDTH / 2;
         debugPhysicsView.y = renderer.cameraY + ScreenController.SCREEN_HEIGHT / 2;

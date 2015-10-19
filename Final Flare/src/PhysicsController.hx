@@ -13,11 +13,14 @@ class PhysicsController extends B2ContactListener {
     public static var GRAVITY = new B2Vec2(0,-160);
 
     public var world:B2World;
+    private var state:GameState;
     public var debugger: B2DebugDraw;
 
-    public function new() {
+    public function new(s:GameState) {
         super();
 
+        state = s;
+        
         world = new B2World(GRAVITY, true);
         world.setContactListener(this);
         world.setWarmStarting(true);
@@ -39,10 +42,8 @@ class PhysicsController extends B2ContactListener {
 
     public function BeginContact(contact:B2Contact):Void {
         // Check what was in collision
-        var entity1 = contact.getFixtureA().getBody().getUserData();
-        var entity2 = contact.getFixtureB().getBody().getUserData();
-        trace(entity1);
-        trace(entity2);
+        var entity1 = cast(contact.getFixtureA().getBody().getUserData(), ObjectModel);
+        var entity2 = cast(contact.getFixtureB().getBody().getUserData(), ObjectModel);        
 
         // TODO: Just enqueue something into the state for the GameplayController to process
     }
