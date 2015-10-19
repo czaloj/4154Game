@@ -94,7 +94,8 @@ class GameplayController {
         player.dimension = new Point(32, 64);
         player.width = 32;
         player.height = 64;
-
+        player.bulletType = 1;
+        
         player.bodyDef = new B2BodyDef();
         player.bodyDef.position.set(player.position.x, player.position.y);
         player.bodyDef.type = B2Body.b2_dynamicBody;
@@ -141,6 +142,67 @@ class GameplayController {
         enemy.fixture = enemy.body.createFixture(enemy.fixtureDef);
         enemy.body.setUserData(enemy);
         
+    }
+    
+    public function createBullet(world:B2World, entity:ObjectModel,bullet:Projectile):Void {
+        if (entity.bulletType == 0 ) {
+            bullet.id = "melee";
+            bullet.velocity.set(0, 0);
+            bullet.dimension = new Point(5, 10);
+            bullet.width = 32;
+            bullet.height = 64;
+        }
+        else {
+            if (entity.bulletType == 1 ) {
+                bullet.id = "bullet";
+            }
+            if (entity.bulletType == 2 ) {
+                bullet.id = "piercingbullet";
+                //bullet.body.isSensor = true;
+            }
+            else{
+                bullet.id = "explosivebullet";
+            }
+        //bullet.velocity.set(0,0);
+        bullet.dimension = new Point(5, 10);
+        bullet.width = 5;
+        bullet.height = 10;
+        }
+        
+        bullet.position = entity.position;
+        
+        if (entity.targetX > bullet.position.x) {
+            bullet.position.x += 30;
+        }
+        if (entity.targetX < bullet.position.x) {
+            bullet.position.x -= 30;
+        }
+        bullet.bodyDef = new B2BodyDef();
+        bullet.bodyDef.position.set(bullet.position.x, bullet.position.y);
+        bullet.bodyDef.type = B2Body.b2_dynamicBody;
+        bullet.bodyDef.fixedRotation = true;
+        bullet.bodyDef.bullet = true;
+        //bullet.bodyDef.sensor = true;
+        
+        
+        
+        bullet.shape = new B2PolygonShape();
+        bullet.shape.setAsBox ((bullet.width)/2, (bullet.height)/2);
+
+        bullet.fixtureDef = new B2FixtureDef();
+        bullet.fixtureDef.shape = bullet.shape;
+        bullet.fixtureDef.friction = 1;
+        bullet.fixtureDef.density = 1;
+        bullet.fixtureDef.filter.maskBits = 0x0000;
+        if (entity.bulletType == 2) {
+        
+            bullet.fixtureDef.isSensor = true;
+        }
+        
+        bullet.body = world.createBody(bullet.bodyDef);
+        
+        bullet.fixture = bullet.body.createFixture(bullet.fixtureDef);
+        bullet.body.setUserData(bullet.id);
     }
     
     public function updatePlayerRays(state:GameState):Void 
@@ -290,7 +352,7 @@ class GameplayController {
     
     public function update(s:GameState, gameTime:GameTime):Void {
         state = s;     
-		physicsController.update(gameTime.elapsed);
+        physicsController.update(gameTime.elapsed);
         for (entity in state.entities) {
             //UPDATES VELOCITY
             entity.velocity = entity.body.getLinearVelocity(); //Just in case -__-
@@ -302,6 +364,19 @@ class GameplayController {
             if (!entity.left && !entity.right) {
                 var friction = entity.grounded ? PLAYER_GROUND_FRICTION : PLAYER_AIR_FRICTION;
                 entity.velocity.x *= friction;
+            }
+            
+            
+            if (entity.click) {
+                var bullet:Projectile = new Projectile();
+                createBullet(physicsController.world, entity, bullet);
+                bullet.targetX = entity.targetX;
+                bullet.targetY = entity.targetY;
+                bullet.setVelocity();
+                //bullet.body.setLinearVelocity(bullet.velocity);
+                state.bullets.push(bullet);
+                //push bullet onto gamestate bullets
+                
             }
 
             // Clamp speed to a maximum value
@@ -316,11 +391,14 @@ class GameplayController {
             //UPDATE POSITION
             entity.position = entity.body.getPosition();           
         }
-		
-		
-		//Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
+        
+        //Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
         updatePlayerRays(state);
         Raycast(physicsController.world, state.player);
-		trace(state.player.position.x);
+        trace(state.player.position.x);
+        
+        for (bullet in state.bullets) {
+            bullet.body.setLinearVelocity(bullet.velocity);
+        }
     }
 }

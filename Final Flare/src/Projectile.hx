@@ -13,16 +13,17 @@ import openfl.geom.Point;
 
 class Projectile {
     
-    private static var BULLET_SPEED:Float = 15;
+    private static var BULLET_SPEED:Float = 200;
     private static var PHYSICS_SCALE:Float = 1 / 30;
     public var id:String;
     
     public var targetX:Float;
     public var targetY:Float;
     public var playerX:Float;
-    public var playerY:Float;
-    
-    
+    public var playerY:Float;    
+    public var deltaX:Float;
+    public var deltaY:Float;
+    public var magnitude:Float;
     public var shape:B2PolygonShape; 
     public var body:B2Body;
     public var bodyType:B2BodyType;
@@ -47,7 +48,21 @@ class Projectile {
     {
        
     }
-
+    
+    public function setVelocity():Void {
+        
+        deltaX = targetX - position.x;
+        deltaY = targetY - position.y;
+        magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        deltaX = deltaX / magnitude;
+        deltaY = deltaY / magnitude;
+        deltaX = deltaX * BULLET_SPEED;
+        deltaY = deltaY * BULLET_SPEED;
+        velocity.x = deltaX;
+        velocity.y = deltaY;
+        //body.setLinearVelocity(velocity);
+        
+    }
 
     
     

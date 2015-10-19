@@ -14,6 +14,8 @@ class InputController {
     private var click:Bool;
     private var x:Float;
     private var y:Float;
+    private var stageHalfWidth:Int;
+    private var stageHalfHeight:Int;
 
     public function new() {
         // Empty
@@ -32,9 +34,11 @@ class InputController {
     }
     
     public function mouseDown(e:MouseEvent):Void {
+        stageHalfWidth =400 ;
+        stageHalfHeight = 225;
         click = true;
-        x = e.stageX;
-        y = e.stageY;
+        x = e.stageX-stageHalfWidth/30;
+        y = e.stageY-stageHalfHeight/30;
     }
     
     public function mouseUp(e:MouseEvent):Void {
@@ -46,9 +50,8 @@ class InputController {
         state.player.right = keysDown[Keyboard.D];
         state.player.up = keysDown[Keyboard.W];
         state.player.down = keysDown[Keyboard.S];
-        //state.player.targetX = x;
-        //state.player.targetY = y;
-        //state.player.click = click;
-        
+        state.player.targetX = x;
+        state.player.targetY = y;
+        state.player.click = click;
     }
 }
