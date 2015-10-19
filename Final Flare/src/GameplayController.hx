@@ -16,9 +16,9 @@ import box2D.dynamics.B2ContactFilter;
 import openfl.Lib;
 
 class GameplayController {
-    public static var PLAYER_MAX_SPEED:Float = 80;
-    public static var PLAYER_GROUND_ACCEL:Float = 8.5;
-    public static var PLAYER_AIR_ACCEL:Float = 6.5;
+    public static var PLAYER_MAX_SPEED:Float = 1000000000;
+    public static var PLAYER_GROUND_ACCEL:Float = 10000000;
+    public static var PLAYER_AIR_ACCEL:Float = 10;
     public static var PLAYER_GROUND_FRICTION:Float = .3;
     public static var PLAYER_AIR_FRICTION:Float = .9;
     public static inline var TILE_HALF_WIDTH:Float = 16;
@@ -50,31 +50,37 @@ class GameplayController {
             if (state.foreground[i] != 0) {
                 // TODO: Platforms are not ObjectModels
                 var platform = new ObjectModel();
-                platform.id = "platform";
-                platform.position.set(x, y);
-                platform.grounded = false;
-                platform.rotation = 0;
-                platform.velocity.set(0,0);
-                platform.left = false;
-                platform.right = false;
-                platform.height = TILE_HALF_WIDTH;
-                platform.width = TILE_HALF_WIDTH;
-
-                platform.bodyDef = new B2BodyDef();
-                platform.bodyDef.position.set(platform.position.x, platform.position.y);
-                platform.bodyDef.type = B2Body.b2_staticBody;
-
-                var polygon = new B2PolygonShape ();
-                polygon.setAsBox ((platform.width)/2, (platform.height)/2);
-
-                platform.fixtureDef = new B2FixtureDef();
-                platform.fixtureDef.shape = polygon;
-                platform.body = physicsController.world.createBody(platform.bodyDef);
-                platform.body.createFixture(platform.fixtureDef);
-                platform.body.setUserData(platform);
+				createPlatform(physicsController.world, platform, x, y);
             }
          }
     }
+
+	public function createPlatform(world:B2World, platform:ObjectModel, x:Float, y:Float):Void {
+		// TODO: Platforms are not ObjectModels
+		var platform = new ObjectModel();
+		platform.id = "platform";
+		platform.position.set(x, y);
+		platform.grounded = false;
+		platform.rotation = 0;
+		platform.velocity.set(0,0);
+		platform.left = false;
+		platform.right = false;
+		platform.height = TILE_HALF_WIDTH;
+		platform.width = TILE_HALF_WIDTH;
+
+		platform.bodyDef = new B2BodyDef();
+		platform.bodyDef.position.set(platform.position.x, platform.position.y);
+		platform.bodyDef.type = B2Body.b2_staticBody;
+
+		var polygon = new B2PolygonShape ();
+		polygon.setAsBox ((platform.width)/2, (platform.height)/2);
+
+		platform.fixtureDef = new B2FixtureDef();
+		platform.fixtureDef.shape = polygon;
+		platform.body = physicsController.world.createBody(platform.bodyDef);
+		platform.body.createFixture(platform.fixtureDef);
+		platform.body.setUserData(platform);
+	}
 
     // TODO: Remove this function from here
     public function createPlayer(world:B2World, player:ObjectModel):Void {
@@ -304,23 +310,15 @@ class GameplayController {
                     entity.velocity.y = 70;
             }
 
-            entity.body.setLinearVelocity(entity.velocity); //So that the velocity actually does something
+            //entity.body.setLinearVelocity(entity.velocity); //So that the velocity actually does something
 
             //UPDATE POSITION
-
-            var levelWidth = state.width * TILE_HALF_WIDTH;
-            var levelHeight = state.height * TILE_HALF_WIDTH;
-            if (entity.position.x > levelWidth - entity.width / 2) entity.position.x = levelWidth - entity.width / 2;
-            if (entity.position.x < entity.width / 2) entity.position.x = entity.width / 2;
-            //if (entity.position.y > 250) entity.position = new B2Vec2(entity.position.x,250);
-            //if (entity.position.y < -250) entity.position = new B2Vec2(entity.position.x, -250);
-
-            physicsController.update(gameTime.elapsed);
             entity.position = entity.body.getPosition();
             
             //Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
             updatePlayerRays(state);
-            Raycast(physicsController.world, state.player);
+            Raycast(physicsController.world, state.player);			
+            physicsController.update(gameTime.elapsed);
         }
     }
 }

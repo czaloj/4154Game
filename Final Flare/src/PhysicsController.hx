@@ -30,7 +30,7 @@ class PhysicsController {
         world.setContactListener(contactListener);
 		contactFilter = new ContactFilter(state);
 		world.setContactFilter(contactFilter);
-        //world.setWarmStarting(true);
+        world.setWarmStarting(true);
 	}
 
     /**

@@ -112,7 +112,7 @@ class GameplayScreen extends IGameScreen {
         // Update game logic
         gameplayController.update(state, gameTime);
         if (gameTime.frame%120 ==0) {
-           Spawner.spawn(gameplayController, state, renderer);
+           //Spawner.spawn(gameplayController, state, renderer);
         }
     }
     override function draw(gameTime:GameTime):Void {
