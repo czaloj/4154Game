@@ -107,7 +107,7 @@ class GameplayScreen extends IGameScreen {
 
     override function update(gameTime:GameTime):Void {
         // Update input first
-        inputController.update(state);
+        inputController.update(state, renderer.cameraX, renderer.cameraY, renderer.cameraScale);
 
         // Update game logic
         gameplayController.update(state, gameTime);

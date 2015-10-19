@@ -34,24 +34,26 @@ class InputController {
     }
     
     public function mouseDown(e:MouseEvent):Void {
-        stageHalfWidth =400 ;
-        stageHalfHeight = 225;
         click = true;
-        x = e.stageX-stageHalfWidth/30;
-        y = e.stageY-stageHalfHeight/30;
+        x = e.stageX;
+        y = e.stageY;
+        trace(y);
     }
     
     public function mouseUp(e:MouseEvent):Void {
         click = false;
     }
 
-    public function update(state:GameState):Void {
+    public function update(state:GameState, camX:Float, camY:Float, camScale:Float):Void {
         state.player.left = keysDown[Keyboard.A];
         state.player.right = keysDown[Keyboard.D];
         state.player.up = keysDown[Keyboard.W];
         state.player.down = keysDown[Keyboard.S];
-        state.player.targetX = x;
-        state.player.targetY = y;
         state.player.click = click;
+        if (click) {
+            state.player.targetX = (x - ScreenController.SCREEN_WIDTH / 2) / camScale + camX;
+            state.player.targetY = ((ScreenController.SCREEN_HEIGHT - y) - ScreenController.SCREEN_HEIGHT / 2) / camScale + camY;
+            click = false;
+        }
     }
 }
