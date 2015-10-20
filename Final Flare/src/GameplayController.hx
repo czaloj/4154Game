@@ -417,7 +417,7 @@ class GameplayController {
 					explosion.targetY = entity2o.targetY;
                 }
 				
-				if (( id1 == "enemy") && id2 == "explosion") {
+				if (( id1 == "enemy"||id1=="player") && id2 == "explosion") {
                     var entity1o = cast(entity1, ObjectModel);
                     entity1o.health -= E_DAMAGE;
                     if (entity1o.health <= 0) {
@@ -427,7 +427,7 @@ class GameplayController {
                     }
                 }
                 
-                if ((id2 == "enemy") && id1 == "explosion") {
+                if ((id2 == "enemy"||id2=="player") && id1 == "explosion") {
                     //player takes damage;
                     //mark bullet for destreuction
                     var entity2o = cast(entity2, ObjectModel);
