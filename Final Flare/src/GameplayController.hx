@@ -28,7 +28,7 @@ class GameplayController {
     public static inline var TILE_HALF_WIDTH:Float = 0.5;
     public static var BULLET_DAMAGE = 10;
     public static var MELEE_DAMAGE = 20;
-	public static var EBULLET_DAMAGE = 40;
+	public static var E_DAMAGE = 100;
 
     public var state:GameState;
     public var physicsController:PhysicsController;
@@ -162,9 +162,17 @@ class GameplayController {
 		if (entity.bulletType == 0 ) {
             bullet.id = "melee";
             bullet.velocity.set(0, 0);
-            bullet.dimension = new Point(5, 10);
+            bullet.dimension = new Point(2, 2);
             bullet.width = 2;
             bullet.height = 2;
+			//bullet.bodyDef.bullet = false;
+        }
+		if (entity.bulletType == 4 ) {
+            bullet.id = "explosion";
+            bullet.velocity.set(0, 0);
+            bullet.dimension = new Point(4, 4);
+            bullet.width = 4;
+            bullet.height = 4;
 			//bullet.bodyDef.bullet = false;
         }
         else {
@@ -209,7 +217,7 @@ class GameplayController {
         bullet.fixtureDef.friction = 1;
         //bullet.fixtureDef.density = 100;
        // bullet.fixtureDef.filter.maskBits = 0x0000;
-        if (entity.bulletType == 2||entity.bulletType ==0) {
+        if (entity.bulletType == 2||entity.bulletType ==0||entity.bulletType==4) {
 
             bullet.fixtureDef.isSensor = true;
         }
@@ -353,12 +361,12 @@ class GameplayController {
                 var id1 = entity1.id;
                 var id2 = entity2.id;
                 
-                if (id1 == "bullet"||id1 == "melee"||id1 == "explosivebullet") {
+                if (id1 == "bullet"||id1 == "melee"||id1 == "explosivebullet"||id1 =="explosion") {
                     state.markedForDeletion.push(entity1);
                     var bulldead = cast(entity1, Projectile);
                     r.onBulletRemoved(bulldead);
                 }
-                if (id2 == "bullet"||id2=="melee"||id2 =="explosivebullet") {
+                if (id2 == "bullet"||id2=="melee"||id2 =="explosivebullet"||id2=="explosion") {
                     state.markedForDeletion.push(entity2);
                     var bulldead = cast(entity2, Projectile);
                     r.onBulletRemoved(bulldead);
@@ -379,7 +387,7 @@ class GameplayController {
                     //player takes damage;
                     //mark bullet for destreuction
                     var entity2o = cast(entity2, ObjectModel);
-                    entity2o.health -= EBULLET_DAMAGE;
+                    entity2o.health -= BULLET_DAMAGE;
                     if (entity2o.health <= 0) {
                         state.markedForDeletion.push(entity2);
                         var dead = cast(entity2, ObjectModel);
@@ -388,9 +396,30 @@ class GameplayController {
 
                 }
 				
+				
+				
 				if (( id1 == "enemy") && id2 == "explosivebullet") {
                     var entity1o = cast(entity1, ObjectModel);
-                    entity1o.health -= BULLET_DAMAGE;
+                    entity1o.bulletType = 4;
+					var explosion:Projectile = new Projectile();
+					createBullet(physicsController.world, entity1o, explosion);
+					explosion.targetX = entity1o.targetX;
+					explosion.targetY = entity1o.targetY;
+				
+                }
+				
+				if (( id2 == "enemy") && id1 == "explosivebullet") {
+                    var entity2o = cast(entity2, ObjectModel);
+                    entity2o.bulletType = 4;
+					var explosion:Projectile = new Projectile();
+					createBullet(physicsController.world, entity2o, explosion);
+					explosion.targetX = entity2o.targetX;
+					explosion.targetY = entity2o.targetY;
+                }
+				
+				if (( id1 == "enemy") && id2 == "explosion") {
+                    var entity1o = cast(entity1, ObjectModel);
+                    entity1o.health -= E_DAMAGE;
                     if (entity1o.health <= 0) {
                         state.markedForDeletion.push(entity1);
                         var dead = cast(entity1, ObjectModel);
@@ -398,11 +427,11 @@ class GameplayController {
                     }
                 }
                 
-                if ((id2 == "enemy") && id1 == "explosivebullet") {
+                if ((id2 == "enemy") && id1 == "explosion") {
                     //player takes damage;
                     //mark bullet for destreuction
                     var entity2o = cast(entity2, ObjectModel);
-                    entity2o.health -= EBULLET_DAMAGE;
+                    entity2o.health -= E_DAMAGE;
                     if (entity2o.health <= 0) {
                         state.markedForDeletion.push(entity2);
                         var dead = cast(entity2, ObjectModel);
