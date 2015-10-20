@@ -50,9 +50,9 @@ class PhysicsController {
 
     public function update(dt:Float) {
         world.step(1 / 60, 5, 3);
-		for (entity in state.markedForDeletion) {
-				world.destroyBody(entity.body);
-		}
+        for (entity in state.markedForDeletion) {
+                world.destroyBody(entity.body);
+        }
         world.clearForces();
         world.drawDebugData();
     }

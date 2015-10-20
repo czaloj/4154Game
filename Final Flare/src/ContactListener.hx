@@ -6,8 +6,8 @@ import box2D.dynamics.contacts.B2Contact;
 class ContactListener extends B2ContactListener
 {
     private var state:GameState;
-	public static var BULLET_DAMAGE = 10;
-	public static var MELEE_DAMAGE = 20;
+    public static var BULLET_DAMAGE = 10;
+    public static var MELEE_DAMAGE = 20;
     public function new(s:GameState) 
     {
         super();
