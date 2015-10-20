@@ -1,9 +1,11 @@
 package;
 
 import openfl.Assets;
+import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
 import openfl.geom.Rectangle;
 import openfl.Lib;
+import openfl.ui.Keyboard;
 import starling.display.Sprite;
 import starling.events.Event;
 import starling.utils.AssetManager;
@@ -37,6 +39,11 @@ class ScreenController extends Sprite {
             new LevelEditorScreen(this)
         ];
         activeScreen = screens[2];
+        
+        // TODO: Remove debug level creation
+        Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, function (e:KeyboardEvent):Void {
+            if (e.keyCode == Keyboard.F6) CodeLevelEditor.run();
+        });
     }
 
     private function load(e:Event = null):Void {
