@@ -28,7 +28,7 @@ class Renderer {
     //private var myState:GameState;
     public var sprites:Array<Sprite> = [];
     public var entityTbl:ObjectMap<ObjectModel, AnimatedSprite> = new ObjectMap<ObjectModel, AnimatedSprite>();
-
+    public var projTbl:ObjectMap<Projectile, AnimatedSprite> = new ObjectMap<Projectile, AnimatedSprite>();
     public var cameraX(get,set):Float;
     public var cameraY(get,set):Float;
     public var cameraScale(get,set):Float;
@@ -39,7 +39,7 @@ class Renderer {
     // This is for debug camera movement
     private var debugViewing:Bool = false;
     private var debugViewMoves:Array<Int> = [ 0, 0, 0, 0, 0, 0 ];
-    
+
     public function new(stage:Sprite, p:RenderPack, state:GameState) {
         pack = p;
         stage3D = stage.stage;
@@ -106,8 +106,10 @@ class Renderer {
     public function onEntityAdded(o:ObjectModel):Void {
         // Add a corresponding sprite to stage and track this entity
         var enemy = new AnimatedSprite(pack.enemies, "Robot.Run", 3);
-        enemy.x = o.position.x - o.width * 0.5;
+        enemy.x = o.position.x - enemy.width * 0.5;
         enemy.y = o.position.y - o.height * 0.5;
+        enemy.scaleX /= 32;
+        enemy.scaleY /= 32;
         //trace(enemy.x, enemy.y);
         hierarchy.enemy.addChild(enemy);
         entityTbl.set(o,enemy);
@@ -121,11 +123,35 @@ class Renderer {
         // Remove this entity from the stage
     }
 
+    public function onBulletAdded(p:Projectile):Void {
+        // Add a corresponding sprite to stage and track this entity
+        var bullet = new AnimatedSprite(pack.projectiles, "Bullet.Fly", 1);
+        bullet.x = p.position.x - bullet.width * 0.5;
+        bullet.y = p.position.y - p.height * 0.5;
+        bullet.scaleX /= 32;
+        bullet.scaleY /= 32;
+        //trace(enemy.x, enemy.y);
+        hierarchy.projectiles.addChild(bullet);
+        projTbl.set(p,bullet);
+        //what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
+    }
+    public function onBulletRemoved(p:Projectile):Void {
+        //idk about this function the implementation i was thinking of was sketchy.
+        //i need to figure out the mapping between objectModels and sprites
+        hierarchy.projectiles.removeChild(projTbl.get(p));
+        projTbl.remove(p);
+        // Remove this entity from the stage
+    }
+
     public function update(s:GameState):Void {
         // TODO: Update sprite positions from entities
         for (o in entityTbl.keys()) {
-            entityTbl.get(o).x = o.position.x - o.width * 0.5;
+            entityTbl.get(o).x = o.position.x - entityTbl.get(o).width * 0.5;
             entityTbl.get(o).y = o.position.y - o.height * 0.5;
+        }
+        for (p in projTbl.keys()) {
+            projTbl.get(p).x = p.body.getPosition().x;
+            projTbl.get(p).y = p.body.getPosition().y - projTbl.get(p).height * 0.5;
         }
         var levelWidth = s.width * TILE_HALF_WIDTH;
         var levelHeight = s.height * TILE_HALF_WIDTH;
@@ -153,6 +179,16 @@ class Renderer {
     }
 
     private function load(state:GameState):Void {
+        // TODO: Remove this test code
+        var man = new AnimatedSprite(pack.characters, "Man.Run", 3);
+        //TODO: remove magic number: player dimension
+        man.x = state.player.position.x - man.width*0.5;
+        man.y = state.player.position.y - PLAYER_HEIGHT * 0.5;
+        man.scaleX /= 32;
+        man.scaleY /= 32;
+        hierarchy.player.addChild(man);
+        entityTbl.set(state.player, man);
+
         function fAdd(x:Float, y:Float, n:String):Void {
             var brick:StaticSprite = new StaticSprite(pack.environment, n);
             brick.x = x;
@@ -189,13 +225,13 @@ class Renderer {
         if (e.keyCode == Keyboard.C) {
             debugViewing = !debugViewing;
             if (debugViewing) {
-                for (i in 0...4) debugViewMoves[i] = 0; 
+                for (i in 0...4) debugViewMoves[i] = 0;
                 Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, debugMoveCameraKeyDown);
                 Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, debugMoveCameraKeyUp);
             }
             else {
                 Lib.current.stage.removeEventListener(KeyboardEvent.KEY_DOWN, debugMoveCameraKeyDown);
-                Lib.current.stage.removeEventListener(KeyboardEvent.KEY_UP, debugMoveCameraKeyUp);                
+                Lib.current.stage.removeEventListener(KeyboardEvent.KEY_UP, debugMoveCameraKeyUp);
             }
         }
     }

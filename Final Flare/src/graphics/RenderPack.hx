@@ -6,7 +6,7 @@ import starling.textures.Texture;
 class RenderPack {
     public var characters:SpriteSheet;
     public var enemies:SpriteSheet;
-
+    public var projectiles:SpriteSheet;
     public var environment:SpriteSheet;
     public var parallax:Array<Texture> = []; ///< Images of the different parallax layers
 

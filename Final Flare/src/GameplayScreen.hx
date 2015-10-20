@@ -50,7 +50,7 @@ class GameplayScreen extends IGameScreen {
 
         // TODO: Remove temp create a level
         // CodeLevelEditor.run();
-        
+
         var gl:GameLevel = LevelCreator.loadLevelFromFile("assets/level/test.lvl");
         LevelCreator.createStateFromLevel(gl, state);
         gameplayController.init(state);
@@ -87,7 +87,8 @@ class GameplayScreen extends IGameScreen {
         inputController.update(state, renderer.cameraX, renderer.cameraY, renderer.cameraScale);
 
         // Update game logic
-        gameplayController.update(state, gameTime);
+        Spawner.spawn(gameplayController, state, renderer, gameTime);
+        gameplayController.update(state, renderer, gameTime);
     }
     override function draw(gameTime:GameTime):Void {
         renderer.update(state);

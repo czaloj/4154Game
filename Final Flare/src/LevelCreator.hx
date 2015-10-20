@@ -27,14 +27,14 @@ class LevelCreator {
         var level:GameLevel = cast(Unserializer.run(value), GameLevel);
         return level;
     }
-    
+
     public static function createStateFromLevel(level:GameLevel, state:GameState):Void {
         state.width = level.width;
         state.height = level.height;
         state.foreground = level.foreground; // TODO: Better data structure
         state.background = level.background; // TODO: Better data structure
         state.spawners = level.spawners;
-        
+
         state.player = new ObjectModel();
         state.player.position.set(level.playerPt.x, level.playerPt.y);
     }
@@ -62,6 +62,9 @@ class LevelCreator {
             new StripRegion("Man.Backflip", 0, 0, 48, 90, 2, 42, 80),
             new StripRegion("Man.Run", 0, 180, 48, 90, 1, 12, 12),
             new StripRegion("Man.Idle", 0, 270, 48, 90, 1, 7, 7)
+        ]);
+        renderPack.projectiles = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Bullet.png")), [
+            new StripRegion("Bullet.Fly", 0, 0, 5, 10, 1, 1, 1),
         ]);
     }
 

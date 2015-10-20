@@ -66,7 +66,7 @@ class LevelEditorScreen extends IGameScreen {
     }
     override public function update(gameTime:GameTime):Void {
         state.foreground = tileMap.toIDArray();
-        gameplayController.update(state, gameTime);
+        gameplayController.update(state, renderer, gameTime);
     }
     override public function draw(gameTime:GameTime):Void {
         renderer.update(state);

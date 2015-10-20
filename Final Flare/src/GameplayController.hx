@@ -1,6 +1,7 @@
 package;
 
 import box2D.dynamics.contacts.B2Contact;
+import graphics.Renderer;
 import openfl.display.Sprite;
 import openfl.geom.Point;
 import box2D.dynamics.B2Body;
@@ -94,7 +95,7 @@ class GameplayController {
         player.width = 0.9;
         player.height = 1.9;
         player.bulletType = 1;
-        
+
         player.bodyDef = new B2BodyDef();
         player.bodyDef.position.set(player.position.x, player.position.y);
         player.bodyDef.type = B2Body.b2_dynamicBody;
@@ -111,7 +112,7 @@ class GameplayController {
         player.fixture = player.body.createFixture(player.fixtureDef);
         player.body.setUserData(player);
     }
-    
+
     //TODO ADD ARGUMENTS FROM PARSER SO THAT RIGHT INFO IS USED
     public function createEnemy(world:B2World, enemy:ObjectModel) {
         enemy.id = "enemy";
@@ -138,7 +139,7 @@ class GameplayController {
         enemy.fixture = enemy.body.createFixture(enemy.fixtureDef);
         enemy.body.setUserData(enemy);
     }
-    
+
     public function createBullet(world:B2World, entity:ObjectModel,bullet:Projectile):Void {
         if (entity.bulletType == 0 ) {
             bullet.id = "melee";
@@ -163,9 +164,9 @@ class GameplayController {
         bullet.width = .05;
         bullet.height = .05;
         }
-        
+
         bullet.position = entity.position;
-        
+
         if (entity.targetX > bullet.position.x) {
             bullet.position.x += .5;
         }
@@ -178,9 +179,9 @@ class GameplayController {
         bullet.bodyDef.fixedRotation = true;
         bullet.bodyDef.bullet = true;
         //bullet.bodyDef.sensor = true;
-        
-        
-        
+
+
+
         bullet.shape = new B2PolygonShape();
         bullet.shape.setAsBox ((bullet.width)/2, (bullet.height)/2);
 
@@ -190,16 +191,16 @@ class GameplayController {
         bullet.fixtureDef.density = 1;
         bullet.fixtureDef.filter.maskBits = 0x0000;
         if (entity.bulletType == 2) {
-        
+
             bullet.fixtureDef.isSensor = true;
         }
-        
+
         bullet.body = world.createBody(bullet.bodyDef);
-        
+
         bullet.fixture = bullet.body.createFixture(bullet.fixtureDef);
         bullet.body.setUserData(bullet.id);
     }
-    
+
     public function updatePlayerRays(state:GameState):Void {
         //Update left Ray
         state.player.leftRayStart = new B2Vec2(state.player.position.x - (state.player.width/2), state.player.position.y /*- (state.player.height/2)*/);
@@ -217,7 +218,7 @@ class GameplayController {
         state.player.rightWallRayStart = new B2Vec2(state.player.position.x - (state.player.width/2), state.player.position.y + (state.player.height/2));
         state.player.rightWallRayEnd = new B2Vec2(state.player.rightWallRayStart.x + 1, state.player.rightWallRayStart.y);
     }
-    
+
     public function raycastLeftCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
         if (fixture.getBody().getUserData() != null)
         {
@@ -235,7 +236,7 @@ class GameplayController {
         }
         return -1;
     }
-    
+
     public function raycastRightCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
 		if (fixture.getBody().getUserData() != null)
         {
@@ -250,10 +251,10 @@ class GameplayController {
             {
                 return 0;
             }
-        }    
+        }
         return -1;
     }
-    
+
     public function raycastLeftWallCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
         if (fixture.getBody().getUserData() != null)
         {
@@ -268,10 +269,10 @@ class GameplayController {
             {
                 return 0;
             }
-        }    
+        }
         return -1;
     }
-    
+
     public function raycastRightWallCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
         if (fixture.getBody().getUserData() != null)
         {
@@ -286,29 +287,29 @@ class GameplayController {
             {
                 return 0;
             }
-        }    
+        }
         return -1;
     }
-    
-    
+
+
     public function Raycast(world:B2World, o:ObjectModel):Void {
 
         o.leftFootGrounded = false;
         o.rightFootGrounded = false;
         o.leftTouchingWall  = false;
-        o.rightTouchingWall =  false;    
+        o.rightTouchingWall =  false;
         world.rayCast(raycastLeftCallback, o.leftRayStart, o.leftRayEnd);
         world.rayCast(raycastRightCallback, o.rightRayStart, o.rightRayEnd);
         world.rayCast(raycastLeftWallCallback, o.leftWallRayStart, o.leftWallRayEnd);
         world.rayCast(raycastRightWallCallback, o.rightWallRayStart, o.rightWallRayEnd);
-    }    
-    
+    }
+
     public function checkGrounded(o:ObjectModel):Void
     {
         if (o.leftFootGrounded || o.rightFootGrounded) { o.grounded = true; }
 		else { o.grounded = false; }
     }
-    
+
     public function handleCollisions():Bool {
         for (contact in state.contactList) {
             // Check what was in collision
@@ -317,7 +318,7 @@ class GameplayController {
                 var entity2 = cast(contact.getFixtureB().getBody().getUserData(), ObjectModel);
                 var id1 = entity1.id;
                 var id2 = entity2.id;
-                
+
                 /*
                 //When a player is hit by normal bullet
                 if ((id1 == "player" && id2 == "bullet") || (id2 == "player" && id1 == "bullet")) {
@@ -343,23 +344,23 @@ class GameplayController {
                 }
                 */
             }
-            
+
             // TODO: Contact list should be a special tuple of <GameObjectType, Dynamic> to get correct casting results
         }
-        
+
         return true;
     }
-    
-    public function update(s:GameState, gameTime:GameTime):Void {
+
+    public function update(s:GameState, r:Renderer, gameTime:GameTime):Void {
         state = s;
-        Spawner.spawn(gameTime, state);
+        //Spawner.spawn(gameTime, state);
         updatePlayerRays(state);
         Raycast(physicsController.world, state.player);
-		
+
         for (entity in state.entities) {
             //UPDATES VELOCITY
             entity.velocity = entity.body.getLinearVelocity().copy();
-            
+
             //Just in case -__-
             var moveSpeed = entity.grounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
             if (entity.left) entity.velocity.x -= moveSpeed;
@@ -370,21 +371,21 @@ class GameplayController {
                 var friction = entity.grounded ? PLAYER_GROUND_FRICTION : PLAYER_AIR_FRICTION;
                 entity.velocity.x *= friction;
             }
-            
+
             // Clamp speed to a maximum value
             entity.velocity.x = Math.min(PLAYER_MAX_SPEED, Math.max(-PLAYER_MAX_SPEED, entity.velocity.x));
-            
+
 			checkGrounded(entity);
-            
+
 			if (entity.up && entity.grounded) {
                 entity.velocity.y = 8;
             }
             entity.body.setLinearVelocity(entity.velocity.copy()); //So that the velocity actually does something
-            
-            //UPDATE POSITION
-            entity.position = entity.body.getPosition();   
 
-            
+            //UPDATE POSITION
+            entity.position = entity.body.getPosition();
+
+
             //TODO This should be its own function
             if (entity.click) {
                 var bullet:Projectile = new Projectile();
@@ -393,21 +394,22 @@ class GameplayController {
                 bullet.targetY = entity.targetY;
                 bullet.setVelocity();
                 state.bullets.push(bullet);  //push bullet onto gamestate bullets
+                r.onBulletAdded(bullet);
             }
         }
-        
+
 
 		trace(state.player.leftFootGrounded);
 		trace(state.player.rightFootGrounded);
-        
+
         physicsController.update(gameTime.elapsed);
         for (bullet in state.bullets) {
             bullet.body.setLinearVelocity(bullet.velocity);
         }
-        
+
         //Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
 
-        
+
 
     }
 }
