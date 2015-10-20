@@ -223,7 +223,7 @@ class GameplayController {
         if (fixture.getBody().getUserData() != null)
         {
             var o = fixture.getBody().getUserData();
-            cast(o, ObjectModel);
+            cast(o, Entity);
             if (o.id == "platform")
             {
                 state.player.leftFootGrounded= true;
@@ -241,7 +241,7 @@ class GameplayController {
 		if (fixture.getBody().getUserData() != null)
         {
             var o = fixture.getBody().getUserData();
-            cast(o, ObjectModel);
+            cast(o, Entity);
             if (o.id == "platform")
             {
                 state.player.rightFootGrounded= true;
@@ -259,7 +259,7 @@ class GameplayController {
         if (fixture.getBody().getUserData() != null)
         {
             var o = fixture.getBody().getUserData();
-            cast(o, ObjectModel);
+            cast(o, Entity);
             if (o.id == "platform")
             {
                 state.player.leftTouchingWall= true;
@@ -277,7 +277,7 @@ class GameplayController {
         if (fixture.getBody().getUserData() != null)
         {
             var o = fixture.getBody().getUserData();
-            cast(o, ObjectModel);
+            cast(o, Entity);
             if (o.id == "platform")
             {
                 state.player.rightTouchingWall= true;
@@ -314,8 +314,8 @@ class GameplayController {
         for (contact in state.contactList) {
             // Check what was in collision
             if (contact != null) {
-                var entity1 = cast(contact.getFixtureA().getBody().getUserData(), ObjectModel);
-                var entity2 = cast(contact.getFixtureB().getBody().getUserData(), ObjectModel);
+                var entity1 = cast(contact.getFixtureA().getBody().getUserData(), Entity);
+                var entity2 = cast(contact.getFixtureB().getBody().getUserData(), Entity);
                 var id1 = entity1.id;
                 var id2 = entity2.id;
 

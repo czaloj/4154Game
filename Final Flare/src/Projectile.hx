@@ -11,11 +11,10 @@ import box2D.collision.shapes.B2PolygonShape;
 import openfl.geom.Point;
 
 
-class Projectile {
+class Projectile extends Entity {
     
     private static var BULLET_SPEED:Float = 2000;
     private static var PHYSICS_SCALE:Float = 1 / 30;
-    public var id:String;
     
     public var targetX:Float;
     public var targetY:Float;
@@ -24,29 +23,13 @@ class Projectile {
     public var deltaX:Float;
     public var deltaY:Float;
     public var magnitude:Float;
-    public var shape:B2PolygonShape; 
-    public var body:B2Body;
-    public var bodyType:B2BodyType;
-    public var bodyDef:B2BodyDef;
-    public var fixture:B2Fixture;
-    public var fixtureDef:B2FixtureDef;
+
     public var gravityScale:Float;
-    public var width:Float;        //In case body dimensions are different from the sprite dimensions
-    public var height:Float;       //In case body dimensions are different from the sprite dimensions
-    public var position:B2Vec2 = new B2Vec2();     //Object position
-    public var velocity:B2Vec2 = new B2Vec2();     //Object velocity
-    public var rotation:Float;                   //Rotation
-    
-    
-    public var textureSize:Point = new Point();  //Texture Size
-    public var dimension:Point = new Point();    //Dimensions of box, for drawing purposes
-    public var scale:Point = new Point();        //Used to scale texture
-    
     
     
     public function new() 
     {
-       
+       super();
     }
     
     public function setVelocity():Void {

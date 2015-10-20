@@ -10,27 +10,12 @@ import box2D.collision.shapes.B2Shape;
 import box2D.collision.shapes.B2PolygonShape;
 import openfl.geom.Point;
 
-class ObjectModel {
-    public var id:String; // Identifying tag
+class ObjectModel extends Entity {
+
     
     // TODO: OMG, we need a real "Gun" class
     // bullet type of current gun
     public var bulletType:Int; //0 = bullet, 1 = piercing, 2 = explosive
-
-    // Gameplay data
-    public var width:Float;        //In case body dimensions are different from the sprite dimensions
-    public var height:Float;       //In case body dimensions are different from the sprite dimensions
-    public var position:B2Vec2 = new B2Vec2();     //Object position
-    public var velocity:B2Vec2 = new B2Vec2();     //Object velocity
-    public var rotation:Float;                   //Rotation
-    
-    //Physics data
-    public var shape:B2PolygonShape; 
-    public var body:B2Body;
-    public var bodyType:B2BodyType;
-    public var bodyDef:B2BodyDef;
-    public var fixture:B2Fixture;
-    public var fixtureDef:B2FixtureDef;
 
     //Input Flags
     public var direction:Int;      //-1 for left, 1 for right, 0 otherwise
@@ -41,7 +26,7 @@ class ObjectModel {
     public var up:Bool;            //up is being pressed
     public var down:Bool;  
     public var grounded:Bool;      //True if touching a platform
-    public var isDead:Bool; //True is player is dead
+    public var isDead:Bool; 		//True is player is dead
     public var click:Bool;
     public var targetX:Float;
     public var targetY:Float;
@@ -63,6 +48,6 @@ class ObjectModel {
     public var rightWallRayEnd:B2Vec2 = new B2Vec2();
 
     public function new() {
-        // Empty
+        super();
     }
 }
