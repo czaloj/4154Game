@@ -317,40 +317,58 @@ class GameplayController {
         else { o.grounded = false; }
     }
 
-    public function handleCollisions():Bool {
+ public function handleCollisions():Void {
         for (contact in state.contactList) {
             // Check what was in collision
             if (contact != null) {
-                var entity1 = cast(contact.getFixtureA().getBody().getUserData(), Entity);
+				var entity1 = cast(contact.getFixtureA().getBody().getUserData(), Entity);
                 var entity2 = cast(contact.getFixtureB().getBody().getUserData(), Entity);
                 var id1 = entity1.id;
                 var id2 = entity2.id;
-
-                
+				trace("id1" + id1 + "id2" + id2);
+				
+				if (id1 == "bullet") {
+						state.markedForDeletion.push(entity1);
+				}
+				if (id2 == "bullet") {
+						state.markedForDeletion.push(entity2);
+				}
                 
                 //When a player is hit by normal bullet
-                if ((id1 == "player" || id1 == "enemy") && id2 == "bullet") {
-                    var entity1o = cast(entity1, ObjectModel);
-                    entity1o.health -= BULLET_DAMAGE;
-                }
-                
-                if((id2 == "player" || id2 =="enemy") && id1 == "bullet") {
-                    var entity2o = cast(entity2, ObjectModel);
-                    entity2o.health -= BULLET_DAMAGE;
-                    //player takes damage;
+                if (( id1 == "enemy") && id2 == "bullet") {
+					state.markedForDeletion.push(entity2);
+					var entity1o = cast(entity1, ObjectModel);
+					entity1o.health -= BULLET_DAMAGE;
+					if (entity1o.health <= 0) {state.markedForDeletion.push(entity1);}
+					trace("contact");
+				}
+				
+				if ((id2 == "enemy") && id1 == "bullet") {
+					state.markedForDeletion.push(entity1);
+					var entity2o = cast(entity2, ObjectModel);
+					entity2o.health -= BULLET_DAMAGE;
+					if (entity2o.health <= 0) {state.markedForDeletion.push(entity2);}
+					trace("contact");
+					//player takes damage;
                     //mark bullet for destreuction
                 }
-                if ((id1 == "player" || id1 == "enemy") && id2 == "melee") {
-                    var entity1o = cast(entity1, ObjectModel);
-                    entity1o.health -=MELEE_DAMAGE;
-                }
-                
-                if((id2 == "player" || id2 =="enemy") && id1 == "melee") {
-                    var entity2o = cast(entity2, ObjectModel);
-                    entity2o.health -=MELEE_DAMAGE;    
-                    //player takes damage;
+				if ((id1 == "player" ) && id2 == "melee") {
+					state.markedForDeletion.push(entity2);
+					var entity1o = cast(entity1, ObjectModel);
+					entity1o.health -= MELEE_DAMAGE;
+					if (entity1o.health <= 0) {state.markedForDeletion.push(entity1);}
+					trace("contact");
+				}
+				
+				if ((id2 == "player" ) && id1 == "melee") {
+					state.markedForDeletion.push(entity1);
+					var entity2o = cast(entity2, ObjectModel);
+					entity2o.health -= MELEE_DAMAGE;
+					if (entity2o.health <= 0) {state.markedForDeletion.push(entity2);}
+					trace("contact");
+					//player takes damage;
                     //mark bullet for destreuction
-                }
+				}
                 //If player is hit by melee
                 /*
                 if ((id1 == "player" && id2 == "melee") || (id2 == "player" && id1 == "melee")) {
@@ -372,9 +390,11 @@ class GameplayController {
             }
 
             // TODO: Contact list should be a special tuple of <GameObjectType, Dynamic> to get correct casting results
-        }
-
-        return true;
+       
+			
+			}
+		state.contactList.clear();
+        //return true;
     }
 
     public function update(s:GameState, r:Renderer, gameTime:GameTime):Void {
@@ -430,11 +450,11 @@ class GameplayController {
 
         //trace(state.player.leftFootGrounded);
         //trace(state.player.rightFootGrounded);
-
+	handleCollisions();	
         physicsController.update(gameTime.elapsed);
-        for (bullet in state.bullets) {
-            bullet.body.setLinearVelocity(bullet.velocity);
-        }
+       // for (bullet in state.bullets) {
+        //    bullet.body.setLinearVelocity(bullet.velocity);
+        //}
 
         //Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
 
