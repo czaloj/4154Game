@@ -91,8 +91,8 @@ class GameplayController {
         player.rotation = 0;
         player.left = false;
         player.right = false;
-        player.width = 0.9;
-        player.height = 1.9;
+        player.width = 32;
+        player.height = 64;
         player.bulletType = 1;
         
         player.bodyDef = new B2BodyDef();
@@ -120,8 +120,8 @@ class GameplayController {
         enemy.rotation = 0;
         enemy.left = false;
         enemy.right = false;
-        enemy.width = 0.9;
-        enemy.height = 1.9;
+        enemy.width = 32;
+        enemy.height = 64;
         enemy.bodyDef = new B2BodyDef();
         enemy.bodyDef.position.set(enemy.position.x, enemy.position.y);
         enemy.bodyDef.type = B2Body.b2_dynamicBody;
