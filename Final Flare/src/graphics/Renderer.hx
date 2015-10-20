@@ -146,6 +146,7 @@ class Renderer {
     public function update(s:GameState):Void {
         // TODO: Update sprite positions from entities
         for (o in entityTbl.keys()) {
+
             entityTbl.get(o).x = o.position.x - entityTbl.get(o).width * 0.5;
             entityTbl.get(o).y = o.position.y - o.height * 0.5;
         }
@@ -179,16 +180,13 @@ class Renderer {
     }
 
     private function load(state:GameState):Void {
-        // TODO: Remove this test code
         var man = new AnimatedSprite(pack.characters, "Man.Run", 3);
-        //TODO: remove magic number: player dimension
         man.x = state.player.position.x - man.width*0.5;
         man.y = state.player.position.y - PLAYER_HEIGHT * 0.5;
         man.scaleX /= 32;
         man.scaleY /= 32;
         hierarchy.player.addChild(man);
         entityTbl.set(state.player, man);
-
         function fAdd(x:Float, y:Float, n:String):Void {
             var brick:StaticSprite = new StaticSprite(pack.environment, n);
             brick.x = x;
