@@ -26,7 +26,7 @@ class GameplayController {
     public static var PLAYER_GROUND_FRICTION:Float = .3;
     public static var PLAYER_AIR_FRICTION:Float = .95;
     public static inline var TILE_HALF_WIDTH:Float = 0.5;
-    public static var BULLET_DAMAGE = 10;
+    public static var BULLET_DAMAGE = 20;
     public static var MELEE_DAMAGE = 20;
 	public static var E_DAMAGE = 100;
 
@@ -125,7 +125,6 @@ class GameplayController {
         player.fixture = player.body.createFixture(player.fixtureDef);
         player.body.setUserData(player);
     }
-
     //TODO ADD ARGUMENTS FROM PARSER SO THAT RIGHT INFO IS USED
     public function createEnemy(world:B2World, enemy:ObjectModel) {
         enemy.id = "enemy";
@@ -142,7 +141,7 @@ class GameplayController {
         enemy.bodyDef.type = B2Body.b2_dynamicBody;
         enemy.bodyDef.allowSleep = false;
         enemy.bodyDef.fixedRotation = true;
-        enemy.health = 100;
+        enemy.health = 50;
         enemy.shape = new B2PolygonShape();
         enemy.shape.setAsBox ((enemy.width)/2, (enemy.height)/2);
 
@@ -154,7 +153,6 @@ class GameplayController {
         enemy.fixture = enemy.body.createFixture(enemy.fixtureDef);
         enemy.body.setUserData(enemy);
     }
-
     public function createBullet(world:B2World, entity:ObjectModel,bullet:Projectile):Void {
 		bullet.bodyDef = new B2BodyDef();
 		bullet.bodyDef.bullet = true;
@@ -257,7 +255,6 @@ class GameplayController {
         state.player.rightWallRayStart = new B2Vec2(state.player.position.x - (state.player.width/2), state.player.position.y + (state.player.height/2));
         state.player.rightWallRayEnd = new B2Vec2(state.player.rightWallRayStart.x + 1, state.player.rightWallRayStart.y);
     }
-
     public function raycastLeftCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
         if (fixture.getBody().getUserData() != null)
         {
@@ -275,7 +272,6 @@ class GameplayController {
         }
         return -1;
     }
-
     public function raycastRightCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
         if (fixture.getBody().getUserData() != null)
         {
@@ -293,7 +289,6 @@ class GameplayController {
         }
         return -1;
     }
-
     public function raycastLeftWallCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
         if (fixture.getBody().getUserData() != null)
         {
@@ -311,7 +306,6 @@ class GameplayController {
         }
         return -1;
     }
-
     public function raycastRightWallCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
         if (fixture.getBody().getUserData() != null)
         {
@@ -502,6 +496,9 @@ class GameplayController {
 			}
             //Just in case -__-
             var moveSpeed = entity.grounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
+            if (entity.id == "enemy") {
+               moveSpeed /= 2; 
+            }
             if (entity.left) entity.velocity.x -= moveSpeed;
             if (entity.right) entity.velocity.x += moveSpeed;
 
@@ -520,7 +517,6 @@ class GameplayController {
                 entity.velocity.y = 9.5;
             }
             entity.body.setLinearVelocity(entity.velocity.copy()); //So that the velocity actually does something
-
             //UPDATE POSITION
             entity.position = entity.body.getPosition();
 
