@@ -463,6 +463,7 @@ class GameplayController {
                 bullet.setVelocity();
                 state.bullets.push(bullet);  //push bullet onto gamestate bullets
                 r.onBulletAdded(bullet);
+				if (bullet.id == "melee") { bullet.velocity = new B2Vec2(0, 0);}
                 bullet.body.setLinearVelocity(bullet.velocity);
             }
         }
