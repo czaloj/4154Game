@@ -146,9 +146,15 @@ class Renderer {
     public function update(s:GameState):Void {
         // TODO: Update sprite positions from entities
         for (o in entityTbl.keys()) {
-
-            entityTbl.get(o).x = o.position.x - entityTbl.get(o).width * 0.5;
-            entityTbl.get(o).y = o.position.y - o.height * 0.5;
+            var sprite:AnimatedSprite = entityTbl.get(o);
+            sprite.x = o.position.x - entityTbl.get(o).width * 0.5;
+            sprite.y = o.position.y - o.height * 0.5;
+            if (o.left && !o.right)  {
+                sprite.x += sprite.width;
+                sprite.scaleX = -Math.abs(sprite.scaleX);
+            } else {
+                sprite.scaleX = Math.abs(sprite.scaleX);
+            }
         }
         for (p in projTbl.keys()) {
             projTbl.get(p).x = p.body.getPosition().x;
