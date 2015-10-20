@@ -43,7 +43,7 @@ class Projectile extends Entity {
         deltaY = deltaY * BULLET_SPEED;
         velocity.x = deltaX;
         velocity.y = deltaY;
-        //body.setLinearVelocity(velocity);
+        body.setLinearVelocity(velocity);
         
     }
 

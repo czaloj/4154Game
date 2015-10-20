@@ -16,43 +16,53 @@ class ContactListener extends B2ContactListener
     
     override function beginContact(contact:B2Contact):Void 
     { 
-		
+		/*
 				trace("begun");
                 var entity1 = cast(contact.getFixtureA().getBody().getUserData(), Entity);
                 var entity2 = cast(contact.getFixtureB().getBody().getUserData(), Entity);
                 var id1 = entity1.id;
                 var id2 = entity2.id;
-				trace("id1"+id1+"id2"+id2);
+				trace("id1" + id1 + "id2" + id2);
 				
+				if (id1 == "bullet") {
+						state.markedForDeletion.push(entity1);
+				}
+				if (id2 == "bullet") {
+						state.markedForDeletion.push(entity2);
+				}
                 
                 //When a player is hit by normal bullet
-                if ((id1 == "player" || id1 == "enemy") && id2 == "bullet") {
+                if (( id1 == "enemy") && id2 == "bullet") {
 					var entity1o = cast(entity1, ObjectModel);
 					entity1o.health -= BULLET_DAMAGE;
+					if (entity1o.health <= 0) {state.markedForDeletion.push(entity1);}
 					trace("contact");
 				}
 				
-				if((id2 == "player" || id2 =="enemy") && id1 == "bullet") {
+				if((id2 =="enemy") && id1 == "bullet") {
 					var entity2o = cast(entity2, ObjectModel);
 					entity2o.health -= BULLET_DAMAGE;
+					if (entity2o.health <= 0) {state.markedForDeletion.push(entity2);}
 					trace("contact");
 					//player takes damage;
                     //mark bullet for destreuction
                 }
-				if ((id1 == "player" || id1 == "enemy") && id2 == "melee") {
+				if ((id1 == "player" ) && id2 == "melee") {
 					var entity1o = cast(entity1, ObjectModel);
 					entity1o.health -= MELEE_DAMAGE;
+					if (entity1o.health <= 0) {state.markedForDeletion.push(entity1);}
 					trace("contact");
 				}
 				
-				if((id2 == "player" || id2 =="enemy") && id1 == "melee") {
+				if((id2 == "player" ) && id1 == "melee") {
 					var entity2o = cast(entity2, ObjectModel);
 					entity2o.health -= MELEE_DAMAGE;
+					if (entity2o.health <= 0) {state.markedForDeletion.push(entity2);}
 					trace("contact");
 					//player takes damage;
                     //mark bullet for destreuction
-                }
-        //state.contactList.add(contact);
+                }*/
+        state.contactList.add(contact);
     }
     
     override public function endContact(contact:B2Contact):Void 
