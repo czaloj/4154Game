@@ -223,7 +223,7 @@ class GameplayController {
 			jointDef.bodyB = bullet.body;
 			jointDef.localAnchorA = new B2Vec2(0, 0);
 			jointDef.localAnchorB = new B2Vec2(0, 0);
-			jointDef.length = 1;
+			jointDef.length = .1;
 			
 			jointDef.collideConnected = false;
 			world.createJoint(jointDef);
