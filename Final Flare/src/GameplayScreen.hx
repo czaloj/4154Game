@@ -50,9 +50,6 @@ class GameplayScreen extends IGameScreen {
         aiController = new AIController();
         var pack:RenderPack = new RenderPack();
 
-        // TODO: Remove temp create a level
-        // CodeLevelEditor.run();
-
         var gl:GameLevel = LevelCreator.loadLevelFromFile("assets/level/diamond");
         LevelCreator.createStateFromLevel(gl, state);
         gameplayController.init(state);
