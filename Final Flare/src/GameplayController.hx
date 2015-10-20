@@ -133,6 +133,7 @@ class GameplayController {
         enemy.bodyDef = new B2BodyDef();
         enemy.bodyDef.position.set(enemy.position.x, enemy.position.y);
         enemy.bodyDef.type = B2Body.b2_dynamicBody;
+		enemy.bodyDef.allowSleep = false;
         enemy.bodyDef.fixedRotation = true;
         enemy.health = 50;
         enemy.shape = new B2PolygonShape();
@@ -317,56 +318,80 @@ class GameplayController {
         else { o.grounded = false; }
     }
 
- public function handleCollisions():Void {
+ public function handleCollisions(r:Renderer):Void {
         for (contact in state.contactList) {
             // Check what was in collision
             if (contact != null) {
-                var entity1 = cast(contact.getFixtureA().getBody().getUserData(), Entity);
+				var entity1 = cast(contact.getFixtureA().getBody().getUserData(), Entity);
                 var entity2 = cast(contact.getFixtureB().getBody().getUserData(), Entity);
                 var id1 = entity1.id;
                 var id2 = entity2.id;
-                
-                if (id1 == "bullet") {
-                        state.markedForDeletion.push(entity1);
-                }
-                if (id2 == "bullet") {
-                        state.markedForDeletion.push(entity2);
-                }
+				//trace("id1" + id1 + "id2" + id2);
+				
+				if (id1 == "bullet") {
+						state.markedForDeletion.push(entity1);
+						var bulldead = cast(entity1, Projectile);
+					r.onBulletRemoved(bulldead);
+				}
+				if (id2 == "bullet") {
+						state.markedForDeletion.push(entity2);
+						var bulldead = cast(entity2, Projectile);
+					r.onBulletRemoved(bulldead);
+				}
                 
                 //When a player is hit by normal bullet
                 if (( id1 == "enemy") && id2 == "bullet") {
-                    state.markedForDeletion.push(entity2);
-                    var entity1o = cast(entity1, ObjectModel);
-                    entity1o.health -= BULLET_DAMAGE;
-                    if (entity1o.health <= 0) {state.markedForDeletion.push(entity1);}
-                }
-                
-                if ((id2 == "enemy") && id1 == "bullet") {
-                    //player takes damage;
+					
+					var entity1o = cast(entity1, ObjectModel);
+					entity1o.health -= BULLET_DAMAGE;
+					if (entity1o.health <= 0) {
+						state.markedForDeletion.push(entity1);
+						var dead = cast(entity1, ObjectModel);
+						r.onEntityRemoved(dead);
+					}
+					//trace("contact");
+				}
+				
+				if ((id2 == "enemy") && id1 == "bullet") {
+					
+					var entity2o = cast(entity2, ObjectModel);
+					entity2o.health -= BULLET_DAMAGE;
+					if (entity2o.health <= 0) {
+						state.markedForDeletion.push(entity2);
+						
+						var dead = cast(entity2, ObjectModel);
+						r.onEntityRemoved(dead);
+						
+						}
+					//trace("contact");
+					//player takes damage;
                     //mark bullet for destreuction
-                    state.markedForDeletion.push(entity1);
-                    var entity2o = cast(entity2, ObjectModel);
-                    entity2o.health -= BULLET_DAMAGE;
-                    if (entity2o.health <= 0) {state.markedForDeletion.push(entity2);}
-
                 }
-                if ((id1 == "player" ) && id2 == "melee") {
-                    state.markedForDeletion.push(entity2);
-                    var entity1o = cast(entity1, ObjectModel);
-                    entity1o.health -= MELEE_DAMAGE;
-                    if (entity1o.health <= 0) {state.markedForDeletion.push(entity1);}
-                }
-                
-                if ((id2 == "player" ) && id1 == "melee") {
-                    //player takes damage;
+				if ((id1 == "player" ) && id2 == "melee") {
+			
+					var entity1o = cast(entity1, ObjectModel);
+					entity1o.health -= MELEE_DAMAGE;
+					if (entity1o.health <= 0) {
+						state.markedForDeletion.push(entity1);
+						var dead = cast(entity1, ObjectModel);
+						r.onEntityRemoved(dead);
+					}
+					//trace("contact");
+				}
+				
+				if ((id2 == "player" ) && id1 == "melee") {
+			
+					var entity2o = cast(entity2, ObjectModel);
+					entity2o.health -= MELEE_DAMAGE;
+					if (entity2o.health <= 0) {
+						state.markedForDeletion.push(entity2);
+						var dead = cast(entity2, ObjectModel);
+						r.onEntityRemoved(dead);
+					}
+					//trace("contact");
+					//player takes damage;
                     //mark bullet for destreuction
-                    state.markedForDeletion.push(entity1);
-                    var entity2o = cast(entity2, ObjectModel);
-                    entity2o.health -= MELEE_DAMAGE;
-                    if (entity2o.health <= 0) {state.markedForDeletion.push(entity2);}
-
-                }
-                
+				}
                 //If player is hit by melee
                 /*
                 if ((id1 == "player" && id2 == "melee") || (id2 == "player" && id1 == "melee")) {
@@ -389,9 +414,9 @@ class GameplayController {
 
             // TODO: Contact list should be a special tuple of <GameObjectType, Dynamic> to get correct casting results
        
-            
-            }
-        state.contactList.clear();
+			
+			}
+		state.contactList.clear();
         //return true;
     }
 
@@ -444,7 +469,7 @@ class GameplayController {
         updatePlayerRays(state); //Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
         Raycast(physicsController.world, state.player);
         aiController.move(state);
-        handleCollisions();    
+        handleCollisions(r);    
         physicsController.update(gameTime.elapsed);
     }
 }
