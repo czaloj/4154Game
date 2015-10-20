@@ -8,15 +8,11 @@ import box2D.dynamics.B2FixtureDef;
 import box2D.common.math.B2Vec2;
 import box2D.collision.shapes.B2Shape;
 import box2D.collision.shapes.B2PolygonShape;
-import game.Entity;
 import openfl.geom.Point;
 
-
-class Projectile extends game.Entity {
-    
+class Projectile extends Entity {
     private static var BULLET_SPEED:Float = 20;
-    private static var PHYSICS_SCALE:Float = 1 / 30;
-    
+
     public var targetX:Float;
     public var targetY:Float;
     public var playerX:Float;
@@ -24,17 +20,15 @@ class Projectile extends game.Entity {
     public var deltaX:Float;
     public var deltaY:Float;
     public var magnitude:Float;
+    public var rotation:Float;
 
     public var gravityScale:Float;
     
-    
-    public function new() 
-    {
+    public function new() {
        super();
     }
     
     public function setVelocity():Void {
-        
         deltaX = targetX - position.x;
         deltaY = targetY - position.y;
         magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -45,10 +39,5 @@ class Projectile extends game.Entity {
         velocity.x = deltaX;
         velocity.y = deltaY;
         //body.setLinearVelocity(velocity);
-        
     }
-
-    
-    
-    
 }

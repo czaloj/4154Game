@@ -4,6 +4,8 @@ import flash.net.FileReference;
 import flash.events.Event;
 import game.GameLevel;
 import game.GameState;
+import game.ObjectModel;
+import game.Spawner;
 import graphics.RenderPack;
 import graphics.SpriteSheet;
 import graphics.SpriteSheetRegistry;
@@ -37,8 +39,9 @@ class LevelCreator {
         state.background = level.background; // TODO: Better data structure
         state.spawners = level.spawners;
 
-        state.player = new game.ObjectModel();
-        state.player.position.set(level.playerPt.x, level.playerPt.y);
+        state.player = new ObjectModel();
+        Spawner.createPlayer(state.player, "player", level.playerPt.x, level.playerPt.y);
+        state.entities.push(state.player);
     }
     public static function createPackFromLevel(level:game.GameLevel, renderPack:RenderPack):Void {
         // Load the environment texture

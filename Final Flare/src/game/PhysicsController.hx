@@ -1,16 +1,15 @@
 package game;
 
-import box2D.dynamics.B2ContactFilter;
-import box2D.dynamics.B2DebugDraw;
-import game.GameState;
-import game.ObjectModel;
-import openfl.geom.Point;
-import box2D.dynamics.contacts.B2Contact;
-import box2D.dynamics.B2ContactListener;
+import box2D.collision.shapes.B2PolygonShape;
 import box2D.common.math.B2Vec2;
+import box2D.dynamics.B2Body;
+import box2D.dynamics.B2BodyDef;
+import box2D.dynamics.B2DebugDraw;
+import box2D.dynamics.B2FixtureDef;
 import box2D.dynamics.B2World;
 import flash.display.Sprite;
-import openfl.Lib;
+import game.GameState;
+import game.ObjectModel;
 
 class PhysicsController {
     public static var GRAVITY = new B2Vec2(0, -9.8);
@@ -50,6 +49,63 @@ class PhysicsController {
         world.setDebugDraw(dbgDraw);
     }
 
+    public function initEntity(e:ObjectModel):Void {
+        // Create body
+        e.bodyDef = new B2BodyDef();
+        e.bodyDef.position.set(e.position.x, e.position.y);
+        e.bodyDef.type = B2Body.b2_dynamicBody;
+        e.bodyDef.allowSleep = false;
+        e.bodyDef.fixedRotation = true;
+        e.body = world.createBody(e.bodyDef);
+
+        // Create collision information
+        e.shape = new B2PolygonShape();
+        e.shape.setAsBox ((e.width) / 2, (e.height) / 2);
+        e.fixtureDef = new B2FixtureDef();
+        e.fixtureDef.shape = e.shape;
+        e.fixtureDef.friction = 1;
+        e.fixtureDef.density = 1;
+        e.fixture = e.body.createFixture(e.fixtureDef);
+        
+        // Set initial entity data to the body
+        e.body.setUserData(e);
+        e.body.setLinearVelocity(e.velocity);
+    }
+    public function initPlatforms(state:GameState):Void { 
+        var halfSize:Float = GameplayController.TILE_HALF_WIDTH;
+        
+        for (i in 0...(state.width * state.height)) {
+            var x:Float = (i % state.width) * halfSize + (halfSize * 0.5);
+            var y:Float = (state.height -  (Std.int(i / state.width) + 1)) * halfSize + (halfSize * 0.5);
+            if (state.foreground[i] != 0) {
+                // TODO: Platforms are not ObjectModels
+                var platform = new ObjectModel();
+
+                platform.id = "platform";
+                platform.position.set(x, y);
+                platform.grounded = false;
+                platform.velocity.set(0,0);
+                platform.left = false;
+                platform.right = false;
+                platform.height = halfSize;
+                platform.width = halfSize;
+
+                platform.bodyDef = new B2BodyDef();
+                platform.bodyDef.position.set(platform.position.x, platform.position.y);
+                platform.bodyDef.type = B2Body.b2_staticBody;
+
+                var polygon = new B2PolygonShape ();
+                polygon.setAsBox ((platform.width)/2, (platform.height)/2);
+
+                platform.fixtureDef = new B2FixtureDef();
+                platform.fixtureDef.shape = polygon;
+                platform.body = world.createBody(platform.bodyDef);
+                platform.body.createFixture(platform.fixtureDef);
+                platform.body.setUserData(platform);
+            }
+         }
+    }
+    
     public function update(dt:Float) {
         world.step(1 / 60, 5, 3);
         for (entity in state.markedForDeletion) {

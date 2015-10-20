@@ -1,25 +1,17 @@
 package game;
 
-import box2D.dynamics.contacts.B2Contact;
-import game.events.GameEvent;
-import game.events.GameEventSpawn;
-import graphics.Renderer;
-import openfl.display.Sprite;
-import openfl.geom.Point;
+import box2D.collision.shapes.B2PolygonShape;
+import box2D.common.math.B2Vec2;
 import box2D.dynamics.B2Body;
 import box2D.dynamics.B2BodyDef;
 import box2D.dynamics.B2Fixture;
 import box2D.dynamics.B2FixtureDef;
-
-import box2D.dynamics.joints.B2DistanceJointDef;
 import box2D.dynamics.joints.B2DistanceJoint;
-import box2D.collision.shapes.B2PolygonShape;
-import box2D.common.math.B2Vec2;
-import box2D.dynamics.B2DebugDraw;
-import box2D.common.B2Color;
+import box2D.dynamics.joints.B2DistanceJointDef;
 import box2D.dynamics.B2World;
-import box2D.dynamics.B2ContactFilter;
-import openfl.Lib;
+import game.events.GameEvent;
+import game.events.GameEventSpawn;
+import openfl.display.Sprite;
 
 class GameplayController {
     public static var PLAYER_MAX_SPEED:Float = 7;
@@ -36,8 +28,6 @@ class GameplayController {
     public var physicsController:PhysicsController;
     private var debugPhysicsView:Sprite;
 
-    private var aiController:AIController;
-
     public function new() {
         // Empty
     }
@@ -49,112 +39,15 @@ class GameplayController {
         debugPhysicsView.scaleY = -debugPhysicsView.scaleY;
         physicsController.initDebug(debugPhysicsView);
     }
-
-    public function init(s:game.GameState):Void {
+    public function init(s:GameState):Void {
         state = s;
-        physicsController = new PhysicsController(state);
-        createPlayer(physicsController.world, state.player);
-        state.entities.push(state.player);
-        for (i in 0...(state.width * state.height)) {
-            var x:Float = (i % state.width) * TILE_HALF_WIDTH + (TILE_HALF_WIDTH * 0.5);
-            var y:Float = (state.height -  (Std.int(i / state.width) + 1)) * TILE_HALF_WIDTH + (TILE_HALF_WIDTH * 0.5);
-            if (state.foreground[i] != 0) {
-                // TODO: Platforms are not ObjectModels
-                var platform = new ObjectModel();
-                createPlatform(physicsController.world, platform, x, y);
-            }
-         }
-
-         aiController = new AIController();
-    }
-
-    public function createPlatform(world:B2World, platform:ObjectModel, x:Float, y:Float):Void {
-        // TODO: Platforms are not ObjectModels
-        var platform = new ObjectModel();
-        platform.id = "platform";
-        platform.position.set(x, y);
-        platform.grounded = false;
-        platform.rotation = 0;
-        platform.velocity.set(0,0);
-        platform.left = false;
-        platform.right = false;
-        platform.height = TILE_HALF_WIDTH;
-        platform.width = TILE_HALF_WIDTH;
-
-        platform.bodyDef = new B2BodyDef();
-        platform.bodyDef.position.set(platform.position.x, platform.position.y);
-        platform.bodyDef.type = B2Body.b2_staticBody;
-
-        var polygon = new B2PolygonShape ();
-        polygon.setAsBox ((platform.width)/2, (platform.height)/2);
-
-        platform.fixtureDef = new B2FixtureDef();
-        platform.fixtureDef.shape = polygon;
-        platform.body = physicsController.world.createBody(platform.bodyDef);
-        platform.body.createFixture(platform.fixtureDef);
-        platform.body.setUserData(platform);
-    }
-
-    // TODO: Remove this function from here
-    public function createPlayer(world:B2World, player:ObjectModel):Void {
-        //ALL THE MAGIC NUMBERS. REMEMBER TO FIX.
-        player.id = "player";
-        player.velocity.set(0,0);
-        player.grounded = false;
-        player.rotation = 0;
-        player.left = false;
-        player.right = false;
-        player.width = 0.9;
-        player.height = 1.9;
-        player.bulletType = 1;
-        player.health = 100;
-        player.canSwap2 = true;
-        player.canSwap3 = true;
         
-        player.bodyDef = new B2BodyDef();
-        player.bodyDef.position.set(player.position.x, player.position.y);
-        player.bodyDef.type = B2Body.b2_dynamicBody;
-        player.bodyDef.allowSleep = false;
-        player.bodyDef.fixedRotation = true;
-
-        player.shape = new B2PolygonShape();
-        player.shape.setAsBox ((player.width)/2, (player.height)/2);
-
-        player.fixtureDef = new B2FixtureDef();
-        player.fixtureDef.shape = player.shape;
-        player.fixtureDef.density = 1;
-        player.body = world.createBody(player.bodyDef);
-        player.fixture = player.body.createFixture(player.fixtureDef);
-        player.body.setUserData(player);
+        // Initialize physics from loaded GameState
+        physicsController = new PhysicsController(state);
+        physicsController.initEntity(state.player);
+        physicsController.initPlatforms(state);
     }
-    //TODO ADD ARGUMENTS FROM PARSER SO THAT RIGHT INFO IS USED
-    public function createEnemy(world:B2World, enemy:ObjectModel) {
-        enemy.id = "enemy";
-        enemy.bulletType = 0;
-        enemy.velocity.set(0,0);
-        enemy.grounded = false;
-        enemy.rotation = 0;
-        enemy.left = false;
-        enemy.right = false;
-        enemy.width = 0.9;
-        enemy.height = 1.9;
-        enemy.bodyDef = new B2BodyDef();
-        enemy.bodyDef.position.set(enemy.position.x, enemy.position.y);
-        enemy.bodyDef.type = B2Body.b2_dynamicBody;
-        enemy.bodyDef.allowSleep = false;
-        enemy.bodyDef.fixedRotation = true;
-        enemy.health = 50;
-        enemy.shape = new B2PolygonShape();
-        enemy.shape.setAsBox ((enemy.width)/2, (enemy.height)/2);
 
-        enemy.fixtureDef = new B2FixtureDef();
-        enemy.fixtureDef.shape = enemy.shape;
-        enemy.fixtureDef.friction = 1;
-        enemy.fixtureDef.density = 1;
-        enemy.body = world.createBody(enemy.bodyDef);
-        enemy.fixture = enemy.body.createFixture(enemy.fixtureDef);
-        enemy.body.setUserData(enemy);
-    }
     public function createBullet(world:B2World, entity:ObjectModel,bullet:Projectile):Void {
         bullet.bodyDef = new B2BodyDef();
         bullet.bodyDef.bullet = true;
@@ -326,7 +219,6 @@ class GameplayController {
         return -1;
     }
 
-
     public function Raycast(world:B2World, o:ObjectModel):Void {
 
         o.leftFootGrounded = false;
@@ -393,7 +285,6 @@ class GameplayController {
                     createBullet(physicsController.world, entity1o, explosion);
                     explosion.targetX = entity1o.targetX;
                     explosion.targetY = entity1o.targetY;
-                
                 }
                 
                 if (( id2 == "enemy") && id1 == "explosivebullet") {
@@ -456,11 +347,11 @@ class GameplayController {
         state.contactList.clear();
     }
 
-    public function update(s:game.GameState, gameTime:GameTime):Void {
+    public function update(s:GameState, gameTime:GameTime):Void {
         state = s;
         
         // TODO: Spawner shouldn't need reference to this
-        game.Spawner.spawn(this, state, gameTime);
+        Spawner.spawn(this, state, gameTime);
         
         // Update game events
         if (state.gameEvents.length > 0) {
@@ -529,8 +420,6 @@ class GameplayController {
             }
         }
         
-        aiController.move(state);
-        
         // Update physics
         physicsController.update(gameTime.elapsed);
         
@@ -540,15 +429,11 @@ class GameplayController {
     }
 
     // Application of game events
-    public function applyEventSpawn(state:game.GameState, e:GameEventSpawn) {
-        switch (e.entity) {
-            // TODO: Actually fix this
-            case "Grunt":
-                var enemy = new ObjectModel();
-                enemy.position.set(e.x, e.y);
-                state.entities.push(enemy);
-                createEnemy(physicsController.world, enemy);
-                state.onEntityAdded.invoke(state, enemy);
-        }
+    public function applyEventSpawn(state:GameState, e:GameEventSpawn) {
+        var enemy:ObjectModel = new ObjectModel();
+        Spawner.createEnemy(enemy, e.entity, e.x, e.y);
+        physicsController.initEntity(enemy);
+        state.entities.push(enemy);
+        state.onEntityAdded.invoke(state, enemy);
     }
 }

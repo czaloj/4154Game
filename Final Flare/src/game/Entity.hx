@@ -18,7 +18,6 @@ class Entity {
     public var height:Float;       //In case body dimensions are different from the sprite dimensions
     public var position:B2Vec2 = new B2Vec2();     //Object position
     public var velocity:B2Vec2 = new B2Vec2();     //Object velocity
-    public var rotation:Float;                   //Rotation
     
     //Physics data
     public var shape:B2PolygonShape; 
@@ -29,6 +28,6 @@ class Entity {
     public var fixtureDef:B2FixtureDef;
 
     public function new() {
-        
+        // Empty
     }
 }

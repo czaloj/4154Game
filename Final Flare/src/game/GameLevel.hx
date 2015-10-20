@@ -13,7 +13,7 @@ class GameLevel {
     public var foreground:Array<Int>; // Array of identifiers for foreground tiles
     public var background:Array<Int>; // Array of identifiers for background tiles
 
-    public var spawners:Array<game.Spawner>; // List of spawn points for enemies
+    public var spawners:Array<Spawner>; // List of spawn points for enemies
     public var playerPt:Point; // Initial spawn point for the player
 
     public var parallax:Array<String>; // List of parallax image files

@@ -26,5 +26,38 @@ class Spawner {
                 state.gameEvents.push(new GameEventSpawn(spawner.position.x, spawner.position.y, "Grunt"));
             }
         }
-     }
+    }
+    
+    public static function createPlayer(e:ObjectModel, type:String, x:Float, y:Float):Void {
+        e.id = "player";
+        e.health = 100;
+        e.bulletType = 1;
+        e.canSwap2 = true;
+        e.canSwap3 = true;
+
+        // Physical parameters
+        e.position.set(x, y);
+        e.velocity.set(0, 0);
+        e.width = 0.9;
+        e.height = 1.9;
+
+        e.left = false;
+        e.right = false;
+        e.grounded = false;
+    }
+    public static function createEnemy(e:ObjectModel, type:String, x:Float, y:Float):Void {
+        e.id = "enemy";
+        e.health = 50;
+        e.bulletType = 0;
+
+        // Physical parameters
+        e.position.set(x, y);
+        e.velocity.set(0, 0);
+        e.width = 0.9;
+        e.height = 1.9;
+
+        e.left = false;
+        e.right = false;
+        e.grounded = false;
+    }
 }
