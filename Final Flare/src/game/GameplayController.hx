@@ -55,86 +55,34 @@ class GameplayController {
     public function createBullet(world:B2World, entity:ObjectModel,bullet:Projectile):Void {
         bullet.bodyDef = new B2BodyDef();
         bullet.bodyDef.bullet = true;
+        bullet.velocity.set(0, 0);
         
-        if (entity.bulletType == 0 ) {
-            bullet.id = "melee";
-            bullet.velocity.set(0, 0);
-            bullet.width = 2;
-            bullet.height = 2;
-            //bullet.bodyDef.bullet = false;
-        }
-        if (entity.bulletType == 4 ) {
-            bullet.id = "explosion";
-            bullet.velocity.set(0, 0);
-            bullet.width = 4;
-            bullet.height = 4;
-            //bullet.bodyDef.bullet = false;
-        }
-        else {
-            if (entity.bulletType == 1 ) {
+        switch(entity.bulletType) {
+            case 0:
+                bullet.id = "melee";
+                bullet.width = 2;
+                bullet.height = 2;
+            case 1:
                 bullet.id = "bullet";
-            }
-            if (entity.bulletType == 2 ) {
+                bullet.width = .05;
+                bullet.height = .05;
+            case 2:
                 bullet.id = "piercingbullet";
-                //bullet.body.isSensor = true;
-            }
-            if(entity.bulletType ==3){
+                bullet.width = .05;
+                bullet.height = .05;
+            case 3:
                 bullet.id = "explosivebullet";
-            }
-        //bullet.velocity.set(0,0);
-        bullet.width = .05;
-        bullet.height = .05;
-        }
-
-        bullet.position = entity.position;
-
-        if (entity.targetX > bullet.position.x) {
-            bullet.position.x += .6;
-        }
-        if (entity.targetX < bullet.position.x) {
-            bullet.position.x -= .6;
-        }
-        bullet.bodyDef = new B2BodyDef();
-        bullet.bodyDef.position.set(bullet.position.x, bullet.position.y);
-        bullet.bodyDef.type = B2Body.b2_dynamicBody;
-        bullet.bodyDef.fixedRotation = true;
-        
-        //bullet.bodyDef.sensor = true;
-
-
-
-        bullet.shape = new B2PolygonShape();
-        bullet.shape.setAsBox ((bullet.width)/2, (bullet.height)/2);
-
-        bullet.fixtureDef = new B2FixtureDef();
-        bullet.fixtureDef.shape = bullet.shape;
-        bullet.fixtureDef.friction = 1;
-        //bullet.fixtureDef.density = 100;
-       // bullet.fixtureDef.filter.maskBits = 0x0000;
-        if (entity.bulletType == 2||entity.bulletType ==0||entity.bulletType==4) {
-
-            bullet.fixtureDef.isSensor = true;
+                bullet.width = .05;
+                bullet.height = .05;
+            case 4:
+                bullet.id = "explosion";
+                bullet.width = 4;
+                bullet.height = 4;
         }
         
-        bullet.body = world.createBody(bullet.bodyDef);
-        if (entity.bulletType != 0) {
-                
-            bullet.fixture = bullet.body.createFixture(bullet.fixtureDef);
-        }
-        if (entity.bulletType == 0) {
-            var jointDef = new B2DistanceJointDef();
-            //entity.fixtureDef.density = 100;
-            jointDef.bodyA = entity.body;
-            jointDef.bodyB = bullet.body;
-            jointDef.localAnchorA = new B2Vec2(0, 0);
-            jointDef.localAnchorB = new B2Vec2(0, 0);
-            jointDef.length = .1;
-            
-            jointDef.collideConnected = false;
-            world.createJoint(jointDef);
-            bullet.fixture = bullet.body.createFixture(bullet.fixtureDef);
-        }
-        bullet.body.setUserData(bullet);
+        bullet.position.setV(entity.position);
+        bullet.position.x += entity.targetX > bullet.position.x ? 0.6 : -0.6;
+        physicsController.initProjectile(bullet, entity, entity.id == "player");
     }
 
     public function updatePlayerRays(state:game.GameState):Void {
