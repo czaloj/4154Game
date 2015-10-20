@@ -27,6 +27,7 @@ import openfl.ui.Mouse;
 class GameplayScreen extends IGameScreen {
     private var state:GameState;
     private var gameplayController:GameplayController;
+    private var aiController:AIController;
     private var renderer:Renderer;
     public var inputController:InputController;
     private var debugPhysicsView:Sprite;
@@ -46,6 +47,7 @@ class GameplayScreen extends IGameScreen {
         state = new GameState();
         inputController = new InputController();
         gameplayController = new GameplayController();
+        aiController = new AIController();
         var pack:RenderPack = new RenderPack();
 
         // TODO: Remove temp create a level
