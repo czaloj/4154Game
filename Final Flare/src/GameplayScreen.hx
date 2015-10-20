@@ -1,5 +1,7 @@
 package;
 
+import flash.events.KeyboardEvent;
+import flash.events.MouseEvent;
 import game.AIController;
 import game.GameLevel;
 import game.GameplayController;
@@ -8,27 +10,16 @@ import game.InputController;
 import game.PhysicsController;
 import graphics.Renderer;
 import graphics.RenderPack;
-import graphics.SpriteSheet;
 import graphics.StaticSprite;
-import graphics.StripRegion;
-import graphics.TileRegion;
+import gun.Gun;
 import gun.GunGenerator;
 import gun.GunGenParams;
-import gun.Gun;
-import openfl.display.Graphics;
-import openfl.display.Sprite;
-import openfl.Lib;
 import openfl.Assets;
+import openfl.display.Sprite;
 import openfl.events.KeyboardEvent;
-import openfl.events.Event;
-import openfl.ui.Keyboard;
-import starling.display.Quad;
+import openfl.Lib;
 import starling.textures.Texture;
 import ui.UISpriteFactory;
-import flash.events.KeyboardEvent;
-import flash.events.MouseEvent;
-import openfl.ui.Keyboard;
-import openfl.ui.Mouse;
 
 class GameplayScreen extends IGameScreen {
     private var state:game.GameState;
@@ -72,12 +63,9 @@ class GameplayScreen extends IGameScreen {
         gameplayController.initDebug(debugPhysicsView);
         Lib.current.stage.addChild(debugPhysicsView);
 
-
         // TODO: Remove this test code
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         var hb:StaticSprite = uif.getTile("Health.Background");
-        hb.scaleX *= 2;
-        hb.scaleY *= 2;
         screenController.addChild(hb);
         var ggp:GunGenParams = new GunGenParams();
         var gunData = GunGenerator.generate(ggp);

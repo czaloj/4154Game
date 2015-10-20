@@ -1,17 +1,16 @@
 package game;
 
-import box2D.dynamics.B2ContactListener;
-import box2D.dynamics.B2FilterData;
-import box2D.dynamics.joints.B2DistanceJoint;
-import box2D.dynamics.joints.B2DistanceJointDef;
-import box2D.dynamics.contacts.B2Contact;
 import box2D.collision.shapes.B2PolygonShape;
 import box2D.common.math.B2Vec2;
 import box2D.dynamics.B2Body;
 import box2D.dynamics.B2BodyDef;
+import box2D.dynamics.B2ContactListener;
 import box2D.dynamics.B2DebugDraw;
+import box2D.dynamics.B2FilterData;
 import box2D.dynamics.B2FixtureDef;
 import box2D.dynamics.B2World;
+import box2D.dynamics.contacts.B2Contact;
+import box2D.dynamics.joints.B2DistanceJointDef;
 import flash.display.Sprite;
 import game.GameState;
 import game.ObjectModel;
@@ -88,8 +87,6 @@ class PhysicsController extends B2ContactListener {
         
         world = new B2World(GRAVITY, true);
         world.setContactListener(this);
-        //contactFilter = new ContactFilter(state);
-        //world.setContactFilter(contactFilter);
         world.setWarmStarting(true);
     }
     
@@ -157,7 +154,9 @@ class PhysicsController extends B2ContactListener {
     }
     public function initProjectile(bullet:Projectile, entity:ObjectModel, isFromPlayer:Bool):Void {
         // TODO: So much to fix
+
         bullet.bodyDef = new B2BodyDef();
+        bullet.bodyDef.bullet = true;
         bullet.bodyDef.position.set(bullet.position.x, bullet.position.y);
         bullet.bodyDef.type = B2Body.b2_dynamicBody;
         bullet.bodyDef.fixedRotation = true;

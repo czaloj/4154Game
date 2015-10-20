@@ -1,9 +1,6 @@
 package game;
 
-import graphics.SpriteSheet;
 import openfl.geom.Point;
-import openfl.Lib;
-import openfl.Assets;
 
 class GameLevel {
     public var width:Int; // Width of level

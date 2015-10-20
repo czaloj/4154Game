@@ -3,13 +3,10 @@ package;
 import game.GameLevel;
 import game.GameState;
 import game.InputController;
-import openfl.Lib;
-import openfl.events.MouseEvent;
-import openfl.events.KeyboardEvent;
-import openfl.Assets;
-import haxe.Serializer;
-import graphics.RenderPack;
 import graphics.Renderer;
+import graphics.RenderPack;
+import openfl.events.MouseEvent;
+import openfl.Lib;
 
 class LevelEditorScreen extends IGameScreen {
     private static var BORDER_START = 0;
@@ -20,7 +17,6 @@ class LevelEditorScreen extends IGameScreen {
     private var state:game.GameState;
     private var renderer:Renderer;
     private var levelController:LevelEditorController;
-    private var inputController:game.InputController;
 
     public var tileMap:TileMap;
 
@@ -57,7 +53,6 @@ class LevelEditorScreen extends IGameScreen {
     override public function onEntry(gameTime:GameTime):Void {
         state = new game.GameState();
         levelController = new LevelEditorController();
-        inputController = new game.InputController();
         var pack:RenderPack = new RenderPack();
 
         // set up startup level
@@ -85,10 +80,10 @@ class LevelEditorScreen extends IGameScreen {
         Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE,onMouseMove);
 
     }
-
     override public function onExit(gameTime:GameTime):Void {
         // Empty
     }
+
     override public function update(gameTime:GameTime):Void {
         state.foreground = tileMap.toIDArray();
         // gameplayController.update(state, renderer, gameTime);

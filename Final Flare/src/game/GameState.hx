@@ -1,14 +1,13 @@
 package game;
 
-import flash.display.Sprite;
 import box2D.dynamics.contacts.B2Contact;
+import flash.display.Sprite;
 import game.events.GameEvent;
 
 class GameState {
-    //dimension of map in tiles
-
     public static var world_sprite:Sprite;
 
+    // Dimension of map in half-tiles
     public var width = 0;
     public var height = 0;
 
@@ -22,7 +21,6 @@ class GameState {
 
     public var contactList:List<B2Contact> = new List();
     public var bullets:Array<game.Projectile> = [];
-    public var markedForDeletion:Array<Entity> = [];
     
     public var gameEvents:Array<GameEvent> = []; // The queue of game events that should occur during an update
     

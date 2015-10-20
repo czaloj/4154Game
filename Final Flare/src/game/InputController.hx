@@ -4,8 +4,6 @@ import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import game.GameState;
 import openfl.ui.Keyboard;
-import openfl.ui.Mouse;
-
 
 /** Handlers for input events **/
 class InputController {
@@ -27,8 +25,6 @@ class InputController {
         keysDown[e.keyCode] = true;
     }
 
-
-
     // KeyUp handler. Given even e, flips key code element in keysDown to false
     public function keyUp(e:KeyboardEvent):Void {
         keysDown[e.keyCode] = false;
@@ -38,7 +34,6 @@ class InputController {
         click = true;
         x = e.stageX;
         y = e.stageY;
-       // trace(y);
     }
     
     public function mouseUp(e:MouseEvent):Void {
@@ -53,6 +48,8 @@ class InputController {
         state.player.swap2 = keysDown[Keyboard.NUMBER_2];
         state.player.swap3 = keysDown[Keyboard.NUMBER_3];
         state.player.click = click;
+        
+        // Keyboard and mouse targeting logic
         if (keysDown[Keyboard.LEFT]) {
             state.player.targetX = state.player.position.x - 100;
             state.player.targetY = state.player.position.y;
@@ -73,8 +70,4 @@ class InputController {
             click = false;
         }
     }
-
-    /****************************************************************************/
-    /* Handlers for level editor */
-
 }

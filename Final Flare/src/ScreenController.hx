@@ -1,14 +1,11 @@
 package;
 
+import game.GameLevel;
 import openfl.events.KeyboardEvent;
-import openfl.events.MouseEvent;
 import openfl.Lib;
 import openfl.ui.Keyboard;
-import openfl.utils.ByteArray;
 import starling.display.Sprite;
 import starling.events.Event;
-import starling.core.Starling;
-import game.GameLevel;
 
 class ScreenController extends Sprite {
     public static var FRAME_TIME:Float = 1.0 / 60.0;
@@ -21,7 +18,7 @@ class ScreenController extends Sprite {
     private var activeScreen:IGameScreen;
     private var screenToSwitch:Int = -1;
     
-    public var loadedLevel:GameLevel = null;
+    public var loadedLevel:GameLevel = null; // The level that has been loaded in by the menu
 
     public function new() {
         super();

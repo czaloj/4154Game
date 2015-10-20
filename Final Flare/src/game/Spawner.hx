@@ -3,15 +3,10 @@ package game;
 import game.events.GameEventSpawn;
 import game.GameplayController;
 import game.GameState;
-import graphics.Renderer;
-import openfl.display.Graphics;
 import openfl.geom.Point;
-import openfl.events.EventDispatcher;
 
 class Spawner {
     public var id:String; // Identifying tag
-
-    //Physics data
     public var position:Point = new Point(); // Spawner position
 
     public function new(id:String = null, x:Float = 0, y:Float = 0) {

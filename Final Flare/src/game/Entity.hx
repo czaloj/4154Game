@@ -1,14 +1,12 @@
 package game;
 
+import box2D.collision.shapes.B2PolygonShape;
+import box2D.common.math.B2Vec2;
 import box2D.dynamics.B2Body;
 import box2D.dynamics.B2BodyDef;
 import box2D.dynamics.B2BodyType;
 import box2D.dynamics.B2Fixture;
 import box2D.dynamics.B2FixtureDef;
-import box2D.common.math.B2Vec2;
-import box2D.collision.shapes.B2Shape;
-import box2D.collision.shapes.B2PolygonShape;
-import openfl.geom.Point;
 
 class Entity {
     public var id:String; // Identifying tag

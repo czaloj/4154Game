@@ -1,38 +1,25 @@
 package game;
+
 import game.GameState;
 
 class AIController {
-    
-    public var entities:Array<game.ObjectModel>;
-
     public function new() {
+        // Empty
     }
 
-    public function addEntity(e:game.ObjectModel):Void {
-        entities.push(e);
-    }
-
-    public function move(state:game.GameState):Void {
+    public function move(state:GameState):Void {
         for (entity in state.entities) {
             if (entity.id != "player") {
                 followPlayer(entity, state);
-                // entity.up = true; entity.leftFootGrounded = true; entity.velocity.y = 9.5;
-                // var target = state.player.position;
-                // var x:Float = entity.position.x;
-                // var dir = (x-target.x)/Math.abs(x-target.x);    // -1 for left, 1 for right
-                // var onLeft = dir > 0;
-                // entity.left = onLeft;
-                //entity.right = !onLeft;
             }
         }
     }
 
     // TODO: weee magic numberss
-    public function followPlayer(entity:game.ObjectModel, state:game.GameState):Void {
-        if (entity.click ) { 
+    public function followPlayer(entity:ObjectModel, state:GameState):Void {
+        if (entity.click) { 
             entity.click = false; 
             entity.countSinceClick = 60; 
-            
         }
         if (!entity.click ) {
             entity.countSinceClick--;    
@@ -44,7 +31,7 @@ class AIController {
         var onLeft = dir > 0;
         
         if (state.player.position.x - x <= 2 && entity.countSinceClick <= 0) {
-                entity.click = true;
+            entity.click = true;
         }
         entity.up = false; entity.velocity.y = 0; entity.leftFootGrounded = true;
         // if (entity.grounded) {
@@ -80,10 +67,11 @@ class AIController {
         // }
     }
 
-    public function findPlatformLateral(state:game.GameState, curX:Int, curY:Int, dir:Int) {
+    public function findPlatformLateral(state:GameState, curX:Int, curY:Int, dir:Int):Int {
+        return 0; // ?
     }
 
-    public function findPlatformAbove(state:game.GameState, curx:Int, cury:Int) {
+    public function findPlatformAbove(state:GameState, curx:Int, cury:Int):Int {
         var lastY = cury;
         var lowestY = -1;
         var closestX = -1;

@@ -1,13 +1,7 @@
 package game;
 
-import box2D.collision.shapes.B2PolygonShape;
 import box2D.common.math.B2Vec2;
-import box2D.dynamics.B2Body;
-import box2D.dynamics.B2BodyDef;
 import box2D.dynamics.B2Fixture;
-import box2D.dynamics.B2FixtureDef;
-import box2D.dynamics.joints.B2DistanceJoint;
-import box2D.dynamics.joints.B2DistanceJointDef;
 import box2D.dynamics.B2World;
 import game.events.GameEvent;
 import game.events.GameEventSpawn;
@@ -27,6 +21,7 @@ class GameplayController {
     public var state:game.GameState;
     public var physicsController:PhysicsController = new PhysicsController();
     private var debugPhysicsView:Sprite;
+    private var deletingEntities:Array<ObjectModel> = [];
 
     public function new() {
         // Empty
@@ -52,9 +47,7 @@ class GameplayController {
         physicsController.renderDebug();
     }
     
-    public function createBullet(world:B2World, entity:ObjectModel,bullet:Projectile):Void {
-        bullet.bodyDef = new B2BodyDef();
-        bullet.bodyDef.bullet = true;
+    public function createBullet(world:B2World, entity:ObjectModel, bullet:Projectile):Void {
         bullet.velocity.set(0, 0);
         
         switch(entity.bulletType) {
@@ -85,7 +78,7 @@ class GameplayController {
         physicsController.initProjectile(bullet, entity, entity.id == "player");
     }
 
-    public function updatePlayerRays(state:game.GameState):Void {
+    public function updatePlayerRays(state:GameState):Void {
         //Update left Ray
         state.player.leftRayStart = new B2Vec2(state.player.position.x - (state.player.width/2), state.player.position.y /*- (state.player.height/2)*/);
         state.player.leftRayEnd = new B2Vec2(state.player.leftRayStart.x, state.player.leftRayStart.y - 1);
@@ -191,15 +184,11 @@ class GameplayController {
                 var id1 = entity1.id;
                 var id2 = entity2.id;
                 
-                if (id1 == "bullet"||id1 == "melee"||id1 == "explosivebullet"||id1 =="explosion") {
-                    state.markedForDeletion.push(entity1);
-                    var bulldead = cast(entity1, Projectile);
-                    state.onProjectileRemoved.invoke(state, bulldead);
+                if (id1 == "bullet" || id1 == "melee" || id1 == "explosivebullet" || id1 =="explosion") {
+                    state.onProjectileRemoved.invoke(state, cast(entity1, Projectile));
                 }
-                if (id2 == "bullet"||id2=="melee"||id2 =="explosivebullet"||id2=="explosion") {
-                    state.markedForDeletion.push(entity2);
-                    var bulldead = cast(entity2, Projectile);
-                    state.onProjectileRemoved.invoke(state, bulldead);
+                if (id2 == "bullet" || id2=="melee" || id2 =="explosivebullet" || id2=="explosion") {
+                    state.onProjectileRemoved.invoke(state, cast(entity2, Projectile));
                 }
                 
                 //When a player is hit by normal bullet
@@ -207,9 +196,7 @@ class GameplayController {
                     var entity1o = cast(entity1, ObjectModel);
                     entity1o.health -= BULLET_DAMAGE;
                     if (entity1o.health <= 0) {
-                        state.markedForDeletion.push(entity1);
-                        var dead = cast(entity1, ObjectModel);
-                        state.onEntityRemoved.invoke(state, dead);
+                        deletingEntities.push(entity1o);
                     }
                 }
                 
@@ -219,9 +206,7 @@ class GameplayController {
                     var entity2o = cast(entity2, ObjectModel);
                     entity2o.health -= BULLET_DAMAGE;
                     if (entity2o.health <= 0) {
-                        state.markedForDeletion.push(entity2);
-                        var dead = cast(entity2, ObjectModel);
-                        state.onEntityRemoved.invoke(state, dead);
+                        deletingEntities.push(entity2o);
                     }
                 }
                 if (( id1 == "enemy") && id2 == "explosivebullet") {
@@ -246,9 +231,7 @@ class GameplayController {
                     var entity1o = cast(entity1, ObjectModel);
                     entity1o.health -= E_DAMAGE;
                     if (entity1o.health <= 0) {
-                        state.markedForDeletion.push(entity1);
-                        var dead = cast(entity1, ObjectModel);
-                        state.onEntityRemoved.invoke(state, dead);
+                        deletingEntities.push(entity1o);
                     }
                 }
                 
@@ -258,9 +241,7 @@ class GameplayController {
                     var entity2o = cast(entity2, ObjectModel);
                     entity2o.health -= E_DAMAGE;
                     if (entity2o.health <= 0) {
-                        state.markedForDeletion.push(entity2);
-                        var dead = cast(entity2, ObjectModel);
-                        state.onEntityRemoved.invoke(state, dead);
+                        deletingEntities.push(entity2o);
                     }
 
                 }
@@ -268,9 +249,7 @@ class GameplayController {
                     var entity1o = cast(entity1, ObjectModel);
                     entity1o.health -=  MELEE_DAMAGE;
                     if (entity1o.health <= 0) {
-                        state.markedForDeletion.push(entity1);
-                        var dead = cast(entity1, ObjectModel);
-                        state.onEntityRemoved.invoke(state, dead);
+                        deletingEntities.push(entity1o);
                     }
                 }
                 
@@ -280,9 +259,7 @@ class GameplayController {
                     var entity2o = cast(entity2, ObjectModel);
                     entity2o.health -=  MELEE_DAMAGE;
                     if (entity2o.health <= 0) {
-                        state.markedForDeletion.push(entity2);
-                        var dead = cast(entity2, ObjectModel);
-                        state.onEntityRemoved.invoke(state, dead);
+                        deletingEntities.push(entity2o);
                     }
                 }
             }
@@ -372,6 +349,10 @@ class GameplayController {
         handleCollisions();
         
         // Destroy all dead things
+        for (entity in deletingEntities) {
+            state.onEntityRemoved.invoke(state, entity);
+            state.entities.remove(entity);
+        }
         physicsController.clearDeadBodies();
     }
 

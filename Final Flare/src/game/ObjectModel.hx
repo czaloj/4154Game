@@ -33,7 +33,7 @@ class ObjectModel extends Entity {
     public var grounded(get, never):Bool;      //True if touching a platform
     public var isDead:Bool;         //True is player is dead
     public var click:Bool;
-    public var targetX:Float;
+    public var targetX:Float; // TODO: This should be a viewing direction
     public var targetY:Float;
      
     //Raycast flags
