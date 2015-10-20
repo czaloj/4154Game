@@ -56,4 +56,8 @@ class InputController {
             click = false;
         }
     }
+
+    /****************************************************************************/
+    /* Handlers for level editor */
+
 }

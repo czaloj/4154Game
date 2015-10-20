@@ -30,6 +30,8 @@ class GameplayController {
     public var physicsController:PhysicsController;
     private var debugPhysicsView:Sprite;
 
+    private var aiController:AIController;
+
     public function new() {
         // Empty
     }
@@ -56,6 +58,8 @@ class GameplayController {
                 createPlatform(physicsController.world, platform, x, y);
             }
          }
+
+         aiController = new AIController();
     }
 
     public function createPlatform(world:B2World, platform:ObjectModel, x:Float, y:Float):Void {
@@ -376,8 +380,6 @@ class GameplayController {
     public function update(s:GameState, r:Renderer, gameTime:GameTime):Void {
         state = s;
         //Spawner.spawn(gameTime, state);
-        updatePlayerRays(state);
-        Raycast(physicsController.world, state.player);
 
         for (entity in state.entities) {
             //UPDATES VELOCITY
@@ -418,6 +420,11 @@ class GameplayController {
                 state.bullets.push(bullet);  //push bullet onto gamestate bullets
                 r.onBulletAdded(bullet);
             }
+		
+		updatePlayerRays(state);
+        Raycast(physicsController.world, state.player);
+        aiController.move(state);
+
         }
 
 
