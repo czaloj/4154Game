@@ -144,8 +144,8 @@ class GameplayController {
             bullet.id = "melee";
             bullet.velocity.set(0, 0);
             bullet.dimension = new Point(5, 10);
-            bullet.width = 32;
-            bullet.height = 64;
+            bullet.width = 2;
+            bullet.height = 2;
         }
         else {
             if (entity.bulletType == 1 ) {
@@ -159,18 +159,18 @@ class GameplayController {
                 bullet.id = "explosivebullet";
             }
         //bullet.velocity.set(0,0);
-        bullet.dimension = new Point(5, 10);
-        bullet.width = 5;
-        bullet.height = 10;
+        bullet.dimension = new Point(.05, .05);
+        bullet.width = .05;
+        bullet.height = .05;
         }
         
         bullet.position = entity.position;
         
         if (entity.targetX > bullet.position.x) {
-            bullet.position.x += 30;
+            bullet.position.x += .5;
         }
         if (entity.targetX < bullet.position.x) {
-            bullet.position.x -= 30;
+            bullet.position.x -= .5;
         }
         bullet.bodyDef = new B2BodyDef();
         bullet.bodyDef.position.set(bullet.position.x, bullet.position.y);
@@ -386,14 +386,14 @@ class GameplayController {
 
             
             //TODO This should be its own function
-            /*if (entity.click) {
+            if (entity.click) {
                 var bullet:Projectile = new Projectile();
                 createBullet(physicsController.world, entity, bullet);
                 bullet.targetX = entity.targetX;
                 bullet.targetY = entity.targetY;
                 bullet.setVelocity();
                 state.bullets.push(bullet);  //push bullet onto gamestate bullets
-            }*/
+            }
         }
         
 
