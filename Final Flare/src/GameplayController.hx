@@ -23,6 +23,8 @@ class GameplayController {
     public static var PLAYER_GROUND_FRICTION:Float = .3;
     public static var PLAYER_AIR_FRICTION:Float = .95;
     public static inline var TILE_HALF_WIDTH:Float = 0.5;
+	public static var BULLET_DAMAGE = 10;
+	public static var MELEE_DAMAGE = 20;
 
     public var state:GameState;
     public var physicsController:PhysicsController;
@@ -95,7 +97,8 @@ class GameplayController {
         player.width = 0.9;
         player.height = 1.9;
         player.bulletType = 1;
-
+		player.health = 100;
+		
         player.bodyDef = new B2BodyDef();
         player.bodyDef.position.set(player.position.x, player.position.y);
         player.bodyDef.type = B2Body.b2_dynamicBody;
@@ -127,7 +130,7 @@ class GameplayController {
         enemy.bodyDef.position.set(enemy.position.x, enemy.position.y);
         enemy.bodyDef.type = B2Body.b2_dynamicBody;
         enemy.bodyDef.fixedRotation = true;
-
+		enemy.health = 50;
         enemy.shape = new B2PolygonShape();
         enemy.shape.setAsBox ((enemy.width)/2, (enemy.height)/2);
 
@@ -168,10 +171,10 @@ class GameplayController {
         bullet.position = entity.position;
 
         if (entity.targetX > bullet.position.x) {
-            bullet.position.x += .5;
+            bullet.position.x += .6;
         }
         if (entity.targetX < bullet.position.x) {
-            bullet.position.x -= .5;
+            bullet.position.x -= .6;
         }
         bullet.bodyDef = new B2BodyDef();
         bullet.bodyDef.position.set(bullet.position.x, bullet.position.y);
@@ -198,7 +201,7 @@ class GameplayController {
         bullet.body = world.createBody(bullet.bodyDef);
 
         bullet.fixture = bullet.body.createFixture(bullet.fixtureDef);
-        bullet.body.setUserData(bullet.id);
+        bullet.body.setUserData(bullet);
     }
 
     public function updatePlayerRays(state:GameState):Void {
@@ -319,14 +322,33 @@ class GameplayController {
                 var id1 = entity1.id;
                 var id2 = entity2.id;
 
-                /*
+				
+                
                 //When a player is hit by normal bullet
-                if ((id1 == "player" && id2 == "bullet") || (id2 == "player" && id1 == "bullet")) {
-                    //player takes damage;
+                if ((id1 == "player" || id1 == "enemy") && id2 == "bullet") {
+					var entity1o = cast(entity1, ObjectModel);
+					entity1o.health -= BULLET_DAMAGE;
+				}
+				
+				if((id2 == "player" || id2 =="enemy") && id1 == "bullet") {
+					var entity2o = cast(entity2, ObjectModel);
+					entity2o.health -= BULLET_DAMAGE;
+					//player takes damage;
+                    //mark bullet for destreuction
+                }
+				if ((id1 == "player" || id1 == "enemy") && id2 == "melee") {
+					var entity1o = cast(entity1, ObjectModel);
+					entity1o.health -=MELEE_DAMAGE;
+				}
+				
+				if((id2 == "player" || id2 =="enemy") && id1 == "melee") {
+					var entity2o = cast(entity2, ObjectModel);
+					entity2o.health -=MELEE_DAMAGE;	
+					//player takes damage;
                     //mark bullet for destreuction
                 }
                 //If player is hit by melee
-                }
+                /*
                 if ((id1 == "player" && id2 == "melee") || (id2 == "player" && id1 == "melee")) {
                     //player takes damage;
                 }
@@ -399,8 +421,8 @@ class GameplayController {
         }
 
 
-		trace(state.player.leftFootGrounded);
-		trace(state.player.rightFootGrounded);
+		//trace(state.player.leftFootGrounded);
+		//trace(state.player.rightFootGrounded);
 
         physicsController.update(gameTime.elapsed);
         for (bullet in state.bullets) {

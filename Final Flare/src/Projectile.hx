@@ -13,7 +13,7 @@ import openfl.geom.Point;
 
 class Projectile extends Entity {
     
-    private static var BULLET_SPEED:Float = 2000;
+    private static var BULLET_SPEED:Float = 20;
     private static var PHYSICS_SCALE:Float = 1 / 30;
     
     public var targetX:Float;
