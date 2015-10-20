@@ -16,12 +16,12 @@ import box2D.dynamics.B2ContactFilter;
 import openfl.Lib;
 
 class GameplayController {
-    public static var PLAYER_MAX_SPEED:Float = 900;
-    public static var PLAYER_GROUND_ACCEL:Float = 400;
-    public static var PLAYER_AIR_ACCEL:Float = 300;
+    public static var PLAYER_MAX_SPEED:Float = 9;
+    public static var PLAYER_GROUND_ACCEL:Float = 4;
+    public static var PLAYER_AIR_ACCEL:Float = 3;
     public static var PLAYER_GROUND_FRICTION:Float = .8;
     public static var PLAYER_AIR_FRICTION:Float = .95;
-    public static inline var TILE_HALF_WIDTH:Float = 16;
+    public static inline var TILE_HALF_WIDTH:Float = 0.5;
 
     public var state:GameState;
     public var physicsController:PhysicsController;
@@ -91,8 +91,8 @@ class GameplayController {
         player.rotation = 0;
         player.left = false;
         player.right = false;
-        player.width = 32;
-        player.height = 64;
+        player.width = 0.9;
+        player.height = 1.9;
         player.bulletType = 1;
         
         player.bodyDef = new B2BodyDef();
@@ -120,8 +120,8 @@ class GameplayController {
         enemy.rotation = 0;
         enemy.left = false;
         enemy.right = false;
-        enemy.width = 32;
-        enemy.height = 64;
+        enemy.width = 0.9;
+        enemy.height = 1.9;
         enemy.bodyDef = new B2BodyDef();
         enemy.bodyDef.position.set(enemy.position.x, enemy.position.y);
         enemy.bodyDef.type = B2Body.b2_dynamicBody;
@@ -368,7 +368,7 @@ class GameplayController {
             entity.velocity.x = Math.min(PLAYER_MAX_SPEED, Math.max(-PLAYER_MAX_SPEED, entity.velocity.x));
 //trace(entity.velocity.y);
             if (entity.up && entity.leftFootGrounded) {
-                    entity.velocity.y = 600;
+                    entity.velocity.y = 10;
 					
             }
 		

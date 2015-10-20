@@ -10,8 +10,10 @@ class Spawner {
     //Physics data
     public var position:Point = new Point(); // Spawner position
 
-    public function new() {
-        // Empty
+    public function new(id:String = null, x:Float = 0, y:Float = 0) {
+        this.id = id;
+        position.x = x;
+        position.y = y;
     }
 
     public static function spawn(gameTime:GameTime, state: GameState) {

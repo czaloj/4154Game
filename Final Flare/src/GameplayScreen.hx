@@ -48,33 +48,10 @@ class GameplayScreen extends IGameScreen {
         gameplayController = new GameplayController();
         var pack:RenderPack = new RenderPack();
 
-        // TODO: Remove this test code
-        //var level = new GameLevel();
-        //level.width = 75;
-        //level.height = 30;
-        //level.playerPt.setTo(0, -150);
-        //var spawnerTL = new Spawner();
-        //spawnerTL.position.setTo(-400, 150);
-        //var spawnerTR = new Spawner();
-         //spawnerTR.position.setTo(400, 50);
-        //var spawnerC = new Spawner();
-         //spawnerC.position.setTo(0, 100);
-        //level.spawners = [spawnerTL, spawnerTR, spawnerC];
-        //level.foreground = [
-        //];
-        //level.environmentSprites = "assets/img/Factory.png";
-        //level.environmentType = "Simple";
-        //level.parallax = [
-            //"assets/img/FactoryP1.png",
-            //"assets/img/FactoryP2.png",
-            //"assets/img/FactoryP3.png",
-            //"assets/img/FactoryP4.png"
-        //];
-        //trace(haxe.Serializer.run(level));
-        //TODO: Load Level
-        //LevelCreator.createFromLevel(level, state, pack);
-
-        var gl:GameLevel = LevelCreator.loadLevelFromFile("assets/level/valley");
+        // TODO: Remove temp create a level
+        // CodeLevelEditor.run();
+        
+        var gl:GameLevel = LevelCreator.loadLevelFromFile("assets/level/test.lvl");
         LevelCreator.createStateFromLevel(gl, state);
         gameplayController.init(state);
         LevelCreator.createPackFromLevel(gl, pack);
@@ -118,7 +95,7 @@ class GameplayScreen extends IGameScreen {
         // Update the view for the debug physics
         debugPhysicsView.x = renderer.cameraScale * -renderer.cameraX + ScreenController.SCREEN_WIDTH / 2;
         debugPhysicsView.y = renderer.cameraScale * renderer.cameraY + ScreenController.SCREEN_HEIGHT / 2;
-        debugPhysicsView.scaleX = renderer.cameraScale;
-        debugPhysicsView.scaleY = -renderer.cameraScale;
+        debugPhysicsView.scaleX = renderer.cameraScale / PhysicsController.DEBUG_VIEW_SCALE;
+        debugPhysicsView.scaleY = -renderer.cameraScale / PhysicsController.DEBUG_VIEW_SCALE;
     }
 }

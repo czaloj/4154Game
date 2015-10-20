@@ -16,10 +16,10 @@ import starling.display.Stage;
 import starling.textures.Texture;
 
 class Renderer {
-    public static inline var TILE_HALF_WIDTH:Float = 16;
-    public static inline var PLAYER_WIDTH:Float = 32;
-    public static inline var PLAYER_HEIGHT:Float = 64;
-    public static inline var CAMERA_DEBUG_MOVE_SPEED:Float = 500.0;
+    public static inline var TILE_HALF_WIDTH:Float = 0.5;
+    public static inline var PLAYER_WIDTH:Float = 0.9;
+    public static inline var PLAYER_HEIGHT:Float = 1.9;
+    public static inline var CAMERA_DEBUG_MOVE_SPEED:Float = 5.0;
 
     private var stageHalfSize:Point = new Point();
     private var hierarchy:RenderHierarchy = new RenderHierarchy();
@@ -53,7 +53,7 @@ class Renderer {
         // Default camera
         cameraX = 0;
         cameraY = 0;
-        cameraScale = 1;
+        cameraScale = 32;
 
         // What to do when screen changes size
         Lib.current.stage.addEventListener(Event.RESIZE, onWindowResize);
@@ -153,17 +153,12 @@ class Renderer {
     }
 
     private function load(state:GameState):Void {
-        // TODO: Remove this test code
-        var man = new AnimatedSprite(pack.characters, "Man.Run", 3);
-        //TODO: remove magic number: player dimension
-        man.x = state.player.position.x - PLAYER_WIDTH * 0.5;
-        man.y = state.player.position.y - PLAYER_HEIGHT * 0.5;
-        hierarchy.player.addChild(man);
-        entityTbl.set(state.player,man);
         function fAdd(x:Float, y:Float, n:String):Void {
             var brick:StaticSprite = new StaticSprite(pack.environment, n);
             brick.x = x;
             brick.y = y;
+            brick.scaleX /= 32;
+            brick.scaleY /= 32;
             // TODO: Correct this
             hierarchy.foreground.addChild(brick);
         };
