@@ -8,6 +8,9 @@ import box2D.dynamics.B2Body;
 import box2D.dynamics.B2BodyDef;
 import box2D.dynamics.B2Fixture;
 import box2D.dynamics.B2FixtureDef;
+
+import box2D.dynamics.joints.B2DistanceJointDef;
+import box2D.dynamics.joints.B2DistanceJoint;
 import box2D.collision.shapes.B2PolygonShape;
 import box2D.common.math.B2Vec2;
 import box2D.dynamics.B2DebugDraw;
@@ -150,21 +153,25 @@ class GameplayController {
     }
 
     public function createBullet(world:B2World, entity:ObjectModel,bullet:Projectile):Void {
-        if (entity.bulletType == 0 ) {
+		bullet.bodyDef = new B2BodyDef();
+		bullet.bodyDef.bullet = true;
+		
+		if (entity.bulletType == 0 ) {
             bullet.id = "melee";
             bullet.velocity.set(0, 0);
             bullet.dimension = new Point(5, 10);
             bullet.width = 2;
             bullet.height = 2;
+			//bullet.bodyDef.bullet = false;
         }
         else {
-            if (entity.bulletType == 1 ) {
+            //if (entity.bulletType == 1 ) {
                 bullet.id = "bullet";
-            }
-            if (entity.bulletType == 2 ) {
-                bullet.id = "piercingbullet";
+            //}
+            //if (entity.bulletType == 2 ) {
+           //     bullet.id = "piercingbullet";
                 //bullet.body.isSensor = true;
-            }
+           // }
            /// else{
            //     bullet.id = "explosivebullet";
            // }
@@ -186,7 +193,7 @@ class GameplayController {
         bullet.bodyDef.position.set(bullet.position.x, bullet.position.y);
         bullet.bodyDef.type = B2Body.b2_dynamicBody;
         bullet.bodyDef.fixedRotation = true;
-        bullet.bodyDef.bullet = true;
+        
         //bullet.bodyDef.sensor = true;
 
 
@@ -197,16 +204,31 @@ class GameplayController {
         bullet.fixtureDef = new B2FixtureDef();
         bullet.fixtureDef.shape = bullet.shape;
         bullet.fixtureDef.friction = 1;
-        bullet.fixtureDef.density = 1;
+        //bullet.fixtureDef.density = 100;
        // bullet.fixtureDef.filter.maskBits = 0x0000;
         if (entity.bulletType == 2||entity.bulletType ==0) {
 
             bullet.fixtureDef.isSensor = true;
         }
-
+		
         bullet.body = world.createBody(bullet.bodyDef);
-
-        bullet.fixture = bullet.body.createFixture(bullet.fixtureDef);
+		if (entity.bulletType != 0) {
+				
+			bullet.fixture = bullet.body.createFixture(bullet.fixtureDef);
+		}
+		if (entity.bulletType == 0) {
+			var jointDef = new B2DistanceJointDef();
+			//entity.fixtureDef.density = 100;
+			jointDef.bodyA = entity.body;
+			jointDef.bodyB = bullet.body;
+			jointDef.localAnchorA = new B2Vec2(0, 0);
+			jointDef.localAnchorB = new B2Vec2(0, 0);
+			jointDef.length = 1;
+			
+			jointDef.collideConnected = false;
+			world.createJoint(jointDef);
+			bullet.fixture = bullet.body.createFixture(bullet.fixtureDef);
+		}
         bullet.body.setUserData(bullet);
     }
 

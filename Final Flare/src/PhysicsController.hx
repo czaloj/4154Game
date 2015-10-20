@@ -52,6 +52,11 @@ class PhysicsController {
         world.step(1 / 60, 5, 3);
         for (entity in state.markedForDeletion) {
                 world.destroyBody(entity.body);
+				if (entity.id == "enemy") {
+				var ontity = cast(entity, ObjectModel);	
+				state.entities.remove(ontity);
+				}
+				
         }
         world.clearForces();
         world.drawDebugData();
