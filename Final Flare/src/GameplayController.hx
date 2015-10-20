@@ -162,7 +162,6 @@ class GameplayController {
 		if (entity.bulletType == 0 ) {
             bullet.id = "melee";
             bullet.velocity.set(0, 0);
-            bullet.dimension = new Point(2, 2);
             bullet.width = 2;
             bullet.height = 2;
 			//bullet.bodyDef.bullet = false;
@@ -170,7 +169,6 @@ class GameplayController {
 		if (entity.bulletType == 4 ) {
             bullet.id = "explosion";
             bullet.velocity.set(0, 0);
-            bullet.dimension = new Point(4, 4);
             bullet.width = 4;
             bullet.height = 4;
 			//bullet.bodyDef.bullet = false;
@@ -187,7 +185,6 @@ class GameplayController {
                 bullet.id = "explosivebullet";
             }
         //bullet.velocity.set(0,0);
-        bullet.dimension = new Point(.05, .05);
         bullet.width = .05;
         bullet.height = .05;
         }
