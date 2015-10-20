@@ -1,7 +1,6 @@
 package;
 
 import flash.net.FileReference;
-import game.GameLevel;
 import haxe.remoting.FlashJsConnection;
 import haxe.Unserializer;
 import openfl.Assets;
@@ -19,6 +18,7 @@ import starling.display.Image;
 import starling.display.Quad;
 import starling.textures.Texture;
 import flash.display.BitmapData;
+import game.GameLevel;
 
 class ScreenController extends Sprite {
     public static var FRAME_TIME:Float = 1.0 / 60.0;
@@ -31,7 +31,7 @@ class ScreenController extends Sprite {
     private var activeScreen:IGameScreen;
     private var screenToSwitch:Int = -1;
     
-    public var loadedLevel:game.GameLevel = null;
+    public var loadedLevel:GameLevel = null;
 
     public function new() {
         super();
@@ -50,7 +50,14 @@ class ScreenController extends Sprite {
         
         // TODO: Remove debug level creation
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, function (e:KeyboardEvent):Void {
-            if (e.keyCode == Keyboard.F6) CodeLevelEditor.run();
+            switch (e.keyCode) {
+                case Keyboard.F6:
+                    CodeLevelEditor.run();
+                case Keyboard.F7:
+                    // TODO: Load Level
+                case Keyboard.F8:
+                    LevelCreator.saveToFile(loadedLevel);
+            }
         });
         
         // Begin loading a file
@@ -107,7 +114,8 @@ class ScreenController extends Sprite {
         fileReference.removeEventListener(Event.COMPLETE, onFileLoaded);
 
         var data:ByteArray = fileReference.data;
-        loadedLevel = cast(Unserializer.run(data.toString()), game.GameLevel);
+        loadedLevel = cast(Unserializer.run(data.toString()), GameLevel);
+
         switchToScreen(2);
     }
 }
