@@ -1,6 +1,8 @@
 package;
 
 import box2D.dynamics.contacts.B2Contact;
+import game.events.GameEvent;
+import game.events.GameEventSpawn;
 import graphics.Renderer;
 import openfl.display.Sprite;
 import openfl.geom.Point;
@@ -459,7 +461,19 @@ class GameplayController {
         
         // TODO: Spawner shouldn't need reference to this
         Spawner.spawn(this, state, gameTime);
+        
+        // Update game events
+        if (state.gameEvents.length > 0) {
+            for (event in state.gameEvents) {
+                switch(event.type) {
+                    case GameEvent.TYPE_SPAWN:
+                        applyEventSpawn(state, cast(event, GameEventSpawn));
+                }
+            }
+            state.gameEvents = [];
+        }
 
+        // Update entity movement
         for (entity in state.entities) {
             //UPDATES VELOCITY
             entity.velocity = entity.body.getLinearVelocity().copy();
@@ -523,5 +537,18 @@ class GameplayController {
         updatePlayerRays(state); //Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
         Raycast(physicsController.world, state.player);
         handleCollisions();
+    }
+
+    // Application of game events
+    public function applyEventSpawn(state:GameState, e:GameEventSpawn) {
+        switch (e.entity) {
+            // TODO: Actually fix this
+            case "Grunt":
+                var enemy = new ObjectModel();
+                enemy.position.set(e.x, e.y);
+                state.entities.push(enemy);
+                createEnemy(physicsController.world, enemy);
+                state.onEntityAdded.invoke(state, enemy);
+        }
     }
 }

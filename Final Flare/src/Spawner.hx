@@ -1,5 +1,6 @@
 package;
 
+import game.events.GameEventSpawn;
 import graphics.Renderer;
 import openfl.display.Graphics;
 import openfl.geom.Point;
@@ -17,14 +18,10 @@ class Spawner {
         position.y = y;
     }
     public static function spawn(gameplayController:GameplayController, state: GameState, gameTime:GameTime) {
+        // TODO: Use advanced spawning logic
         if (gameTime.frame % 120 == 0) {
             for (spawner in state.spawners) {
-                // TODO: Send a spawn event instead of updating the state in here
-                var enemy = new ObjectModel();
-                enemy.position.set(spawner.position.x, spawner.position.y);
-                state.entities.push(enemy);
-                gameplayController.createEnemy(gameplayController.physicsController.world, enemy);
-                state.onEntityAdded.invoke(state, enemy);
+                state.gameEvents.push(new GameEventSpawn(spawner.position.x, spawner.position.y, "Grunt"));
             }
         }
      }

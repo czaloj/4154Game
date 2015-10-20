@@ -2,6 +2,7 @@ package;
 
 import flash.display.Sprite;
 import box2D.dynamics.contacts.B2Contact;
+import game.events.GameEvent;
 
 class GameState {
     //dimension of map in tiles
@@ -22,6 +23,8 @@ class GameState {
     public var contactList:List<B2Contact> = new List();
     public var bullets:Array<Projectile> = [];
     public var markedForDeletion:Array<Entity> = [];
+    
+    public var gameEvents:Array<GameEvent> = []; // The queue of game events that should occur during an update
     
     // Broadcasting events
     public var onEntityAdded:BroadcastEvent2<GameState, ObjectModel> = new BroadcastEvent2<GameState, ObjectModel>();
