@@ -124,7 +124,7 @@ class Renderer {
     public function update(s:GameState):Void {
         // TODO: Update sprite positions from entities
         for (o in entityTbl.keys()) {
-            entityTbl.get(o).x = o.position.x - o.width * 0.5;
+            entityTbl.get(o).x = o.position.x - o.width;// * 0.5;
             entityTbl.get(o).y = o.position.y - o.height * 0.5;
         }
         var levelWidth = s.width * TILE_HALF_WIDTH;
@@ -153,6 +153,14 @@ class Renderer {
     }
 
     private function load(state:GameState):Void {
+		var man = new AnimatedSprite(pack.characters, "Man.Run", 3);
+		man.x = state.player.position.x- .45;
+        man.y = state.player.position.y - .95;
+		man.scaleX /= 32;
+        man.scaleY /= 32;
+		//trace(state.player.position.x, state.player.position.y);
+        hierarchy.player.addChild(man);
+        entityTbl.set(state.player,man);
         function fAdd(x:Float, y:Float, n:String):Void {
             var brick:StaticSprite = new StaticSprite(pack.environment, n);
             brick.x = x;
