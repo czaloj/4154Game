@@ -17,7 +17,7 @@ class ObjectModel extends Entity {
     // bullet type of current gun
     public var bulletType:Int; //0 = bullet, 1 = piercing, 2 = explosive
 
-	public var health:Int;
+    public var health:Int;
     //Input Flags
     public var direction:Int;      //-1 for left, 1 for right, 0 otherwise
     public var canShoot:Bool;
@@ -27,7 +27,7 @@ class ObjectModel extends Entity {
     public var up:Bool;            //up is being pressed
     public var down:Bool;  
     public var grounded:Bool;      //True if touching a platform
-    public var isDead:Bool; 		//True is player is dead
+    public var isDead:Bool;         //True is player is dead
     public var click:Bool;
     public var targetX:Float;
     public var targetY:Float;

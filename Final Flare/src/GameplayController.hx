@@ -23,8 +23,8 @@ class GameplayController {
     public static var PLAYER_GROUND_FRICTION:Float = .3;
     public static var PLAYER_AIR_FRICTION:Float = .95;
     public static inline var TILE_HALF_WIDTH:Float = 0.5;
-	public static var BULLET_DAMAGE = 10;
-	public static var MELEE_DAMAGE = 20;
+    public static var BULLET_DAMAGE = 10;
+    public static var MELEE_DAMAGE = 20;
 
     public var state:GameState;
     public var physicsController:PhysicsController;
@@ -101,8 +101,8 @@ class GameplayController {
         player.width = 0.9;
         player.height = 1.9;
         player.bulletType = 1;
-		player.health = 100;
-		
+        player.health = 100;
+        
         player.bodyDef = new B2BodyDef();
         player.bodyDef.position.set(player.position.x, player.position.y);
         player.bodyDef.type = B2Body.b2_dynamicBody;
@@ -134,7 +134,7 @@ class GameplayController {
         enemy.bodyDef.position.set(enemy.position.x, enemy.position.y);
         enemy.bodyDef.type = B2Body.b2_dynamicBody;
         enemy.bodyDef.fixedRotation = true;
-		enemy.health = 50;
+        enemy.health = 50;
         enemy.shape = new B2PolygonShape();
         enemy.shape.setAsBox ((enemy.width)/2, (enemy.height)/2);
 
@@ -245,7 +245,7 @@ class GameplayController {
     }
 
     public function raycastRightCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
-		if (fixture.getBody().getUserData() != null)
+        if (fixture.getBody().getUserData() != null)
         {
             var o = fixture.getBody().getUserData();
             cast(o, Entity);
@@ -314,7 +314,7 @@ class GameplayController {
     public function checkGrounded(o:ObjectModel):Void
     {
         if (o.leftFootGrounded || o.rightFootGrounded) { o.grounded = true; }
-		else { o.grounded = false; }
+        else { o.grounded = false; }
     }
 
     public function handleCollisions():Bool {
@@ -326,29 +326,29 @@ class GameplayController {
                 var id1 = entity1.id;
                 var id2 = entity2.id;
 
-				
+                
                 
                 //When a player is hit by normal bullet
                 if ((id1 == "player" || id1 == "enemy") && id2 == "bullet") {
-					var entity1o = cast(entity1, ObjectModel);
-					entity1o.health -= BULLET_DAMAGE;
-				}
-				
-				if((id2 == "player" || id2 =="enemy") && id1 == "bullet") {
-					var entity2o = cast(entity2, ObjectModel);
-					entity2o.health -= BULLET_DAMAGE;
-					//player takes damage;
+                    var entity1o = cast(entity1, ObjectModel);
+                    entity1o.health -= BULLET_DAMAGE;
+                }
+                
+                if((id2 == "player" || id2 =="enemy") && id1 == "bullet") {
+                    var entity2o = cast(entity2, ObjectModel);
+                    entity2o.health -= BULLET_DAMAGE;
+                    //player takes damage;
                     //mark bullet for destreuction
                 }
-				if ((id1 == "player" || id1 == "enemy") && id2 == "melee") {
-					var entity1o = cast(entity1, ObjectModel);
-					entity1o.health -=MELEE_DAMAGE;
-				}
-				
-				if((id2 == "player" || id2 =="enemy") && id1 == "melee") {
-					var entity2o = cast(entity2, ObjectModel);
-					entity2o.health -=MELEE_DAMAGE;	
-					//player takes damage;
+                if ((id1 == "player" || id1 == "enemy") && id2 == "melee") {
+                    var entity1o = cast(entity1, ObjectModel);
+                    entity1o.health -=MELEE_DAMAGE;
+                }
+                
+                if((id2 == "player" || id2 =="enemy") && id1 == "melee") {
+                    var entity2o = cast(entity2, ObjectModel);
+                    entity2o.health -=MELEE_DAMAGE;    
+                    //player takes damage;
                     //mark bullet for destreuction
                 }
                 //If player is hit by melee
@@ -399,9 +399,9 @@ class GameplayController {
             // Clamp speed to a maximum value
             entity.velocity.x = Math.min(PLAYER_MAX_SPEED, Math.max(-PLAYER_MAX_SPEED, entity.velocity.x));
 
-			checkGrounded(entity);
+            checkGrounded(entity);
 
-			if (entity.up && entity.grounded) {
+            if (entity.up && entity.grounded) {
                 entity.velocity.y = 9.5;
             }
             entity.body.setLinearVelocity(entity.velocity.copy()); //So that the velocity actually does something
@@ -420,16 +420,16 @@ class GameplayController {
                 state.bullets.push(bullet);  //push bullet onto gamestate bullets
                 r.onBulletAdded(bullet);
             }
-		
-		updatePlayerRays(state);
+        
+        updatePlayerRays(state);
         Raycast(physicsController.world, state.player);
         aiController.move(state);
 
         }
 
 
-		//trace(state.player.leftFootGrounded);
-		//trace(state.player.rightFootGrounded);
+        //trace(state.player.leftFootGrounded);
+        //trace(state.player.rightFootGrounded);
 
         physicsController.update(gameTime.elapsed);
         for (bullet in state.bullets) {

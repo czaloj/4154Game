@@ -19,8 +19,8 @@ class Entity {
     public var position:B2Vec2 = new B2Vec2();     //Object position
     public var velocity:B2Vec2 = new B2Vec2();     //Object velocity
     public var rotation:Float;                   //Rotation
-	
-	public var textureSize:Point = new Point();  //Texture Size
+    
+    public var textureSize:Point = new Point();  //Texture Size
     public var dimension:Point = new Point();    //Dimensions of box, for drawing purposes
     public var scale:Point = new Point();        //Used to scale texture
     
