@@ -51,7 +51,7 @@ class GameplayScreen extends IGameScreen {
         // TODO: Remove temp create a level
         // CodeLevelEditor.run();
 
-        var gl:GameLevel = LevelCreator.loadLevelFromFile("assets/level/test.lvl");
+        var gl:GameLevel = LevelCreator.loadLevelFromFile("assets/level/diamond");
         LevelCreator.createStateFromLevel(gl, state);
         gameplayController.init(state);
         LevelCreator.createPackFromLevel(gl, pack);

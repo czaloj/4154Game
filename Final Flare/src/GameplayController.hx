@@ -378,7 +378,7 @@ class GameplayController {
 			checkGrounded(entity);
 
 			if (entity.up && entity.grounded) {
-                entity.velocity.y = 8;
+                entity.velocity.y = 9.5;
             }
             entity.body.setLinearVelocity(entity.velocity.copy()); //So that the velocity actually does something
 
