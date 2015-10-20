@@ -11,7 +11,7 @@ import flash.display.Sprite;
 import openfl.Lib;
 
 class PhysicsController {
-    public static var GRAVITY = new B2Vec2(0, -9800);
+    public static var GRAVITY = new B2Vec2(0, -500);
 
     public var world:B2World;
     private var state:GameState;
@@ -48,7 +48,7 @@ class PhysicsController {
     }
 
     public function update(dt:Float) {
-        world.step(dt, 8, 5);
+        world.step(1/60, 8, 5);
         world.clearForces();
         world.drawDebugData();
     }
