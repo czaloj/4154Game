@@ -27,7 +27,7 @@ class PhysicsController {
     public function init(s:GameState) {
         state = s;
         world = new B2World(GRAVITY, true);
-        contactListener = new ContactListener(state);
+        contactListener = new ContactListener( state);
         world.setContactListener(contactListener);
         contactFilter = new ContactFilter(state);
         world.setContactFilter(contactFilter);
@@ -49,7 +49,10 @@ class PhysicsController {
     }
 
     public function update(dt:Float) {
-        world.step(1/60, 5, 3);
+        world.step(1 / 60, 5, 3);
+		for (entity in state.markedForDeletion) {
+				world.destroyBody(entity.body);
+		}
         world.clearForces();
         world.drawDebugData();
     }

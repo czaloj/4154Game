@@ -21,6 +21,7 @@ class GameState {
 
     public var contactList:List<B2Contact> = new List();
     public var bullets:Array<Projectile> = [];
+	public var markedForDeletion:Array<Entity> = [];
 
     
     public function new() {
