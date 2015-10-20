@@ -123,6 +123,7 @@ class GameplayController {
     //TODO ADD ARGUMENTS FROM PARSER SO THAT RIGHT INFO IS USED
     public function createEnemy(world:B2World, enemy:ObjectModel) {
         enemy.id = "enemy";
+		enemy.bulletType = 0;
         enemy.velocity.set(0,0);
         enemy.grounded = false;
         enemy.rotation = 0;
