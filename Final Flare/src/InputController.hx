@@ -52,7 +52,21 @@ class InputController {
 		state.player.swap2 = keysDown[Keyboard.NUMBER_2];
 		state.player.swap3 = keysDown[Keyboard.NUMBER_3];
         state.player.click = click;
-        if (click) {
+        if (keysDown[Keyboard.LEFT]) {
+            state.player.targetX = state.player.position.x - 100;
+            state.player.targetY = state.player.position.y;
+            state.player.click = true;
+            keysDown[Keyboard.LEFT] = false;
+            click = false;
+        }
+        else if (keysDown[Keyboard.RIGHT]) {
+            state.player.targetX = state.player.position.x + 100;
+            state.player.targetY = state.player.position.y;
+            state.player.click = true;
+            keysDown[Keyboard.RIGHT] = false;
+            click = false;
+        }
+        else if (click) {
             state.player.targetX = (x - ScreenController.SCREEN_WIDTH / 2) / camScale + camX;
             state.player.targetY = ((ScreenController.SCREEN_HEIGHT - y) - ScreenController.SCREEN_HEIGHT / 2) / camScale + camY;
             click = false;
