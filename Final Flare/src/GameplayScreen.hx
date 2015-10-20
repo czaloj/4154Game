@@ -86,8 +86,7 @@ class GameplayScreen extends IGameScreen {
         inputController.update(state, renderer.cameraX, renderer.cameraY, renderer.cameraScale);
 
         // Update game logic
-        Spawner.spawn(gameplayController, state, renderer, gameTime);
-        gameplayController.update(state, renderer, gameTime);
+        gameplayController.update(state, gameTime);
     }
     override function draw(gameTime:GameTime):Void {
         renderer.update(state);

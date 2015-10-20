@@ -22,7 +22,12 @@ class GameState {
     public var contactList:List<B2Contact> = new List();
     public var bullets:Array<Projectile> = [];
     public var markedForDeletion:Array<Entity> = [];
-
+    
+    // Broadcasting events
+    public var onEntityAdded:BroadcastEvent2<GameState, ObjectModel> = new BroadcastEvent2<GameState, ObjectModel>();
+    public var onEntityRemoved:BroadcastEvent2<GameState, ObjectModel> = new BroadcastEvent2<GameState, ObjectModel>();
+    public var onProjectileAdded:BroadcastEvent2<GameState, Projectile> = new BroadcastEvent2<GameState, Projectile>();
+    public var onProjectileRemoved:BroadcastEvent2<GameState, Projectile> = new BroadcastEvent2<GameState, Projectile>();
     
     public function new() {
         // Empty

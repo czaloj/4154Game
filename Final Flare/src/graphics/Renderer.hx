@@ -103,7 +103,7 @@ class Renderer {
         Starling.current.viewPort = viewPortRectangle;
     }
 
-    public function onEntityAdded(o:ObjectModel):Void {
+    public function onEntityAdded(s:GameState, o:ObjectModel):Void {
         // Add a corresponding sprite to stage and track this entity
         var enemy = new AnimatedSprite(pack.enemies, "Robot.Run", 3);
         enemy.x = o.position.x - enemy.width * 0.5;
@@ -115,7 +115,7 @@ class Renderer {
         entityTbl.set(o,enemy);
         //what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
     }
-    public function onEntityRemoved(o:ObjectModel):Void {
+    public function onEntityRemoved(s:GameState, o:ObjectModel):Void {
         //idk about this function the implementation i was thinking of was sketchy.
         //i need to figure out the mapping between objectModels and sprites
         hierarchy.enemy.removeChild(entityTbl.get(o));
@@ -123,7 +123,7 @@ class Renderer {
         // Remove this entity from the stage
     }
 
-    public function onBulletAdded(p:Projectile):Void {
+    public function onBulletAdded(s:GameState, p:Projectile):Void {
         // Add a corresponding sprite to stage and track this entity
         var bullet = new AnimatedSprite(pack.projectiles, "Bullet.Fly", 1);
         bullet.x = p.position.x - bullet.width * 0.5;
@@ -135,7 +135,7 @@ class Renderer {
         projTbl.set(p,bullet);
         //what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
     }
-    public function onBulletRemoved(p:Projectile):Void {
+    public function onBulletRemoved(s:GameState, p:Projectile):Void {
         //idk about this function the implementation i was thinking of was sketchy.
         //i need to figure out the mapping between objectModels and sprites
         hierarchy.projectiles.removeChild(projTbl.get(p));
@@ -186,6 +186,12 @@ class Renderer {
     }
 
     private function load(state:GameState):Void {
+        // Register listener functions
+        state.onEntityAdded.add(onEntityAdded);
+        state.onEntityRemoved.add(onEntityRemoved);
+        state.onProjectileAdded.add(onBulletAdded);
+        state.onProjectileRemoved.add(onBulletRemoved);
+        
         var man = new AnimatedSprite(pack.characters, "Man.Run", 3);
         man.x = state.player.position.x - man.width*0.5;
         man.y = state.player.position.y - PLAYER_HEIGHT * 0.5;

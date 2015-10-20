@@ -342,7 +342,7 @@ class GameplayController {
         else { o.grounded = false; }
     }
 
-    public function handleCollisions(r:Renderer):Void {
+    public function handleCollisions():Void {
         for (contact in state.contactList) {
             // Check what was in collision
             if (contact != null) {
@@ -354,12 +354,12 @@ class GameplayController {
                 if (id1 == "bullet"||id1 == "melee"||id1 == "explosivebullet"||id1 =="explosion") {
                     state.markedForDeletion.push(entity1);
                     var bulldead = cast(entity1, Projectile);
-                    r.onBulletRemoved(bulldead);
+                    state.onProjectileRemoved.invoke(state, bulldead);
                 }
                 if (id2 == "bullet"||id2=="melee"||id2 =="explosivebullet"||id2=="explosion") {
                     state.markedForDeletion.push(entity2);
                     var bulldead = cast(entity2, Projectile);
-                    r.onBulletRemoved(bulldead);
+                    state.onProjectileRemoved.invoke(state, bulldead);
                 }
                 
                 //When a player is hit by normal bullet
@@ -369,7 +369,7 @@ class GameplayController {
                     if (entity1o.health <= 0) {
                         state.markedForDeletion.push(entity1);
                         var dead = cast(entity1, ObjectModel);
-                        r.onEntityRemoved(dead);
+                        state.onEntityRemoved.invoke(state, dead);
                     }
                 }
                 
@@ -381,13 +381,9 @@ class GameplayController {
                     if (entity2o.health <= 0) {
                         state.markedForDeletion.push(entity2);
                         var dead = cast(entity2, ObjectModel);
-                        r.onEntityRemoved(dead);
+                        state.onEntityRemoved.invoke(state, dead);
                     }
-
                 }
-				
-				
-				
 				if (( id1 == "enemy") && id2 == "explosivebullet") {
                     var entity1o = cast(entity1, ObjectModel);
                     entity1o.bulletType = 4;
@@ -413,7 +409,7 @@ class GameplayController {
                     if (entity1o.health <= 0) {
                         state.markedForDeletion.push(entity1);
                         var dead = cast(entity1, ObjectModel);
-                        r.onEntityRemoved(dead);
+                        state.onEntityRemoved.invoke(state, dead);
                     }
                 }
                 
@@ -425,7 +421,7 @@ class GameplayController {
                     if (entity2o.health <= 0) {
                         state.markedForDeletion.push(entity2);
                         var dead = cast(entity2, ObjectModel);
-                        r.onEntityRemoved(dead);
+                        state.onEntityRemoved.invoke(state, dead);
                     }
 
                 }
@@ -435,7 +431,7 @@ class GameplayController {
                     if (entity1o.health <= 0) {
                         state.markedForDeletion.push(entity1);
                         var dead = cast(entity1, ObjectModel);
-                        r.onEntityRemoved(dead);
+                        state.onEntityRemoved.invoke(state, dead);
                     }
                 }
                 
@@ -447,27 +443,9 @@ class GameplayController {
                     if (entity2o.health <= 0) {
                         state.markedForDeletion.push(entity2);
                         var dead = cast(entity2, ObjectModel);
-                        r.onEntityRemoved(dead);
+                        state.onEntityRemoved.invoke(state, dead);
                     }
                 }
-                /*
-                 //If player is hit by melee
-                if ((id1 == "player" && id2 == "melee") || (id2 == "player" && id1 == "melee")) {
-                    //player takes damage;
-                }
-                if ((id1 == "player" && id2 == "piercingBullet") || (id2 == "player" && id1 == "piercingBullet")) {
-                    //player takes damage;
-                }
-                if ((id1 == "player" && id2 == "explosiveBullet") || (id2 == "player" && id1 == "explosiveBullet")) {
-                    //player takes damage;
-                    //mark bullet for destreuction;
-                    //spawn radial burst;
-                }
-                if ((id1 == "player" && id2 == "bulletBurst") || (id2 == "player" && id1 == "bulletBurst")) {
-                    //player takes damage;
-                    //burst disappears on its own so nothing else needed
-                }
-                */
             }
 
             // TODO: Contact list should be a special tuple of <GameObjectType, Dynamic> to get correct casting results
@@ -476,9 +454,11 @@ class GameplayController {
         state.contactList.clear();
     }
 
-    public function update(s:GameState, r:Renderer, gameTime:GameTime):Void {
+    public function update(s:GameState, gameTime:GameTime):Void {
         state = s;
-        //Spawner.spawn(gameTime, state);
+        
+        // TODO: Spawner shouldn't need reference to this
+        Spawner.spawn(this, state, gameTime);
 
         for (entity in state.entities) {
             //UPDATES VELOCITY
@@ -529,16 +509,19 @@ class GameplayController {
                 bullet.targetY = entity.targetY;
                 bullet.setVelocity();
                 state.bullets.push(bullet);  //push bullet onto gamestate bullets
-                r.onBulletAdded(bullet);
+                state.onProjectileAdded.invoke(state, bullet);
 				if (bullet.id == "melee") { bullet.velocity = new B2Vec2(0, 0);}
                 bullet.body.setLinearVelocity(bullet.velocity);
             }
         }
         
+        aiController.move(state);
+        
+        // Update physics
+        physicsController.update(gameTime.elapsed);
+        
         updatePlayerRays(state); //Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
         Raycast(physicsController.world, state.player);
-        aiController.move(state);
-        handleCollisions(r);    
-        physicsController.update(gameTime.elapsed);
+        handleCollisions();
     }
 }

@@ -16,25 +16,16 @@ class Spawner {
         position.x = x;
         position.y = y;
     }
-    public static function spawn(gameplayController:GameplayController, state: GameState, renderer:Renderer, gameTime:GameTime) {
+    public static function spawn(gameplayController:GameplayController, state: GameState, gameTime:GameTime) {
         if (gameTime.frame % 120 == 0) {
             for (spawner in state.spawners) {
+                // TODO: Send a spawn event instead of updating the state in here
                 var enemy = new ObjectModel();
                 enemy.position.set(spawner.position.x, spawner.position.y);
                 state.entities.push(enemy);
                 gameplayController.createEnemy(gameplayController.physicsController.world, enemy);
-                renderer.onEntityAdded(enemy);
+                state.onEntityAdded.invoke(state, enemy);
             }
         }
      }
-    //public static function spawn(gameTime:GameTime, state: GameState) {
-        //// TODO: Use variable "level" time
-//
-        //// TODO: More advanced spawning logic
-        //if (gameTime.frame % 120 == 0) {
-            //for (spawner in state.spawners) {
-                //// TODO: Send a spawn event instead of updating the state in here
-            //}
-        //}
-    //}
 }
