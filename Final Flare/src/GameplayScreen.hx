@@ -52,7 +52,7 @@ class GameplayScreen extends IGameScreen {
     override function onEntry(gameTime:GameTime):Void {
         state = new game.GameState();
         inputController = new game.InputController();
-        gameplayController = new game.GameplayController();
+        gameplayController = new GameplayController();
         aiController = new game.AIController();
         var pack:RenderPack = new RenderPack();
 
@@ -103,5 +103,6 @@ class GameplayScreen extends IGameScreen {
         debugPhysicsView.y = renderer.cameraScale * renderer.cameraY + ScreenController.SCREEN_HEIGHT / 2;
         debugPhysicsView.scaleX = renderer.cameraScale / game.PhysicsController.DEBUG_VIEW_SCALE;
         debugPhysicsView.scaleY = -renderer.cameraScale / game.PhysicsController.DEBUG_VIEW_SCALE;
+        gameplayController.drawDebug();
     }
 }

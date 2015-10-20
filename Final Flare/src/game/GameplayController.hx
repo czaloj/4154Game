@@ -25,11 +25,20 @@ class GameplayController {
     public static var E_DAMAGE = 100;
 
     public var state:game.GameState;
-    public var physicsController:PhysicsController;
+    public var physicsController:PhysicsController = new PhysicsController();
     private var debugPhysicsView:Sprite;
 
     public function new() {
         // Empty
+    }
+
+    public function init(s:GameState):Void {
+        state = s;
+        
+        // Initialize physics from loaded GameState
+        physicsController.init(state);
+        physicsController.initEntity(state.player);
+        physicsController.initPlatforms(state);
     }
 
     public function initDebug(debugPhysicsView:Sprite):Void {
@@ -39,15 +48,10 @@ class GameplayController {
         debugPhysicsView.scaleY = -debugPhysicsView.scaleY;
         physicsController.initDebug(debugPhysicsView);
     }
-    public function init(s:GameState):Void {
-        state = s;
-        
-        // Initialize physics from loaded GameState
-        physicsController = new PhysicsController(state);
-        physicsController.initEntity(state.player);
-        physicsController.initPlatforms(state);
+    public function drawDebug():Void {
+        physicsController.renderDebug();
     }
-
+    
     public function createBullet(world:B2World, entity:ObjectModel,bullet:Projectile):Void {
         bullet.bodyDef = new B2BodyDef();
         bullet.bodyDef.bullet = true;
@@ -218,7 +222,6 @@ class GameplayController {
         }
         return -1;
     }
-
     public function Raycast(world:B2World, o:ObjectModel):Void {
 
         o.leftFootGrounded = false;
@@ -229,11 +232,6 @@ class GameplayController {
         world.rayCast(raycastRightCallback, o.rightRayStart, o.rightRayEnd);
         world.rayCast(raycastLeftWallCallback, o.leftWallRayStart, o.leftWallRayEnd);
         world.rayCast(raycastRightWallCallback, o.rightWallRayStart, o.rightWallRayEnd);
-    }
-
-    public function checkGrounded(o:ObjectModel):Void {
-        if (o.leftFootGrounded || o.rightFootGrounded) { o.grounded = true; }
-        else { o.grounded = false; }
     }
 
     public function handleCollisions():Void {
@@ -396,8 +394,6 @@ class GameplayController {
             // Clamp speed to a maximum value
             entity.velocity.x = Math.min(PLAYER_MAX_SPEED, Math.max(-PLAYER_MAX_SPEED, entity.velocity.x));
 
-            checkGrounded(entity);
-
             if (entity.up && entity.grounded) {
                 entity.velocity.y = 9.5;
             }
@@ -426,6 +422,9 @@ class GameplayController {
         updatePlayerRays(state); //Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
         Raycast(physicsController.world, state.player);
         handleCollisions();
+        
+        // Destroy all dead things
+        physicsController.clearDeadBodies();
     }
 
     // Application of game events

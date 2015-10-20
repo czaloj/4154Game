@@ -1,5 +1,7 @@
 package game;
 
+import box2D.dynamics.B2ContactListener;
+import box2D.dynamics.contacts.B2Contact;
 import box2D.collision.shapes.B2PolygonShape;
 import box2D.common.math.B2Vec2;
 import box2D.dynamics.B2Body;
@@ -11,44 +13,33 @@ import flash.display.Sprite;
 import game.GameState;
 import game.ObjectModel;
 
-class PhysicsController {
+class PhysicsController extends B2ContactListener {
     public static var GRAVITY = new B2Vec2(0, -9.8);
     public static inline var DEBUG_VIEW_SCALE:Float = 32;
     
     public var world:B2World;
-    private var state:game.GameState;
-    private var contactListener:ContactListener;
+    public var state:GameState;
     private var contactFilter:ContactFilter;
     public var debugger: B2DebugDraw;
 
-    public function new(s:game.GameState) {
-        init(s);
+    public var deleteList:Array<B2Body> = []; // List of entities that are marked for deletion
+    
+    public function new() {
+        super();
     }
     
-    public function init(s:game.GameState) {
+    public function init(s:GameState) {
         state = s;
+        state.onEntityRemoved.add(onEntityRemoved);
+        state.onProjectileRemoved.add(onProjectileRemoved);
+        
         world = new B2World(GRAVITY, true);
-        contactListener = new ContactListener( state);
-        world.setContactListener(contactListener);
+        world.setContactListener(this);
         contactFilter = new ContactFilter(state);
         world.setContactFilter(contactFilter);
         world.setWarmStarting(true);
     }
-
-    /**
-     * Setup debugging information
-     * @param sprite The target drawing sprite
-     */
-    public function initDebug(sprite:openfl.display.Sprite) {
-        var dbgDraw:B2DebugDraw = new B2DebugDraw();
-        dbgDraw.setSprite(sprite);
-        dbgDraw.setDrawScale(DEBUG_VIEW_SCALE);
-        dbgDraw.setFillAlpha(0.3);
-        dbgDraw.setLineThickness(1.0);
-        dbgDraw.setFlags(B2DebugDraw.e_shapeBit | B2DebugDraw.e_jointBit);
-        world.setDebugDraw(dbgDraw);
-    }
-
+    
     public function initEntity(e:ObjectModel):Void {
         // Create body
         e.bodyDef = new B2BodyDef();
@@ -83,7 +74,6 @@ class PhysicsController {
 
                 platform.id = "platform";
                 platform.position.set(x, y);
-                platform.grounded = false;
                 platform.velocity.set(0,0);
                 platform.left = false;
                 platform.right = false;
@@ -107,16 +97,49 @@ class PhysicsController {
     }
     
     public function update(dt:Float) {
-        world.step(1 / 60, 5, 3);
-        for (entity in state.markedForDeletion) {
-                world.destroyBody(entity.body);
-                if (entity.id == "enemy") {
-                var ontity = cast(entity, game.ObjectModel);    
-                state.entities.remove(ontity);
-                }
-                
-        }
+        world.step(dt, 5, 3);
         world.clearForces();
+    }
+    public function clearDeadBodies() {
+        if (deleteList.length > 0) { 
+            for (body in deleteList) {
+                world.destroyBody(body);
+            }
+            deleteList = [];
+        }
+    }
+    
+    override function beginContact(contact:B2Contact):Void { 
+        super.beginContact(contact);
+        
+        // TODO: Convert contact into more usable form
+        state.contactList.add(contact);
+    }
+    override function endContact(contact:B2Contact):Void {
+        super.endContact(contact);
+    }
+    
+    private function onEntityRemoved(state:GameState, e:ObjectModel) {
+        deleteList.push(e.body);
+    }
+    private function onProjectileRemoved(state:GameState, e:Projectile) {
+        deleteList.push(e.body);
+    }
+    
+    /**
+     * Setup debugging information
+     * @param sprite The target drawing sprite
+     */
+    public function initDebug(sprite:openfl.display.Sprite) {
+        var dbgDraw:B2DebugDraw = new B2DebugDraw();
+        dbgDraw.setSprite(sprite);
+        dbgDraw.setDrawScale(DEBUG_VIEW_SCALE);
+        dbgDraw.setFillAlpha(0.3);
+        dbgDraw.setLineThickness(1.0);
+        dbgDraw.setFlags(B2DebugDraw.e_shapeBit | B2DebugDraw.e_jointBit);
+        world.setDebugDraw(dbgDraw);
+    }
+    public function renderDebug():Void {
         world.drawDebugData();
     }
 }

@@ -30,7 +30,7 @@ class ObjectModel extends Entity {
     public var right:Bool;         //Can move right
     public var up:Bool;            //up is being pressed
     public var down:Bool;  
-    public var grounded:Bool;      //True if touching a platform
+    public var grounded(get, never):Bool;      //True if touching a platform
     public var isDead:Bool;         //True is player is dead
     public var click:Bool;
     public var targetX:Float;
@@ -54,5 +54,9 @@ class ObjectModel extends Entity {
 
     public function new() {
         super();
+    }
+    
+    public function get_grounded():Bool {
+        return leftFootGrounded || rightFootGrounded;
     }
 }

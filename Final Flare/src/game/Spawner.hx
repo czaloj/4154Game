@@ -43,7 +43,6 @@ class Spawner {
 
         e.left = false;
         e.right = false;
-        e.grounded = false;
     }
     public static function createEnemy(e:ObjectModel, type:String, x:Float, y:Float):Void {
         e.id = "enemy";
@@ -58,6 +57,5 @@ class Spawner {
 
         e.left = false;
         e.right = false;
-        e.grounded = false;
     }
 }
