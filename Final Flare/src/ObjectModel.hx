@@ -16,7 +16,10 @@ class ObjectModel extends Entity {
     // TODO: OMG, we need a real "Gun" class
     // bullet type of current gun
     public var bulletType:Int; //0 = bullet, 1 = piercing, 2 = explosive
-	
+	public var swap2:Bool;
+	public var swap3:Bool;
+	public var canSwap2:Bool;
+	public var canSwap3:Bool;
 	public var countSinceClick:Int;
     public var health:Int;
     //Input Flags

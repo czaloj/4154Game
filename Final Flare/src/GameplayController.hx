@@ -28,6 +28,7 @@ class GameplayController {
     public static inline var TILE_HALF_WIDTH:Float = 0.5;
     public static var BULLET_DAMAGE = 10;
     public static var MELEE_DAMAGE = 20;
+	public static var EBULLET_DAMAGE = 40;
 
     public var state:GameState;
     public var physicsController:PhysicsController;
@@ -105,7 +106,9 @@ class GameplayController {
         player.height = 1.9;
         player.bulletType = 1;
         player.health = 100;
-        
+		player.canSwap2 = true;
+        player.canSwap3 = true;
+		
         player.bodyDef = new B2BodyDef();
         player.bodyDef.position.set(player.position.x, player.position.y);
         player.bodyDef.type = B2Body.b2_dynamicBody;
@@ -139,7 +142,7 @@ class GameplayController {
         enemy.bodyDef.type = B2Body.b2_dynamicBody;
         enemy.bodyDef.allowSleep = false;
         enemy.bodyDef.fixedRotation = true;
-        enemy.health = 50;
+        enemy.health = 100;
         enemy.shape = new B2PolygonShape();
         enemy.shape.setAsBox ((enemy.width)/2, (enemy.height)/2);
 
@@ -165,16 +168,16 @@ class GameplayController {
 			//bullet.bodyDef.bullet = false;
         }
         else {
-            //if (entity.bulletType == 1 ) {
+            if (entity.bulletType == 1 ) {
                 bullet.id = "bullet";
-            //}
-            //if (entity.bulletType == 2 ) {
-           //     bullet.id = "piercingbullet";
+            }
+            if (entity.bulletType == 2 ) {
+                bullet.id = "piercingbullet";
                 //bullet.body.isSensor = true;
-           // }
-           /// else{
-           //     bullet.id = "explosivebullet";
-           // }
+            }
+			if(entity.bulletType ==3){
+                bullet.id = "explosivebullet";
+            }
         //bullet.velocity.set(0,0);
         bullet.dimension = new Point(.05, .05);
         bullet.width = .05;
@@ -350,19 +353,19 @@ class GameplayController {
                 var id1 = entity1.id;
                 var id2 = entity2.id;
                 
-                if (id1 == "bullet"||id1 == "melee") {
+                if (id1 == "bullet"||id1 == "melee"||id1 == "explosivebullet") {
                     state.markedForDeletion.push(entity1);
                     var bulldead = cast(entity1, Projectile);
                     r.onBulletRemoved(bulldead);
                 }
-                if (id2 == "bullet"||id2=="melee") {
+                if (id2 == "bullet"||id2=="melee"||id2 =="explosivebullet") {
                     state.markedForDeletion.push(entity2);
                     var bulldead = cast(entity2, Projectile);
                     r.onBulletRemoved(bulldead);
                 }
                 
                 //When a player is hit by normal bullet
-                if (( id1 == "enemy") && id2 == "bullet") {
+                if (( id1 == "enemy") && (id2 == "bullet"||id2=="piercingbullet")) {
                     var entity1o = cast(entity1, ObjectModel);
                     entity1o.health -= BULLET_DAMAGE;
                     if (entity1o.health <= 0) {
@@ -372,11 +375,34 @@ class GameplayController {
                     }
                 }
                 
-                if ((id2 == "enemy") && id1 == "bullet") {
+                if ((id2 == "enemy") && (id1 == "bullet"||id1 =="piercingbullet")) {
                     //player takes damage;
                     //mark bullet for destreuction
                     var entity2o = cast(entity2, ObjectModel);
-                    entity2o.health -= BULLET_DAMAGE;
+                    entity2o.health -= EBULLET_DAMAGE;
+                    if (entity2o.health <= 0) {
+                        state.markedForDeletion.push(entity2);
+                        var dead = cast(entity2, ObjectModel);
+                        r.onEntityRemoved(dead);
+                    }
+
+                }
+				
+				if (( id1 == "enemy") && id2 == "explosivebullet") {
+                    var entity1o = cast(entity1, ObjectModel);
+                    entity1o.health -= BULLET_DAMAGE;
+                    if (entity1o.health <= 0) {
+                        state.markedForDeletion.push(entity1);
+                        var dead = cast(entity1, ObjectModel);
+                        r.onEntityRemoved(dead);
+                    }
+                }
+                
+                if ((id2 == "enemy") && id1 == "explosivebullet") {
+                    //player takes damage;
+                    //mark bullet for destreuction
+                    var entity2o = cast(entity2, ObjectModel);
+                    entity2o.health -= EBULLET_DAMAGE;
                     if (entity2o.health <= 0) {
                         state.markedForDeletion.push(entity2);
                         var dead = cast(entity2, ObjectModel);
@@ -386,7 +412,7 @@ class GameplayController {
                 }
                 if ((id1 == "player" ) && id2 == "melee") {
                     var entity1o = cast(entity1, ObjectModel);
-                    entity1o.health -= MELEE_DAMAGE;
+                    entity1o.health -=  MELEE_DAMAGE;
                     if (entity1o.health <= 0) {
                         state.markedForDeletion.push(entity1);
                         var dead = cast(entity1, ObjectModel);
@@ -398,7 +424,7 @@ class GameplayController {
                     //player takes damage;
                     //mark bullet for destreuction
                     var entity2o = cast(entity2, ObjectModel);
-                    entity2o.health -= MELEE_DAMAGE;
+                    entity2o.health -=  MELEE_DAMAGE;
                     if (entity2o.health <= 0) {
                         state.markedForDeletion.push(entity2);
                         var dead = cast(entity2, ObjectModel);
@@ -438,7 +464,17 @@ class GameplayController {
         for (entity in state.entities) {
             //UPDATES VELOCITY
             entity.velocity = entity.body.getLinearVelocity().copy();
-
+			
+			if (entity.swap2&& entity.canSwap2) {
+				entity.canSwap2 = false;
+				entity.bulletType = 2;
+				entity.health = 150;
+			}
+			if (entity.swap3 && entity.canSwap3) {
+				entity.canSwap3 = false;
+				entity.bulletType = 3;
+				entity.health = 200;
+			}
             //Just in case -__-
             var moveSpeed = entity.grounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
             if (entity.left) entity.velocity.x -= moveSpeed;

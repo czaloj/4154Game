@@ -49,6 +49,8 @@ class InputController {
         state.player.right = keysDown[Keyboard.D];
         state.player.up = keysDown[Keyboard.W];
         state.player.down = keysDown[Keyboard.S];
+		state.player.swap2 = keysDown[Keyboard.NUMBER_2];
+		state.player.swap3 = keysDown[Keyboard.NUMBER_3];
         state.player.click = click;
         if (click) {
             state.player.targetX = (x - ScreenController.SCREEN_WIDTH / 2) / camScale + camX;
