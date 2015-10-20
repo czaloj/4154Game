@@ -15,6 +15,7 @@ class AIController {
         for (entity in state.entities) {
             if (entity.id != "player") {
 	            followPlayer(entity, state);
+	            // entity.up = true; entity.leftFootGrounded = true; entity.velocity.y = 9.5;
 	      //      	var target = state.player.position;
 		    	// var x:Float = entity.position.x;
 	      //       var dir = (x-target.x)/Math.abs(x-target.x);	// -1 for left, 1 for right
@@ -32,6 +33,7 @@ class AIController {
     	var y:Float = entity.position.y;
     	var dir = (x-target.x)/Math.abs(x-target.x);	// -1 for left, 1 for right
     	var onLeft = dir > 0;
+    	entity.up = false; entity.velocity.y = 0; entity.leftFootGrounded = true;
 		// if (entity.grounded) {
             if (y > target.y) {
            		entity.left = onLeft;
@@ -48,14 +50,14 @@ class AIController {
            			entity.right = true;
            			entity.left = !entity.right;
            		} else {
-           			entity.up = true;
+           			entity.up = true; entity.velocity.y = 9.5;
            		}
            	} else {
            		if (state.foreground[Std.int(y*state.width + x + dir)] > 0) {
            			entity.left = onLeft;
            			entity.right = !onLeft;
            		} else {
-              		entity.up = true;
+              		entity.up = true; entity.velocity.y = 9.5;
            		}
            	}
         // } else {
