@@ -163,9 +163,9 @@ class GameplayController {
                 bullet.id = "piercingbullet";
                 //bullet.body.isSensor = true;
             }
-            else{
-                bullet.id = "explosivebullet";
-            }
+           /// else{
+           //     bullet.id = "explosivebullet";
+           // }
         //bullet.velocity.set(0,0);
         bullet.dimension = new Point(.05, .05);
         bullet.width = .05;
