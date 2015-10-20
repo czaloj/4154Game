@@ -31,8 +31,6 @@ class ContactFilter extends B2ContactFilter
         || (id2 == "player" && id1 == "enemy") 
         || (id1 == "platform" && id2 == "platform") 
         || (id1 == "enemy" && id2 == "enemy")
-        || (id1 == "bullet" && id2 == "platform")
-        || (id2 == "bullet" && id1 == "platform")
         || (id1 == "player" && id2 == "bullet") 
         || (id2 == "player" && id1 == "bullet")) {
             return false;
