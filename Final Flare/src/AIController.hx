@@ -14,13 +14,13 @@ class AIController {
     public function move(state:GameState):Void {
         for (entity in state.entities) {
             if (entity.id != "player") {
-	            // followPlayer(entity, state);
-	           	var target = state.player.position;
-		    	var x:Float = entity.position.x;
-	            var dir = (x-target.x)/Math.abs(x-target.x);	// -1 for left, 1 for right
-    			var onLeft = dir > 0;
-    			entity.left = onLeft;
-           		entity.right = !onLeft;
+	            followPlayer(entity, state);
+	      //      	var target = state.player.position;
+		    	// var x:Float = entity.position.x;
+	      //       var dir = (x-target.x)/Math.abs(x-target.x);	// -1 for left, 1 for right
+    			// var onLeft = dir > 0;
+    			// entity.left = onLeft;
+       //     		entity.right = !onLeft;
             }
         }
     }
@@ -32,7 +32,7 @@ class AIController {
     	var y:Float = entity.position.y;
     	var dir = (x-target.x)/Math.abs(x-target.x);	// -1 for left, 1 for right
     	var onLeft = dir > 0;
-		if (entity.grounded) {
+		// if (entity.grounded) {
             if (y > target.y) {
            		entity.left = onLeft;
            		entity.right = !onLeft;
@@ -58,11 +58,11 @@ class AIController {
               		entity.up = true;
            		}
            	}
-        } else {
+        // } else {
            	// entity.up = true;
            	// entity.left = false;
            	// entity.right = false;
-        }
+        // }
     }
 
     public function findPlatformLateral(state:GameState, curX:Int, curY:Int, dir:Int) {
