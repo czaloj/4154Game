@@ -343,8 +343,7 @@ class GameplayController {
         world.rayCast(raycastRightWallCallback, o.rightWallRayStart, o.rightWallRayEnd);
     }
 
-    public function checkGrounded(o:ObjectModel):Void
-    {
+    public function checkGrounded(o:ObjectModel):Void {
         if (o.leftFootGrounded || o.rightFootGrounded) { o.grounded = true; }
         else { o.grounded = false; }
     }

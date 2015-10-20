@@ -14,8 +14,8 @@ class CodeLevelEditor {
     
     public static function run():Void {
         var lvl:GameLevel = new GameLevel();
-        lvl.width = 80;
-        lvl.height = 40;
+        lvl.width = 100;
+        lvl.height = 50;
         
         // Create the level with only air
         lvl.background = [];
@@ -26,14 +26,21 @@ class CodeLevelEditor {
         drawBox(lvl, 0, 0, 0, lvl.width, lvl.height, true);
         
         // Add platforms
-        drawBox(lvl, 1, 0, lvl.height - 2, lvl.width, 2, true);
-        drawBox(lvl, 2, 0, lvl.height - 4, 10, 2, true);
+        drawBox(lvl, 1, 0, 48, 100, 2);
+        drawBox(lvl, 1, 0, 0, 2, 48);
+        drawBox(lvl, 1, 98, 0, 2, 48);
+        drawBox(lvl, 1, 2, 43, 30, 1);
+        drawBox(lvl, 1, 98 - 30, 43, 30, 1);
+        drawBox(lvl, 1, 30, 37, 40, 1);
+        drawBox(lvl, 1, 2, 31, 30, 1);
+        drawBox(lvl, 1, 98 - 30, 31, 30, 1);
         
         // Spawning locations
         lvl.playerPt.x = lvl.width / 2 - 2;
-        lvl.playerPt.y = 5;
+        lvl.playerPt.y = 20;
         lvl.spawners = [
-            new Spawner("Grunt", 2, 3)
+            new Spawner("Grunt", 2, 23),
+            new Spawner("Grunt", 48, 23)
         ];
         
         // Environment
