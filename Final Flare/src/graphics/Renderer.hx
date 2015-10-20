@@ -3,10 +3,12 @@ package graphics;
 import haxe.ds.ObjectMap;
 import openfl.Assets;
 import openfl.events.Event;
+import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.Lib;
+import openfl.ui.Keyboard;
 import starling.core.Starling;
 import starling.display.Image;
 import starling.display.Sprite;
@@ -17,6 +19,7 @@ class Renderer {
     public static inline var TILE_HALF_WIDTH:Float = 16;
     public static inline var PLAYER_WIDTH:Float = 32;
     public static inline var PLAYER_HEIGHT:Float = 64;
+    public static inline var CAMERA_DEBUG_MOVE_SPEED:Float = 500.0;
 
     private var stageHalfSize:Point = new Point();
     private var hierarchy:RenderHierarchy = new RenderHierarchy();
@@ -33,6 +36,10 @@ class Renderer {
     private var crX:Float;
     private var crY:Float;
 
+    // This is for debug camera movement
+    private var debugViewing:Bool = false;
+    private var debugViewMoves:Array<Int> = [ 0, 0, 0, 0, 0, 0 ];
+    
     public function new(stage:Sprite, p:RenderPack, state:GameState) {
         pack = p;
         stage3D = stage.stage;
@@ -54,6 +61,7 @@ class Renderer {
             crX = e.stageX / ScreenController.SCREEN_WIDTH;
             crY = e.stageY / ScreenController.SCREEN_HEIGHT;
         });
+        Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, debugMoveListening);
 
         load(state);
     }
@@ -118,16 +126,22 @@ class Renderer {
         for (o in entityTbl.keys()) {
             entityTbl.get(o).x = o.position.x - o.width * 0.5;
             entityTbl.get(o).y = o.position.y - o.height * 0.5;
-            //trace(o.position.x,  o.position.y);
-            //trace(entityTbl.get(o).x,  entityTbl.get(o).y);
         }
-        // Center camera on player and constrict to level bounds
         var levelWidth = s.width * TILE_HALF_WIDTH;
         var levelHeight = s.height * TILE_HALF_WIDTH;
         var cameraHalfWidth = stage3D.stageWidth / (2 * cameraScale);
         var cameraHalfHeight = stage3D.stageHeight / (2 * cameraScale);
-        cameraX = Math.min((levelWidth) - cameraHalfWidth, Math.max((0) + cameraHalfWidth, s.player.position.x));
-        cameraY = Math.min((levelHeight) - cameraHalfHeight, Math.max((0) + cameraHalfHeight, s.player.position.y));
+        if (!debugViewing) {
+            // Center camera on player and constrict to level bounds
+            cameraX = Math.min((levelWidth) - cameraHalfWidth, Math.max((0) + cameraHalfWidth, s.player.position.x));
+            cameraY = Math.min((levelHeight) - cameraHalfHeight, Math.max((0) + cameraHalfHeight, s.player.position.y));
+        }
+        else {
+            // Move the camera according to keyboard input
+            cameraX += CAMERA_DEBUG_MOVE_SPEED * ((debugViewMoves[1] - debugViewMoves[0]) / 60);
+            cameraY += CAMERA_DEBUG_MOVE_SPEED * ((debugViewMoves[3] - debugViewMoves[2]) / 60);
+            cameraScale *= [ 0.95, 1, 1.15 ] [1 + (debugViewMoves[5] - debugViewMoves[4])];
+        }
 
         // Update parallax layers
         crX = (cameraX - cameraHalfWidth) / (levelWidth - 2 * cameraHalfWidth);
@@ -150,6 +164,7 @@ class Renderer {
             var brick:StaticSprite = new StaticSprite(pack.environment, n);
             brick.x = x;
             brick.y = y;
+            // TODO: Correct this
             hierarchy.foreground.addChild(brick);
         };
         for (i in 0...state.foreground.length) {
@@ -172,6 +187,53 @@ class Renderer {
         });
         for (texture in pack.parallax) {
             hierarchy.parallax.addChild(new ParallaxSprite(texture, state.width * TILE_HALF_WIDTH, state.height * TILE_HALF_WIDTH, ScreenController.SCREEN_WIDTH, ScreenController.SCREEN_HEIGHT));
+        }
+    }
+
+    private function debugMoveListening(e:KeyboardEvent = null):Void {
+        if (e.keyCode == Keyboard.C) {
+            debugViewing = !debugViewing;
+            if (debugViewing) {
+                for (i in 0...4) debugViewMoves[i] = 0; 
+                Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, debugMoveCameraKeyDown);
+                Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, debugMoveCameraKeyUp);
+            }
+            else {
+                Lib.current.stage.removeEventListener(KeyboardEvent.KEY_DOWN, debugMoveCameraKeyDown);
+                Lib.current.stage.removeEventListener(KeyboardEvent.KEY_UP, debugMoveCameraKeyUp);                
+            }
+        }
+    }
+    private function debugMoveCameraKeyDown(e:KeyboardEvent = null):Void {
+        switch(e.keyCode) {
+            case Keyboard.LEFT:
+                debugViewMoves[0] = 1;
+            case Keyboard.RIGHT:
+                debugViewMoves[1] = 1;
+            case Keyboard.DOWN:
+                debugViewMoves[2] = 1;
+            case Keyboard.UP:
+                debugViewMoves[3] = 1;
+            case Keyboard.X:
+                debugViewMoves[4] = 1;
+            case Keyboard.Z:
+                debugViewMoves[5] = 1;
+        }
+    }
+    private function debugMoveCameraKeyUp(e:KeyboardEvent = null):Void {
+        switch(e.keyCode) {
+            case Keyboard.LEFT:
+                debugViewMoves[0] = 0;
+            case Keyboard.RIGHT:
+                debugViewMoves[1] = 0;
+            case Keyboard.DOWN:
+                debugViewMoves[2] = 0;
+            case Keyboard.UP:
+                debugViewMoves[3] = 0;
+            case Keyboard.X:
+                debugViewMoves[4] = 0;
+            case Keyboard.Z:
+                debugViewMoves[5] = 0;
         }
     }
 }

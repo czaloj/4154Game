@@ -116,7 +116,9 @@ class GameplayScreen extends IGameScreen {
         renderer.update(state);
 
         // Update the view for the debug physics
-        debugPhysicsView.x = -renderer.cameraX + ScreenController.SCREEN_WIDTH / 2;
-        debugPhysicsView.y = renderer.cameraY + ScreenController.SCREEN_HEIGHT / 2;
+        debugPhysicsView.x = renderer.cameraScale * -renderer.cameraX + ScreenController.SCREEN_WIDTH / 2;
+        debugPhysicsView.y = renderer.cameraScale * renderer.cameraY + ScreenController.SCREEN_HEIGHT / 2;
+        debugPhysicsView.scaleX = renderer.cameraScale;
+        debugPhysicsView.scaleY = -renderer.cameraScale;
     }
 }
