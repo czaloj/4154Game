@@ -37,7 +37,7 @@ class InputController {
         click = true;
         x = e.stageX;
         y = e.stageY;
-        trace(y);
+       // trace(y);
     }
     
     public function mouseUp(e:MouseEvent):Void {
