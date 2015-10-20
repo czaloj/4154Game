@@ -1,4 +1,4 @@
-package;
+package game;
 
 import flash.display.Sprite;
 import box2D.dynamics.contacts.B2Contact;
@@ -15,13 +15,13 @@ class GameState {
     public var foreground:Array<Int> = [];
     public var background:Array<Int> = [];
 
-    public var spawners:Array<Spawner> = [];
+    public var spawners:Array<game.Spawner> = [];
 
     public var player:ObjectModel;
     public var entities:List<ObjectModel> = new List();
 
     public var contactList:List<B2Contact> = new List();
-    public var bullets:Array<Projectile> = [];
+    public var bullets:Array<game.Projectile> = [];
     public var markedForDeletion:Array<Entity> = [];
     
     public var gameEvents:Array<GameEvent> = []; // The queue of game events that should occur during an update
@@ -29,8 +29,8 @@ class GameState {
     // Broadcasting events
     public var onEntityAdded:BroadcastEvent2<GameState, ObjectModel> = new BroadcastEvent2<GameState, ObjectModel>();
     public var onEntityRemoved:BroadcastEvent2<GameState, ObjectModel> = new BroadcastEvent2<GameState, ObjectModel>();
-    public var onProjectileAdded:BroadcastEvent2<GameState, Projectile> = new BroadcastEvent2<GameState, Projectile>();
-    public var onProjectileRemoved:BroadcastEvent2<GameState, Projectile> = new BroadcastEvent2<GameState, Projectile>();
+    public var onProjectileAdded:BroadcastEvent2<GameState, game.Projectile> = new BroadcastEvent2<GameState, game.Projectile>();
+    public var onProjectileRemoved:BroadcastEvent2<GameState, game.Projectile> = new BroadcastEvent2<GameState, game.Projectile>();
     
     public function new() {
         // Empty

@@ -1,4 +1,4 @@
-package;
+package game;
 
 import box2D.dynamics.contacts.B2Contact;
 import game.events.GameEvent;
@@ -30,9 +30,9 @@ class GameplayController {
     public static inline var TILE_HALF_WIDTH:Float = 0.5;
     public static var BULLET_DAMAGE = 20;
     public static var MELEE_DAMAGE = 20;
-	public static var E_DAMAGE = 100;
+    public static var E_DAMAGE = 100;
 
-    public var state:GameState;
+    public var state:game.GameState;
     public var physicsController:PhysicsController;
     private var debugPhysicsView:Sprite;
 
@@ -50,7 +50,7 @@ class GameplayController {
         physicsController.initDebug(debugPhysicsView);
     }
 
-    public function init(s:GameState):Void {
+    public function init(s:game.GameState):Void {
         state = s;
         physicsController = new PhysicsController(state);
         createPlayer(physicsController.world, state.player);
@@ -108,9 +108,9 @@ class GameplayController {
         player.height = 1.9;
         player.bulletType = 1;
         player.health = 100;
-		player.canSwap2 = true;
+        player.canSwap2 = true;
         player.canSwap3 = true;
-		
+        
         player.bodyDef = new B2BodyDef();
         player.bodyDef.position.set(player.position.x, player.position.y);
         player.bodyDef.type = B2Body.b2_dynamicBody;
@@ -130,7 +130,7 @@ class GameplayController {
     //TODO ADD ARGUMENTS FROM PARSER SO THAT RIGHT INFO IS USED
     public function createEnemy(world:B2World, enemy:ObjectModel) {
         enemy.id = "enemy";
-		enemy.bulletType = 0;
+        enemy.bulletType = 0;
         enemy.velocity.set(0,0);
         enemy.grounded = false;
         enemy.rotation = 0;
@@ -156,22 +156,22 @@ class GameplayController {
         enemy.body.setUserData(enemy);
     }
     public function createBullet(world:B2World, entity:ObjectModel,bullet:Projectile):Void {
-		bullet.bodyDef = new B2BodyDef();
-		bullet.bodyDef.bullet = true;
-		
-		if (entity.bulletType == 0 ) {
+        bullet.bodyDef = new B2BodyDef();
+        bullet.bodyDef.bullet = true;
+        
+        if (entity.bulletType == 0 ) {
             bullet.id = "melee";
             bullet.velocity.set(0, 0);
             bullet.width = 2;
             bullet.height = 2;
-			//bullet.bodyDef.bullet = false;
+            //bullet.bodyDef.bullet = false;
         }
-		if (entity.bulletType == 4 ) {
+        if (entity.bulletType == 4 ) {
             bullet.id = "explosion";
             bullet.velocity.set(0, 0);
             bullet.width = 4;
             bullet.height = 4;
-			//bullet.bodyDef.bullet = false;
+            //bullet.bodyDef.bullet = false;
         }
         else {
             if (entity.bulletType == 1 ) {
@@ -181,7 +181,7 @@ class GameplayController {
                 bullet.id = "piercingbullet";
                 //bullet.body.isSensor = true;
             }
-			if(entity.bulletType ==3){
+            if(entity.bulletType ==3){
                 bullet.id = "explosivebullet";
             }
         //bullet.velocity.set(0,0);
@@ -218,29 +218,29 @@ class GameplayController {
 
             bullet.fixtureDef.isSensor = true;
         }
-		
+        
         bullet.body = world.createBody(bullet.bodyDef);
-		if (entity.bulletType != 0) {
-				
-			bullet.fixture = bullet.body.createFixture(bullet.fixtureDef);
-		}
-		if (entity.bulletType == 0) {
-			var jointDef = new B2DistanceJointDef();
-			//entity.fixtureDef.density = 100;
-			jointDef.bodyA = entity.body;
-			jointDef.bodyB = bullet.body;
-			jointDef.localAnchorA = new B2Vec2(0, 0);
-			jointDef.localAnchorB = new B2Vec2(0, 0);
-			jointDef.length = .1;
-			
-			jointDef.collideConnected = false;
-			world.createJoint(jointDef);
-			bullet.fixture = bullet.body.createFixture(bullet.fixtureDef);
-		}
+        if (entity.bulletType != 0) {
+                
+            bullet.fixture = bullet.body.createFixture(bullet.fixtureDef);
+        }
+        if (entity.bulletType == 0) {
+            var jointDef = new B2DistanceJointDef();
+            //entity.fixtureDef.density = 100;
+            jointDef.bodyA = entity.body;
+            jointDef.bodyB = bullet.body;
+            jointDef.localAnchorA = new B2Vec2(0, 0);
+            jointDef.localAnchorB = new B2Vec2(0, 0);
+            jointDef.length = .1;
+            
+            jointDef.collideConnected = false;
+            world.createJoint(jointDef);
+            bullet.fixture = bullet.body.createFixture(bullet.fixtureDef);
+        }
         bullet.body.setUserData(bullet);
     }
 
-    public function updatePlayerRays(state:GameState):Void {
+    public function updatePlayerRays(state:game.GameState):Void {
         //Update left Ray
         state.player.leftRayStart = new B2Vec2(state.player.position.x - (state.player.width/2), state.player.position.y /*- (state.player.height/2)*/);
         state.player.leftRayEnd = new B2Vec2(state.player.leftRayStart.x, state.player.leftRayStart.y - 1);
@@ -386,26 +386,26 @@ class GameplayController {
                         state.onEntityRemoved.invoke(state, dead);
                     }
                 }
-				if (( id1 == "enemy") && id2 == "explosivebullet") {
+                if (( id1 == "enemy") && id2 == "explosivebullet") {
                     var entity1o = cast(entity1, ObjectModel);
                     entity1o.bulletType = 4;
-					var explosion:Projectile = new Projectile();
-					createBullet(physicsController.world, entity1o, explosion);
-					explosion.targetX = entity1o.targetX;
-					explosion.targetY = entity1o.targetY;
-				
+                    var explosion:Projectile = new Projectile();
+                    createBullet(physicsController.world, entity1o, explosion);
+                    explosion.targetX = entity1o.targetX;
+                    explosion.targetY = entity1o.targetY;
+                
                 }
-				
-				if (( id2 == "enemy") && id1 == "explosivebullet") {
+                
+                if (( id2 == "enemy") && id1 == "explosivebullet") {
                     var entity2o = cast(entity2, ObjectModel);
                     entity2o.bulletType = 4;
-					var explosion:Projectile = new Projectile();
-					createBullet(physicsController.world, entity2o, explosion);
-					explosion.targetX = entity2o.targetX;
-					explosion.targetY = entity2o.targetY;
+                    var explosion:Projectile = new Projectile();
+                    createBullet(physicsController.world, entity2o, explosion);
+                    explosion.targetX = entity2o.targetX;
+                    explosion.targetY = entity2o.targetY;
                 }
-				
-				if (( id1 == "enemy"||id1=="player") && id2 == "explosion") {
+                
+                if (( id1 == "enemy"||id1=="player") && id2 == "explosion") {
                     var entity1o = cast(entity1, ObjectModel);
                     entity1o.health -= E_DAMAGE;
                     if (entity1o.health <= 0) {
@@ -456,11 +456,11 @@ class GameplayController {
         state.contactList.clear();
     }
 
-    public function update(s:GameState, gameTime:GameTime):Void {
+    public function update(s:game.GameState, gameTime:GameTime):Void {
         state = s;
         
         // TODO: Spawner shouldn't need reference to this
-        Spawner.spawn(this, state, gameTime);
+        game.Spawner.spawn(this, state, gameTime);
         
         // Update game events
         if (state.gameEvents.length > 0) {
@@ -477,17 +477,17 @@ class GameplayController {
         for (entity in state.entities) {
             //UPDATES VELOCITY
             entity.velocity = entity.body.getLinearVelocity().copy();
-			
-			if (entity.swap2&& entity.canSwap2) {
-				entity.canSwap2 = false;
-				entity.bulletType = 2;
-				entity.health = 150;
-			}
-			if (entity.swap3 && entity.canSwap3) {
-				entity.canSwap3 = false;
-				entity.bulletType = 3;
-				entity.health = 200;
-			}
+            
+            if (entity.swap2&& entity.canSwap2) {
+                entity.canSwap2 = false;
+                entity.bulletType = 2;
+                entity.health = 150;
+            }
+            if (entity.swap3 && entity.canSwap3) {
+                entity.canSwap3 = false;
+                entity.bulletType = 3;
+                entity.health = 200;
+            }
             //Just in case -__-
             var moveSpeed = entity.grounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
             if (entity.id == "enemy") {
@@ -524,7 +524,7 @@ class GameplayController {
                 bullet.setVelocity();
                 state.bullets.push(bullet);  //push bullet onto gamestate bullets
                 state.onProjectileAdded.invoke(state, bullet);
-				if (bullet.id == "melee") { bullet.velocity = new B2Vec2(0, 0);}
+                if (bullet.id == "melee") { bullet.velocity = new B2Vec2(0, 0);}
                 bullet.body.setLinearVelocity(bullet.velocity);
             }
         }
@@ -540,7 +540,7 @@ class GameplayController {
     }
 
     // Application of game events
-    public function applyEventSpawn(state:GameState, e:GameEventSpawn) {
+    public function applyEventSpawn(state:game.GameState, e:GameEventSpawn) {
         switch (e.entity) {
             // TODO: Actually fix this
             case "Grunt":

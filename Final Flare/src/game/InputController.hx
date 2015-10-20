@@ -1,7 +1,8 @@
-package;
+package game;
 
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
+import game.GameState;
 import openfl.ui.Keyboard;
 import openfl.ui.Mouse;
 
@@ -44,13 +45,13 @@ class InputController {
         click = false;
     }
 
-    public function update(state:GameState, camX:Float, camY:Float, camScale:Float):Void {
+    public function update(state:game.GameState, camX:Float, camY:Float, camScale:Float):Void {
         state.player.left = keysDown[Keyboard.A];
         state.player.right = keysDown[Keyboard.D];
         state.player.up = keysDown[Keyboard.W];
         state.player.down = keysDown[Keyboard.S];
-		state.player.swap2 = keysDown[Keyboard.NUMBER_2];
-		state.player.swap3 = keysDown[Keyboard.NUMBER_3];
+        state.player.swap2 = keysDown[Keyboard.NUMBER_2];
+        state.player.swap3 = keysDown[Keyboard.NUMBER_3];
         state.player.click = click;
         if (keysDown[Keyboard.LEFT]) {
             state.player.targetX = state.player.position.x - 100;

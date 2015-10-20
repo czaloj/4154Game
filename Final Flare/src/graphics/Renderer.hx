@@ -1,5 +1,8 @@
 package graphics;
 
+import game.GameState;
+import game.ObjectModel;
+import game.Projectile;
 import haxe.ds.ObjectMap;
 import openfl.Assets;
 import openfl.events.Event;
@@ -27,8 +30,8 @@ class Renderer {
     private var stage3D:Stage;
     //private var myState:GameState;
     public var sprites:Array<Sprite> = [];
-    public var entityTbl:ObjectMap<ObjectModel, AnimatedSprite> = new ObjectMap<ObjectModel, AnimatedSprite>();
-    public var projTbl:ObjectMap<Projectile, AnimatedSprite> = new ObjectMap<Projectile, AnimatedSprite>();
+    public var entityTbl:ObjectMap<game.ObjectModel, AnimatedSprite> = new ObjectMap<game.ObjectModel, AnimatedSprite>();
+    public var projTbl:ObjectMap<game.Projectile, AnimatedSprite> = new ObjectMap<game.Projectile, AnimatedSprite>();
     public var cameraX(get,set):Float;
     public var cameraY(get,set):Float;
     public var cameraScale(get,set):Float;
@@ -40,7 +43,7 @@ class Renderer {
     private var debugViewing:Bool = false;
     private var debugViewMoves:Array<Int> = [ 0, 0, 0, 0, 0, 0 ];
 
-    public function new(stage:Sprite, p:RenderPack, state:GameState) {
+    public function new(stage:Sprite, p:RenderPack, state:game.GameState) {
         pack = p;
         stage3D = stage.stage;
 
@@ -103,7 +106,7 @@ class Renderer {
         Starling.current.viewPort = viewPortRectangle;
     }
 
-    public function onEntityAdded(s:GameState, o:ObjectModel):Void {
+    public function onEntityAdded(s:game.GameState, o:game.ObjectModel):Void {
         // Add a corresponding sprite to stage and track this entity
         var enemy = new AnimatedSprite(pack.enemies, "Robot.Run", 3);
         enemy.x = o.position.x - enemy.width * 0.5;
@@ -115,7 +118,7 @@ class Renderer {
         entityTbl.set(o,enemy);
         //what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
     }
-    public function onEntityRemoved(s:GameState, o:ObjectModel):Void {
+    public function onEntityRemoved(s:game.GameState, o:game.ObjectModel):Void {
         //idk about this function the implementation i was thinking of was sketchy.
         //i need to figure out the mapping between objectModels and sprites
         hierarchy.enemy.removeChild(entityTbl.get(o));
@@ -123,7 +126,7 @@ class Renderer {
         // Remove this entity from the stage
     }
 
-    public function onBulletAdded(s:GameState, p:Projectile):Void {
+    public function onBulletAdded(s:game.GameState, p:game.Projectile):Void {
         // Add a corresponding sprite to stage and track this entity
         var bullet = new AnimatedSprite(pack.projectiles, "Bullet.Fly", 1);
         bullet.x = p.position.x - bullet.width * 0.5;
@@ -135,7 +138,7 @@ class Renderer {
         projTbl.set(p,bullet);
         //what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
     }
-    public function onBulletRemoved(s:GameState, p:Projectile):Void {
+    public function onBulletRemoved(s:game.GameState, p:game.Projectile):Void {
         //idk about this function the implementation i was thinking of was sketchy.
         //i need to figure out the mapping between objectModels and sprites
         hierarchy.projectiles.removeChild(projTbl.get(p));
@@ -143,7 +146,7 @@ class Renderer {
         // Remove this entity from the stage
     }
 
-    public function update(s:GameState):Void {
+    public function update(s:game.GameState):Void {
         // TODO: Update sprite positions from entities
         for (o in entityTbl.keys()) {
             var sprite:AnimatedSprite = entityTbl.get(o);
@@ -185,7 +188,7 @@ class Renderer {
         }
     }
 
-    private function load(state:GameState):Void {
+    private function load(state:game.GameState):Void {
         // Register listener functions
         state.onEntityAdded.add(onEntityAdded);
         state.onEntityRemoved.add(onEntityRemoved);

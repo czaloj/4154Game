@@ -1,5 +1,11 @@
 package;
 
+import game.AIController;
+import game.GameLevel;
+import game.GameplayController;
+import game.GameState;
+import game.InputController;
+import game.PhysicsController;
 import graphics.Renderer;
 import graphics.RenderPack;
 import graphics.SpriteSheet;
@@ -25,11 +31,11 @@ import openfl.ui.Keyboard;
 import openfl.ui.Mouse;
 
 class GameplayScreen extends IGameScreen {
-    private var state:GameState;
-    private var gameplayController:GameplayController;
-    private var aiController:AIController;
+    private var state:game.GameState;
+    private var gameplayController:game.GameplayController;
+    private var aiController:game.AIController;
     private var renderer:Renderer;
-    public var inputController:InputController;
+    public var inputController:game.InputController;
     private var debugPhysicsView:Sprite;
 
     public function new(sc: ScreenController) {
@@ -44,13 +50,13 @@ class GameplayScreen extends IGameScreen {
     }
 
     override function onEntry(gameTime:GameTime):Void {
-        state = new GameState();
-        inputController = new InputController();
-        gameplayController = new GameplayController();
-        aiController = new AIController();
+        state = new game.GameState();
+        inputController = new game.InputController();
+        gameplayController = new game.GameplayController();
+        aiController = new game.AIController();
         var pack:RenderPack = new RenderPack();
 
-        var gl:GameLevel = screenController.loadedLevel;
+        var gl:game.GameLevel = screenController.loadedLevel;
         LevelCreator.createStateFromLevel(gl, state);
         gameplayController.init(state);
         LevelCreator.createPackFromLevel(gl, pack);
@@ -94,7 +100,7 @@ class GameplayScreen extends IGameScreen {
         // Update the view for the debug physics
         debugPhysicsView.x = renderer.cameraScale * -renderer.cameraX + ScreenController.SCREEN_WIDTH / 2;
         debugPhysicsView.y = renderer.cameraScale * renderer.cameraY + ScreenController.SCREEN_HEIGHT / 2;
-        debugPhysicsView.scaleX = renderer.cameraScale / PhysicsController.DEBUG_VIEW_SCALE;
-        debugPhysicsView.scaleY = -renderer.cameraScale / PhysicsController.DEBUG_VIEW_SCALE;
+        debugPhysicsView.scaleX = renderer.cameraScale / game.PhysicsController.DEBUG_VIEW_SCALE;
+        debugPhysicsView.scaleY = -renderer.cameraScale / game.PhysicsController.DEBUG_VIEW_SCALE;
     }
 }

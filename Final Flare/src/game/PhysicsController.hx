@@ -1,7 +1,9 @@
-package;
+package game;
 
 import box2D.dynamics.B2ContactFilter;
 import box2D.dynamics.B2DebugDraw;
+import game.GameState;
+import game.ObjectModel;
 import openfl.geom.Point;
 import box2D.dynamics.contacts.B2Contact;
 import box2D.dynamics.B2ContactListener;
@@ -15,16 +17,16 @@ class PhysicsController {
     public static inline var DEBUG_VIEW_SCALE:Float = 32;
     
     public var world:B2World;
-    private var state:GameState;
+    private var state:game.GameState;
     private var contactListener:ContactListener;
     private var contactFilter:ContactFilter;
     public var debugger: B2DebugDraw;
 
-    public function new(s:GameState) {
+    public function new(s:game.GameState) {
         init(s);
     }
     
-    public function init(s:GameState) {
+    public function init(s:game.GameState) {
         state = s;
         world = new B2World(GRAVITY, true);
         contactListener = new ContactListener( state);
@@ -52,11 +54,11 @@ class PhysicsController {
         world.step(1 / 60, 5, 3);
         for (entity in state.markedForDeletion) {
                 world.destroyBody(entity.body);
-				if (entity.id == "enemy") {
-				var ontity = cast(entity, ObjectModel);	
-				state.entities.remove(ontity);
-				}
-				
+                if (entity.id == "enemy") {
+                var ontity = cast(entity, game.ObjectModel);    
+                state.entities.remove(ontity);
+                }
+                
         }
         world.clearForces();
         world.drawDebugData();

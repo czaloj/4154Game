@@ -1,7 +1,9 @@
 package;
+import game.GameLevel;
+import game.Spawner;
 
 class CodeLevelEditor {
-    public static function drawBox(lvl:GameLevel, id:Int, x:Int, y:Int, w:Int, h:Int, inForeground:Bool = true):Void {
+    public static function drawBox(lvl:game.GameLevel, id:Int, x:Int, y:Int, w:Int, h:Int, inForeground:Bool = true):Void {
         var blocks:Array<Int> = inForeground ? lvl.foreground : lvl.background;
         for (iy in y...(y + h)) {
             var i:Int = iy * lvl.width + x;
@@ -13,7 +15,7 @@ class CodeLevelEditor {
     }
     
     public static function run():Void {
-        var lvl:GameLevel = new GameLevel();
+        var lvl:game.GameLevel = new game.GameLevel();
         lvl.width = 100;
         lvl.height = 50;
         
@@ -39,8 +41,8 @@ class CodeLevelEditor {
         lvl.playerPt.x = lvl.width / 2 - 2;
         lvl.playerPt.y = 20;
         lvl.spawners = [
-            new Spawner("Grunt", 2, 23),
-            new Spawner("Grunt", 48, 23)
+            new game.Spawner("Grunt", 2, 23),
+            new game.Spawner("Grunt", 48, 23)
         ];
         
         // Environment

@@ -1,16 +1,18 @@
-package;
+package game;
 
 import box2D.dynamics.contacts.B2Contact;
 import box2D.dynamics.B2Fixture;
 import box2D.dynamics.B2ContactFilter;
+import game.Entity;
+import game.GameState;
 
 
 class ContactFilter extends B2ContactFilter
 {
     
-    private var state:GameState;
+    private var state:game.GameState;
     
-    public function new(s:GameState) 
+    public function new(s:game.GameState) 
     {
         super();
         state = s;
@@ -18,8 +20,8 @@ class ContactFilter extends B2ContactFilter
     
     override public function shouldCollide(fixtureA:B2Fixture, fixtureB:B2Fixture):Bool 
     {
-        var entity1 = cast(fixtureA.getBody().getUserData(), Entity);
-        var entity2 = cast(fixtureB.getBody().getUserData(), Entity);
+        var entity1 = cast(fixtureA.getBody().getUserData(), game.Entity);
+        var entity2 = cast(fixtureB.getBody().getUserData(), game.Entity);
         var id1 = entity1.id;
         var id2 = entity2.id;
         

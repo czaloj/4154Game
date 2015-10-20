@@ -1,6 +1,8 @@
-package;
+package game;
 
 import game.events.GameEventSpawn;
+import game.GameplayController;
+import game.GameState;
 import graphics.Renderer;
 import openfl.display.Graphics;
 import openfl.geom.Point;
@@ -17,7 +19,7 @@ class Spawner {
         position.x = x;
         position.y = y;
     }
-    public static function spawn(gameplayController:GameplayController, state: GameState, gameTime:GameTime) {
+    public static function spawn(gameplayController:game.GameplayController, state: game.GameState, gameTime:GameTime) {
         // TODO: Use advanced spawning logic
         if (gameTime.frame % 120 == 0) {
             for (spawner in state.spawners) {

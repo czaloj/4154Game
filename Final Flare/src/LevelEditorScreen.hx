@@ -1,5 +1,8 @@
 package;
 
+import game.GameLevel;
+import game.GameState;
+import game.InputController;
 import openfl.Lib;
 import openfl.events.MouseEvent;
 import openfl.events.KeyboardEvent;
@@ -14,10 +17,10 @@ class LevelEditorScreen extends IGameScreen {
     public static var MIN_LEVEL_WIDTH:Int = 1600;
     public static var MIN_LEVEL_HEIGHT:Int = 900;
 
-    private var state:GameState;
+    private var state:game.GameState;
     private var renderer:Renderer;
     private var levelController:LevelEditorController;
-    private var inputController:InputController;
+    private var inputController:game.InputController;
 
     public var tileMap:TileMap;
 
@@ -52,13 +55,13 @@ class LevelEditorScreen extends IGameScreen {
     }
 
     override public function onEntry(gameTime:GameTime):Void {
-        state = new GameState();
+        state = new game.GameState();
         levelController = new LevelEditorController();
-        inputController = new InputController();
+        inputController = new game.InputController();
         var pack:RenderPack = new RenderPack();
 
         // set up startup level
-        var level = new GameLevel();
+        var level = new game.GameLevel();
         level.height = Std.int(MIN_LEVEL_HEIGHT/16);
         level.width = Std.int(MIN_LEVEL_WIDTH/16);
         level.environmentType = "Simple";

@@ -1,4 +1,6 @@
 package;
+import game.GameState;
+import game.ObjectModel;
 
 // https://gist.github.com/danielcmessias/930e6990d9c6845f2aa5
 class Pathfinder {
@@ -13,7 +15,7 @@ class Pathfinder {
     public var f_score:Array<Array<Int>>;
     public var highest_f_score:Int;
     
-    public function new(entities:Array<ObjectModel>, state:GameState) {
+    public function new(entities:Array<game.ObjectModel>, state:game.GameState) {
 
     }
 

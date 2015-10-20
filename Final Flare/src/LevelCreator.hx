@@ -2,6 +2,8 @@ package;
 
 import flash.net.FileReference;
 import flash.events.Event;
+import game.GameLevel;
+import game.GameState;
 import graphics.RenderPack;
 import graphics.SpriteSheet;
 import graphics.SpriteSheetRegistry;
@@ -15,30 +17,30 @@ import openfl.Assets;
 import haxe.Unserializer;
 
 class LevelCreator {
-    public static function saveToFile(lvl:GameLevel):Void {
+    public static function saveToFile(lvl:game.GameLevel):Void {
         var fileRef:FileReference = new FileReference();
         fileRef.addEventListener(Event.COMPLETE, function (e:Event = null):Void {
             trace("Save Successful");
         });
         fileRef.save(Serializer.run(lvl),"level.txt");
     }
-    public static function loadLevelFromFile(file:String):GameLevel {
+    public static function loadLevelFromFile(file:String):game.GameLevel {
         var value = Assets.getText(file);
-        var level:GameLevel = cast(Unserializer.run(value), GameLevel);
+        var level:game.GameLevel = cast(Unserializer.run(value), game.GameLevel);
         return level;
     }
 
-    public static function createStateFromLevel(level:GameLevel, state:GameState):Void {
+    public static function createStateFromLevel(level:game.GameLevel, state:game.GameState):Void {
         state.width = level.width;
         state.height = level.height;
         state.foreground = level.foreground; // TODO: Better data structure
         state.background = level.background; // TODO: Better data structure
         state.spawners = level.spawners;
 
-        state.player = new ObjectModel();
+        state.player = new game.ObjectModel();
         state.player.position.set(level.playerPt.x, level.playerPt.y);
     }
-    public static function createPackFromLevel(level:GameLevel, renderPack:RenderPack):Void {
+    public static function createPackFromLevel(level:game.GameLevel, renderPack:RenderPack):Void {
         // Load the environment texture
         var environmentTexture:Texture = Texture.fromBitmapData(Assets.getBitmapData(level.environmentSprites, false));
         renderPack.environment = SpriteSheetRegistry.getEnvironment(environmentTexture, level.environmentType);
@@ -68,7 +70,7 @@ class LevelCreator {
         ]);
     }
 
-    public static function createStateFromFile(file:String, state:GameState):Void {
+    public static function createStateFromFile(file:String, state:game.GameState):Void {
         createStateFromLevel(loadLevelFromFile(file), state);
     }
     public static function createPackFromFile(file:String, renderPack:RenderPack):Void {

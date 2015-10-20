@@ -1,6 +1,7 @@
 package;
 
 import flash.net.FileReference;
+import game.GameLevel;
 import haxe.remoting.FlashJsConnection;
 import haxe.Unserializer;
 import openfl.Assets;
@@ -30,7 +31,7 @@ class ScreenController extends Sprite {
     private var activeScreen:IGameScreen;
     private var screenToSwitch:Int = -1;
     
-    public var loadedLevel:GameLevel = null;
+    public var loadedLevel:game.GameLevel = null;
 
     public function new() {
         super();
@@ -106,7 +107,7 @@ class ScreenController extends Sprite {
         fileReference.removeEventListener(Event.COMPLETE, onFileLoaded);
 
         var data:ByteArray = fileReference.data;
-        loadedLevel = cast(Unserializer.run(data.toString()), GameLevel);
+        loadedLevel = cast(Unserializer.run(data.toString()), game.GameLevel);
         switchToScreen(2);
     }
 }

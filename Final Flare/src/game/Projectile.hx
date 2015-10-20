@@ -1,4 +1,4 @@
-package;
+package game;
 
 import box2D.dynamics.B2Body;
 import box2D.dynamics.B2BodyDef;
@@ -8,10 +8,11 @@ import box2D.dynamics.B2FixtureDef;
 import box2D.common.math.B2Vec2;
 import box2D.collision.shapes.B2Shape;
 import box2D.collision.shapes.B2PolygonShape;
+import game.Entity;
 import openfl.geom.Point;
 
 
-class Projectile extends Entity {
+class Projectile extends game.Entity {
     
     private static var BULLET_SPEED:Float = 20;
     private static var PHYSICS_SCALE:Float = 1 / 30;
