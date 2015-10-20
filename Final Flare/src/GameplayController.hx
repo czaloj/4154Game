@@ -198,8 +198,8 @@ class GameplayController {
         bullet.fixtureDef.shape = bullet.shape;
         bullet.fixtureDef.friction = 1;
         bullet.fixtureDef.density = 1;
-        bullet.fixtureDef.filter.maskBits = 0x0000;
-        if (entity.bulletType == 2) {
+       // bullet.fixtureDef.filter.maskBits = 0x0000;
+        if (entity.bulletType == 2||entity.bulletType ==0) {
 
             bullet.fixtureDef.isSensor = true;
         }
@@ -328,12 +328,12 @@ class GameplayController {
                 var id1 = entity1.id;
                 var id2 = entity2.id;
                 
-                if (id1 == "bullet") {
+                if (id1 == "bullet"||id1 == "melee") {
                     state.markedForDeletion.push(entity1);
                     var bulldead = cast(entity1, Projectile);
                     r.onBulletRemoved(bulldead);
                 }
-                if (id2 == "bullet") {
+                if (id2 == "bullet"||id2=="melee") {
                     state.markedForDeletion.push(entity2);
                     var bulldead = cast(entity2, Projectile);
                     r.onBulletRemoved(bulldead);
