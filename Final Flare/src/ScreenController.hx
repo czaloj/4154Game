@@ -1,23 +1,13 @@
 package;
 
-import flash.net.FileReference;
-import haxe.remoting.FlashJsConnection;
-import haxe.Unserializer;
-import openfl.Assets;
 import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
-import openfl.geom.Rectangle;
 import openfl.Lib;
 import openfl.ui.Keyboard;
 import openfl.utils.ByteArray;
 import starling.display.Sprite;
 import starling.events.Event;
-import starling.utils.AssetManager;
 import starling.core.Starling;
-import starling.display.Image;
-import starling.display.Quad;
-import starling.textures.Texture;
-import flash.display.BitmapData;
 import game.GameLevel;
 
 class ScreenController extends Sprite {
@@ -36,22 +26,23 @@ class ScreenController extends Sprite {
     public function new() {
         super();
 
+        // Register initialization and update functions
         addEventListener(Event.ADDED_TO_STAGE, load);
         openfl.Lib.current.stage.addEventListener(Event.ENTER_FRAME, update);
 
-        // TODO: Start on the splash screen
+        // Startup on the splash screen
         screens = [
             new SplashScreen(this),
             new MenuScreen(this),
             new GameplayScreen(this),
             new LevelEditorScreen(this)
         ];
-        activeScreen = null;
+        activeScreen = screens[0];
         
-        // TODO: Remove debug level creation
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, function (e:KeyboardEvent):Void {
             switch (e.keyCode) {
                 case Keyboard.F6:
+                    // TODO: Remove debug level creation with real level editor
                     CodeLevelEditor.run();
                 case Keyboard.F7:
                     // TODO: Load Level
@@ -60,10 +51,6 @@ class ScreenController extends Sprite {
             }
         });
         
-        // Begin loading a file
-        var fileRef:FileReference = new FileReference();
-        fileRef.addEventListener(Event.SELECT, onFileBrowse);
-        fileRef.browse();
     }
 
     private function load(e:Event = null):Void {
@@ -84,15 +71,19 @@ class ScreenController extends Sprite {
         dt.frame++;
         
         // Logic to switch screens appropriately
-        if (screenToSwitch >= 0) {
+        while (screenToSwitch >= 0) {
+            // Buffer screen switching
+            var buf:Int = screenToSwitch;
+            screenToSwitch = -1;
+
+            // Screens may now switch
             if (activeScreen != null) {
                 activeScreen.onExit(dt);
             }
-            activeScreen = screens[screenToSwitch];
+            activeScreen = screens[buf];
             if (activeScreen != null) {
                 activeScreen.onEntry(dt);
             }
-            screenToSwitch = -1;
         }
         
         // Update the active screen
@@ -100,22 +91,5 @@ class ScreenController extends Sprite {
             activeScreen.update(dt);
             activeScreen.draw(dt);
         }
-    }
-
-    public function onFileBrowse(e:openfl.events.Event):Void {
-        var fileReference:FileReference = cast(e.target, FileReference);
-        fileReference.removeEventListener(Event.SELECT, onFileBrowse);
-        fileReference.addEventListener(Event.COMPLETE, onFileLoaded);
-
-        fileReference.load();
-    }
-    public function onFileLoaded(e:openfl.events.Event):Void {
-        var fileReference:FileReference = cast(e.target, FileReference);
-        fileReference.removeEventListener(Event.COMPLETE, onFileLoaded);
-
-        var data:ByteArray = fileReference.data;
-        loadedLevel = cast(Unserializer.run(data.toString()), GameLevel);
-
-        switchToScreen(2);
     }
 }

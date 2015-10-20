@@ -20,7 +20,10 @@ class SplashScreen extends IGameScreen {
     }
     
     override public function update(gameTime:GameTime):Void {
-        // Empty
+        // TODO: Add real switching
+        
+        // Switch to the main menu
+        screenController.switchToScreen(1);
     }
     override public function draw(gameTime:GameTime):Void {
         // Empty
