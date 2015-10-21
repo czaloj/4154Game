@@ -18,6 +18,7 @@ import openfl.Assets;
 import openfl.display.Sprite;
 import openfl.events.KeyboardEvent;
 import openfl.Lib;
+import openfl.ui.Keyboard;
 import starling.textures.Texture;
 import ui.UISpriteFactory;
 
@@ -55,9 +56,9 @@ class GameplayScreen extends IGameScreen {
 
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);
-
         openfl.Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, inputController.mouseDown);
         openfl.Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, inputController.mouseUp);
+
         // Debug view of physics
         debugPhysicsView = new Sprite();
         gameplayController.initDebug(debugPhysicsView);
@@ -70,9 +71,15 @@ class GameplayScreen extends IGameScreen {
         var ggp:GunGenParams = new GunGenParams();
         var gunData = GunGenerator.generate(ggp);
         var gun:Gun = new Gun(gunData);
+        
+        Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
     }
     override function onExit(gameTime:GameTime):Void {
-        // Empty
+        openfl.Lib.current.stage.removeEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
+        openfl.Lib.current.stage.removeEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);
+        openfl.Lib.current.stage.removeEventListener(MouseEvent.MOUSE_DOWN, inputController.mouseDown);
+        openfl.Lib.current.stage.removeEventListener(MouseEvent.MOUSE_UP, inputController.mouseUp);
+        Lib.current.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
     }
 
     override function update(gameTime:GameTime):Void {
@@ -92,5 +99,12 @@ class GameplayScreen extends IGameScreen {
         debugPhysicsView.scaleX = renderer.cameraScale / game.PhysicsController.DEBUG_VIEW_SCALE;
         debugPhysicsView.scaleY = -renderer.cameraScale / game.PhysicsController.DEBUG_VIEW_SCALE;
         gameplayController.drawDebug();
+    }
+
+    private function onKeyPress(e:KeyboardEvent = null):Void {
+        switch (e.keyCode) {
+            case Keyboard.F5:
+                debugPhysicsView.visible = !debugPhysicsView.visible;
+        }
     }
 }
