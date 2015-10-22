@@ -7,6 +7,7 @@ import box2D.dynamics.B2BodyDef;
 import box2D.dynamics.B2ContactListener;
 import box2D.dynamics.B2DebugDraw;
 import box2D.dynamics.B2FilterData;
+import box2D.dynamics.B2Fixture;
 import box2D.dynamics.B2FixtureDef;
 import box2D.dynamics.B2World;
 import box2D.dynamics.contacts.B2Contact;
@@ -75,6 +76,8 @@ class PhysicsController extends B2ContactListener {
     public var debugger: B2DebugDraw;
 
     public var deleteList:Array<B2Body> = []; // List of entities that are marked for deletion
+    
+    private var rcContext:RayCastContext = null;
     
     public function new() {
         super();
@@ -224,6 +227,147 @@ class PhysicsController extends B2ContactListener {
     private function onProjectileRemoved(state:GameState, e:Projectile) {
         deleteList.push(e.body);
     }
+    
+    private function rayCastCollisions(ox:Float, oy:Float, dx:Float, dy:Float, hitPlayer:Bool, hitEnemies:Bool, pierce:Int):Void {
+        // New ray context used for ray collisions
+        rcContext = new RayCastContext();
+        
+        // Setup filtering
+        rcContext.discardCategories = FILTER_CATEGORY_PLATFORM;
+        if (hitPlayer) {
+            if (hitEnemies) {
+                rcContext.hitCategories = FILTER_CATEGORY_ENEMY | FILTER_CATEGORY_PLAYER;                
+            } 
+            else {
+                rcContext.hitCategories = FILTER_CATEGORY_PLAYER;                
+            }
+        }
+        else {
+            if (hitEnemies) {
+                rcContext.hitCategories = FILTER_CATEGORY_ENEMY;                
+            }
+            else {
+                return;
+            }
+        }
+
+        // Construct ray points
+        var origin:B2Vec2 = new B2Vec2(ox, oy);
+        var end:B2Vec2 = new B2Vec2(ox + dx * 1000, oy + dy * 1000);
+        
+        // TODO: Do something with the results
+        if (pierce >= 0) {
+            // Get closest N
+            rcContext.maxHits = pierce;
+            world.rayCast(onRayCastN, origin, end);
+        }
+        else if (pierce == 0) {
+            // Get all pierced
+            world.rayCast(onRayCastPierce, origin, end);
+        }
+        else {
+            // Just raycast and get the nearest damage
+            world.rayCast(onRayCastClosest, origin, end);
+        }
+    }
+    private function onRayCastClosest(fixture:B2Fixture, location:B2Vec2, normal:B2Vec2, fraction:Float):Float {
+        if ((fixture.m_filter.categoryBits & rcContext.discardCategories) != 0) {
+            // Hit a wall, shorten the ray and discard last best result
+            rcContext.closestFixture = null;
+            return fraction;
+        }
+        else if ((fixture.m_filter.categoryBits & rcContext.hitCategories) != 0) {
+            // We obtained the best new result
+            rcContext.closestFixture = new Pair<B2Fixture, Float>(fixture, fraction);
+            return fraction;
+        }
+        else {
+            // Ignore this intersection
+            return -1;
+        }
+    }
+    private function onRayCastN(fixture:B2Fixture, location:B2Vec2, normal:B2Vec2, fraction:Float):Float {
+        if ((fixture.m_filter.categoryBits & rcContext.discardCategories) != 0) {
+            // Hit a wall, shorten the ray and discard last results past wall
+            rcContext.closestNFixtures = rcContext.closestNFixtures.filter(function (f:Pair<B2Fixture, Float>):Bool {
+                return f.second < fraction;
+            });
+            rcContext.farthestHitFraction = 0.0;
+            
+            // Reupdate farthest hit
+            for (pair in rcContext.closestNFixtures) {
+                if (pair.second > rcContext.farthestHitFraction) {
+                    rcContext.farthestHitFraction = pair.second;
+                }
+            }
+            rcContext.wallFraction = fraction;
+            return fraction;
+        }
+        else if ((fixture.m_filter.categoryBits & rcContext.hitCategories) != 0) {
+            if (rcContext.closestNFixtures.length < rcContext.maxHits) {
+                // We know we're still within our bounds for getting hits
+                rcContext.closestNFixtures.push(new Pair<B2Fixture, Float>(fixture, fraction));
+                if (fraction > rcContext.farthestHitFraction) {
+                    rcContext.farthestHitFraction = fraction;
+                }
+                
+                // If we're at max capacity, return farthest hit location, otherwise allow hits up until the closest wall
+                return (rcContext.closestNFixtures.length < rcContext.maxHits) ? rcContext.wallFraction : rcContext.farthestHitFraction;
+            }
+            else {
+                var i:Int = 0;
+                var fhf:Float = 0.0;
+                
+                // We must replace the farthest hit
+                while (i < rcContext.closestNFixtures.length) {
+                    if (rcContext.closestNFixtures[i].second == rcContext.farthestHitFraction) {
+                        rcContext.closestNFixtures[i] = new Pair<B2Fixture, Float>(fixture, fraction);
+                        break;
+                    }
+                    else if (fhf < rcContext.closestNFixtures[i].second) {
+                        fhf = rcContext.closestNFixtures[i].second;
+                    }
+                    i++;
+                }
+                i++;
+                
+                // Keep checking for farthest hit location
+                while (i < rcContext.closestNFixtures.length) {
+                    if (fhf < rcContext.closestNFixtures[i].second) {
+                        fhf = rcContext.closestNFixtures[i].second;
+                    }
+                    i++;
+                }
+                rcContext.farthestHitFraction = fhf;
+                
+                // We're at max capacity, return farthest hit location
+                return rcContext.farthestHitFraction;
+            }
+        }
+        else {
+            // Ignore this value
+            return -1;
+        }
+    }
+    private function onRayCastPierce(fixture:B2Fixture, location:B2Vec2, normal:B2Vec2, fraction:Float):Float {
+        if ((fixture.m_filter.categoryBits & rcContext.discardCategories) != 0) {
+            // Hit a wall, shorten the ray and discard last results past wall
+            rcContext.piercedFixtures = rcContext.piercedFixtures.filter(function (f:Pair<B2Fixture, Float>):Bool {
+                return f.second < fraction;
+            });
+            rcContext.wallFraction = fraction;
+            return fraction;
+        }
+        else if ((fixture.m_filter.categoryBits & rcContext.hitCategories) != 0) {
+            // We obtained a valid result
+            rcContext.piercedFixtures.push(new Pair<B2Fixture, Float>(fixture, fraction));
+            return rcContext.wallFraction;
+        }
+        else {
+            return -1;
+        }
+    }
+    
     
     /**
      * Setup debugging information
