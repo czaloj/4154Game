@@ -2,10 +2,8 @@ package game.damage;
 
 class DamageDealer {
     public static inline var TYPE_BULLET:Int = 1;
-    public static inline var TYPE_PIERCING_BULLET:Int = 1;
-    public static inline var TYPE_PROJECTILE:Int = 1;
-    public static inline var TYPE_RADIAL_EXPLOSION:Int = 1;
-    public static inline var TYPE_COLLISION_POLYGON:Int = 1;
+    public static inline var TYPE_RADIAL_EXPLOSION:Int = 2;
+    public static inline var TYPE_COLLISION_POLYGON:Int = 3;
     
     public static inline var TEAM_PLAYER:Int = 0x1 << 0;
     public static inline var TEAM_ENEMY:Int = 0x1 << 1;

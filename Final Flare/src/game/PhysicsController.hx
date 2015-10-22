@@ -266,8 +266,8 @@ class PhysicsController extends B2ContactListener {
         
         var results = [];
         if (pierce > 0) {
-            // Get closest N
-            rcContext.maxHits = pierce;
+            // Get closest N + 1
+            rcContext.maxHits = pierce + 1;
             world.rayCast(onRayCastN, origin, end);
             for (f in rcContext.closestNFixtures) {
                 results.push(new RayCastInfo(f.first, origin, f.third, f.fourth));

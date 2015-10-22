@@ -3,8 +3,13 @@ package game;
 import box2D.common.math.B2Vec2;
 import box2D.dynamics.B2Fixture;
 import box2D.dynamics.B2World;
+import game.damage.DamageBullet;
+import game.damage.DamageDealer;
+import game.damage.DamageExplosion;
+import game.damage.DamagePolygon;
 import game.events.GameEvent;
 import game.events.GameEventSpawn;
+import game.PhysicsController.RayCastInfo;
 import openfl.display.Sprite;
 
 class GameplayController {
@@ -286,23 +291,41 @@ class GameplayController {
             }
             state.gameEvents = [];
         }
+        
+        // Create damage dealers
 
-        // Update entity movement
+        // Physics
+        updatePhysics(gameTime);
+        
+        // Interactions
+        handleCollisions();
+        for (damage in state.damage) {
+            switch (damage.type) {
+                case DamageDealer.TYPE_BULLET:
+                    applyDamageBullet(state, cast(damage, DamageBullet));
+                case DamageDealer.TYPE_COLLISION_POLYGON:
+                    applyDamagePolygon(state, cast(damage, DamagePolygon));
+                case DamageDealer.TYPE_RADIAL_EXPLOSION:
+                    applyDamageExplosion(state, cast(damage, DamageExplosion));
+            }
+        }
+        
+        // Other game logic
         for (entity in state.entities) {
-            //UPDATES VELOCITY
-            entity.velocity = entity.body.getLinearVelocity().copy();
-            
-            if (entity.swap2&& entity.canSwap2) {
-                entity.canSwap2 = false;
-                entity.bulletType = 2;
-                entity.health = 150;
-            }
-            if (entity.swap3 && entity.canSwap3) {
-                entity.canSwap3 = false;
-                entity.bulletType = 3;
-                entity.health = 200;
-            }
-            //Just in case -__-
+            if (entity.health <= 0) deletingEntities.push(entity);
+        }
+        
+        // Destroy all dead things
+        for (entity in deletingEntities) {
+            state.onEntityRemoved.invoke(state, entity);
+            state.entities.remove(entity);
+        }
+        physicsController.clearDeadBodies();
+    }
+    public function updatePhysics(dt:GameTime):Void {
+        // Update entity movement input
+        for (entity in state.entities) {
+            // Add acceleration
             var moveSpeed = entity.grounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
             if (entity.id == "enemy") {
                moveSpeed /= 2; 
@@ -319,49 +342,75 @@ class GameplayController {
             // Clamp speed to a maximum value
             entity.velocity.x = Math.min(PLAYER_MAX_SPEED, Math.max(-PLAYER_MAX_SPEED, entity.velocity.x));
 
+            // Jump up
             if (entity.up && entity.grounded) {
                 entity.velocity.y = 9.5;
             }
-            entity.body.setLinearVelocity(entity.velocity.copy()); //So that the velocity actually does something
-            //UPDATE POSITION
-            entity.position = entity.body.getPosition();
-
-
-            //TODO This should be its own function
-            if (entity.click) {
-                var bullet:Projectile = new Projectile();
-                createBullet(physicsController.world, entity, bullet);
-                bullet.targetX = entity.targetX;
-                bullet.targetY = entity.targetY;
-                bullet.setVelocity();
-                state.bullets.push(bullet);  //push bullet onto gamestate bullets
-                state.onProjectileAdded.invoke(state, bullet);
-                if (bullet.id == "melee") { bullet.velocity = new B2Vec2(0, 0);}
-                bullet.body.setLinearVelocity(bullet.velocity);
-            }
+            
+            // Update the body
+            entity.body.setLinearVelocity(entity.velocity.copy());
+            entity.body.setPosition(entity.position.copy());
         }
         
-        // Update physics
-        physicsController.update(gameTime.elapsed);
+        // Simulate the world
+        physicsController.update(dt.elapsed);
         
-        updatePlayerRays(state); //Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
+        // Reapply from physics
+        for (entity in state.entities) {
+            entity.velocity = entity.body.getLinearVelocity().copy();
+            entity.position = entity.body.getPosition().copy();
+        }
+        
+        //Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
+        updatePlayerRays(state);
         Raycast(physicsController.world, state.player);
-        handleCollisions();
-        
-        // Destroy all dead things
-        for (entity in deletingEntities) {
-            state.onEntityRemoved.invoke(state, entity);
-            state.entities.remove(entity);
-        }
-        physicsController.clearDeadBodies();
     }
-
+    
     // Application of game events
-    public function applyEventSpawn(state:GameState, e:GameEventSpawn) {
+    public function applyEventSpawn(state:GameState, e:GameEventSpawn):Void {
         var enemy:ObjectModel = new ObjectModel();
         Spawner.createEnemy(enemy, e.entity, e.x, e.y);
         physicsController.initEntity(enemy);
         state.entities.push(enemy);
         state.onEntityAdded.invoke(state, enemy);
+    }
+
+    public function applyDamageBullet(state:GameState, bullet:DamageBullet):Void {
+        // Apply the raycast
+        var info:Pair<Array<RayCastInfo>, RayCastInfo> = physicsController.rayCastCollisions(
+            bullet.originX, bullet.originY,
+            bullet.velocityX, bullet.velocityY,
+            (bullet.teamDestinationFlags & DamageDealer.TEAM_PLAYER) != 0,
+            (bullet.teamDestinationFlags & DamageDealer.TEAM_ENEMY) != 0,
+            bullet.piercingAmount
+            );
+        
+        if (info.first.length > 0) {
+            // TODO: All entities are damaged
+            for (rci in info.first) {
+                var hitEntity:ObjectModel = cast(rci.first.getUserData(), ObjectModel);
+                hitEntity.health -= bullet.damageFor(hitEntity.id == "player" ? DamageDealer.TEAM_PLAYER : DamageDealer.TEAM_ENEMY);
+            }
+            
+            // Apply piercing count
+            if (bullet.piercingAmount > 0) {
+                bullet.piercingAmount -= info.first.length;
+                if (bullet.piercingAmount < 0) {
+                    // Bullet has travelled through max enemies
+                    // TODO: Bullet is destroyed
+                }
+            }
+        }
+        
+        // Check for wall hit
+        if (info.second != null) {
+            // TODO: Bullet is destroyed
+        }
+    }
+    public function applyDamagePolygon(state:GameState, polygon:DamagePolygon):Void {
+        // TODO: Work magic
+    }
+    public function applyDamageExplosion(state:GameState, explosion:DamageExplosion):Void {
+        // TODO: Work magic        
     }
 }
