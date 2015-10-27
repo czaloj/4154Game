@@ -13,10 +13,13 @@ import openfl.geom.Rectangle;
 import openfl.Lib;
 import openfl.ui.Keyboard;
 import starling.core.Starling;
+import starling.display.DisplayObject;
 import starling.display.Image;
+import starling.display.QuadBatch;
 import starling.display.Sprite;
 import starling.display.Stage;
 import starling.textures.Texture;
+import starling.textures.RenderTexture;
 
 class Renderer {
     public static inline var TILE_HALF_WIDTH:Float = 0.5;
@@ -38,6 +41,18 @@ class Renderer {
 
     private var crX:Float;
     private var crY:Float;
+    
+    
+    // Tilemap display objects
+    private var tilesForeground:QuadBatch;
+    private var tilesBackground:QuadBatch;
+    
+    // Permanence display objects
+    private var rtMaskBackground:RenderTexture;
+    private var rtMaskImage:Image;
+    private var rtBackground:RenderTexture;
+    private var rtForeground:RenderTexture;
+    
 
     // This is for debug camera movement
     private var debugViewing:Bool = false;
@@ -232,8 +247,132 @@ class Renderer {
         for (texture in pack.parallax) {
             hierarchy.parallax.addChild(new ParallaxSprite(texture, state.width * TILE_HALF_WIDTH, state.height * TILE_HALF_WIDTH, ScreenController.SCREEN_WIDTH, ScreenController.SCREEN_HEIGHT));
         }
+        
+        // Create the permanence layers
+        var permananceWidth:Int = Std.int(state.width * TILE_HALF_WIDTH);
+        if (permananceWidth > 2048) permananceWidth = 2048;
+        var permananceHeight:Int = Std.int(state.height * TILE_HALF_WIDTH);
+        if (permananceHeight > 2048) permananceHeight = 2048;
+        rtMaskBackground = new RenderTexture(permananceWidth, permananceHeight, false);
+        rtMaskBackground.clear();
+        generateBackgroundClipping();
+        rtForeground = new RenderTexture(permananceWidth, permananceHeight, false);
+        rtForeground.clear();
+        rtBackground = new RenderTexture(permananceWidth, permananceHeight, false);
+        rtBackground.clear();
     }
 
+    /** Tilemap generation code **/
+    private function getNeighbors(s:GameState, array:Array<Int>, tID:Int, x:Int, y:Int, ts:Int):Int {
+        var l:Int = x - ts;
+        var r:Int = x + ts;
+        var t:Int = y - ts;
+        var b:Int = y + ts;
+        var n:Int = 0;
+        var i:Int = 0;
+        
+        for (pos in [
+            { x:l, y:t },
+            { x:l, y:t },
+            { x:l, y:t },
+            { x:l, y:t },
+            { x:l, y:t },
+            { x:l, y:t },
+            { x:l, y:t },
+            { x:l, y:t }
+        ]) {
+            if (x >= 0 && y >= 0 && x < s.width && y < s.height && array[y * s.width + x] == tID) {
+                // We are connected to a tile type such as our own
+                n |= 1 << i;
+            }
+        }
+        
+        return n;
+    }
+    private function generateTiles(s:GameState):Void {
+        // Create foreground
+        var i:Int = 0;
+        for (y in 0...s.height) {
+            for (x in 0...s.width) {
+                var tileID:Int = s.foreground[i];
+                if (tileID > 0 && tileID <= 27) {
+                    var tileImage:Image = new Image(null);
+                    var tileName:String = SpriteSheetRegistry.getSheetName(tileID);
+                    switch(tileID) {
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 6:
+                        case 7:
+                        case 8:
+                            // Full Connected
+                            pack.environment.getConnected(tileName).setToTile(tileImage, getNeighbors(s, s.foreground, tileID, x, y, 2), false);
+                        case 4:
+                        case 5:
+                        case 9:
+                            // Half Connected
+                            pack.environment.getConnected(tileName).setToTile(tileImage, getNeighbors(s, s.foreground, tileID, x, y, 1), false);
+                        case 14:
+                        case 15:
+                        case 16:
+                        case 17:
+                        case 18:
+                            // Full Single
+                            pack.environment.getTile(tileName).setToTile(tileImage, false);
+                        case 10:
+                        case 11:
+                        case 12:
+                        case 13:
+                            // Half Single
+                            pack.environment.getTile(tileName).setToTile(tileImage, false);
+                        case 23:
+                        case 24:
+                        case 25:
+                        case 26:
+                        case 27:
+                            // Full Animated
+                            
+                        case 19:
+                        case 20:
+                        case 21:
+                        case 22:
+                            // Half Animated
+                    }
+                    tilesForeground.addImage(tileImage);
+                }
+                i++;
+            }
+        }
+        
+        i = 0;
+    }
+    
+    /** Permanence rendering code **/
+    private function generateBackgroundClipping():Void {
+        // Draw the currently generated background
+        rtMaskBackground.drawBundled(function():Void {
+            rtMaskBackground.draw(hierarchy.background);
+            rtMaskBackground.draw(hierarchy.backgroundDetail);            
+        });
+        
+        rtMaskImage = new Image(rtMaskBackground);
+    }
+    private function renderPermanence(backgroundObjects:Array<DisplayObject>, foregroundObjects:Array<DisplayObject>):Void {
+        rtBackground.drawBundled(function():Void {
+            for (obj in backgroundObjects) {
+                var curMask:DisplayObject = obj.mask;
+                obj.mask = rtMaskImage;
+                rtBackground.draw(obj);
+                obj.mask = curMask;
+            }
+        });
+        rtForeground.drawBundled(function():Void {
+            for (obj in foregroundObjects) {
+                rtForeground.draw(obj);
+            }
+        });
+    }
+    
     private function debugMoveListening(e:KeyboardEvent = null):Void {
         if (e.keyCode == Keyboard.C) {
             debugViewing = !debugViewing;

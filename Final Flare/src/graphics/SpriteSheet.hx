@@ -8,6 +8,7 @@ class SpriteSheet {
 
     private var tiles:StringMap<TileRegion> = new StringMap<TileRegion>();
     private var strips:StringMap<StripRegion> = new StringMap<StripRegion>();
+    private var connected:StringMap<ConnectedRegion> = new StringMap<ConnectedRegion>();
     
     public function new(t:Texture, r:Array<Dynamic>) {
         texture = t;
@@ -17,6 +18,8 @@ class SpriteSheet {
                 strips.set(o.name, o);
             case TileRegion:
                 tiles.set(o.name, o);
+            case ConnectedRegion:
+                connected.set(o.name, o);
             default:
                 trace("Unknown argument");
             }
@@ -29,5 +32,8 @@ class SpriteSheet {
     }
     public function getStrip(name:String):StripRegion {
         return strips.get(name);
+    }
+    public function getConnected(name:String):ConnectedRegion {
+        return connected.get(name);
     }
 }
