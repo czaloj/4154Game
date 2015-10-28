@@ -3,6 +3,7 @@ package graphics;
 import game.GameState;
 import game.ObjectModel;
 import game.Projectile;
+import game.World;
 import haxe.ds.ObjectMap;
 import openfl.Assets;
 import openfl.events.Event;
@@ -22,7 +23,6 @@ import starling.textures.Texture;
 import starling.textures.RenderTexture;
 
 class Renderer {
-    public static inline var TILE_HALF_WIDTH:Float = 0.5;
     public static inline var PLAYER_WIDTH:Float = 0.9;
     public static inline var PLAYER_HEIGHT:Float = 1.9;
     public static inline var CAMERA_DEBUG_MOVE_SPEED:Float = 5.0;
@@ -178,8 +178,8 @@ class Renderer {
             projTbl.get(p).x = p.body.getPosition().x;
             projTbl.get(p).y = p.body.getPosition().y - projTbl.get(p).height * 0.5;
         }
-        var levelWidth = s.width * TILE_HALF_WIDTH;
-        var levelHeight = s.height * TILE_HALF_WIDTH;
+        var levelWidth:Float = s.width * World.TILE_HALF_WIDTH;
+        var levelHeight:Float = s.height * World.TILE_HALF_WIDTH;
         var cameraHalfWidth = stage3D.stageWidth / (2 * cameraScale);
         var cameraHalfHeight = stage3D.stageHeight / (2 * cameraScale);
         if (!debugViewing) {
@@ -227,8 +227,8 @@ class Renderer {
             hierarchy.foreground.addChild(brick);
         };
         for (i in 0...state.foreground.length) {
-            var x:Float = (i % state.width) * TILE_HALF_WIDTH;
-            var y:Float = (state.height -  (Std.int(i / state.width) + 1)) * TILE_HALF_WIDTH;
+            var x:Float = (i % state.width) * World.TILE_HALF_WIDTH;
+            var y:Float = (state.height -  (Std.int(i / state.width) + 1)) * World.TILE_HALF_WIDTH;
             if (state.foreground[i] == 1) {
                 fAdd(x, y, "Half");
             }
@@ -245,13 +245,13 @@ class Renderer {
             else return 1;
         });
         for (texture in pack.parallax) {
-            hierarchy.parallax.addChild(new ParallaxSprite(texture, state.width * TILE_HALF_WIDTH, state.height * TILE_HALF_WIDTH, ScreenController.SCREEN_WIDTH, ScreenController.SCREEN_HEIGHT));
+            hierarchy.parallax.addChild(new ParallaxSprite(texture, state.width * World.TILE_HALF_WIDTH, state.height * World.TILE_HALF_WIDTH, ScreenController.SCREEN_WIDTH, ScreenController.SCREEN_HEIGHT));
         }
         
         // Create the permanence layers
-        var permananceWidth:Int = Std.int(state.width * TILE_HALF_WIDTH);
+        var permananceWidth:Int = Std.int(state.width * World.TILE_HALF_WIDTH);
         if (permananceWidth > 2048) permananceWidth = 2048;
-        var permananceHeight:Int = Std.int(state.height * TILE_HALF_WIDTH);
+        var permananceHeight:Int = Std.int(state.height * World.TILE_HALF_WIDTH);
         if (permananceHeight > 2048) permananceHeight = 2048;
         rtMaskBackground = new RenderTexture(permananceWidth, permananceHeight, false);
         rtMaskBackground.clear();

@@ -3,6 +3,7 @@ package;
 import game.GameLevel;
 import game.GameState;
 import game.InputController;
+import game.World;
 import graphics.Renderer;
 import graphics.RenderPack;
 import openfl.events.MouseEvent;
@@ -25,8 +26,8 @@ class LevelEditorScreen extends IGameScreen {
     }
 
     private function onMouseMove(e:MouseEvent):Void {
-        var levelWidth = state.width * Renderer.TILE_HALF_WIDTH;
-        var levelHeight = state.height * Renderer.TILE_HALF_WIDTH;
+        var levelWidth = state.width * World.TILE_HALF_WIDTH;
+        var levelHeight = state.height * World.TILE_HALF_WIDTH;
         var curX = e.stageX/ScreenController.SCREEN_WIDTH;
         var curY = e.stageY/ScreenController.SCREEN_HEIGHT;
         var cameraHalfWidth = ScreenController.SCREEN_WIDTH / (2 * renderer.cameraScale);
