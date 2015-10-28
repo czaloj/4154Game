@@ -25,6 +25,7 @@ class Renderer {
     public static inline var PLAYER_WIDTH:Float = 0.9;
     public static inline var PLAYER_HEIGHT:Float = 1.9;
     public static inline var CAMERA_DEBUG_MOVE_SPEED:Float = 5.0;
+    public static inline var DESATURATION_LEVEL:Float = 0.7;
 
     private var stageHalfSize:Point = new Point();
     private var hierarchy:RenderHierarchy = new RenderHierarchy();
@@ -180,12 +181,12 @@ class Renderer {
         // Generate environment geometry
         tilesForeground = new QuadBatch();
         animatedForeground = [];
-        generateTiles(state, state.foreground, tilesForeground, animatedForeground, 0xffffff);
+        generateTiles(state, pack.environment, state.foreground, tilesForeground, animatedForeground);
         hierarchy.foreground.addChild(tilesForeground);
         for (anim in animatedForeground) hierarchy.foreground.addChild(anim);
         tilesBackground = new QuadBatch();
         animatedBackground = [];
-        generateTiles(state, state.background, tilesBackground, animatedBackground, 0x888888);
+        generateTiles(state, pack.environmentDesaturated, state.background, tilesBackground, animatedBackground);
         hierarchy.background.addChild(tilesBackground);
         for (anim in animatedBackground) hierarchy.background.addChild(anim);
         
@@ -239,12 +240,11 @@ class Renderer {
         
         return n;
     }
-    private function generateTiles(s:GameState, tiles:Array<Int>, tileBatch:QuadBatch, animated:Array<AnimatedSprite>, tint:UInt):Void {
+    private function generateTiles(s:GameState, sheet:SpriteSheet, tiles:Array<Int>, tileBatch:QuadBatch, animated:Array<AnimatedSprite>):Void {
         // Create foreground
         var i:Int = 0;
         tileBatch.reset();
-        var tileImage:Image = new Image(pack.environment.texture);
-        tileImage.color = tint;
+        var tileImage:Image = new Image(sheet.texture);
         for (iy in 0...s.height) {
             var y:Float = (s.height -  (iy + 1)) * World.TILE_HALF_WIDTH;
             for (ix in 0...s.width) {
@@ -261,36 +261,36 @@ class Renderer {
                     switch(tileID) {
                         case 1, 2, 3, 6, 7, 8:
                             // Full Connected
-                            pack.environment.getConnected(tileName).setToTile(tileImage, getDisconnected(s, tiles, tileID, ix, iy, 2), true);
+                            sheet.getConnected(tileName).setToTile(tileImage, getDisconnected(s, tiles, tileID, ix, iy, 2), true);
                             tileImage.width = (tileImage.height = 2 * World.TILE_HALF_WIDTH);
                             tileImage.y -= World.TILE_HALF_WIDTH;
                             tileBatch.addImage(tileImage);
                         case 4, 5, 9:
                             // Half Connected
-                            pack.environment.getConnected(tileName).setToTile(tileImage, getDisconnected(s, tiles, tileID, ix, iy, 1), true);
+                            sheet.getConnected(tileName).setToTile(tileImage, getDisconnected(s, tiles, tileID, ix, iy, 1), true);
                             tileImage.width = (tileImage.height = World.TILE_HALF_WIDTH);
                             tileBatch.addImage(tileImage);
                         case 14, 15, 16, 17, 18:
                             // Full Single
-                            pack.environment.getTile(tileName).setToTile(tileImage, true);
+                            sheet.getTile(tileName).setToTile(tileImage, true);
                             tileImage.width = (tileImage.height = 2 * World.TILE_HALF_WIDTH);
                             tileImage.y -= World.TILE_HALF_WIDTH;
                             tileBatch.addImage(tileImage);
                         case 10, 11, 12, 13:
                             // Half Single
-                            pack.environment.getTile(tileName).setToTile(tileImage, true);
+                            sheet.getTile(tileName).setToTile(tileImage, true);
                             tileImage.width = (tileImage.height = World.TILE_HALF_WIDTH);
                             tileBatch.addImage(tileImage);
                         case 23, 24, 25, 26, 27:
                             // Full Animated
-                            var anim:AnimatedSprite = new AnimatedSprite(pack.environment, tileName, 8, true); // TODO: Delay comes from elsewhere
+                            var anim:AnimatedSprite = new AnimatedSprite(sheet, tileName, 8, true); // TODO: Delay comes from elsewhere
                             anim.x = x;
                             anim.y = y - World.TILE_HALF_WIDTH;
                             anim.width = (anim.height = 2 * World.TILE_HALF_WIDTH);
                             animated.push(anim);
                         case 19, 20, 21, 22:
                             // Half Animated
-                            var anim:AnimatedSprite = new AnimatedSprite(pack.environment, tileName, 8, true); // TODO: Delay comes from elsewhere
+                            var anim:AnimatedSprite = new AnimatedSprite(sheet, tileName, 8, true); // TODO: Delay comes from elsewhere
                             anim.x = x;
                             anim.y = y;
                             anim.width = (anim.height = World.TILE_HALF_WIDTH);

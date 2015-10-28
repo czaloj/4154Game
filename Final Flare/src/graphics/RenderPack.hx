@@ -8,6 +8,7 @@ class RenderPack {
     public var enemies:SpriteSheet;
     public var projectiles:SpriteSheet;
     public var environment:SpriteSheet;
+    public var environmentDesaturated:SpriteSheet;
     public var parallax:Array<Texture> = []; ///< Images of the different parallax layers
 
     // The background color when the screen is cleared to draw the level
