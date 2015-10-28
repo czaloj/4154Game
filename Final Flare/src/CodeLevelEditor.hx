@@ -45,6 +45,7 @@ class CodeLevelEditor {
         drawBox(lvl, 21, 98 - 30, 31, 30, 1);
         
         // Add background
+        drawBox(lvl, 27, 20, 18, 60, 30, false);
         drawBox(lvl, 6, 20, 20, 60, 30, false);
         drawBox(lvl, 0, 40, 26, 20, 10, false);
         
