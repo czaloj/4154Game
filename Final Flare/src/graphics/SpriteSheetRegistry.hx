@@ -2,7 +2,13 @@ package graphics;
 
 import starling.textures.Texture;
 
-class SpriteSheetRegistry {  
+class SpriteSheetRegistry {
+    public static inline var TYPE_CITY:String = "City";
+    public static inline var TYPE_SEWER:String = "Sewer";
+    public static inline var TYPE_FACTORY:String = "Factory";
+    public static inline var TYPE_INVADERS:String = "Invaders";
+    public static inline var TILE_ID_FIRST_ANIMATION:Int = 19;
+    
     public static function getSheetName(id:Int) {
         switch (id) {
             case 1: return "FloorFull.0";
@@ -46,6 +52,38 @@ class SpriteSheetRegistry {
     }
     
     public static function getEnvironment(t:Texture, type:String):SpriteSheet {
+        var animationData:Array<Int> = null;
+        switch(type) {
+            case TYPE_CITY:
+                animationData = [
+                    // Half containers
+                    2, 2, 2, 2,
+                    // Full containers
+                    2, 2, 2, 2, 2
+                    ];
+            case TYPE_SEWER:
+                animationData = [
+                    // Half containers
+                    2, 2, 2, 2,
+                    // Full containers
+                    2, 2, 2, 2, 2
+                    ];
+            case TYPE_FACTORY:
+                animationData = [
+                    // Half containers
+                    2, 2, 2, 2,
+                    // Full containers
+                    2, 2, 2, 2, 2
+                    ];
+            case TYPE_INVADERS:
+                animationData = [
+                    // Half containers
+                    2, 2, 2, 2,
+                    // Full containers
+                    2, 2, 2, 2, 2
+                    ];
+        }
+        
         var f:Int = 2;
         return new SpriteSheet(t, [
             // TODO: Fill out with correct regions
@@ -67,16 +105,50 @@ class SpriteSheetRegistry {
             new TileRegion("LargeBox.2", 64, 384, 32, 32),
             new TileRegion("LargeBox.3", 96, 384, 32, 32),
             new TileRegion("LargeBox.4", 128, 384, 32, 32),
-            new StripRegion("SmallContainer.0", 768, 208, 16, 16, 1, f, f),
-            new StripRegion("SmallContainer.1", 768, 224, 16, 16, 1, f, f),
-            new StripRegion("SmallContainer.2", 768, 240, 16, 16, 1, f, f),
-            new StripRegion("SmallContainer.3", 768, 256, 16, 16, 1, f, f),
-            new StripRegion("LargeContainer.0", 0, 416, 32, 32, 1, f, f),
-            new StripRegion("LargeContainer.1", 0, 448, 32, 32, 1, f, f),
-            new StripRegion("LargeContainer.2", 0, 480, 32, 32, 1, f, f),
-            new StripRegion("LargeContainer.3", 0, 512, 32, 32, 1, f, f),
-            new StripRegion("LargeContainer.4", 0, 544, 32, 32, 1, f, f)
+            new StripRegion("SmallContainer.0", 768, 208, 16, 16, 1, animationData[0], animationData[0]),
+            new StripRegion("SmallContainer.1", 768, 224, 16, 16, 1, animationData[1], animationData[1]),
+            new StripRegion("SmallContainer.2", 768, 240, 16, 16, 1, animationData[2], animationData[2]),
+            new StripRegion("SmallContainer.3", 768, 256, 16, 16, 1, animationData[3], animationData[3]),
+            new StripRegion("LargeContainer.0", 0, 416, 32, 32, 1, animationData[4], animationData[4]),
+            new StripRegion("LargeContainer.1", 0, 448, 32, 32, 1, animationData[5], animationData[5]),
+            new StripRegion("LargeContainer.2", 0, 480, 32, 32, 1, animationData[6], animationData[6]),
+            new StripRegion("LargeContainer.3", 0, 512, 32, 32, 1, animationData[7], animationData[7]),
+            new StripRegion("LargeContainer.4", 0, 544, 32, 32, 1, animationData[8], animationData[8])
         ]);
+    }
+    public static function getAnimationSpeeds(type:String):Array<Int> {
+        switch(type) {
+            case TYPE_CITY:
+                return [
+                    // Half containers
+                    15, 15, 15, 15,
+                    // Full containers
+                    15, 15, 15, 15, 15
+                    ];
+            case TYPE_SEWER:
+                return [
+                    // Half containers
+                    15, 15, 15, 15,
+                    // Full containers
+                    15, 15, 15, 15, 15
+                    ];
+            case TYPE_FACTORY:
+                return [
+                    // Half containers
+                    15, 15, 15, 15,
+                    // Full containers
+                    15, 15, 15, 15, 15
+                    ];
+            case TYPE_INVADERS:
+                return [
+                    // Half containers
+                    15, 15, 15, 15,
+                    // Full containers
+                    15, 15, 15, 15, 15
+                    ];
+            default:
+                return null;
+        }
     }
     
     public function new() {

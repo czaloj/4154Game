@@ -62,7 +62,8 @@ class LevelCreator {
             0, 0, 0, 1, 0
         ]));
         renderPack.environmentDesaturated = SpriteSheetRegistry.getEnvironment(Texture.fromBitmapData(bmpEnvDesaturated), level.environmentType);
-
+        renderPack.tileAnimationSpeeds = SpriteSheetRegistry.getAnimationSpeeds(level.environmentType);
+        
         // TODO: Load/stitch enemies from spawner information
         renderPack.enemies = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Pixel.png", false)), [
             // TODO: Add hardcoded enemies

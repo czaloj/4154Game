@@ -10,6 +10,7 @@ class RenderHierarchy extends Sprite {
     public var origin:Sprite = new Sprite();
     public var background:Sprite = new Sprite();
     public var backgroundDetail:Sprite = new Sprite();
+    public var backgroundMask:Sprite = new Sprite();
     public var foreground:Sprite = new Sprite();
     public var foregroundDetail:Sprite = new Sprite();
     public var parallax:Sprite = new Sprite();
@@ -31,6 +32,7 @@ class RenderHierarchy extends Sprite {
         camera.addChild(origin);
 
         // Setup layer order (bottom to top)
+        origin.addChild(backgroundMask);
         origin.addChild(background);
         origin.addChild(backgroundDetail);
         origin.addChild(dead);

@@ -13,8 +13,10 @@ import openfl.geom.Rectangle;
 import openfl.Lib;
 import openfl.ui.Keyboard;
 import starling.core.Starling;
+import starling.display.Canvas;
 import starling.display.DisplayObject;
 import starling.display.Image;
+import starling.display.Quad;
 import starling.display.QuadBatch;
 import starling.display.Sprite;
 import starling.display.Stage;
@@ -52,8 +54,7 @@ class Renderer {
     private var animatedBackground:Array<AnimatedSprite>;
 
     // Permanence display objects
-    private var rtMaskBackground:RenderTexture;
-    private var rtMaskImage:Image;
+    private var maskSprite:Sprite;
     private var rtBackground:RenderTexture;
     private var rtForeground:RenderTexture;
     
@@ -77,12 +78,9 @@ class Renderer {
 
         // What to do when screen changes size
         Lib.current.stage.addEventListener(Event.RESIZE, onWindowResize);
-        Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, function (e:MouseEvent = null):Void {
-            crX = e.stageX / ScreenController.SCREEN_WIDTH;
-            crY = e.stageY / ScreenController.SCREEN_HEIGHT;
-        });
+        Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, debugMouseClick);
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, debugMoveListening);
-
+        
         load(state);
     }
 
@@ -189,7 +187,8 @@ class Renderer {
         generateTiles(state, pack.environmentDesaturated, state.background, tilesBackground, animatedBackground);
         hierarchy.background.addChild(tilesBackground);
         for (anim in animatedBackground) hierarchy.background.addChild(anim);
-        
+        generateBackgroundClipping();
+                
         // Add the parallax layers in a sorted order by their width
         pack.parallax.sort(function (t1:Texture, t2:Texture):Int {
             if (t1.width == t2.width) return 0;
@@ -201,17 +200,23 @@ class Renderer {
         }
         
         // Create the permanence layers
-        var permananceWidth:Int = Std.int(state.width * World.TILE_HALF_WIDTH);
+        var permananceWidth:Int = Std.int(state.width * World.TILE_HALF_WIDTH) * 16;
         if (permananceWidth > 2048) permananceWidth = 2048;
-        var permananceHeight:Int = Std.int(state.height * World.TILE_HALF_WIDTH);
+        var permananceHeight:Int = Std.int(state.height * World.TILE_HALF_WIDTH) * 16;
         if (permananceHeight > 2048) permananceHeight = 2048;
-        rtMaskBackground = new RenderTexture(permananceWidth, permananceHeight, false);
-        rtMaskBackground.clear();
-        generateBackgroundClipping();
-        rtForeground = new RenderTexture(permananceWidth, permananceHeight, false);
+        rtForeground = new RenderTexture(permananceWidth, permananceHeight, true);
         rtForeground.clear();
-        rtBackground = new RenderTexture(permananceWidth, permananceHeight, false);
+        var permForeground:Image = new Image(rtForeground);
+        permForeground.width = state.width * World.TILE_HALF_WIDTH;
+        permForeground.height = state.height * World.TILE_HALF_WIDTH;
+        hierarchy.foreground.addChild(permForeground);
+        rtBackground = new RenderTexture(permananceWidth, permananceHeight, true);
         rtBackground.clear();
+        var permBackground:Image = new Image(rtBackground);
+        permBackground.mask = hierarchy.backgroundMask;
+        permBackground.width = state.width * World.TILE_HALF_WIDTH;
+        permBackground.height = state.height * World.TILE_HALF_WIDTH;
+        hierarchy.background.addChild(permBackground);
     }
 
     /** Tilemap generation code **/
@@ -283,14 +288,14 @@ class Renderer {
                             tileBatch.addImage(tileImage);
                         case 23, 24, 25, 26, 27:
                             // Full Animated
-                            var anim:AnimatedSprite = new AnimatedSprite(sheet, tileName, 8, true); // TODO: Delay comes from elsewhere
+                            var anim:AnimatedSprite = new AnimatedSprite(sheet, tileName, pack.tileAnimationSpeeds[tileID - SpriteSheetRegistry.TILE_ID_FIRST_ANIMATION], true);
                             anim.x = x;
                             anim.y = y - World.TILE_HALF_WIDTH;
                             anim.width = (anim.height = 2 * World.TILE_HALF_WIDTH);
                             animated.push(anim);
                         case 19, 20, 21, 22:
                             // Half Animated
-                            var anim:AnimatedSprite = new AnimatedSprite(sheet, tileName, 8, true); // TODO: Delay comes from elsewhere
+                            var anim:AnimatedSprite = new AnimatedSprite(sheet, tileName, pack.tileAnimationSpeeds[tileID - SpriteSheetRegistry.TILE_ID_FIRST_ANIMATION], true);
                             anim.x = x;
                             anim.y = y;
                             anim.width = (anim.height = World.TILE_HALF_WIDTH);
@@ -299,32 +304,47 @@ class Renderer {
                 }
             }
         }
-        
-        i = 0;
     }
     
     /** Permanence rendering code **/
     private function generateBackgroundClipping():Void {
-        // Draw the currently generated background
-        rtMaskBackground.drawBundled(function():Void {
-            rtMaskBackground.draw(hierarchy.background);
-            rtMaskBackground.draw(hierarchy.backgroundDetail);            
-        });
+        var qb:QuadBatch = new QuadBatch();
+        qb.reset();
+        qb.addQuadBatch(tilesBackground);
+        for (obj in animatedBackground) qb.addImage(obj);
+        hierarchy.backgroundMask.addChild(qb);
         
-        rtMaskImage = new Image(rtMaskBackground);
     }
+    
     private function renderPermanence(backgroundObjects:Array<DisplayObject>, foregroundObjects:Array<DisplayObject>):Void {
         rtBackground.drawBundled(function():Void {
             for (obj in backgroundObjects) {
-                var curMask:DisplayObject = obj.mask;
-                obj.mask = rtMaskImage;
+                obj.x *= 16;
+                obj.y *= 16;
+                obj.scaleX *= 16;
+                obj.scaleY *= 16;
+                
                 rtBackground.draw(obj);
-                obj.mask = curMask;
+                
+                obj.x /= 16;
+                obj.y /= 16;
+                obj.scaleX /= 16;
+                obj.scaleY /= 16;
             }
         });
         rtForeground.drawBundled(function():Void {
             for (obj in foregroundObjects) {
+                obj.x *= 16;
+                obj.y *= 16;
+                obj.scaleX *= 16;
+                obj.scaleY *= 16;
+                
                 rtForeground.draw(obj);
+                
+                obj.x /= 16;
+                obj.y /= 16;
+                obj.scaleX /= 16;
+                obj.scaleY /= 16;
             }
         });
     }
@@ -375,7 +395,22 @@ class Renderer {
                 debugViewMoves[5] = 0;
         }
     }
-
+    private function debugMouseClick(e:MouseEvent = null):Void {
+        var position:Point = new Point(e.stageX, e.stageY);
+        screenToWorldSpace(position);
+        
+        var quad:Quad = new Quad(1, 1);
+        quad.x = position.x - quad.width / 2.0;
+        quad.y = position.y - quad.height / 2.0;
+        quad.color = 0x000000;
+        renderPermanence([quad], []);
+    }
+    
+    public function screenToWorldSpace(pt:Point):Void {
+        pt.x = (pt.x - ScreenController.SCREEN_WIDTH / 2) / cameraScale + cameraX;
+        pt.y = ((ScreenController.SCREEN_HEIGHT - pt.y) - ScreenController.SCREEN_HEIGHT / 2) / cameraScale + cameraY;
+    }
+    
     public function update(s:game.GameState):Void {
         // TODO: Update sprite positions from entities
         for (o in entityTbl.keys()) {
