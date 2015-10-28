@@ -35,22 +35,48 @@ class SpriteSheetRegistry {
             default: return "";
         }
     }
+    // TODO: Remove this for a better data structure
+    public static function isHalfTile(id:Int):Bool {
+        switch (id) {
+            case 4, 5, 9, 10, 11, 12, 13, 19, 20, 21, 22:
+                return true;
+            default:
+                return false;
+        }
+    }
     
     public static function getEnvironment(t:Texture, type:String):SpriteSheet {
-        switch (type) {
-            case "Simple":
-                return new SpriteSheet(t, [
-                    // TODO: Fill out with correct regions
-                    new TileRegion("Half", 0, 0, 16, 16),
-                    new TileRegion("Full", 16, 0, 32, 32)
-                ]);
-            case "Complex":
-                return new SpriteSheet(t, [
-                    // TODO: Fill out regions
-                ]);
-            default:
-                return null;
-        }
+        var f:Int = 2;
+        return new SpriteSheet(t, [
+            // TODO: Fill out with correct regions
+            new ConnectedRegion("FloorFull.0", 0, 0, 32, 32),
+            new ConnectedRegion("FloorFull.1", 384, 0, 32, 32),
+            new ConnectedRegion("FloorFull.2", 0, 128, 32, 32),
+            new ConnectedRegion("FloorDetail.0", 768, 0, 16, 16),
+            new ConnectedRegion("FloorDetail.1", 768, 64, 16, 16),
+            new ConnectedRegion("Fill", 384, 128, 32, 32),
+            new ConnectedRegion("Supports.0", 0, 256, 32, 32),
+            new ConnectedRegion("Supports.1", 384, 256, 32, 32),
+            new ConnectedRegion("Framing", 768, 128, 16, 16),
+            new TileRegion("SmallBox.0", 768, 192, 16, 16),
+            new TileRegion("SmallBox.1", 768 + 16, 192, 16, 16),
+            new TileRegion("SmallBox.2", 768 + 32, 192, 16, 16),
+            new TileRegion("SmallBox.3", 768 + 48, 192, 16, 16),
+            new TileRegion("LargeBox.0", 0, 384, 32, 32),
+            new TileRegion("LargeBox.1", 32, 384, 32, 32),
+            new TileRegion("LargeBox.2", 64, 384, 32, 32),
+            new TileRegion("LargeBox.3", 96, 384, 32, 32),
+            new TileRegion("LargeBox.4", 128, 384, 32, 32),
+            new StripRegion("SmallContainer.0", 768, 208, 16, 16, 1, f, f),
+            new StripRegion("SmallContainer.1", 768, 224, 16, 16, 1, f, f),
+            new StripRegion("SmallContainer.2", 768, 240, 16, 16, 1, f, f),
+            new StripRegion("SmallContainer.3", 768, 256, 16, 16, 1, f, f),
+            new StripRegion("LargeContainer.0", 0, 416, 32, 32, 1, f, f),
+            new StripRegion("LargeContainer.1", 0, 448, 32, 32, 1, f, f),
+            new StripRegion("LargeContainer.2", 0, 480, 32, 32, 1, f, f),
+            new StripRegion("LargeContainer.3", 0, 512, 32, 32, 1, f, f),
+            new StripRegion("LargeContainer.4", 0, 544, 32, 32, 1, f, f)
+        ]);
     }
     
     public function new() {

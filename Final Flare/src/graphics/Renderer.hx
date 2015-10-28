@@ -5,7 +5,6 @@ import game.ObjectModel;
 import game.Projectile;
 import game.World;
 import haxe.ds.ObjectMap;
-import openfl.Assets;
 import openfl.events.Event;
 import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
@@ -19,8 +18,8 @@ import starling.display.Image;
 import starling.display.QuadBatch;
 import starling.display.Sprite;
 import starling.display.Stage;
-import starling.textures.Texture;
 import starling.textures.RenderTexture;
+import starling.textures.Texture;
 
 class Renderer {
     public static inline var PLAYER_WIDTH:Float = 0.9;
@@ -31,17 +30,19 @@ class Renderer {
     private var hierarchy:RenderHierarchy = new RenderHierarchy();
     private var pack:RenderPack;
     private var stage3D:Stage;
-    //private var myState:GameState;
+    
     public var sprites:Array<Sprite> = [];
     public var entityTbl:ObjectMap<game.ObjectModel, AnimatedSprite> = new ObjectMap<game.ObjectModel, AnimatedSprite>();
     public var projTbl:ObjectMap<game.Projectile, AnimatedSprite> = new ObjectMap<game.Projectile, AnimatedSprite>();
-    public var cameraX(get,set):Float;
-    public var cameraY(get,set):Float;
-    public var cameraScale(get,set):Float;
 
+    // Camera parameters
+    public var cameraX(get, set):Float;
+    public var cameraY(get, set):Float;
+    public var cameraScale(get, set):Float;
+    
+    // Ratios in x and y for parallax
     private var crX:Float;
     private var crY:Float;
-    
     
     // Tilemap display objects
     private var tilesForeground:QuadBatch;
@@ -53,7 +54,6 @@ class Renderer {
     private var rtBackground:RenderTexture;
     private var rtForeground:RenderTexture;
     
-
     // This is for debug camera movement
     private var debugViewing:Bool = false;
     private var debugViewMoves:Array<Int> = [ 0, 0, 0, 0, 0, 0 ];
@@ -62,9 +62,8 @@ class Renderer {
         pack = p;
         stage3D = stage.stage;
 
-        //myState = state;
         // Everything will be rendered inside the hierarchy
-        stage.stage.color = 0x808080;
+        stage.stage.color = pack.backgroundColor;
         stage.addChild(hierarchy);
         onWindowResize(null);
 
@@ -161,47 +160,6 @@ class Renderer {
         // Remove this entity from the stage
     }
 
-    public function update(s:game.GameState):Void {
-        // TODO: Update sprite positions from entities
-        for (o in entityTbl.keys()) {
-            var sprite:AnimatedSprite = entityTbl.get(o);
-            sprite.x = o.position.x - entityTbl.get(o).width * 0.5;
-            sprite.y = o.position.y - o.height * 0.5;
-            if (o.left && !o.right)  {
-                sprite.x += sprite.width;
-                sprite.scaleX = -Math.abs(sprite.scaleX);
-            } else {
-                sprite.scaleX = Math.abs(sprite.scaleX);
-            }
-        }
-        for (p in projTbl.keys()) {
-            projTbl.get(p).x = p.body.getPosition().x;
-            projTbl.get(p).y = p.body.getPosition().y - projTbl.get(p).height * 0.5;
-        }
-        var levelWidth:Float = s.width * World.TILE_HALF_WIDTH;
-        var levelHeight:Float = s.height * World.TILE_HALF_WIDTH;
-        var cameraHalfWidth = stage3D.stageWidth / (2 * cameraScale);
-        var cameraHalfHeight = stage3D.stageHeight / (2 * cameraScale);
-        if (!debugViewing) {
-            // Center camera on player and constrict to level bounds
-            cameraX = Math.min((levelWidth) - cameraHalfWidth, Math.max((0) + cameraHalfWidth, s.player.position.x));
-            cameraY = Math.min((levelHeight) - cameraHalfHeight, Math.max((0) + cameraHalfHeight, s.player.position.y));
-        }
-        else {
-            // Move the camera according to keyboard input
-            cameraX += CAMERA_DEBUG_MOVE_SPEED * ((debugViewMoves[1] - debugViewMoves[0]) / 60);
-            cameraY += CAMERA_DEBUG_MOVE_SPEED * ((debugViewMoves[3] - debugViewMoves[2]) / 60);
-            cameraScale *= [ 0.95, 1, 1.15 ] [1 + (debugViewMoves[5] - debugViewMoves[4])];
-        }
-
-        // Update parallax layers
-        crX = (cameraX - cameraHalfWidth) / (levelWidth - 2 * cameraHalfWidth);
-        crY = (cameraY - cameraHalfHeight) / (levelHeight - 2 * cameraHalfHeight);
-        for (layer in hierarchy.parallax.children) {
-            var pLayer:ParallaxSprite = cast (layer, ParallaxSprite);
-            pLayer.update(crX, crY);
-        }
-    }
 
     private function load(state:game.GameState):Void {
         // Register listener functions
@@ -217,27 +175,15 @@ class Renderer {
         man.scaleY /= 32;
         hierarchy.player.addChild(man);
         entityTbl.set(state.player, man);
-        function fAdd(x:Float, y:Float, n:String):Void {
-            var brick:StaticSprite = new StaticSprite(pack.environment, n);
-            brick.x = x;
-            brick.y = y;
-            brick.scaleX /= 32;
-            brick.scaleY /= 32;
-            // TODO: Correct this
-            hierarchy.foreground.addChild(brick);
-        };
-        for (i in 0...state.foreground.length) {
-            var x:Float = (i % state.width) * World.TILE_HALF_WIDTH;
-            var y:Float = (state.height -  (Std.int(i / state.width) + 1)) * World.TILE_HALF_WIDTH;
-            if (state.foreground[i] == 1) {
-                fAdd(x, y, "Half");
-            }
-            if (state.foreground[i] == 2) {
-                // TODO: This why it won't work quite yet... need better data structure
-                fAdd(x, y, "Full");
-            }
-        }
-
+        
+        // Generate environment geometry
+        tilesForeground = new QuadBatch();
+        generateTiles(state, state.foreground, tilesForeground);
+        hierarchy.foreground.addChild(tilesForeground);
+        tilesBackground = new QuadBatch();
+        generateTiles(state, state.background, tilesBackground);
+        hierarchy.background.addChild(tilesBackground);
+        
         // Add the parallax layers in a sorted order by their width
         pack.parallax.sort(function (t1:Texture, t2:Texture):Int {
             if (t1.width == t2.width) return 0;
@@ -263,84 +209,77 @@ class Renderer {
     }
 
     /** Tilemap generation code **/
-    private function getNeighbors(s:GameState, array:Array<Int>, tID:Int, x:Int, y:Int, ts:Int):Int {
+    private function getDisconnected(s:GameState, array:Array<Int>, tID:Int, x:Int, y:Int, ts:Int):Int {
         var l:Int = x - ts;
         var r:Int = x + ts;
         var t:Int = y - ts;
         var b:Int = y + ts;
         var n:Int = 0;
-        var i:Int = 0;
         
         for (pos in [
-            { x:l, y:t },
-            { x:l, y:t },
-            { x:l, y:t },
-            { x:l, y:t },
-            { x:l, y:t },
-            { x:l, y:t },
-            { x:l, y:t },
-            { x:l, y:t }
+            { x:l, y:t, mask: 0x80 },
+            { x:x, y:t, mask: 0xE0 },
+            { x:r, y:t, mask: 0x20 },
+            { x:r, y:y, mask: 0x38 },
+            { x:r, y:b, mask: 0x08 },
+            { x:x, y:b, mask: 0x0E },
+            { x:l, y:b, mask: 0x02 },
+            { x:l, y:y, mask: 0x83 }
         ]) {
-            if (x >= 0 && y >= 0 && x < s.width && y < s.height && array[y * s.width + x] == tID) {
+            if (pos.x >= 0 && pos.y >= 0 && pos.x < s.width && pos.y < s.height && array[pos.y * s.width + pos.x] != tID) {
                 // We are connected to a tile type such as our own
-                n |= 1 << i;
+                n |= pos.mask;
             }
         }
         
         return n;
     }
-    private function generateTiles(s:GameState):Void {
+    private function generateTiles(s:GameState, tiles:Array<Int>, tileBatch:QuadBatch):Void {
         // Create foreground
         var i:Int = 0;
-        for (y in 0...s.height) {
-            for (x in 0...s.width) {
-                var tileID:Int = s.foreground[i];
+        tileBatch.reset();
+        var tileImage:Image = new Image(pack.environment.texture);
+        for (iy in 0...s.height) {
+            var y:Float = (s.height -  (iy + 1)) * World.TILE_HALF_WIDTH;
+            for (ix in 0...s.width) {
+                var x:Float = ix * World.TILE_HALF_WIDTH;
+                var tileID:Int = tiles[i];
+                i++;
                 if (tileID > 0 && tileID <= 27) {
-                    var tileImage:Image = new Image(null);
+                    // Create the image and obtain the correct sprite type
                     var tileName:String = SpriteSheetRegistry.getSheetName(tileID);
                     switch(tileID) {
-                        case 1:
-                        case 2:
-                        case 3:
-                        case 6:
-                        case 7:
-                        case 8:
+                        case 1, 2, 3, 6, 7, 8:
                             // Full Connected
-                            pack.environment.getConnected(tileName).setToTile(tileImage, getNeighbors(s, s.foreground, tileID, x, y, 2), false);
-                        case 4:
-                        case 5:
-                        case 9:
+                            pack.environment.getConnected(tileName).setToTile(tileImage, getDisconnected(s, tiles, tileID, ix, iy, 2), true);
+                            tileImage.width = (tileImage.height = 2 * World.TILE_HALF_WIDTH);
+                        case 4, 5, 9:
                             // Half Connected
-                            pack.environment.getConnected(tileName).setToTile(tileImage, getNeighbors(s, s.foreground, tileID, x, y, 1), false);
-                        case 14:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 18:
+                            pack.environment.getConnected(tileName).setToTile(tileImage, getDisconnected(s, tiles, tileID, ix, iy, 1), true);
+                            tileImage.width = (tileImage.height = World.TILE_HALF_WIDTH);
+                        case 14, 15, 16, 17, 18:
                             // Full Single
-                            pack.environment.getTile(tileName).setToTile(tileImage, false);
-                        case 10:
-                        case 11:
-                        case 12:
-                        case 13:
+                            pack.environment.getTile(tileName).setToTile(tileImage, true);
+                            tileImage.width = (tileImage.height = 2 * World.TILE_HALF_WIDTH);
+                        case 10, 11, 12, 13:
                             // Half Single
-                            pack.environment.getTile(tileName).setToTile(tileImage, false);
-                        case 23:
-                        case 24:
-                        case 25:
-                        case 26:
-                        case 27:
+                            pack.environment.getTile(tileName).setToTile(tileImage, true);
+                            tileImage.width = (tileImage.height = World.TILE_HALF_WIDTH);
+                        case 23, 24, 25, 26, 27:
                             // Full Animated
                             
-                        case 19:
-                        case 20:
-                        case 21:
-                        case 22:
+                        case 19, 20, 21, 22:
                             // Half Animated
+                            
                     }
-                    tilesForeground.addImage(tileImage);
+                    
+                    // Position the image
+                    tileImage.x = x;
+                    tileImage.y = y;
+                    
+                    // Add new image to the foreground
+                    tileBatch.addImage(tileImage);
                 }
-                i++;
             }
         }
         
@@ -417,6 +356,48 @@ class Renderer {
                 debugViewMoves[4] = 0;
             case Keyboard.Z:
                 debugViewMoves[5] = 0;
+        }
+    }
+
+    public function update(s:game.GameState):Void {
+        // TODO: Update sprite positions from entities
+        for (o in entityTbl.keys()) {
+            var sprite:AnimatedSprite = entityTbl.get(o);
+            sprite.x = o.position.x - entityTbl.get(o).width * 0.5;
+            sprite.y = o.position.y - o.height * 0.5;
+            if (o.left && !o.right)  {
+                sprite.x += sprite.width;
+                sprite.scaleX = -Math.abs(sprite.scaleX);
+            } else {
+                sprite.scaleX = Math.abs(sprite.scaleX);
+            }
+        }
+        for (p in projTbl.keys()) {
+            projTbl.get(p).x = p.body.getPosition().x;
+            projTbl.get(p).y = p.body.getPosition().y - projTbl.get(p).height * 0.5;
+        }
+        var levelWidth:Float = s.width * World.TILE_HALF_WIDTH;
+        var levelHeight:Float = s.height * World.TILE_HALF_WIDTH;
+        var cameraHalfWidth = stage3D.stageWidth / (2 * cameraScale);
+        var cameraHalfHeight = stage3D.stageHeight / (2 * cameraScale);
+        if (!debugViewing) {
+            // Center camera on player and constrict to level bounds
+            cameraX = Math.min((levelWidth) - cameraHalfWidth, Math.max((0) + cameraHalfWidth, s.player.position.x));
+            cameraY = Math.min((levelHeight) - cameraHalfHeight, Math.max((0) + cameraHalfHeight, s.player.position.y));
+        }
+        else {
+            // Move the camera according to keyboard input
+            cameraX += CAMERA_DEBUG_MOVE_SPEED * ((debugViewMoves[1] - debugViewMoves[0]) / 60);
+            cameraY += CAMERA_DEBUG_MOVE_SPEED * ((debugViewMoves[3] - debugViewMoves[2]) / 60);
+            cameraScale *= [ 0.95, 1, 1.15 ] [1 + (debugViewMoves[5] - debugViewMoves[4])];
+        }
+
+        // Update parallax layers
+        crX = (cameraX - cameraHalfWidth) / (levelWidth - 2 * cameraHalfWidth);
+        crY = (cameraY - cameraHalfHeight) / (levelHeight - 2 * cameraHalfHeight);
+        for (layer in hierarchy.parallax.children) {
+            var pLayer:ParallaxSprite = cast (layer, ParallaxSprite);
+            pLayer.update(crX, crY);
         }
     }
 }

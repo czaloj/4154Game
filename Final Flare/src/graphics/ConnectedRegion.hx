@@ -68,6 +68,6 @@ class ConnectedRegion extends StripRegion {
     }
     
     public function setToTile(i:Image, neighbors:Int, flipTexture:Bool) {
-        setToFrame(i, mapNeighbors(neighbors ^ 0xff), flipTexture);
+        setToFrame(i, mapNeighbors(neighbors), flipTexture);
     }
 }
