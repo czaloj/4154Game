@@ -180,14 +180,14 @@ class Renderer {
         // Generate environment geometry
         tilesForeground = new QuadBatch();
         animatedForeground = [];
-        generateTiles(state, state.foreground, tilesForeground, animatedForeground);
+        generateTiles(state, state.foreground, tilesForeground, animatedForeground, 0xffffff);
         hierarchy.foreground.addChild(tilesForeground);
         for (anim in animatedForeground) hierarchy.foreground.addChild(anim);
         tilesBackground = new QuadBatch();
         animatedBackground = [];
-        generateTiles(state, state.background, tilesBackground, animatedBackground);
+        generateTiles(state, state.background, tilesBackground, animatedBackground, 0x888888);
         hierarchy.background.addChild(tilesBackground);
-        for (anim in animatedForeground) hierarchy.background.addChild(anim);
+        for (anim in animatedBackground) hierarchy.background.addChild(anim);
         
         // Add the parallax layers in a sorted order by their width
         pack.parallax.sort(function (t1:Texture, t2:Texture):Int {
@@ -239,11 +239,12 @@ class Renderer {
         
         return n;
     }
-    private function generateTiles(s:GameState, tiles:Array<Int>, tileBatch:QuadBatch, animated:Array<AnimatedSprite>):Void {
+    private function generateTiles(s:GameState, tiles:Array<Int>, tileBatch:QuadBatch, animated:Array<AnimatedSprite>, tint:UInt):Void {
         // Create foreground
         var i:Int = 0;
         tileBatch.reset();
         var tileImage:Image = new Image(pack.environment.texture);
+        tileImage.color = tint;
         for (iy in 0...s.height) {
             var y:Float = (s.height -  (iy + 1)) * World.TILE_HALF_WIDTH;
             for (ix in 0...s.width) {

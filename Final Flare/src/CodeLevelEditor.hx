@@ -6,7 +6,7 @@ import graphics.SpriteSheetRegistry;
 class CodeLevelEditor {
     public static function drawBox(lvl:game.GameLevel, id:Int, x:Int, y:Int, w:Int, h:Int, inForeground:Bool = true):Void {
         var blocks:Array<Int> = inForeground ? lvl.foreground : lvl.background;
-        var isFullBlock:Bool = !SpriteSheetRegistry.isHalfTile(id);
+        var isFullBlock:Bool = !SpriteSheetRegistry.isHalfTile(id) && id != 0;
         for (iy in y...(y + h)) {
             var i:Int = iy * lvl.width + x;
             for (ix in x...(x + w)) {
@@ -43,6 +43,10 @@ class CodeLevelEditor {
         drawBox(lvl, 4, 30, 37, 40, 1);
         drawBox(lvl, 4, 2, 31, 30, 1);
         drawBox(lvl, 21, 98 - 30, 31, 30, 1);
+        
+        // Add background
+        drawBox(lvl, 6, 20, 20, 60, 30, false);
+        drawBox(lvl, 0, 40, 26, 20, 10, false);
         
         // Spawning locations
         lvl.playerPt.x = lvl.width / 2 - 2;
