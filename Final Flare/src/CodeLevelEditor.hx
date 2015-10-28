@@ -28,14 +28,14 @@ class CodeLevelEditor {
         drawBox(lvl, 0, 0, 0, lvl.width, lvl.height, true);
         
         // Add platforms
-        drawBox(lvl, 1, 0, 48, 100, 2);
-        drawBox(lvl, 1, 0, 0, 2, 48);
-        drawBox(lvl, 1, 98, 0, 2, 48);
-        drawBox(lvl, 1, 2, 43, 30, 1);
-        drawBox(lvl, 1, 98 - 30, 43, 30, 1);
-        drawBox(lvl, 1, 30, 37, 40, 1);
-        drawBox(lvl, 1, 2, 31, 30, 1);
-        drawBox(lvl, 1, 98 - 30, 31, 30, 1);
+        drawBox(lvl, 4, 0, 48, 100, 2);
+        drawBox(lvl, 4, 0, 0, 2, 48);
+        drawBox(lvl, 4, 98, 0, 2, 48);
+        drawBox(lvl, 4, 2, 43, 30, 1);
+        drawBox(lvl, 4, 98 - 30, 43, 30, 1);
+        drawBox(lvl, 4, 30, 37, 40, 1);
+        drawBox(lvl, 4, 2, 31, 30, 1);
+        drawBox(lvl, 4, 98 - 30, 31, 30, 1);
         
         // Spawning locations
         lvl.playerPt.x = lvl.width / 2 - 2;
@@ -47,7 +47,7 @@ class CodeLevelEditor {
         
         // Environment
         lvl.environmentSprites = "assets/img/Factory.png";
-        lvl.environmentType = "Simple";
+        lvl.environmentType = "Factory";
         lvl.parallax = [
             "assets/img/FactoryP1.png",
             "assets/img/FactoryP2.png",
