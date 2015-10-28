@@ -47,7 +47,9 @@ class Renderer {
     // Tilemap display objects
     private var tilesForeground:QuadBatch;
     private var tilesBackground:QuadBatch;
-    
+    private var animatedForeground:Array<AnimatedSprite>;
+    private var animatedBackground:Array<AnimatedSprite>;
+
     // Permanence display objects
     private var rtMaskBackground:RenderTexture;
     private var rtMaskImage:Image;
@@ -177,11 +179,15 @@ class Renderer {
         
         // Generate environment geometry
         tilesForeground = new QuadBatch();
-        generateTiles(state, state.foreground, tilesForeground);
+        animatedForeground = [];
+        generateTiles(state, state.foreground, tilesForeground, animatedForeground);
         hierarchy.foreground.addChild(tilesForeground);
+        for (anim in animatedForeground) hierarchy.foreground.addChild(anim);
         tilesBackground = new QuadBatch();
-        generateTiles(state, state.background, tilesBackground);
+        animatedBackground = [];
+        generateTiles(state, state.background, tilesBackground, animatedBackground);
         hierarchy.background.addChild(tilesBackground);
+        for (anim in animatedForeground) hierarchy.background.addChild(anim);
         
         // Add the parallax layers in a sorted order by their width
         pack.parallax.sort(function (t1:Texture, t2:Texture):Int {
@@ -233,7 +239,7 @@ class Renderer {
         
         return n;
     }
-    private function generateTiles(s:GameState, tiles:Array<Int>, tileBatch:QuadBatch):Void {
+    private function generateTiles(s:GameState, tiles:Array<Int>, tileBatch:QuadBatch, animated:Array<AnimatedSprite>):Void {
         // Create foreground
         var i:Int = 0;
         tileBatch.reset();
@@ -257,30 +263,38 @@ class Renderer {
                             pack.environment.getConnected(tileName).setToTile(tileImage, getDisconnected(s, tiles, tileID, ix, iy, 2), true);
                             tileImage.width = (tileImage.height = 2 * World.TILE_HALF_WIDTH);
                             tileImage.y -= World.TILE_HALF_WIDTH;
+                            tileBatch.addImage(tileImage);
                         case 4, 5, 9:
                             // Half Connected
                             pack.environment.getConnected(tileName).setToTile(tileImage, getDisconnected(s, tiles, tileID, ix, iy, 1), true);
                             tileImage.width = (tileImage.height = World.TILE_HALF_WIDTH);
+                            tileBatch.addImage(tileImage);
                         case 14, 15, 16, 17, 18:
                             // Full Single
                             pack.environment.getTile(tileName).setToTile(tileImage, true);
                             tileImage.width = (tileImage.height = 2 * World.TILE_HALF_WIDTH);
                             tileImage.y -= World.TILE_HALF_WIDTH;
+                            tileBatch.addImage(tileImage);
                         case 10, 11, 12, 13:
                             // Half Single
                             pack.environment.getTile(tileName).setToTile(tileImage, true);
                             tileImage.width = (tileImage.height = World.TILE_HALF_WIDTH);
+                            tileBatch.addImage(tileImage);
                         case 23, 24, 25, 26, 27:
                             // Full Animated
-                            
-                            tileImage.y -= World.TILE_HALF_WIDTH;
+                            var anim:AnimatedSprite = new AnimatedSprite(pack.environment, tileName, 8, true); // TODO: Delay comes from elsewhere
+                            anim.x = x;
+                            anim.y = y - World.TILE_HALF_WIDTH;
+                            anim.width = (anim.height = 2 * World.TILE_HALF_WIDTH);
+                            animated.push(anim);
                         case 19, 20, 21, 22:
                             // Half Animated
-                            
+                            var anim:AnimatedSprite = new AnimatedSprite(pack.environment, tileName, 8, true); // TODO: Delay comes from elsewhere
+                            anim.x = x;
+                            anim.y = y;
+                            anim.width = (anim.height = World.TILE_HALF_WIDTH);
+                            animated.push(anim);
                     }
-                    
-                    // Add new image to the foreground
-                    tileBatch.addImage(tileImage);
                 }
             }
         }

@@ -42,7 +42,7 @@ class CodeLevelEditor {
         drawBox(lvl, 4, 98 - 30, 43, 30, 1);
         drawBox(lvl, 4, 30, 37, 40, 1);
         drawBox(lvl, 4, 2, 31, 30, 1);
-        drawBox(lvl, 4, 98 - 30, 31, 30, 1);
+        drawBox(lvl, 21, 98 - 30, 31, 30, 1);
         
         // Spawning locations
         lvl.playerPt.x = lvl.width / 2 - 2;
