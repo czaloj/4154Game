@@ -1,14 +1,21 @@
 package;
 import game.GameLevel;
 import game.Spawner;
+import graphics.SpriteSheetRegistry;
 
 class CodeLevelEditor {
     public static function drawBox(lvl:game.GameLevel, id:Int, x:Int, y:Int, w:Int, h:Int, inForeground:Bool = true):Void {
         var blocks:Array<Int> = inForeground ? lvl.foreground : lvl.background;
+        var isFullBlock:Bool = !SpriteSheetRegistry.isHalfTile(id);
         for (iy in y...(y + h)) {
             var i:Int = iy * lvl.width + x;
             for (ix in x...(x + w)) {
-                blocks[i] = id;
+                if (isFullBlock && ((((ix - x) & 1) == 1) || (((iy - y) & 1) == 1))) {
+                    blocks[i] = -id;
+                }
+                else {
+                    blocks[i] = id;                    
+                }
                 i++;
             }
         }
@@ -28,9 +35,9 @@ class CodeLevelEditor {
         drawBox(lvl, 0, 0, 0, lvl.width, lvl.height, true);
         
         // Add platforms
-        drawBox(lvl, 4, 0, 48, 100, 2);
-        drawBox(lvl, 4, 0, 0, 2, 48);
-        drawBox(lvl, 4, 98, 0, 2, 48);
+        drawBox(lvl, 1, 0, 48, 100, 2);
+        drawBox(lvl, 1, 0, 0, 2, 48);
+        drawBox(lvl, 1, 98, 0, 2, 48);
         drawBox(lvl, 4, 2, 43, 30, 1);
         drawBox(lvl, 4, 98 - 30, 43, 30, 1);
         drawBox(lvl, 4, 30, 37, 40, 1);

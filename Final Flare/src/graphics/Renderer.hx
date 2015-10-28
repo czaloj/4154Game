@@ -160,7 +160,6 @@ class Renderer {
         // Remove this entity from the stage
     }
 
-
     private function load(state:game.GameState):Void {
         // Register listener functions
         state.onEntityAdded.add(onEntityAdded);
@@ -246,13 +245,18 @@ class Renderer {
                 var tileID:Int = tiles[i];
                 i++;
                 if (tileID > 0 && tileID <= 27) {
-                    // Create the image and obtain the correct sprite type
+                    // Position the image
+                    tileImage.x = x;
+                    tileImage.y = y;
+                    
+                    // Obtain the correct sprite type
                     var tileName:String = SpriteSheetRegistry.getSheetName(tileID);
                     switch(tileID) {
                         case 1, 2, 3, 6, 7, 8:
                             // Full Connected
                             pack.environment.getConnected(tileName).setToTile(tileImage, getDisconnected(s, tiles, tileID, ix, iy, 2), true);
                             tileImage.width = (tileImage.height = 2 * World.TILE_HALF_WIDTH);
+                            tileImage.y -= World.TILE_HALF_WIDTH;
                         case 4, 5, 9:
                             // Half Connected
                             pack.environment.getConnected(tileName).setToTile(tileImage, getDisconnected(s, tiles, tileID, ix, iy, 1), true);
@@ -261,6 +265,7 @@ class Renderer {
                             // Full Single
                             pack.environment.getTile(tileName).setToTile(tileImage, true);
                             tileImage.width = (tileImage.height = 2 * World.TILE_HALF_WIDTH);
+                            tileImage.y -= World.TILE_HALF_WIDTH;
                         case 10, 11, 12, 13:
                             // Half Single
                             pack.environment.getTile(tileName).setToTile(tileImage, true);
@@ -268,14 +273,11 @@ class Renderer {
                         case 23, 24, 25, 26, 27:
                             // Full Animated
                             
+                            tileImage.y -= World.TILE_HALF_WIDTH;
                         case 19, 20, 21, 22:
                             // Half Animated
                             
                     }
-                    
-                    // Position the image
-                    tileImage.x = x;
-                    tileImage.y = y;
                     
                     // Add new image to the foreground
                     tileBatch.addImage(tileImage);
