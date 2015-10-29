@@ -4,6 +4,7 @@ import game.GameState;
 import game.ObjectModel;
 import game.Projectile;
 import game.World;
+import graphics.particles.TracerList;
 import haxe.ds.ObjectMap;
 import openfl.events.Event;
 import openfl.events.KeyboardEvent;
@@ -57,6 +58,9 @@ class Renderer {
     private var maskSprite:Sprite;
     private var rtBackground:RenderTexture;
     private var rtForeground:RenderTexture;
+    
+    // Particles
+    private var tracers:TracerList;
     
     // This is for debug camera movement
     private var debugViewing:Bool = false;
@@ -217,6 +221,9 @@ class Renderer {
         permBackground.width = state.width * World.TILE_HALF_WIDTH;
         permBackground.height = state.height * World.TILE_HALF_WIDTH;
         hierarchy.background.addChild(permBackground);
+        
+        tracers = new TracerList();
+        hierarchy.projectiles.addChild(tracers);
     }
 
     /** Tilemap generation code **/
@@ -404,6 +411,8 @@ class Renderer {
         quad.y = position.y - quad.height / 2.0;
         quad.color = 0x000000;
         renderPermanence([quad], []);
+        
+        tracers.add(cameraX, cameraY, position.x - cameraX, position.y - cameraY, 0.3, 0.2, 0xffff00);
     }
     
     public function screenToWorldSpace(pt:Point):Void {
@@ -451,5 +460,8 @@ class Renderer {
             var pLayer:ParallaxSprite = cast (layer, ParallaxSprite);
             pLayer.update(crX, crY);
         }
+        
+        // Update particles
+        tracers.update(1.0 / 60.0);
     }
 }
