@@ -412,7 +412,7 @@ class Renderer {
         quad.color = 0x000000;
         renderPermanence([quad], []);
         
-        tracers.add(cameraX, cameraY, position.x - cameraX, position.y - cameraY, 0.3, 0.2, 0xffff00);
+        tracers.add(cameraX, cameraY, position.x - cameraX, position.y - cameraY, 0.3, 5.0 / 60.0, 0xffff00, 1.0 / 5.0);
     }
     
     public function screenToWorldSpace(pt:Point):Void {
