@@ -14,6 +14,7 @@ class GameState {
 
     public var foreground:Array<Int> = [];
     public var background:Array<Int> = [];
+    public var platforms:Array<Platform>;
 
     public var spawners:Array<Spawner> = [];
 
@@ -23,15 +24,15 @@ class GameState {
 
     public var contactList:List<B2Contact> = new List();
     public var bullets:Array<Projectile> = [];
-    
+
     public var gameEvents:Array<GameEvent> = []; // The queue of game events that should occur during an update
-    
+
     // Broadcasting events
     public var onEntityAdded:BroadcastEvent2<GameState, ObjectModel> = new BroadcastEvent2<GameState, ObjectModel>();
     public var onEntityRemoved:BroadcastEvent2<GameState, ObjectModel> = new BroadcastEvent2<GameState, ObjectModel>();
     public var onProjectileAdded:BroadcastEvent2<GameState, game.Projectile> = new BroadcastEvent2<GameState, game.Projectile>();
     public var onProjectileRemoved:BroadcastEvent2<GameState, game.Projectile> = new BroadcastEvent2<GameState, game.Projectile>();
-    
+
     public function new() {
         // Empty
     }

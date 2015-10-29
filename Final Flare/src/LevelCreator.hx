@@ -6,6 +6,7 @@ import game.GameLevel;
 import game.GameState;
 import game.ObjectModel;
 import game.Spawner;
+import game.Platform;
 import graphics.Renderer;
 import graphics.RenderPack;
 import graphics.SpriteSheet;
@@ -43,7 +44,7 @@ class LevelCreator {
         state.foreground = level.foreground; // TODO: Better data structure
         state.background = level.background; // TODO: Better data structure
         state.spawners = level.spawners;
-
+        state.platforms = Platform.createFromTileMap(state.width, state.height, state.foreground);
         state.player = new ObjectModel();
         Spawner.createPlayer(state.player, "player", level.playerPt.x, level.playerPt.y);
         state.entities.push(state.player);
@@ -63,7 +64,7 @@ class LevelCreator {
         ]));
         renderPack.environmentDesaturated = SpriteSheetRegistry.getEnvironment(Texture.fromBitmapData(bmpEnvDesaturated), level.environmentType);
         renderPack.tileAnimationSpeeds = SpriteSheetRegistry.getAnimationSpeeds(level.environmentType);
-        
+
         // TODO: Load/stitch enemies from spawner information
         renderPack.enemies = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Pixel.png", false)), [
             // TODO: Add hardcoded enemies
