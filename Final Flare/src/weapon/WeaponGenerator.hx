@@ -1,11 +1,11 @@
-package gun;
+package weapon;
 
 import game.ColorScheme;
 import openfl.display.BitmapData;
 import openfl.geom.Rectangle;
 import openfl.utils.ByteArray;
 
-class GunGenerator {
+class WeaponGenerator {
     // Alpha mask levels for color generation
     public static var ALPHA_LEVEL_TRUE_COLOR:UInt = 21;
     public static var ALPHA_LEVEL_TEXTURE:UInt = 16;
@@ -14,8 +14,8 @@ class GunGenerator {
     public static var ALPHA_LEVEL_TERTIARY:UInt = 1;
     public static var ALPHA_LEVEL_INVISIBLE:UInt = 0;
     
-    public static function generate(params:GunGenParams):GunData {
-        var data:GunData = new GunData();
+    public static function generate(params:WeaponGenParams):WeaponData {
+        var data:WeaponData = new WeaponData();
 
         // TODO: Generate a real gun
         data.name = "Gun";

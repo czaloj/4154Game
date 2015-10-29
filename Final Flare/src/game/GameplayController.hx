@@ -184,11 +184,11 @@ class GameplayController {
         
         // Create damage dealers
         for (entity in state.entities) {
-            if (entity.useWeapon) { 
+            if (entity.useWeapon) {
                 // TODO: Update the weapon
             }
         }
-
+        
         // Physics
         updatePhysics(gameTime);
         
@@ -254,6 +254,20 @@ class GameplayController {
         for (entity in state.entities) {
             entity.velocity = entity.body.getLinearVelocity().copy();
             entity.position = entity.body.getPosition().copy();
+        }
+
+        // Update raycast projectiles
+        for (p in state.projectiles) {
+            p.damage.velocityX = p.velocity.x;
+            p.damage.velocityY = p.velocity.y;
+            p.damage.originX = p.position.x;
+            p.damage.originY = p.position.y;
+            switch (p.type) {
+                case Projectile.Type.BULLET:
+                    var damage:DamageBullet = new DamageBullet();
+                    damage.damage;
+                case Projectile.Type.BODY:
+            }
         }
         
         //Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED

@@ -3,7 +3,7 @@ package;
 import flash.display.Sprite;
 import flash.Lib;
 import starling.core.Starling;
-import gun.PartName;
+import weapon.PartName;
 import game.Statistic;
 
 class Main extends Sprite {

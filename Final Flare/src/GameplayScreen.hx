@@ -11,9 +11,9 @@ import game.PhysicsController;
 import graphics.Renderer;
 import graphics.RenderPack;
 import graphics.StaticSprite;
-import gun.Gun;
-import gun.GunGenerator;
-import gun.GunGenParams;
+import weapon.Weapon;
+import weapon.WeaponGenerator;
+import weapon.WeaponGenParams;
 import openfl.Assets;
 import openfl.display.Sprite;
 import openfl.events.KeyboardEvent;
@@ -68,9 +68,9 @@ class GameplayScreen extends IGameScreen {
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         var hb:StaticSprite = uif.getTile("Health.Background");
         screenController.addChild(hb);
-        var ggp:GunGenParams = new GunGenParams();
-        var gunData = GunGenerator.generate(ggp);
-        var gun:Gun = new Gun(gunData);
+        var ggp:WeaponGenParams = new WeaponGenParams();
+        var gunData = WeaponGenerator.generate(ggp);
+        var gun:Weapon = new Weapon(gunData);
         
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
     }

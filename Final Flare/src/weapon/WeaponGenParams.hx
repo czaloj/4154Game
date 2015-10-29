@@ -1,6 +1,6 @@
-package gun;
+package weapon;
 
-class GunGenParams {
+class WeaponGenParams {
     public var evolutionPoints:Int;
     public var historicalPoints:Int;
     public var shadynessPoints:Int;

@@ -1,6 +1,6 @@
-package gun;
+package weapon;
 
-enum GunPropertyType {
+enum WeaponPropertyType {
     FIRE_RATE;
     RELOAD_TIME;
     FIRING_MODE;
