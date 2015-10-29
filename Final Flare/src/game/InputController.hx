@@ -45,22 +45,20 @@ class InputController {
         state.player.right = keysDown[Keyboard.D];
         state.player.up = keysDown[Keyboard.W];
         state.player.down = keysDown[Keyboard.S];
-        state.player.swap2 = keysDown[Keyboard.NUMBER_2];
-        state.player.swap3 = keysDown[Keyboard.NUMBER_3];
-        state.player.click = click;
+        state.player.useWeapon = click;
         
         // Keyboard and mouse targeting logic
         if (keysDown[Keyboard.LEFT]) {
             state.player.targetX = state.player.position.x - 100;
             state.player.targetY = state.player.position.y;
-            state.player.click = true;
+            state.player.useWeapon = true;
             keysDown[Keyboard.LEFT] = false;
             click = false;
         }
         else if (keysDown[Keyboard.RIGHT]) {
             state.player.targetX = state.player.position.x + 100;
             state.player.targetY = state.player.position.y;
-            state.player.click = true;
+            state.player.useWeapon = true;
             keysDown[Keyboard.RIGHT] = false;
             click = false;
         }

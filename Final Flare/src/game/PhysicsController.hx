@@ -173,33 +173,11 @@ class PhysicsController extends B2ContactListener {
         bullet.fixtureDef = new B2FixtureDef();
         bullet.fixtureDef.shape = bullet.shape;
         bullet.fixtureDef.friction = 1;
-        if (entity.bulletType == 2 || entity.bulletType ==0 || entity.bulletType==4) {
-            bullet.fixtureDef.isSensor = true;
-        }
         bullet.fixtureDef.filter = isFromPlayer ? FILTER_PLAYER_DAMAGE.copy() : FILTER_ENEMY_DAMAGE.copy();
-        if (entity.bulletType == 3) {
-            bullet.fixtureDef.filter = FILTER_NEUTRAL_DAMAGE.copy();
-        }
-        else {
-            bullet.fixtureDef.filter.categoryBits |= FILTER_CATEGORY_PHYSICAL_PROJECTILE;
-        }
         
         bullet.body = world.createBody(bullet.bodyDef);
         bullet.fixture = bullet.body.createFixture(bullet.fixtureDef);
         bullet.body.setUserData(bullet);
-        
-        // Create a joint if it's a melee attack
-        if (entity.bulletType == 0) {
-            var jointDef = new B2DistanceJointDef();
-            jointDef.bodyA = entity.body;
-            jointDef.bodyB = bullet.body;
-            jointDef.localAnchorA = new B2Vec2(0, 0);
-            jointDef.localAnchorB = new B2Vec2(0, 0);
-            jointDef.length = .1;
-            
-            jointDef.collideConnected = false;
-            world.createJoint(jointDef);
-        }
     }
     
     public function update(dt:Float) {

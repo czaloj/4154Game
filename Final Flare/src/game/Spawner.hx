@@ -26,9 +26,6 @@ class Spawner {
     public static function createPlayer(e:ObjectModel, type:String, x:Float, y:Float):Void {
         e.id = "player";
         e.health = 100;
-        e.bulletType = 1;
-        e.canSwap2 = true;
-        e.canSwap3 = true;
 
         // Physical parameters
         e.position.set(x, y);
@@ -42,7 +39,6 @@ class Spawner {
     public static function createEnemy(e:ObjectModel, type:String, x:Float, y:Float):Void {
         e.id = "enemy";
         e.health = 50;
-        e.bulletType = 0;
 
         // Physical parameters
         e.position.set(x, y);

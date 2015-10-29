@@ -14,13 +14,6 @@ class ObjectModel extends Entity {
 
     
     // TODO: OMG, we need a real "Gun" class
-    // bullet type of current gun
-    public var bulletType:Int; //0 = bullet, 1 = piercing, 2 = explosive
-    public var swap2:Bool;
-    public var swap3:Bool;
-    public var canSwap2:Bool;
-    public var canSwap3:Bool;
-    public var countSinceClick:Int;
     public var health:Int;
     //Input Flags
     public var direction:Int;      //-1 for left, 1 for right, 0 otherwise
@@ -32,7 +25,7 @@ class ObjectModel extends Entity {
     public var down:Bool;  
     public var grounded(get, never):Bool;      //True if touching a platform
     public var isDead:Bool;         //True is player is dead
-    public var click:Bool;
+    public var useWeapon:Bool;
     public var targetX:Float; // TODO: This should be a viewing direction
     public var targetY:Float;
      
