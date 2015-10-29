@@ -18,7 +18,7 @@ class Entity {
     public var velocity:B2Vec2 = new B2Vec2();     //Object velocity
     
     //Physics data
-    public var shape:B2PolygonShape; 
+    public var shape:B2PolygonShape;
     public var body:B2Body;
     public var bodyType:B2BodyType;
     public var bodyDef:B2BodyDef;

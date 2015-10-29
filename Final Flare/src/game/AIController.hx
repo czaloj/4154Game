@@ -17,21 +17,17 @@ class AIController {
 
     // TODO: weee magic numberss
     public function followPlayer(entity:ObjectModel, state:GameState):Void {
-        if (entity.click) { 
-            entity.click = false; 
-            entity.countSinceClick = 60; 
-        }
-        if (!entity.click ) {
-            entity.countSinceClick--;    
-        }
         var target = state.player.position;
         var x:Float = entity.position.x;
         var y:Float = entity.position.y;
         var dir = (x-target.x)/Math.abs(x-target.x);    // -1 for left, 1 for right
         var onLeft = dir > 0;
         
-        if (state.player.position.x - x <= 2 && entity.countSinceClick <= 0) {
-            entity.click = true;
+        if (state.player.position.x - x <= 2) {
+            entity.useWeapon = true;
+        }
+        else {
+            entity.useWeapon = false;
         }
         entity.up = false; entity.velocity.y = 0; entity.leftFootGrounded = true;
         // if (entity.grounded) {

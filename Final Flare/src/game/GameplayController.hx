@@ -52,37 +52,6 @@ class GameplayController {
         physicsController.renderDebug();
     }
     
-    public function createBullet(world:B2World, entity:ObjectModel, bullet:Projectile):Void {
-        bullet.velocity.set(0, 0);
-        
-        switch(entity.bulletType) {
-            case 0:
-                bullet.id = "melee";
-                bullet.width = 2;
-                bullet.height = 2;
-            case 1:
-                bullet.id = "bullet";
-                bullet.width = .05;
-                bullet.height = .05;
-            case 2:
-                bullet.id = "piercingbullet";
-                bullet.width = .05;
-                bullet.height = .05;
-            case 3:
-                bullet.id = "explosivebullet";
-                bullet.width = .05;
-                bullet.height = .05;
-            case 4:
-                bullet.id = "explosion";
-                bullet.width = 4;
-                bullet.height = 4;
-        }
-        
-        bullet.position.setV(entity.position);
-        bullet.position.x += entity.targetX > bullet.position.x ? 0.6 : -0.6;
-        physicsController.initProjectile(bullet, entity, entity.id == "player");
-    }
-
     public function updatePlayerRays(state:GameState):Void {
         //Update left Ray
         state.player.leftRayStart = new B2Vec2(state.player.position.x - (state.player.width/2), state.player.position.y /*- (state.player.height/2)*/);
@@ -188,85 +157,6 @@ class GameplayController {
                 var entity2 = cast(contact.getFixtureB().getBody().getUserData(), Entity);
                 var id1 = entity1.id;
                 var id2 = entity2.id;
-                
-                if (id1 == "bullet" || id1 == "melee" || id1 == "explosivebullet" || id1 =="explosion") {
-                    state.onProjectileRemoved.invoke(state, cast(entity1, Projectile));
-                }
-                if (id2 == "bullet" || id2=="melee" || id2 =="explosivebullet" || id2=="explosion") {
-                    state.onProjectileRemoved.invoke(state, cast(entity2, Projectile));
-                }
-                
-                //When a player is hit by normal bullet
-                if (( id1 == "enemy") && (id2 == "bullet"||id2=="piercingbullet")) {
-                    var entity1o = cast(entity1, ObjectModel);
-                    entity1o.health -= BULLET_DAMAGE;
-                    if (entity1o.health <= 0) {
-                        deletingEntities.push(entity1o);
-                    }
-                }
-                
-                if ((id2 == "enemy") && (id1 == "bullet"||id1 =="piercingbullet")) {
-                    //player takes damage;
-                    //mark bullet for destreuction
-                    var entity2o = cast(entity2, ObjectModel);
-                    entity2o.health -= BULLET_DAMAGE;
-                    if (entity2o.health <= 0) {
-                        deletingEntities.push(entity2o);
-                    }
-                }
-                if (( id1 == "enemy") && id2 == "explosivebullet") {
-                    var entity1o = cast(entity1, ObjectModel);
-                    entity1o.bulletType = 4;
-                    var explosion:Projectile = new Projectile();
-                    createBullet(physicsController.world, entity1o, explosion);
-                    explosion.targetX = entity1o.targetX;
-                    explosion.targetY = entity1o.targetY;
-                }
-                
-                if (( id2 == "enemy") && id1 == "explosivebullet") {
-                    var entity2o = cast(entity2, ObjectModel);
-                    entity2o.bulletType = 4;
-                    var explosion:Projectile = new Projectile();
-                    createBullet(physicsController.world, entity2o, explosion);
-                    explosion.targetX = entity2o.targetX;
-                    explosion.targetY = entity2o.targetY;
-                }
-                
-                if (( id1 == "enemy"||id1=="player") && id2 == "explosion") {
-                    var entity1o = cast(entity1, ObjectModel);
-                    entity1o.health -= E_DAMAGE;
-                    if (entity1o.health <= 0) {
-                        deletingEntities.push(entity1o);
-                    }
-                }
-                
-                if ((id2 == "enemy"||id2=="player") && id1 == "explosion") {
-                    //player takes damage;
-                    //mark bullet for destreuction
-                    var entity2o = cast(entity2, ObjectModel);
-                    entity2o.health -= E_DAMAGE;
-                    if (entity2o.health <= 0) {
-                        deletingEntities.push(entity2o);
-                    }
-
-                }
-                if ((id1 == "player" ) && id2 == "melee") {
-                    var entity1o = cast(entity1, ObjectModel);
-                    entity1o.health -=  MELEE_DAMAGE;
-                    if (entity1o.health <= 0) {
-                        deletingEntities.push(entity1o);
-                    }
-                }
-                
-                if ((id2 == "player" ) && id1 == "melee") {
-                    //player takes damage;
-                    //mark bullet for destreuction
-                    var entity2o = cast(entity2, ObjectModel);
-                    entity2o.health -=  MELEE_DAMAGE;
-                    if (entity2o.health <= 0) {
-                        deletingEntities.push(entity2o);
-                    }
-                }
             }
 
             // TODO: Contact list should be a special tuple of <GameObjectType, Dynamic> to get correct casting results
@@ -293,6 +183,11 @@ class GameplayController {
         }
         
         // Create damage dealers
+        for (entity in state.entities) {
+            if (entity.useWeapon) { 
+                // TODO: Update the weapon
+            }
+        }
 
         // Physics
         updatePhysics(gameTime);
