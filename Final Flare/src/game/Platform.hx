@@ -22,8 +22,12 @@ class Platform
         dimension.y = dy;
     }
 
-    public static function createFromTileMap(width:Int, height:Int, tileArr:Array<Int>)
+    public static function createFromTileMap(width:Int, height:Int, foreground:Array<Int>)
     {
+        var tileArr:Array<Int> = [];
+        for (tile in foreground) {
+            tileArr.push(tile);
+        }
         var platformArr:Array<Platform> = [];
         var complete = false;
         while (!complete) {
@@ -63,13 +67,8 @@ class Platform
                             break;
                         }
                     }
-                    trace(Math.abs(id));
-                    trace(sx);
-                    trace(sy);
-                    trace(w);
-                    trace(h);
                     var platform = new Platform(cast(Math.abs(id), Int), sx, sy, w, h);
-                    //platformArr.push(platform);
+                    platformArr.push(platform);
                     break;
                 }
             }

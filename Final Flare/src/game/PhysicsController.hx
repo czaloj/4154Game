@@ -31,7 +31,7 @@ class PhysicsController extends B2ContactListener {
     private static inline var FILTER_CATEGORY_ENEMY_DAMAGE:Int = 0x1 << 4;
     private static inline var FILTER_CATEGORY_NEUTRAL_DAMAGE:Int = 0x1 << 5;
     private static inline var FILTER_CATEGORY_PHYSICAL_PROJECTILE:Int = 0x1 << 5;
-    
+
     private static var FILTER_PLAYER:B2FilterData = {
         var fd:B2FilterData = new B2FilterData();
         fd.categoryBits = FILTER_CATEGORY_PLAYER;
@@ -74,29 +74,29 @@ class PhysicsController extends B2ContactListener {
         fd.groupIndex = 0;
         fd;
     }
-    
+
     public var world:B2World;
     public var state:GameState;
     public var debugger: B2DebugDraw;
 
     public var deleteList:Array<B2Body> = []; // List of entities that are marked for deletion
-    
+
     private var rcContext:RayCastContext = null;
-    
+
     public function new() {
         super();
     }
-    
+
     public function init(s:GameState) {
         state = s;
         state.onEntityRemoved.add(onEntityRemoved);
         state.onProjectileRemoved.add(onProjectileRemoved);
-        
+
         world = new B2World(GRAVITY, true);
         world.setContactListener(this);
         world.setWarmStarting(true);
     }
-    
+
     public function initEntity(e:ObjectModel):Void {
         // Create body
         e.bodyDef = new B2BodyDef();
@@ -120,18 +120,19 @@ class PhysicsController extends B2ContactListener {
                 e.fixtureDef.filter = FILTER_ENEMY.copy();
         }
         e.fixture = e.body.createFixture(e.fixtureDef);
-        
+
         // Set initial entity data to the body
         e.body.setUserData(e);
         e.body.setLinearVelocity(e.velocity);
     }
-    public function initPlatforms(state:GameState):Void { 
+    public function initPlatforms(state:GameState):Void {
         var halfSize:Float = GameplayController.TILE_HALF_WIDTH;
-        
-        for (i in 0...(state.width * state.height)) {
-            var x:Float = (i % state.width) * halfSize + (halfSize * 0.5);
-            var y:Float = (state.height -  (Std.int(i / state.width) + 1)) * halfSize + (halfSize * 0.5);
-            if (state.foreground[i] != 0) {
+
+        for (i in state.platforms) {
+            var x:Float = (i.position.x) * halfSize + i.dimension.x * halfSize/2;
+            var y:Float = (state.height - i.position.y) * halfSize - i.dimension.y * halfSize/2;
+
+            if (i.id != 0) {
                 // TODO: Platforms are not ObjectModels
                 var platform = new ObjectModel();
 
@@ -140,8 +141,8 @@ class PhysicsController extends B2ContactListener {
                 platform.velocity.set(0,0);
                 platform.left = false;
                 platform.right = false;
-                platform.height = halfSize;
-                platform.width = halfSize;
+                platform.width = i.dimension.x * halfSize;
+                platform.height = i.dimension.y * halfSize;
 
                 platform.bodyDef = new B2BodyDef();
                 platform.bodyDef.position.set(platform.position.x, platform.position.y);
@@ -167,66 +168,66 @@ class PhysicsController extends B2ContactListener {
         bullet.bodyDef.position.set(bullet.position.x, bullet.position.y);
         bullet.bodyDef.type = B2Body.b2_dynamicBody;
         bullet.bodyDef.fixedRotation = true;
-        
+
         bullet.shape = new B2PolygonShape();
         bullet.shape.setAsBox ((bullet.width)/2, (bullet.height)/2);
         bullet.fixtureDef = new B2FixtureDef();
         bullet.fixtureDef.shape = bullet.shape;
         bullet.fixtureDef.friction = 1;
         bullet.fixtureDef.filter = isFromPlayer ? FILTER_PLAYER_DAMAGE.copy() : FILTER_ENEMY_DAMAGE.copy();
-        
+
         bullet.body = world.createBody(bullet.bodyDef);
         bullet.fixture = bullet.body.createFixture(bullet.fixtureDef);
         bullet.body.setUserData(bullet);
     }
-    
+
     public function update(dt:Float) {
         world.step(dt, 5, 3);
         world.clearForces();
     }
     public function clearDeadBodies() {
-        if (deleteList.length > 0) { 
+        if (deleteList.length > 0) {
             for (body in deleteList) {
                 world.destroyBody(body);
             }
             deleteList = [];
         }
     }
-    
-    override function beginContact(contact:B2Contact):Void { 
+
+    override function beginContact(contact:B2Contact):Void {
         super.beginContact(contact);
-        
+
         // TODO: Convert contact into more usable form
         state.contactList.add(contact);
     }
     override function endContact(contact:B2Contact):Void {
         super.endContact(contact);
     }
-    
+
     private function onEntityRemoved(state:GameState, e:ObjectModel) {
         deleteList.push(e.body);
     }
     private function onProjectileRemoved(state:GameState, e:Projectile) {
         deleteList.push(e.body);
     }
-    
+
     public function rayCastCollisions(ox:Float, oy:Float, dx:Float, dy:Float, hitPlayer:Bool, hitEnemies:Bool, pierce:Int):Pair<Array<RayCastInfo>, RayCastInfo> {
         // New ray context used for ray collisions
         rcContext = new RayCastContext();
-        
+
         // Setup filtering
         rcContext.discardCategories = FILTER_CATEGORY_PLATFORM;
         if (hitPlayer) {
             if (hitEnemies) {
-                rcContext.hitCategories = FILTER_CATEGORY_ENEMY | FILTER_CATEGORY_PLAYER;                
-            } 
+                rcContext.hitCategories = FILTER_CATEGORY_ENEMY | FILTER_CATEGORY_PLAYER;
+            }
             else {
-                rcContext.hitCategories = FILTER_CATEGORY_PLAYER;                
+                rcContext.hitCategories = FILTER_CATEGORY_PLAYER;
             }
         }
         else {
             if (hitEnemies) {
-                rcContext.hitCategories = FILTER_CATEGORY_ENEMY;                
+                rcContext.hitCategories = FILTER_CATEGORY_ENEMY;
             }
             else {
                 // Construct ray points
@@ -241,7 +242,7 @@ class PhysicsController extends B2ContactListener {
         // Construct ray points
         var origin:B2Vec2 = new B2Vec2(ox, oy);
         var end:B2Vec2 = new B2Vec2(ox + dx, oy + dy);
-        
+
         var results = [];
         if (pierce > 0) {
             // Get closest N + 1
@@ -270,9 +271,9 @@ class PhysicsController extends B2ContactListener {
                     ));
             }
         }
-        
+
         var wi:RayCastInfo = (rcContext.hitWall == null) ? null : new RayCastInfo(rcContext.hitWall.first, origin, rcContext.hitWall.third, rcContext.hitWall.fourth);
-        
+
         return new Pair<Array<RayCastInfo>, RayCastInfo>(results, wi);
     }
     private function onRayCastHitDiscard(fixture:B2Fixture, location:B2Vec2, normal:B2Vec2, fraction:Float) {
@@ -310,7 +311,7 @@ class PhysicsController extends B2ContactListener {
                 return f.second < fraction;
             });
             rcContext.farthestHitFraction = 0.0;
-            
+
             // Reupdate farthest hit
             for (pair in rcContext.closestNFixtures) {
                 if (pair.second > rcContext.farthestHitFraction) {
@@ -327,14 +328,14 @@ class PhysicsController extends B2ContactListener {
                 if (fraction > rcContext.farthestHitFraction) {
                     rcContext.farthestHitFraction = fraction;
                 }
-                
+
                 // If we're at max capacity, return farthest hit location, otherwise allow hits up until the closest wall
                 return (rcContext.closestNFixtures.length < rcContext.maxHits) ? rcContext.wallFraction : rcContext.farthestHitFraction;
             }
             else {
                 var i:Int = 0;
                 var fhf:Float = 0.0;
-                
+
                 // We must replace the farthest hit
                 while (i < rcContext.closestNFixtures.length) {
                     if (rcContext.closestNFixtures[i].second == rcContext.farthestHitFraction) {
@@ -347,7 +348,7 @@ class PhysicsController extends B2ContactListener {
                     i++;
                 }
                 i++;
-                
+
                 // Keep checking for farthest hit location
                 while (i < rcContext.closestNFixtures.length) {
                     if (fhf < rcContext.closestNFixtures[i].second) {
@@ -356,7 +357,7 @@ class PhysicsController extends B2ContactListener {
                     i++;
                 }
                 rcContext.farthestHitFraction = fhf;
-                
+
                 // We're at max capacity, return farthest hit location
                 return rcContext.farthestHitFraction;
             }
@@ -385,7 +386,7 @@ class PhysicsController extends B2ContactListener {
             return -1;
         }
     }
-    
+
     /**
      * Setup debugging information
      * @param sprite The target drawing sprite
