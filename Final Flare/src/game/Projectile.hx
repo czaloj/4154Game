@@ -1,32 +1,30 @@
 package game;
+import game.damage.DamageBullet;
+
+enum Type {
+    BULLET;
+    BODY;
+}
 
 class Projectile extends Entity {
     private static var BULLET_SPEED:Float = 20;
 
-    public var targetX:Float;
-    public var targetY:Float;
-    public var playerX:Float;
-    public var playerY:Float;    
-    public var deltaX:Float;
-    public var deltaY:Float;
-    public var magnitude:Float;
-    public var rotation:Float;
-
+    public var type:Type;
+    public var penetrationsLeft:Int;
     public var gravityScale:Float;
+    public var damage:DamageBullet;
     
-    public function new() {
+    public function new(d:DamageBullet) {
        super();
+       damage = new DamageBullet();
+       damage.damage = d.damage;
+       damage.friendlyDamage = d.friendlyDamage;
+       damage.knockbackAmount = d.knockbackAmount;
+       damage.piercingAmount = d.piercingAmount;
+       damage.teamDestinationFlags = d.teamDestinationFlags;
+       damage.teamSourceFlags = d.teamSourceFlags;
     }
     
-    public function setVelocity():Void {
-        deltaX = targetX - position.x;
-        deltaY = targetY - position.y;
-        magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        deltaX = deltaX / magnitude;
-        deltaY = deltaY / magnitude;
-        deltaX = deltaX * BULLET_SPEED;
-        deltaY = deltaY * BULLET_SPEED;
-        velocity.x = deltaX;
-        velocity.y = deltaY;
+    public function update(dt:Float, s:GameState):Void {
     }
 }

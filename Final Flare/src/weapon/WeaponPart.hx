@@ -1,4 +1,4 @@
-package gun;
+package weapon;
 
 import game.ColorScheme;
 import openfl.Assets;
@@ -11,10 +11,10 @@ import starling.display.Image;
 import starling.textures.Texture;
 import flash.display.BitmapData;
 
-class GunPart {
+class WeaponPart {
     public var names(default, null):Array<PartName>;
     public var schemes(default, null):Array<ColorScheme>;
-    public var properties(default, null):Array<GunProperty>;
+    public var properties(default, null):Array<WeaponProperty>;
     
     public function new(var def:Array<Dynamic>) {
         names = [];
@@ -31,9 +31,9 @@ class GunPart {
                 schemes.push(i);
             case Array<ColorScheme>:
                 schemes.concat(i);
-            case GunProperty:
+            case WeaponProperty:
                 properties.push(i);
-            case Array<GunProperty>:
+            case Array<WeaponProperty>:
                 properties.concat(i);
             default:
                 trace("Unknown argument");

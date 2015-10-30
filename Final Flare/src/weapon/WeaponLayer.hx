@@ -1,6 +1,6 @@
-package gun;
+package weapon;
 
-class GunLayer {
+class WeaponLayer {
     public function new() {
         // Empty
     }

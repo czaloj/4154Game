@@ -23,7 +23,7 @@ class GameState {
     public var damage:List<DamageDealer> =  new List<DamageDealer>();
 
     public var contactList:List<B2Contact> = new List();
-    public var bullets:Array<Projectile> = [];
+    public var projectiles:Array<Projectile> = [];
 
     public var gameEvents:Array<GameEvent> = []; // The queue of game events that should occur during an update
 

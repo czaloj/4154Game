@@ -1,4 +1,4 @@
-package gun;
+package weapon;
 
 import openfl.Lib;
 
