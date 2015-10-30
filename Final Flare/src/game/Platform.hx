@@ -43,7 +43,7 @@ class Platform
                     tileArr[tile] = 0;
                     //extend horizontally
                     for (i in sx +1 ...width) {
-                        if (tileArr[width * sy + i] == id || tileArr[width * sy + i] == -id) {
+                        if (tileArr[width * sy + i] != 0) {
                             tileArr[width * sy + i] = 0;
                             w++;
                         }else {
@@ -54,7 +54,7 @@ class Platform
                     for (j in sy + 1... height) {
                         var passed = true;
                         for (i in sx ... sx + w) {
-                            if (tileArr[width * j +i] == id || tileArr[width * j +i] == -id) {
+                            if (tileArr[width * j +i] != 0) {
                                 tileArr[width * j +i] = 0;
                             }else {
                                 passed = false;
