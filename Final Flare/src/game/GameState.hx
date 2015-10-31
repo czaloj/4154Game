@@ -33,6 +33,7 @@ class GameState {
     public var onProjectileAdded:BroadcastEvent2<GameState, game.Projectile> = new BroadcastEvent2<GameState, game.Projectile>();
     public var onProjectileRemoved:BroadcastEvent2<GameState, game.Projectile> = new BroadcastEvent2<GameState, game.Projectile>();
 
+    public var score:Int = 0;
     public function new() {
         // Empty
     }

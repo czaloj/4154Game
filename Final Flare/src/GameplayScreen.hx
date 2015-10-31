@@ -21,6 +21,7 @@ import openfl.Lib;
 import openfl.ui.Keyboard;
 import starling.textures.Texture;
 import ui.UISpriteFactory;
+//import Logging;
 
 class GameplayScreen extends IGameScreen {
     private var state:game.GameState;
@@ -29,7 +30,8 @@ class GameplayScreen extends IGameScreen {
     private var renderer:Renderer;
     public var inputController:game.InputController;
     private var debugPhysicsView:Sprite;
-
+	//private var logger:Single;
+	
     public function new(sc: ScreenController) {
         super(sc);
     }
@@ -42,9 +44,17 @@ class GameplayScreen extends IGameScreen {
     }
 
     override function onEntry(gameTime:GameTime):Void {
+		
+		
+		var logger:Logging = Logging.getSingleton();
+		logger.initialize(121, 0, true);// , false);
+		logger.recordPageLoad();						
+		logger.recordLevelStart(1);									//should move to gamelevel start once menus are done
+		
+		
         state = new game.GameState();
         inputController = new game.InputController();
-        gameplayController = new GameplayController();
+        gameplayController = new GameplayController( logger);
         aiController = new game.AIController();
         var pack:RenderPack = new RenderPack();
 

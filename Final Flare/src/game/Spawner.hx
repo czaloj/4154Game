@@ -16,13 +16,16 @@ class Spawner {
     }
     public static function spawn(gameplayController:game.GameplayController, state: game.GameState, gameTime:GameTime) {
         // TODO: Use advanced spawning logic
-        if (gameTime.frame % 120 == 0) {
-            for (spawner in state.spawners) {
-                state.gameEvents.push(new GameEventSpawn(spawner.position.x, spawner.position.y, "Grunt"));
+        var spawnCooldown;
+        for (spawner in state.spawners) {
+            var type = game.EnemyType.make(spawner.id);
+            //TODO: factor in difficulty
+            if (gameTime.frame % type.spawnCooldown <= state.score/10) {
+                state.gameEvents.push(new GameEventSpawn(spawner.position.x, spawner.position.y, spawner.id));
             }
         }
     }
-    
+
     public static function createPlayer(e:ObjectModel, type:String, x:Float, y:Float):Void {
         e.id = "player";
         e.health = 100;
