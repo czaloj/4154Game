@@ -5,6 +5,8 @@
 	<window width="800" height="450" fps="60" />
 	<haxelib name="openfl" />
 	<haxelib name="box2d" />
+	<haxedef name="network-sandbox" />
+	<haxeflag name="-swf-lib" value="Logging.swc" />
 	
 	<source path="src" />
 	

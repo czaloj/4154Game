@@ -27,9 +27,11 @@ class GameplayController {
     public var physicsController:PhysicsController = new PhysicsController();
     private var debugPhysicsView:Sprite;
     private var deletingEntities:Array<ObjectModel> = [];
+	private var logger:Logging;
+	private var time:GameTime;
 
-    public function new() {
-        // Empty
+    public function new(logg:Logging) {
+			logger = logg;// Empty
     }
 
     public function init(s:GameState):Void {
@@ -167,7 +169,7 @@ class GameplayController {
 
     public function update(s:GameState, gameTime:GameTime):Void {
         state = s;
-        
+        time = gameTime;
         // TODO: Spawner shouldn't need reference to this
         Spawner.spawn(this, state, gameTime);
         
@@ -279,6 +281,7 @@ class GameplayController {
     public function applyEventSpawn(state:GameState, e:GameEventSpawn):Void {
         var enemy:ObjectModel = new ObjectModel();
         Spawner.createEnemy(enemy, e.entity, e.x, e.y);
+		logger.recordEvent(2, "" + time.total +", " +e.x + ", " + e.y + ", nullenemid") ;
         physicsController.initEntity(enemy);
         state.entities.push(enemy);
         state.onEntityAdded.invoke(state, enemy);
@@ -299,6 +302,11 @@ class GameplayController {
             for (rci in info.first) {
                 var hitEntity:ObjectModel = cast(rci.first.getUserData(), ObjectModel);
                 hitEntity.health -= bullet.damageFor(hitEntity.id == "player" ? DamageDealer.TEAM_PLAYER : DamageDealer.TEAM_ENEMY);
+				if (hitEntity.health <= 0 && hitEntity.id == "player")
+				{
+					logger.recordEvent(3, "" + time.total +", " + hitEntity.position.x + ", " + hitEntity.position.y + ", nullcharid, bullet") ;
+					logger.recordLevelEnd();
+				}
             }
             
             // Apply piercing count
