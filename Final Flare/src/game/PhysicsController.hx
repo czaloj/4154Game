@@ -90,7 +90,6 @@ class PhysicsController extends B2ContactListener {
     public function init(s:GameState) {
         state = s;
         state.onEntityRemoved.add(onEntityRemoved);
-        state.onProjectileRemoved.add(onProjectileRemoved);
 
         world = new B2World(GRAVITY, true);
         world.setContactListener(this);
@@ -160,26 +159,6 @@ class PhysicsController extends B2ContactListener {
             }
          }
     }
-    public function initProjectile(bullet:Projectile, entity:ObjectModel, isFromPlayer:Bool):Void {
-        // TODO: So much to fix
-
-        bullet.bodyDef = new B2BodyDef();
-        bullet.bodyDef.bullet = true;
-        bullet.bodyDef.position.set(bullet.position.x, bullet.position.y);
-        bullet.bodyDef.type = B2Body.b2_dynamicBody;
-        bullet.bodyDef.fixedRotation = true;
-
-        bullet.shape = new B2PolygonShape();
-        bullet.shape.setAsBox ((bullet.width)/2, (bullet.height)/2);
-        bullet.fixtureDef = new B2FixtureDef();
-        bullet.fixtureDef.shape = bullet.shape;
-        bullet.fixtureDef.friction = 1;
-        bullet.fixtureDef.filter = isFromPlayer ? FILTER_PLAYER_DAMAGE.copy() : FILTER_ENEMY_DAMAGE.copy();
-
-        bullet.body = world.createBody(bullet.bodyDef);
-        bullet.fixture = bullet.body.createFixture(bullet.fixtureDef);
-        bullet.body.setUserData(bullet);
-    }
 
     public function update(dt:Float) {
         world.step(dt, 5, 3);
@@ -205,9 +184,6 @@ class PhysicsController extends B2ContactListener {
     }
 
     private function onEntityRemoved(state:GameState, e:ObjectModel) {
-        deleteList.push(e.body);
-    }
-    private function onProjectileRemoved(state:GameState, e:Projectile) {
         deleteList.push(e.body);
     }
 

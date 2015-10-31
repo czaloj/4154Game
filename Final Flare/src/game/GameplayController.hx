@@ -262,12 +262,6 @@ class GameplayController {
             p.damage.velocityY = p.velocity.y;
             p.damage.originX = p.position.x;
             p.damage.originY = p.position.y;
-            switch (p.type) {
-                case Projectile.Type.BULLET:
-                    var damage:DamageBullet = new DamageBullet();
-                    damage.damage;
-                case Projectile.Type.BODY:
-            }
         }
         
         //Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED

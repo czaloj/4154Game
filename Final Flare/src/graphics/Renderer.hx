@@ -148,11 +148,10 @@ class Renderer {
     public function onBulletAdded(s:game.GameState, p:game.Projectile):Void {
         // Add a corresponding sprite to stage and track this entity
         var bullet = new AnimatedSprite(pack.projectiles, "Bullet.Fly", 1);
-        bullet.x = p.position.x - bullet.width * 0.5;
-        bullet.y = p.position.y - p.height * 0.5;
+        bullet.x = p.position.x;
+        bullet.y = p.position.y;
         bullet.scaleX /= 32;
         bullet.scaleY /= 32;
-        //trace(enemy.x, enemy.y);
         hierarchy.projectiles.addChild(bullet);
         projTbl.set(p,bullet);
         //what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
@@ -432,10 +431,6 @@ class Renderer {
             } else {
                 sprite.scaleX = Math.abs(sprite.scaleX);
             }
-        }
-        for (p in projTbl.keys()) {
-            projTbl.get(p).x = p.body.getPosition().x;
-            projTbl.get(p).y = p.body.getPosition().y - projTbl.get(p).height * 0.5;
         }
         var levelWidth:Float = s.width * World.TILE_HALF_WIDTH;
         var levelHeight:Float = s.height * World.TILE_HALF_WIDTH;
