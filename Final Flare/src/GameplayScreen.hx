@@ -80,7 +80,7 @@ class GameplayScreen extends IGameScreen {
         screenController.addChild(hb);
         var ggp:WeaponGenParams = new WeaponGenParams();
         var gunData = WeaponGenerator.generate(ggp);
-        var gun:Weapon = new Weapon(gunData);
+        var gun:Weapon = new Weapon(state.player, gunData);
         
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
     }

@@ -4,6 +4,12 @@ import game.ColorScheme;
 import game.Projectile;
 import openfl.geom.Point;
 
+enum FiringMode {
+    SINGLE;
+    BURST;
+    AUTOMATIC;
+}
+
 class ProjectileOrigin {
     // Origin point relative to the gun
     public var oX:Float;
@@ -32,6 +38,16 @@ class WeaponData {
     public var projectileOrigins:Array<ProjectileOrigin> = [];
     
     public var properties:Array<WeaponProperty> = [];
+    
+    
+    // Information for firing logic
+    public var firingMode:FiringMode;
+    public var useCapacity:Int;
+    public var usesPerActivation:Int;
+    public var reloadTime:Float;
+    public var activationCooldown:Float;
+    public var burstPause:Float;
+    public var burstCount:Int;
     
     public function new() {
         // Empty
