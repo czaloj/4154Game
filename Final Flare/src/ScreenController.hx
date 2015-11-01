@@ -42,7 +42,7 @@ class ScreenController extends Sprite {
                     // TODO: Remove debug level creation with real level editor
                     CodeLevelEditor.run();
                 case Keyboard.F7:
-                    // TODO: Load Level
+                    switchToScreen(1);
                 case Keyboard.F8:
                     LevelCreator.saveToFile(loadedLevel);
             }

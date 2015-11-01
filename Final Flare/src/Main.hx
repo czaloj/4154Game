@@ -11,18 +11,6 @@ class Main extends Sprite {
 
     public function new () {
         super();
-
-        /* TODO: Remove test code
-        var s:Statistic<Float>  = new Statistic<Float>(2.5);
-        trace(s.value);
-        s.baseValue *= 2;
-        trace(s.value);
-
-        var d:Array<PartName> = [
-            new PartName("Noun", PartNameType.NOUN)
-        ];
-        */
-
         engine = new Starling(ScreenController, Lib.current.stage);
         engine.start();
     }
