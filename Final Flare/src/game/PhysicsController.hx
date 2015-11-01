@@ -149,23 +149,24 @@ class PhysicsController extends B2ContactListener {
     public function initPlatforms(state:GameState):Void {
         var halfSize:Float = GameplayController.TILE_HALF_WIDTH;
 
+        // Create the body
+        var bodyDef:B2BodyDef = new B2BodyDef();
+        bodyDef.position.set(0, 0);
+        bodyDef.type = B2Body.b2_staticBody;
+        var body:B2Body = world.createBody(bodyDef);
+        
         for (i in state.platforms) {
             var x:Float = (i.position.x) * halfSize + i.dimension.x * halfSize/2;
             var y:Float = (state.height - i.position.y) * halfSize - i.dimension.y * halfSize/2;
 
             if (i.id != 0) {
-                // Create the body
-                var bodyDef:B2BodyDef = new B2BodyDef();
-                bodyDef.position.set(x, y);
-                bodyDef.type = B2Body.b2_staticBody;
-                var body:B2Body = world.createBody(bodyDef);
-
                 // Create the box collision fixture
                 var fixtureDef:B2FixtureDef = new B2FixtureDef();
                 fixtureDef.filter = FILTER_PLATFORM.copy();
                 var polygon = new B2PolygonShape ();
-                polygon.setAsBox((i.dimension.x * halfSize) * 0.5, (i.dimension.y * halfSize) * 0.5);
+                polygon.setAsOrientedBox((i.dimension.x * halfSize) * 0.5, (i.dimension.y * halfSize) * 0.5, new B2Vec2(x, y), 0);
                 fixtureDef.shape = polygon;
+                
                 var fixture:B2Fixture = body.createFixture(fixtureDef);
 
                 // Set platform user data
