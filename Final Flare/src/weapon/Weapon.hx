@@ -1,13 +1,13 @@
 package weapon;
 
-import game.Entity;
+import game.EntityBase;
 import game.GameState;
-import game.ObjectModel;
+import game.Entity;
 import starling.display.Sprite;
 import weapon.WeaponData.FiringMode;
 
 class Weapon {
-    public var entity:ObjectModel;
+    public var entity:Entity;
     public var data:WeaponData;
     
     // Firing state
@@ -17,7 +17,7 @@ class Weapon {
     private var usesPerformed:Int;
     private var burstsLeft:Int;
     
-    public function new(e:ObjectModel, d:WeaponData) {
+    public function new(e:Entity, d:WeaponData) {
         entity = e;
         data = d;
     }

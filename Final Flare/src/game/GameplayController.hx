@@ -9,6 +9,9 @@ import game.damage.DamageExplosion;
 import game.damage.DamagePolygon;
 import game.events.GameEvent;
 import game.events.GameEventSpawn;
+import game.PhysicsController.PhysicsContact;
+import game.PhysicsController.PhysicsContactBody;
+import game.PhysicsController.PhysicsUserDataType;
 import game.PhysicsController.RayCastInfo;
 import openfl.display.Sprite;
 
@@ -26,7 +29,7 @@ class GameplayController {
     public var state:game.GameState;
     public var physicsController:PhysicsController = new PhysicsController();
     private var debugPhysicsView:Sprite;
-    private var deletingEntities:Array<ObjectModel> = [];
+    private var deletingEntities:Array<Entity> = [];
 	private var logger:Logging;
 	private var time:GameTime;
 
@@ -54,117 +57,40 @@ class GameplayController {
         physicsController.renderDebug();
     }
     
-    public function updatePlayerRays(state:GameState):Void {
-        //Update left Ray
-        state.player.leftRayStart = new B2Vec2(state.player.position.x - (state.player.width/2), state.player.position.y /*- (state.player.height/2)*/);
-        state.player.leftRayEnd = new B2Vec2(state.player.leftRayStart.x, state.player.leftRayStart.y - 1);
-
-        //Update right ray
-        state.player.rightRayStart = new B2Vec2(state.player.position.x + (state.player.width/2), state.player.position.y /*- (state.player.height/2)*/);
-        state.player.rightRayEnd = new B2Vec2(state.player.rightRayStart.x, state.player.rightRayStart.y - 1);
-
-        //Update left wall Ray
-        state.player.leftWallRayStart = new B2Vec2(state.player.position.x - (state.player.width/2), state.player.position.y - (state.player.height/2));
-        state.player.leftWallRayEnd = new B2Vec2(state.player.leftWallRayStart.x - 1, state.player.leftWallRayStart.y);
-
-        //Update right wall ray
-        state.player.rightWallRayStart = new B2Vec2(state.player.position.x - (state.player.width/2), state.player.position.y + (state.player.height/2));
-        state.player.rightWallRayEnd = new B2Vec2(state.player.rightWallRayStart.x + 1, state.player.rightWallRayStart.y);
-    }
-    public function raycastLeftCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
-        if (fixture.getBody().getUserData() != null)
-        {
-            var o = fixture.getBody().getUserData();
-            cast(o, Entity);
-            if (o.id == "platform")
-            {
-                state.player.leftFootGrounded= true;
-                return fraction;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-        return -1;
-    }
-    public function raycastRightCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
-        if (fixture.getBody().getUserData() != null)
-        {
-            var o = fixture.getBody().getUserData();
-            cast(o, Entity);
-            if (o.id == "platform")
-            {
-                state.player.rightFootGrounded= true;
-                return fraction;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-        return -1;
-    }
-    public function raycastLeftWallCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
-        if (fixture.getBody().getUserData() != null)
-        {
-            var o = fixture.getBody().getUserData();
-            cast(o, Entity);
-            if (o.id == "platform")
-            {
-                state.player.leftTouchingWall= true;
-                return fraction;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-        return -1;
-    }
-    public function raycastRightWallCallback(fixture:B2Fixture, point:B2Vec2, normal:B2Vec2, fraction:Float):Dynamic {
-        if (fixture.getBody().getUserData() != null)
-        {
-            var o = fixture.getBody().getUserData();
-            cast(o, Entity);
-            if (o.id == "platform")
-            {
-                state.player.rightTouchingWall= true;
-                return fraction;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-        return -1;
-    }
-    public function Raycast(world:B2World, o:ObjectModel):Void {
-
-        o.leftFootGrounded = false;
-        o.rightFootGrounded = false;
-        o.leftTouchingWall  = false;
-        o.rightTouchingWall =  false;
-        world.rayCast(raycastLeftCallback, o.leftRayStart, o.leftRayEnd);
-        world.rayCast(raycastRightCallback, o.rightRayStart, o.rightRayEnd);
-        world.rayCast(raycastLeftWallCallback, o.leftWallRayStart, o.leftWallRayEnd);
-        world.rayCast(raycastRightWallCallback, o.rightWallRayStart, o.rightWallRayEnd);
-    }
-
     public function handleCollisions():Void {
         for (contact in state.contactList) {
-            // Check what was in collision
-            if (contact != null) {
-                var entity1 = cast(contact.getFixtureA().getBody().getUserData(), Entity);
-                var entity2 = cast(contact.getFixtureB().getBody().getUserData(), Entity);
-                var id1 = entity1.id;
-                var id2 = entity2.id;
-            }
+            if (contact == null) continue;
 
-            // TODO: Contact list should be a special tuple of <GameObjectType, Dynamic> to get correct casting results
+            var object1:PhysicsContactBody = contact.object1;
+            var object2:PhysicsContactBody = contact.object2;
+
+            // Match collision patterns
+            switch [object1.first, object2.first] {
+                case [PhysicsUserDataType.ENTITY, PhysicsUserDataType.ENTITY]:
+                    // TODO: Logic
+                case [PhysicsUserDataType.ENTITY, PhysicsUserDataType.PLATFORM]:
+                    contact.collisionNormal.negativeSelf();
+                    handleEntityPlatform(contact, cast(object1.second, Entity));
+                case [PhysicsUserDataType.PLATFORM, PhysicsUserDataType.ENTITY]:
+                    handleEntityPlatform(contact, cast(object2.second, Entity));
+                    // TODO: Add collision types
+                default:
+                    // No match found here
+            }
         }
         
         state.contactList.clear();
+    }
+    private function handleEntityPlatform(c:PhysicsContact, e:Entity) {
+        if (c.collisionNormal.y > 0.8) { 
+            e.grounded += c.isBegin ? 1 : -1;
+        }
+        else if (c.collisionNormal.x > 0.8) {
+            e.leftTouchingWall += c.isBegin ? 1 : -1;
+        }
+        else if (c.collisionNormal.x < -0.8) {
+            e.rightTouchingWall += c.isBegin ? 1 : -1;
+        }
     }
 
     public function update(s:GameState, gameTime:GameTime):Void {
@@ -223,16 +149,16 @@ class GameplayController {
         // Update entity movement input
         for (entity in state.entities) {
             // Add acceleration
-            var moveSpeed = entity.grounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
+            var moveSpeed = entity.grounded > 0 ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
             if (entity.id == "enemy") {
-               moveSpeed /= 2; 
+               moveSpeed /= 2;
             }
             if (entity.left) entity.velocity.x -= moveSpeed;
             if (entity.right) entity.velocity.x += moveSpeed;
 
             //Apply friction if there is no input command
             if (!entity.left && !entity.right) {
-                var friction = entity.grounded ? PLAYER_GROUND_FRICTION : PLAYER_AIR_FRICTION;
+                var friction = entity.grounded > 0 ? PLAYER_GROUND_FRICTION : PLAYER_AIR_FRICTION;
                 entity.velocity.x *= friction;
             }
 
@@ -240,7 +166,7 @@ class GameplayController {
             entity.velocity.x = Math.min(PLAYER_MAX_SPEED, Math.max(-PLAYER_MAX_SPEED, entity.velocity.x));
 
             // Jump up
-            if (entity.up && entity.grounded) {
+            if (entity.up && entity.grounded > 0) {
                 entity.velocity.y = 9.5;
             }
             
@@ -265,15 +191,11 @@ class GameplayController {
             p.damage.originX = p.position.x;
             p.damage.originY = p.position.y;
         }
-        
-        //Update Raycast Rays. WILL CHANGE TO ENITITY IF NEEDED
-        updatePlayerRays(state);
-        Raycast(physicsController.world, state.player);
     }
     
     // Application of game events
     public function applyEventSpawn(state:GameState, e:GameEventSpawn):Void {
-        var enemy:ObjectModel = new ObjectModel();
+        var enemy:Entity = new Entity();
         Spawner.createEnemy(enemy, e.entity, e.x, e.y);
 		logger.recordEvent(2, "" + time.total +", " +e.x + ", " + e.y + ", nullenemid") ;
         physicsController.initEntity(enemy);
@@ -294,7 +216,7 @@ class GameplayController {
         if (info.first.length > 0) {
             // TODO: All entities are damaged
             for (rci in info.first) {
-                var hitEntity:ObjectModel = cast(rci.first.getUserData(), ObjectModel);
+                var hitEntity:Entity = cast(rci.first.getUserData(), Entity);
                 hitEntity.health -= bullet.damageFor(hitEntity.id == "player" ? DamageDealer.TEAM_PLAYER : DamageDealer.TEAM_ENEMY);
 				if (hitEntity.health <= 0 && hitEntity.id == "player")
 				{

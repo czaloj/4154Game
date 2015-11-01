@@ -16,7 +16,7 @@ class AIController {
     }
 
     // TODO: weee magic numberss
-    public function followPlayer(entity:ObjectModel, state:GameState):Void {
+    public function followPlayer(entity:Entity, state:GameState):Void {
         var target = state.player.position;
         var x:Float = entity.position.x;
         var y:Float = entity.position.y;
@@ -29,38 +29,44 @@ class AIController {
         else {
             entity.useWeapon = false;
         }
-        entity.up = false; entity.velocity.y = 0; entity.leftFootGrounded = true;
-        // if (entity.grounded) {
+        entity.up = false;
+        if (entity.grounded > 0) {
             if (y > target.y) {
                    entity.left = onLeft;
                    entity.right = !onLeft;
-            } else if (y < target.y) {
-                   var displacement = x - findPlatformAbove(state,Std.int(x),Std.int(y));
-                   if (displacement == 0) {
-                       entity.left = onLeft;
-                       entity.right = !onLeft;
-                   } else if (displacement > 5) {
-                       entity.left = true;
-                       entity.right = !entity.left;
-                   } else if (displacement < -5) {
-                       entity.right = true;
-                       entity.left = !entity.right;
-                   } else {
-                       entity.up = true; entity.velocity.y = 9.5;
-                   }
-               } else {
-                   if (state.foreground[Std.int(y*state.width + x + dir)] > 0) {
-                       entity.left = onLeft;
-                       entity.right = !onLeft;
-                   } else {
-                      entity.up = true; entity.velocity.y = 9.5;
-                   }
-               }
-        // } else {
-               // entity.up = true;
-               // entity.left = false;
-               // entity.right = false;
-        // }
+            } 
+            else if (y < target.y) {
+                var displacement = x - findPlatformAbove(state,Std.int(x),Std.int(y));
+                if (displacement == 0) {
+                    entity.left = onLeft;
+                    entity.right = !onLeft;
+                } 
+                else if (displacement > 5) {
+                    entity.left = true;
+                    entity.right = !entity.left;
+                }
+                else if (displacement < -5) {
+                    entity.right = true;
+                    entity.left = !entity.right;
+                } 
+                else {
+                    entity.up = true; entity.velocity.y = 9.5;
+                }
+            } else {
+                if (state.foreground[Std.int(y*state.width + x + dir)] > 0) {
+                    entity.left = onLeft;
+                    entity.right = !onLeft;
+                }
+                else {
+                    entity.up = true; entity.velocity.y = 9.5;
+                }
+            }
+        }
+        else {
+            entity.up = true;
+            entity.left = false;
+            entity.right = false;
+        }
     }
 
     public function findPlatformLateral(state:GameState, curX:Int, curY:Int, dir:Int):Int {

@@ -1,7 +1,7 @@
 package graphics;
 
 import game.GameState;
-import game.ObjectModel;
+import game.Entity;
 import game.Projectile;
 import game.World;
 import graphics.particles.TracerList;
@@ -36,7 +36,7 @@ class Renderer {
     private var stage3D:Stage;
     
     public var sprites:Array<Sprite> = [];
-    public var entityTbl:ObjectMap<game.ObjectModel, AnimatedSprite> = new ObjectMap<game.ObjectModel, AnimatedSprite>();
+    public var entityTbl:ObjectMap<game.Entity, AnimatedSprite> = new ObjectMap<game.Entity, AnimatedSprite>();
     public var projTbl:ObjectMap<game.Projectile, AnimatedSprite> = new ObjectMap<game.Projectile, AnimatedSprite>();
 
     // Camera parameters
@@ -125,7 +125,7 @@ class Renderer {
         Starling.current.viewPort = viewPortRectangle;
     }
 
-    public function onEntityAdded(s:game.GameState, o:game.ObjectModel):Void {
+    public function onEntityAdded(s:game.GameState, o:game.Entity):Void {
         // Add a corresponding sprite to stage and track this entity
         var enemy = new AnimatedSprite(pack.enemies, "Robot.Run", 3);
         enemy.x = o.position.x - enemy.width * 0.5;
@@ -137,7 +137,7 @@ class Renderer {
         entityTbl.set(o,enemy);
         //what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
     }
-    public function onEntityRemoved(s:game.GameState, o:game.ObjectModel):Void {
+    public function onEntityRemoved(s:game.GameState, o:game.Entity):Void {
         //idk about this function the implementation i was thinking of was sketchy.
         //i need to figure out the mapping between objectModels and sprites
         hierarchy.enemy.removeChild(entityTbl.get(o));

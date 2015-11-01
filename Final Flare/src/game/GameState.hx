@@ -4,6 +4,7 @@ import box2D.dynamics.contacts.B2Contact;
 import flash.display.Sprite;
 import game.damage.DamageDealer;
 import game.events.GameEvent;
+import game.PhysicsController.PhysicsContact;
 
 class GameState {
     public static var world_sprite:Sprite;
@@ -18,18 +19,18 @@ class GameState {
 
     public var spawners:Array<Spawner> = [];
 
-    public var player:ObjectModel;
-    public var entities:List<ObjectModel> = new List<ObjectModel>();
+    public var player:Entity;
+    public var entities:List<Entity> = new List<Entity>();
     public var damage:List<DamageDealer> =  new List<DamageDealer>();
 
-    public var contactList:List<B2Contact> = new List();
+    public var contactList:List<PhysicsContact> = new List<PhysicsContact>();
     public var projectiles:Array<Projectile> = [];
 
     public var gameEvents:Array<GameEvent> = []; // The queue of game events that should occur during an update
 
     // Broadcasting events
-    public var onEntityAdded:BroadcastEvent2<GameState, ObjectModel> = new BroadcastEvent2<GameState, ObjectModel>();
-    public var onEntityRemoved:BroadcastEvent2<GameState, ObjectModel> = new BroadcastEvent2<GameState, ObjectModel>();
+    public var onEntityAdded:BroadcastEvent2<GameState, Entity> = new BroadcastEvent2<GameState, Entity>();
+    public var onEntityRemoved:BroadcastEvent2<GameState, Entity> = new BroadcastEvent2<GameState, Entity>();
     public var onProjectileAdded:BroadcastEvent2<GameState, game.Projectile> = new BroadcastEvent2<GameState, game.Projectile>();
     public var onProjectileRemoved:BroadcastEvent2<GameState, game.Projectile> = new BroadcastEvent2<GameState, game.Projectile>();
 

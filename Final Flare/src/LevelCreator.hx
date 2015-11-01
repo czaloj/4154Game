@@ -4,7 +4,7 @@ import flash.net.FileReference;
 import flash.events.Event;
 import game.GameLevel;
 import game.GameState;
-import game.ObjectModel;
+import game.Entity;
 import game.Spawner;
 import game.Platform;
 import graphics.Renderer;
@@ -45,7 +45,7 @@ class LevelCreator {
         state.background = level.background; // TODO: Better data structure
         state.spawners = level.spawners;
         state.platforms = Platform.createFromTileMap(state.width, state.height, state.foreground);
-        state.player = new ObjectModel();
+        state.player = new Entity();
         Spawner.createPlayer(state.player, "player", level.playerPt.x, level.playerPt.y);
         state.entities.push(state.player);
     }

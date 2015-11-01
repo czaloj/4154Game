@@ -31,7 +31,7 @@ class Projectile {
      * @param vx Initial velocity X
      * @param vy Initial velocity Y
      */
-    public function createCopyAt(e:ObjectModel, x:Float, y:Float, vx:Float, vy:Float):Projectile {
+    public function createCopyAt(e:Entity, x:Float, y:Float, vx:Float, vy:Float):Projectile {
         var p:Projectile = new Projectile(damage);
         p.position.set(x, y);
         p.velocity.set(vx, vy);

@@ -26,7 +26,7 @@ class Spawner {
         }
     }
 
-    public static function createPlayer(e:ObjectModel, type:String, x:Float, y:Float):Void {
+    public static function createPlayer(e:Entity, type:String, x:Float, y:Float):Void {
         e.id = "player";
         e.health = 100;
 
@@ -39,7 +39,7 @@ class Spawner {
         e.left = false;
         e.right = false;
     }
-    public static function createEnemy(e:ObjectModel, type:String, x:Float, y:Float):Void {
+    public static function createEnemy(e:Entity, type:String, x:Float, y:Float):Void {
         e.id = "enemy";
         e.health = 50;
 

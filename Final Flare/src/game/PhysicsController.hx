@@ -14,11 +14,33 @@ import box2D.dynamics.contacts.B2Contact;
 import box2D.dynamics.joints.B2DistanceJointDef;
 import flash.display.Sprite;
 import game.GameState;
-import game.ObjectModel;
+import game.Entity;
+import game.PhysicsController.PhysicsContactBody;
+import game.PhysicsController.PhysicsUserData;
 import game.RayCastContext.RayCastInstance;
 
 // Collided fixture, ray origin, collision point, normal
 typedef RayCastInfo = Tuple4<B2Fixture, B2Vec2, B2Vec2, B2Vec2>;
+
+// User data for fixtures
+enum PhysicsUserDataType {
+    ENTITY;
+    PLATFORM;
+}
+typedef PhysicsUserData = Pair<PhysicsUserDataType, Dynamic>;
+
+// Converted data
+typedef PhysicsContactBody = Tuple3<PhysicsUserDataType, Dynamic, B2Fixture>;
+class PhysicsContact {
+    public var object1:PhysicsContactBody;
+    public var object2:PhysicsContactBody;
+    public var collisionNormal:B2Vec2 = new B2Vec2();
+    public var isBegin:Bool = true;
+    
+    public function new() {
+        // Empty
+    }
+}
 
 class PhysicsController extends B2ContactListener {
     public static var GRAVITY = new B2Vec2(0, -9.8);
@@ -96,7 +118,7 @@ class PhysicsController extends B2ContactListener {
         world.setWarmStarting(true);
     }
 
-    public function initEntity(e:ObjectModel):Void {
+    public function initEntity(e:Entity):Void {
         // Create body
         e.bodyDef = new B2BodyDef();
         e.bodyDef.position.set(e.position.x, e.position.y);
@@ -121,7 +143,7 @@ class PhysicsController extends B2ContactListener {
         e.fixture = e.body.createFixture(e.fixtureDef);
 
         // Set initial entity data to the body
-        e.body.setUserData(e);
+        e.fixture.SetUserData(new PhysicsUserData(PhysicsUserDataType.ENTITY, e));
         e.body.setLinearVelocity(e.velocity);
     }
     public function initPlatforms(state:GameState):Void {
@@ -132,32 +154,24 @@ class PhysicsController extends B2ContactListener {
             var y:Float = (state.height - i.position.y) * halfSize - i.dimension.y * halfSize/2;
 
             if (i.id != 0) {
-                // TODO: Platforms are not ObjectModels
-                var platform = new ObjectModel();
+                // Create the body
+                var bodyDef:B2BodyDef = new B2BodyDef();
+                bodyDef.position.set(x, y);
+                bodyDef.type = B2Body.b2_staticBody;
+                var body:B2Body = world.createBody(bodyDef);
 
-                platform.id = "platform";
-                platform.position.set(x, y);
-                platform.velocity.set(0,0);
-                platform.left = false;
-                platform.right = false;
-                platform.width = i.dimension.x * halfSize;
-                platform.height = i.dimension.y * halfSize;
-
-                platform.bodyDef = new B2BodyDef();
-                platform.bodyDef.position.set(platform.position.x, platform.position.y);
-                platform.bodyDef.type = B2Body.b2_staticBody;
-
+                // Create the box collision fixture
+                var fixtureDef:B2FixtureDef = new B2FixtureDef();
+                fixtureDef.filter = FILTER_PLATFORM.copy();
                 var polygon = new B2PolygonShape ();
-                polygon.setAsBox ((platform.width)/2, (platform.height)/2);
+                polygon.setAsBox((i.dimension.x * halfSize) * 0.5, (i.dimension.y * halfSize) * 0.5);
+                fixtureDef.shape = polygon;
+                var fixture:B2Fixture = body.createFixture(fixtureDef);
 
-                platform.fixtureDef = new B2FixtureDef();
-                platform.fixtureDef.shape = polygon;
-                platform.fixtureDef.filter = FILTER_PLATFORM.copy();
-                platform.body = world.createBody(platform.bodyDef);
-                platform.body.createFixture(platform.fixtureDef);
-                platform.body.setUserData(platform);
+                // Set platform user data
+                fixture.SetUserData(new PhysicsUserData(PhysicsUserDataType.PLATFORM, null));
             }
-         }
+        }
     }
 
     public function update(dt:Float) {
@@ -176,14 +190,38 @@ class PhysicsController extends B2ContactListener {
     override function beginContact(contact:B2Contact):Void {
         super.beginContact(contact);
 
-        // TODO: Convert contact into more usable form
-        state.contactList.add(contact);
+        var c:PhysicsContact = new PhysicsContact();
+
+        // Convert collision objects
+        var f1Data:Dynamic = contact.getFixtureA().getUserData();
+        c.object1 = new PhysicsContactBody(f1Data.first, f1Data.second, contact.getFixtureA());
+        var f2Data:Dynamic = contact.getFixtureB().getUserData();
+        c.object2 = new PhysicsContactBody(f2Data.first, f2Data.second, contact.getFixtureB());
+
+        // Get collision normal
+        c.collisionNormal.setV(contact.getManifold().m_localPlaneNormal);
+        
+        state.contactList.add(c);
     }
     override function endContact(contact:B2Contact):Void {
         super.endContact(contact);
-    }
+        
+        var c:PhysicsContact = new PhysicsContact();
+        c.isBegin = false;
 
-    private function onEntityRemoved(state:GameState, e:ObjectModel) {
+        // Convert collision objects
+        var f1Data:Dynamic = contact.getFixtureA().getUserData();
+        c.object1 = new PhysicsContactBody(f1Data.first, f1Data.second, contact.getFixtureA());
+        var f2Data:Dynamic = contact.getFixtureB().getUserData();
+        c.object2 = new PhysicsContactBody(f2Data.first, f2Data.second, contact.getFixtureB());
+
+        // Get collision normal
+        c.collisionNormal.setV(contact.getManifold().m_localPlaneNormal);
+        
+        state.contactList.add(c);
+    }
+    
+    private function onEntityRemoved(state:GameState, e:Entity) {
         deleteList.push(e.body);
     }
 
