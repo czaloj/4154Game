@@ -1,29 +1,11 @@
 package game;
+
 import haxe.ds.ObjectMap;
 import lime.utils.IDataInput;
 import openfl.geom.Point;
 
-/**
- * ...
- * @author Sophie Huang
- */
-class Platform
-{
-    public var id:Int;
-    public var position:Point = new Point(); // Starting position
-    public var dimension:Point = new Point(); // length and width of platform
-
-    public function new(type:Int = 0, sx:Int = 0, sy:Int = 0, dx:Int = 0, dy:Int = 0)
-    {
-        id = type;
-        position.x = sx;
-        position.y = sy;
-        dimension.x = dx;
-        dimension.y = dy;
-    }
-
-    public static function createFromTileMap(width:Int, height:Int, foreground:Array<Int>)
-    {
+class Platform {
+    public static function createFromTileMap(width:Int, height:Int, foreground:Array<Int>) {
         var tileArr:Array<Int> = [];
         for (tile in foreground) {
             tileArr.push(tile);
@@ -56,7 +38,8 @@ class Platform
                         for (i in sx ... sx + w) {
                             if (tileArr[width * j +i] != 0) {
                                 tileArr[width * j +i] = 0;
-                            }else {
+                            }
+                            else {
                                 passed = false;
                                 break;
                             }
@@ -85,5 +68,17 @@ class Platform
             }
         }
         return platformArr;
+    }
+    
+    public var id:Int;
+    public var position:Point = new Point(); // Starting position
+    public var dimension:Point = new Point(); // length and width of platform
+
+    public function new(type:Int = 0, sx:Int = 0, sy:Int = 0, dx:Int = 0, dy:Int = 0) {
+        id = type;
+        position.x = sx;
+        position.y = sy;
+        dimension.x = dx;
+        dimension.y = dy;
     }
 }
