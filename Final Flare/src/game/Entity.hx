@@ -21,6 +21,7 @@ class Entity extends EntityBase {
     public var velocity:B2Vec2 = new B2Vec2();     // Object velocity
 
     // Other Logical information
+    public var enabled:Bool = true;
     public var health:Int;
     public var isDead(get, never):Bool; // True if player is dead
     public var weapon:Weapon; // Weapon that the entity is holding
