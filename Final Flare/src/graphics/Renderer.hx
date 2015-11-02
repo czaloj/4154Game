@@ -425,7 +425,7 @@ class Renderer {
             var sprite:AnimatedSprite = entityTbl.get(o);
             sprite.x = o.position.x - entityTbl.get(o).width * 0.5;
             sprite.y = o.position.y - o.height * 0.5;
-            if (o.left && !o.right)  {
+            if (o.direction == -1)  {
                 sprite.x += sprite.width;
                 sprite.scaleX = -Math.abs(sprite.scaleX);
             } else {

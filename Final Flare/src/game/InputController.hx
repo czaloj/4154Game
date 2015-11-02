@@ -41,10 +41,17 @@ class InputController {
     }
 
     public function update(state:game.GameState, camX:Float, camY:Float, camScale:Float):Void {
-        state.player.left = keysDown[Keyboard.A];
-        state.player.right = keysDown[Keyboard.D];
+        switch [keysDown[Keyboard.A], keysDown[Keyboard.D]] {
+            case [true, true], [false, false]:
+                state.player.direction = 0;
+            case [false, true]:
+                state.player.direction = 1;
+            case [true, false]:
+                state.player.direction = -1;                
+            default:
+                // How did we arrive here?
+        }
         state.player.up = keysDown[Keyboard.W];
-        state.player.down = keysDown[Keyboard.S];
         state.player.useWeapon = click;
         
         // Keyboard and mouse targeting logic

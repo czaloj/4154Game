@@ -33,15 +33,10 @@ class Entity extends EntityBase {
     
     //Input Flags
     public var direction:Int; //  Direction of desired lateral movement (-1 for left, 1 for right, 0 otherwise)
-    public var canShoot:Bool;
-    public var canJump:Bool;
-    public var left:Bool;          // Can move left
-    public var right:Bool;         // Can move right
     public var up:Bool; // Jump up is being pressed
-    public var down:Bool;  
-    public var useWeapon:Bool;
-    public var targetX:Float;
-    public var targetY:Float;
+    public var useWeapon:Bool; // Entity desires to use the weapon
+    public var targetX:Float; // The location the entity is targeting (X)
+    public var targetY:Float; // The location the entity is targeting (Y)
      
     // Physics flags
     public var feetTouches:Int = 0;

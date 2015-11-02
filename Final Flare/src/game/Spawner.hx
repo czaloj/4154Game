@@ -4,6 +4,7 @@ import game.events.GameEventSpawn;
 import game.GameplayController;
 import game.GameState;
 import openfl.geom.Point;
+import weapon.WeaponGenerator;
 
 class Spawner {
     public var id:String; // Identifying tag
@@ -36,8 +37,15 @@ class Spawner {
         e.width = 0.9;
         e.height = 1.9;
 
-        e.left = false;
-        e.right = false;
+        // Clear flags
+        e.direction = 0;
+        e.up = false;
+        e.useWeapon = false;
+        e.targetX = 0;
+        e.targetY = 0;
+        e.rightTouchingWall = 0;
+        e.leftTouchingWall = 0;
+        e.feetTouches = 0;
     }
     public static function createEnemy(e:Entity, type:String, x:Float, y:Float):Void {
         e.id = "enemy";
@@ -49,7 +57,14 @@ class Spawner {
         e.width = 0.9;
         e.height = 1.9;
 
-        e.left = false;
-        e.right = false;
+        // Clear flags
+        e.direction = 0;
+        e.up = false;
+        e.useWeapon = false;
+        e.targetX = 0;
+        e.targetY = 0;
+        e.rightTouchingWall = 0;
+        e.leftTouchingWall = 0;
+        e.feetTouches = 0;
     }
 }

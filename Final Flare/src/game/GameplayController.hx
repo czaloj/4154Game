@@ -112,8 +112,8 @@ class GameplayController {
         
         // Create damage dealers
         for (entity in state.entities) {
-            if (entity.useWeapon) {
-                // TODO: Update the weapon
+            if (entity.weapon != null) {
+                entity.weapon.update(entity.useWeapon, time.elapsed, s);                
             }
         }
         
@@ -153,11 +153,10 @@ class GameplayController {
             if (entity.id == "enemy") {
                moveSpeed /= 2;
             }
-            if (entity.left) entity.velocity.x -= moveSpeed;
-            if (entity.right) entity.velocity.x += moveSpeed;
+            entity.velocity.x += entity.direction * moveSpeed;
 
             //Apply friction if there is no input command
-            if (!entity.left && !entity.right) {
+            if (entity.direction == 0) {
                 var friction = entity.isGrounded ? PLAYER_GROUND_FRICTION : PLAYER_AIR_FRICTION;
                 entity.velocity.x *= friction;
             }
