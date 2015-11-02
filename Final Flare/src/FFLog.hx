@@ -3,9 +3,11 @@ package;
 class FFLog {
     public static inline var LOGGING_GAME_ID:UInt = 121;
     public static inline var TEST_GROUP_COUNT:UInt = 2;
+    private static inline var LEVEL_INVARIANT_MAX:UInt = 1 << 20;
 
     public static var testID:UInt = -1;
     private static var logger:Logging = null;
+    private static var levelInvariant:UInt = 0;
     
     public static function init(debug:Bool):Void {
         // Only init once
@@ -26,11 +28,14 @@ class FFLog {
     
     public static function recordLevelStart(questId:Float, ?questDetail:String):Void {
         logger.recordLevelStart(questId, questDetail);
+        levelInvariant = Std.int(Math.random() * LEVEL_INVARIANT_MAX);
+        logger.recordEvent(FFLogEvent.LEVEL_INVARIANT, "" + levelInvariant);
     }
 	public static function recordEvent(actionId:UInt, ?actionDetail:String):Void {
         logger.recordEvent(actionId, actionDetail);
     }
 	public static function recordLevelEnd():Void {
+        logger.recordEvent(FFLogEvent.LEVEL_INVARIANT, "" + levelInvariant);
         logger.recordLevelEnd();
     }
 }
