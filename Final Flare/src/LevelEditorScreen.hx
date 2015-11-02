@@ -10,6 +10,8 @@ import graphics.SpriteSheetRegistry;
 import openfl.Lib;
 import openfl.events.Event;
 import openfl.events.MouseEvent;
+import openfl.events.KeyboardEvent;
+import openfl.ui.Keyboard;
 import starling.utils.Color;
 import starling.text.TextField;
 import flash.net.FileReference;
