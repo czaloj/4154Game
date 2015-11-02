@@ -110,12 +110,12 @@ class UISpriteFactory {
         addScaledChildSprite("Region.Center", button, 9, 9, 20, 2);
         addChildSprite("Region.TopLeft", button, 0, 0);
         addScaledChildSprite("Region.Top", button, 9, 0, 20, 1);
-        addChildSprite("Region.TopRight", button, 9, 0);
-        addScaledChildSprite("Region.Right", button, 9, 9, 1, 2);
-        addChildSprite("Region.BottomRight", button, 9, 9);
+        addChildSprite("Region.TopRight", button, 29, 0);
+        addScaledChildSprite("Region.Right", button, 29, 9, 1, 2);
+        addChildSprite("Region.BottomRight", button, 29, 11);
         addScaledChildSprite("Region.Bottom", button, 9, 11, 20, 1);
-        addChildSprite("Region.BottomLeft", button, 0, 9);
-        addScaledChildSprite("Region.Left", button, 0, 11, 1, 2);
+        addChildSprite("Region.BottomLeft", button, 0, 11);
+        addScaledChildSprite("Region.Left", button, 0, 9, 1, 2);
         
         return button;
     }
@@ -130,10 +130,8 @@ class UISpriteFactory {
     
     public function addScaledChildSprite(region:String, parent:Sprite, x:Float, y:Float, sx:Float, sy:Float) {
         var piece:StaticSprite = getTile(region);
-        piece.x = x;
-        piece.y = y;
-        piece.scaleX = sx;
-        piece.scaleY = sy;
+        piece.transformationMatrix.translate(x, y);
+        piece.transformationMatrix.scale(sx, sy);
         parent.addChild(piece);
     }
     public function getAnimation(s:String, delay:Int = 1):AnimatedSprite {
