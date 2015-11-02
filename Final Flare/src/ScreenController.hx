@@ -12,6 +12,11 @@ class ScreenController extends Sprite {
     public static var FRAME_TIME:Float = 1.0 / 60.0;
     public static inline var SCREEN_WIDTH:Int = 800;
     public static inline var SCREEN_HEIGHT:Int = 450;
+    public static inline var VERSION_MAJOR:UInt = 0;
+    public static inline var VERSION_MINOR:UInt = 1;
+    public static inline var VERSION_REVISION:UInt = 0;
+    public static inline var VERSION_ID:Int = VERSION_MAJOR << 16 | VERSION_MINOR << 8 | VERSION_REVISION;
+    public static inline var LOGGING_DEBUG_MODE:Bool = true;
 
     public var dt:GameTime = new GameTime();
 
@@ -53,6 +58,10 @@ class ScreenController extends Sprite {
     }
 
     private function load(e:Event = null):Void {
+        // Initialize logging
+        FFLog.init(LOGGING_DEBUG_MODE);
+        
+        // Create the screens
         for (screen in screens) screen.build();
         if (activeScreen != null) {
             activeScreen.onEntry(dt);
