@@ -150,6 +150,5 @@ class Weapon {
     
     private function fireBullets(s:GameState, timeOut:Float):Void {
         // TODO: Fire all projectiles
-        trace("FIRE!!");
     }
 }
