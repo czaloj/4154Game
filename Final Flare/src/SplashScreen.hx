@@ -4,6 +4,7 @@ import starling.display.Sprite;
 import starling.textures.Texture;
 import ui.UISpriteFactory;
 import openfl.Assets;
+import openfl.display.SimpleButton;
 
 class SplashScreen extends IGameScreen {
     private var startButton:Sprite;
@@ -22,7 +23,7 @@ class SplashScreen extends IGameScreen {
     override public function onEntry(gameTime:GameTime):Void {
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         
-        var startButton = uif.createButton();
+        var startButton = uif.createSquareButton();
         screenController.addChild(startButton);
         
         
