@@ -30,7 +30,7 @@ class AIController {
             entity.useWeapon = false;
         }
         entity.up = false;
-        if (entity.grounded > 0) {
+        if (entity.isGrounded) {
             if (y > target.y) {
                    entity.left = onLeft;
                    entity.right = !onLeft;

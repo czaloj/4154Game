@@ -120,30 +120,32 @@ class PhysicsController extends B2ContactListener {
 
     public function initEntity(e:Entity):Void {
         // Create body
-        e.bodyDef = new B2BodyDef();
-        e.bodyDef.position.set(e.position.x, e.position.y);
-        e.bodyDef.type = B2Body.b2_dynamicBody;
-        e.bodyDef.allowSleep = false;
-        e.bodyDef.fixedRotation = true;
-        e.body = world.createBody(e.bodyDef);
+        var bodyDef:B2BodyDef = new B2BodyDef();
+        bodyDef.position.set(e.position.x, e.position.y);
+        bodyDef.type = B2Body.b2_dynamicBody;
+        bodyDef.allowSleep = false;
+        bodyDef.fixedRotation = true;
+        e.body = world.createBody(bodyDef);
 
         // Create collision information
-        e.shape = new B2PolygonShape();
-        e.shape.setAsBox ((e.width) / 2, (e.height) / 2);
-        e.fixtureDef = new B2FixtureDef();
-        e.fixtureDef.shape = e.shape;
-        e.fixtureDef.friction = 1;
-        e.fixtureDef.density = 1;
+        var shape:B2PolygonShape = new B2PolygonShape();
+        shape.setAsBox (e.width / 2, e.height / 2);
+        var fixtureDef:B2FixtureDef = new B2FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.friction = 1;
+        fixtureDef.density = 1;
         switch (e.id) {
             case "player":
-                e.fixtureDef.filter = FILTER_PLAYER.copy();
+                fixtureDef.filter = FILTER_PLAYER.copy();
             default:
-                e.fixtureDef.filter = FILTER_ENEMY.copy();
+                fixtureDef.filter = FILTER_ENEMY.copy();
         }
-        e.fixture = e.body.createFixture(e.fixtureDef);
+        e.fixtureMain = e.body.createFixture(fixtureDef);
+        
+        // TODO: Create head and body fixtures for damage
 
         // Set initial entity data to the body
-        e.fixture.SetUserData(new PhysicsUserData(PhysicsUserDataType.ENTITY, e));
+        e.fixtureMain.SetUserData(new PhysicsUserData(PhysicsUserDataType.ENTITY, e));
         e.body.setLinearVelocity(e.velocity);
     }
     public function initPlatforms(state:GameState):Void {

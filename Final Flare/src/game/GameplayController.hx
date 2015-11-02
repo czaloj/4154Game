@@ -83,7 +83,7 @@ class GameplayController {
     }
     private function handleEntityPlatform(c:PhysicsContact, e:Entity) {
         if (c.collisionNormal.y > 0.8) { 
-            e.grounded += c.isBegin ? 1 : -1;
+            e.feetTouches += c.isBegin ? 1 : -1;
         }
         else if (c.collisionNormal.x > 0.8) {
             e.leftTouchingWall += c.isBegin ? 1 : -1;
@@ -149,7 +149,7 @@ class GameplayController {
         // Update entity movement input
         for (entity in state.entities) {
             // Add acceleration
-            var moveSpeed = entity.grounded > 0 ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
+            var moveSpeed = entity.isGrounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
             if (entity.id == "enemy") {
                moveSpeed /= 2;
             }
@@ -158,7 +158,7 @@ class GameplayController {
 
             //Apply friction if there is no input command
             if (!entity.left && !entity.right) {
-                var friction = entity.grounded > 0 ? PLAYER_GROUND_FRICTION : PLAYER_AIR_FRICTION;
+                var friction = entity.isGrounded ? PLAYER_GROUND_FRICTION : PLAYER_AIR_FRICTION;
                 entity.velocity.x *= friction;
             }
 
@@ -166,7 +166,7 @@ class GameplayController {
             entity.velocity.x = Math.min(PLAYER_MAX_SPEED, Math.max(-PLAYER_MAX_SPEED, entity.velocity.x));
 
             // Jump up
-            if (entity.up && entity.grounded > 0) {
+            if (entity.up && entity.isGrounded) {
                 entity.velocity.y = 9.5;
             }
             
