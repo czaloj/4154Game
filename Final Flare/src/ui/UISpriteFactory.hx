@@ -125,7 +125,6 @@ class UISpriteFactory {
         var piece:StaticSprite = getTile(region);
         piece.x = x;
         piece.y = y;
-        piece.scaleX;
         parent.addChild(piece);
     }
     
