@@ -5,6 +5,8 @@ import graphics.SpriteSheet;
 import graphics.StaticSprite;
 import graphics.StripRegion;
 import graphics.TileRegion;
+import starling.display.DisplayObject;
+import starling.display.Sprite;
 import starling.textures.Texture;
 
 class UISpriteFactory {
@@ -82,6 +84,33 @@ class UISpriteFactory {
     public function getTile(s:String):StaticSprite {
         return new StaticSprite(sheet, s, false);
     }
+    
+    public function createButton():Sprite {
+        var button = new Sprite();
+        
+        //Create regions from sprite sheet
+        addChildSprite("Region.Center", button, 8, 8);
+        addChildSprite("Region.TopLeft", button, 0, 0);
+        addChildSprite("Region.Top", button, 8, 0);
+        addChildSprite("Region.TopRight", button, 9, 0);
+        addChildSprite("Region.Right", button, 9, 8);
+        addChildSprite("Region.BottomRight", button, 9, 9);
+        addChildSprite("Region.Bottom", button, 8, 9);
+        addChildSprite("Region.BottomLeft", button, 0, 9);
+        addChildSprite("Region.Left", button, 0, 8);
+        
+        return button;
+        
+    }
+    
+    public function addChildSprite(region:String, parent:Sprite, x:Float, y:Float) 
+    {
+        var piece:StaticSprite = getTile(region);
+        piece.x = x;
+        piece.y = y;
+        parent.addChild(piece);
+    }
+    
     public function getAnimation(s:String, delay:Int = 1):AnimatedSprite {
         return new AnimatedSprite(sheet, s, delay, false);
     }

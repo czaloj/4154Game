@@ -1,6 +1,13 @@
 package;
 
+import starling.display.Sprite;
+import starling.textures.Texture;
+import ui.UISpriteFactory;
+import openfl.Assets;
+
 class SplashScreen extends IGameScreen {
+    private var startButton:Sprite;
+    
     public function new(sc:ScreenController) {
         super(sc);
     }
@@ -13,7 +20,12 @@ class SplashScreen extends IGameScreen {
     }
     
     override public function onEntry(gameTime:GameTime):Void {
-        // Empty
+        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
+        
+        var startButton = uif.createButton();
+        screenController.addChild(startButton);
+        
+        
     }
     override public function onExit(gameTime:GameTime):Void {
         // Empty
@@ -27,5 +39,5 @@ class SplashScreen extends IGameScreen {
     }
     override public function draw(gameTime:GameTime):Void {
         // Empty
-    }
+    }    
 }
