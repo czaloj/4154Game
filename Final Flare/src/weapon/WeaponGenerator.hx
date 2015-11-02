@@ -4,6 +4,7 @@ import game.ColorScheme;
 import openfl.display.BitmapData;
 import openfl.geom.Rectangle;
 import openfl.utils.ByteArray;
+import weapon.WeaponData.FiringMode;
 
 class WeaponGenerator {
     // Alpha mask levels for color generation
@@ -23,6 +24,14 @@ class WeaponGenerator {
         data.evolutionCost = params.evolutionPoints;
         data.historicalCost = params.historicalPoints;
         data.shadynessCost = params.shadynessPoints;
+        
+        data.firingMode = FiringMode.AUTOMATIC;
+        data.useCapacity = 10;
+        data.usesPerActivation = 1;
+        data.reloadTime = 5;
+        data.activationCooldown = 0.25;
+        data.burstPause = 0;
+        data.burstCount = 0;
         
         return data;
     }

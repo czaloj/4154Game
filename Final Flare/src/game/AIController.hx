@@ -8,7 +8,7 @@ class AIController {
     }
 
     public function move(state:GameState):Void {
-        for (entity in state.entities) {
+        for (entity in state.entitiesNonNull) {
             if (entity.id != "player") {
                 followPlayer(entity, state);
             }

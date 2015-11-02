@@ -1,6 +1,7 @@
 package;
 
 import game.GameLevel;
+import game.MenuLevelModifiers;
 import openfl.events.KeyboardEvent;
 import openfl.Lib;
 import openfl.ui.Keyboard;
@@ -19,7 +20,8 @@ class ScreenController extends Sprite {
     private var screenToSwitch:Int = -1;
     
     public var loadedLevel:GameLevel = null; // The level that has been loaded in by the menu
-
+    public var levelModifiers:MenuLevelModifiers = null; // Additional modification to a level
+    
     public function new() {
         super();
 

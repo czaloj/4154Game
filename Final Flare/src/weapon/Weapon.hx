@@ -11,11 +11,11 @@ class Weapon {
     public var data:WeaponData;
     
     // Firing state
-    private var reloadTimeLeft:Float;
-    private var shotCooldown:Float;
-    private var burstCooldown:Float;
-    private var usesPerformed:Int;
-    private var burstsLeft:Int;
+    private var reloadTimeLeft:Float = 0;
+    private var shotCooldown:Float = 0;
+    private var burstCooldown:Float = 0;
+    private var usesPerformed:Int = 0;
+    private var burstsLeft:Int = 0;
     
     public function new(e:Entity, d:WeaponData) {
         entity = e;
@@ -150,5 +150,6 @@ class Weapon {
     
     private function fireBullets(s:GameState, timeOut:Float):Void {
         // TODO: Fire all projectiles
+        trace("FIRE!!");
     }
 }

@@ -60,6 +60,7 @@ class GameplayScreen extends IGameScreen {
 
         var gl:game.GameLevel = screenController.loadedLevel;
         LevelCreator.createStateFromLevel(gl, state);
+        LevelCreator.modifyFromMenu(screenController.levelModifiers, state);
         gameplayController.init(state);
         LevelCreator.createPackFromLevel(gl, pack);
         renderer = new Renderer(screenController, pack, state);
@@ -78,9 +79,6 @@ class GameplayScreen extends IGameScreen {
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         var hb:StaticSprite = uif.getTile("Health.Background");
         screenController.addChild(hb);
-        var ggp:WeaponGenParams = new WeaponGenParams();
-        var gunData = WeaponGenerator.generate(ggp);
-        var gun:Weapon = new Weapon(state.player, gunData);
         
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
     }

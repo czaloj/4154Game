@@ -1,10 +1,13 @@
 package;
 
 import game.GameLevel;
+import game.MenuLevelModifiers;
 import haxe.Unserializer;
 import openfl.events.Event;
 import flash.net.FileReference;
 import flash.utils.ByteArray;
+import weapon.WeaponGenerator;
+import weapon.WeaponGenParams;
 
 class MenuScreen extends IGameScreen {
     public function new(sc:ScreenController) {
@@ -23,6 +26,28 @@ class MenuScreen extends IGameScreen {
         var fileRef:FileReference = new FileReference();
         fileRef.addEventListener(Event.SELECT, onFileBrowse);
         fileRef.browse();
+        
+        // TODO: This is so badly hardcoded
+        var mod:MenuLevelModifiers = new MenuLevelModifiers();
+        var weaponParams:WeaponGenParams = new WeaponGenParams();
+        weaponParams.evolutionPoints = 100;
+        weaponParams.shadynessPoints = 0;
+        weaponParams.historicalPoints = 0;
+        mod.characterWeapons = [
+            WeaponGenerator.generate(weaponParams),
+            WeaponGenerator.generate(weaponParams),
+            WeaponGenerator.generate(weaponParams),
+            WeaponGenerator.generate(weaponParams),
+            null // For testing only
+        ];
+        mod.enemyWeapons = [
+            WeaponGenerator.generate(weaponParams),
+            WeaponGenerator.generate(weaponParams),
+            WeaponGenerator.generate(weaponParams),
+            WeaponGenerator.generate(weaponParams),
+            WeaponGenerator.generate(weaponParams)
+        ];
+        screenController.levelModifiers = mod;
     }
     override public function onExit(gameTime:GameTime):Void {
         // Empty

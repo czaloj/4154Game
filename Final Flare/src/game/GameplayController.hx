@@ -14,6 +14,7 @@ import game.PhysicsController.PhysicsContactBody;
 import game.PhysicsController.PhysicsUserDataType;
 import game.PhysicsController.RayCastInfo;
 import openfl.display.Sprite;
+import weapon.Weapon;
 
 class GameplayController {
     public static var PLAYER_MAX_SPEED:Float = 7;
@@ -42,8 +43,20 @@ class GameplayController {
         
         // Initialize physics from loaded GameState
         physicsController.init(state);
-        physicsController.initEntity(state.player);
         physicsController.initPlatforms(state);
+        
+        // Give all the players weapons
+        for (i in 0...5) {
+            if (state.entities[i] != null) {
+                physicsController.initEntity(state.entities[i]);
+                if (state.characterWeapons[i] != null) {
+                    state.entities[i].weapon = new Weapon(state.entities[i], state.characterWeapons[i]);
+                }
+            }
+        }
+        
+        // We begin with the first player
+        state.player = state.entities[0];
     }
 
     public function initDebug(debugPhysicsView:Sprite):Void {
@@ -111,7 +124,7 @@ class GameplayController {
         }
         
         // Create damage dealers
-        for (entity in state.entities) {
+        for (entity in state.entitiesNonNull) {
             if (entity.weapon != null) {
                 entity.weapon.update(entity.useWeapon, time.elapsed, s);                
             }
@@ -134,20 +147,24 @@ class GameplayController {
         }
         
         // Other game logic
-        for (entity in state.entities) {
-            if (entity.health <= 0) deletingEntities.push(entity);
+        for (entity in state.entitiesNonNull) {
+            if (entity.isDead) deletingEntities.push(entity);
         }
         
         // Destroy all dead things
         for (entity in deletingEntities) {
             state.onEntityRemoved.invoke(state, entity);
-            state.entities.remove(entity);
+
+            // TODO: Make this work better
+            if (entity.id != "player") {
+                state.entities.remove(entity);
+            }
         }
         physicsController.clearDeadBodies();
     }
     public function updatePhysics(dt:GameTime):Void {
         // Update entity movement input
-        for (entity in state.entities) {
+        for (entity in state.entitiesNonNull) {
             // Add acceleration
             var moveSpeed = entity.isGrounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
             if (entity.id == "enemy") {
@@ -178,7 +195,7 @@ class GameplayController {
         physicsController.update(dt.elapsed);
         
         // Reapply from physics
-        for (entity in state.entities) {
+        for (entity in state.entitiesNonNull) {
             entity.velocity = entity.body.getLinearVelocity().copy();
             entity.position = entity.body.getPosition().copy();
         }
