@@ -3,8 +3,13 @@ package weapon;
 import game.EntityBase;
 import game.GameState;
 import game.Entity;
+import game.Projectile;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+import openfl.geom.Transform;
 import starling.display.Sprite;
 import weapon.WeaponData.FiringMode;
+import weapon.WeaponData.ProjectileOrigin;
 
 class Weapon {
     public var entity:Entity;
@@ -149,6 +154,41 @@ class Weapon {
     }
     
     private function fireBullets(s:GameState, timeOut:Float):Void {
-        // TODO: Fire all projectiles
+        var gunOrigin:Matrix = new Matrix(1, 0, 0, 1, 
+            entity.position.x + entity.weaponOffset.x * entity.lookingDirection,
+            entity.position.y + entity.weaponOffset.y);
+        
+        var pOrigin:Point = new Point();
+        var pDirection:Point = new Point(1, 0);
+        
+        for (projectile in data.projectileOrigins) {
+            // Obtain a random firing angle
+            var a:Float = Math.acos((Math.random() - 0.5) * 2) / Math.PI - 0.5;
+            a = a * a * a * projectile.exitAngle;
+            
+            // Create the projectile's transformation matrix
+            var t:Matrix = new Matrix();
+            t.rotate(a);
+            t.concat(projectile.transform);
+            t.concat(gunOrigin);
+            
+            var position:Point = t.transformPoint(pOrigin);
+            var direction:Point = t.deltaTransformPoint(pDirection);
+            var p:Projectile = projectile.projectile.createCopyAt(
+                entity,
+                position.x,
+                position.y,
+                direction.x * projectile.velocity,
+                direction.y * projectile.velocity
+                );
+            s.projectiles.push(p);
+            
+            // Add a bit of damage if it's been out of the barrel
+            if (timeOut > 0) {
+                p.update(timeOut, s);
+                p.position.x += p.velocity.x * timeOut;
+                p.position.y += p.velocity.y * timeOut;
+            }
+        }
     }
 }

@@ -15,7 +15,7 @@ class Spawner {
         position.x = x;
         position.y = y;
     }
-    public static function spawn(gameplayController:game.GameplayController, state: game.GameState, gameTime:GameTime) {
+    public static function spawn(gameplayController:GameplayController, state: GameState, gameTime:GameTime) {
         // TODO: Use advanced spawning logic
         var spawnCooldown;
         for (spawner in state.spawners) {
