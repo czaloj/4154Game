@@ -46,6 +46,7 @@ class SplashScreen extends IGameScreen {
     }
     override public function onExit(gameTime:GameTime):Void {
         Lib.current.stage.removeEventListener(MouseEvent.CLICK, handleClick);
+        screenController.removeChild(startButton);
     }
     
     override public function update(gameTime:GameTime):Void {

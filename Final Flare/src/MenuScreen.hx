@@ -18,16 +18,17 @@ import openfl.Lib;
 
 
 class MenuScreen extends IGameScreen {
-    private var buttonArray:Array<Sprite>;
+    private var buttonArray1:Array<Sprite>;
+    private var buttonArray2:Array<Sprite>;
     private var button1:Sprite;
     private var button2:Sprite;
-    private var button3:Sprite;
     
     
     public function new(sc:ScreenController) {
         super(sc);
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
-        buttonArray = uif.createButton(175, 50);
+        buttonArray1 = uif.createButton(175, 50);
+        buttonArray2 = uif.createButton(175, 50);
         //Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, updateMouse);
         Lib.current.stage.addEventListener(MouseEvent.CLICK, handleClick);
     }
@@ -41,9 +42,18 @@ class MenuScreen extends IGameScreen {
     
     override public function onEntry(gameTime:GameTime):Void {
         //Arena 1 Button
-        //Arena 2 Button
-        //Areana 3 Button
+        button1 = buttonArray1[0];        
+        var tf1:TextField = new TextField(160, 50, "Level 1", "Verdana", 20);
+        button1.addChild(tf1);
+        button1.transformationMatrix.translate(170, 175);
+        screenController.addChild(button1);
         
+        //Arena 2 Button
+        button2 = buttonArray2[0];        
+        var tf2:TextField = new TextField(150, 50, "Level 2", "Verdana", 20);
+        button2.addChild(tf2);
+        button2.transformationMatrix.translate(425, 175);
+        screenController.addChild(button2);        
         
         
         FFLog.recordMenuStart();
@@ -51,7 +61,7 @@ class MenuScreen extends IGameScreen {
         // Begin loading a file
         var fileRef:FileReference = new FileReference();
         fileRef.addEventListener(Event.SELECT, onFileBrowse);
-        fileRef.browse();
+        //fileRef.browse();
         
         // TODO: This is so badly hardcoded
         var mod:MenuLevelModifiers = new MenuLevelModifiers();
