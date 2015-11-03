@@ -15,6 +15,8 @@ import weapon.Weapon;
 import weapon.WeaponGenerator;
 import weapon.WeaponGenParams;
 import openfl.Assets;
+import openfl.text.TextFormat;
+import openfl.text.TextField;
 import openfl.display.Sprite;
 import openfl.events.KeyboardEvent;
 import openfl.Lib;
@@ -29,7 +31,8 @@ class GameplayScreen extends IGameScreen {
     private var renderer:Renderer;
     public var inputController:game.InputController;
     private var debugPhysicsView:Sprite;
-	
+    private var score:TextField;
+
     public function new(sc: ScreenController) {
         super(sc);
     }
@@ -43,7 +46,7 @@ class GameplayScreen extends IGameScreen {
 
     override function onEntry(gameTime:GameTime):Void {
         FFLog.recordArenaStart(42, 0);
-        
+
         state = new game.GameState();
         inputController = new game.InputController();
         gameplayController = new GameplayController();
@@ -69,11 +72,23 @@ class GameplayScreen extends IGameScreen {
         gameplayController.initDebug(debugPhysicsView);
         Lib.current.stage.addChild(debugPhysicsView);
 
+
+        //Score
+        score = new TextField();
+        var myfmt:TextFormat = new TextFormat();
+        myfmt.color = 0xFFFFFF;
+        myfmt.size = 36;
+        myfmt.bold;
+        score.x = 400;
+        score.defaultTextFormat = myfmt;
+        score.text = Std.string(state.score);
+        openfl.Lib.current.stage.addChild(score);
+
         // TODO: Remove this test code
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         var hb:StaticSprite = uif.getTile("Health.Background");
         screenController.addChild(hb);
-        
+
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
     }
     override function onExit(gameTime:GameTime):Void {
@@ -89,9 +104,12 @@ class GameplayScreen extends IGameScreen {
         // Update input first
         inputController.update(state, renderer.cameraX, renderer.cameraY, renderer.cameraScale);
         aiController.move(state);
-        
+
         // Update game logic
         gameplayController.update(state, gameTime);
+
+        //Update score
+        score.text = Std.string(state.score);
     }
     override function draw(gameTime:GameTime):Void {
         renderer.update(state);
