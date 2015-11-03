@@ -5,14 +5,17 @@ import flash.events.Event;
 import game.GameLevel;
 import game.GameState;
 import game.Entity;
+import game.MenuLevelModifiers;
 import game.Spawner;
 import game.Platform;
+import graphics.EntityRenderData;
 import graphics.Renderer;
 import graphics.RenderPack;
 import graphics.SpriteSheet;
 import graphics.SpriteSheetRegistry;
 import graphics.StripRegion;
 import graphics.TileRegion;
+import haxe.ds.ObjectMap;
 import haxe.ds.StringMap;
 import haxe.Serializer;
 import openfl.display.BitmapData;
@@ -46,8 +49,7 @@ class LevelCreator {
         state.spawners = level.spawners;
         state.platforms = Platform.createFromTileMap(state.width, state.height, state.foreground);
         state.player = new Entity();
-        Spawner.createPlayer(state.player, "player", level.playerPt.x, level.playerPt.y);
-        state.entities.push(state.player);
+        state.player.position.set(level.playerPt.x, level.playerPt.y);
     }
     public static function createPackFromLevel(level:game.GameLevel, renderPack:RenderPack):Void {
         // Load the environment texture
@@ -69,27 +71,33 @@ class LevelCreator {
         renderPack.enemies = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Pixel.png", false)), [
             // TODO: Add hardcoded enemies
         ]);
+        renderPack.entityRenderData = new ObjectMap<String, EntityRenderData>();
+        renderPack.entityRenderData.set("Grunt", new EntityRenderData("Grunt"));
+        renderPack.entityRenderData.set("Man", new EntityRenderData("Man"));
+        renderPack.entityRenderData.set("Robot", new EntityRenderData("Robot"));
+        renderPack.entityRenderData.set("Wolf", new EntityRenderData("Wolf"));
+        renderPack.entityRenderData.set("Zombie", new EntityRenderData("Alien"));
+        renderPack.entityRenderData.set("Alien", new EntityRenderData("Alien"));
 
         renderPack.enemies = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Robot.png")), [
-            new StripRegion("Robot.Run", 0, 0, 36, 64, 1, 10, 10),
+            new TileRegion("Grunt.Head", 8, 2, 20, 20),
+            new StripRegion("Grunt.Rest", 0, 0, 36, 64, 1, 10, 10),
+            new StripRegion("Grunt.Run", 0, 0, 36, 64, 1, 10, 10),
+            new StripRegion("Grunt.Jump", 0, 0, 36, 64, 1, 10, 10)
         ]);
+        renderPack.characters = SpriteSheetRegistry.getCharacterSheet();
 
         // Load parallax layers
         for (f in level.parallax) {
             renderPack.parallax.push(Texture.fromBitmapData(Assets.getBitmapData(f, false)));
         }
-
+        
         //TODO: unhardcode
-        renderPack.characters = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Man.png")), [
-            new StripRegion("Man.Backflip", 0, 0, 48, 90, 2, 42, 80),
-            new StripRegion("Man.Run", 0, 180, 48, 90, 1, 12, 12),
-            new StripRegion("Man.Idle", 0, 270, 48, 90, 1, 7, 7)
-        ]);
         renderPack.projectiles = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Bullet.png")), [
-            new StripRegion("Bullet.Fly", 0, 0, 5, 10, 1, 1, 1),
+            new StripRegion("Bullet.Fly", 0, 0, 5, 10, 1, 1, 1)
         ]);
     }
-
+    
     public static function createStateFromFile(file:String, state:game.GameState):Void {
         createStateFromLevel(loadLevelFromFile(file), state);
     }
@@ -97,6 +105,25 @@ class LevelCreator {
         createPackFromLevel(loadLevelFromFile(file), renderPack);
     }
 
+    public static function modifyFromMenu(mod:MenuLevelModifiers, state:game.GameState):Void {
+        // TODO: Create the entity array
+        state.entities = [
+            new Entity(),
+            new Entity(),
+            new Entity(),
+            new Entity(),
+            null
+        ];
+        Spawner.createPlayer(state.entities[0], "Man", state.player.position.x, state.player.position.y);
+        Spawner.createPlayer(state.entities[1], "Robot", 0, 0);
+        Spawner.createPlayer(state.entities[2], "Wolf", 0, 0);
+        Spawner.createPlayer(state.entities[3], "Zombie", 0, 0);
+
+        
+        state.characterWeapons = mod.characterWeapons.copy();
+        state.enemyWeapons = mod.enemyWeapons.copy();
+    }
+    
     public function new() {
         // Empty
     }

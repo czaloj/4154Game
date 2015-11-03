@@ -3,19 +3,28 @@ package weapon;
 import game.EntityBase;
 import game.GameState;
 import game.Entity;
+import game.LargeProjectile;
+import game.PhysicsController;
+import game.Projectile;
+import openfl.geom.Matrix;
+import openfl.geom.Point;
+import openfl.geom.Transform;
 import starling.display.Sprite;
 import weapon.WeaponData.FiringMode;
+import weapon.WeaponData.ProjectileOrigin;
 
 class Weapon {
+    public static var phys:PhysicsController; // TODO: Remove ASAP
+    
     public var entity:Entity;
     public var data:WeaponData;
     
     // Firing state
-    private var reloadTimeLeft:Float;
-    private var shotCooldown:Float;
-    private var burstCooldown:Float;
-    private var usesPerformed:Int;
-    private var burstsLeft:Int;
+    private var reloadTimeLeft:Float = 0;
+    private var shotCooldown:Float = 0;
+    private var burstCooldown:Float = 0;
+    private var usesPerformed:Int = 0;
+    private var burstsLeft:Int = 0;
     
     public function new(e:Entity, d:WeaponData) {
         entity = e;
@@ -149,6 +158,58 @@ class Weapon {
     }
     
     private function fireBullets(s:GameState, timeOut:Float):Void {
-        // TODO: Fire all projectiles
+        var gunOrigin:Matrix = new Matrix();
+        gunOrigin.rotate(entity.weaponAngle);
+        gunOrigin.translate( 
+            entity.position.x + entity.weaponOffset.x * entity.lookingDirection,
+            entity.position.y + entity.weaponOffset.y
+            );
+        
+        var pOrigin:Point = new Point();
+        var pDirection:Point = new Point(1, 0);
+        
+        for (po in data.projectileOrigins) {
+            // Obtain a random firing angle
+            var a:Float = Math.acos((Math.random() - 0.5) * 2) / Math.PI - 0.5;
+            a = a * a * a * po.exitAngle;
+            
+            // Create the projectile's transformation matrix
+            var t:Matrix = new Matrix();
+            t.rotate(a);
+            t.concat(po.transform);
+            t.concat(gunOrigin);
+            
+            var position:Point = t.transformPoint(pOrigin);
+            var direction:Point = t.deltaTransformPoint(pDirection);
+            
+            if (po.projectile != null) {
+                var p:Projectile = po.projectile.createCopyAt(
+                    entity,
+                    position.x,
+                    position.y,
+                    direction.x * po.velocity,
+                    direction.y * po.velocity
+                    );
+                s.projectiles.push(p);
+                
+                // Add a bit of damage if it's been out of the barrel
+                if (timeOut > 0) {
+                    p.update(timeOut, s);
+                    p.position.x += p.velocity.x * timeOut;
+                    p.position.y += p.velocity.y * timeOut;
+                }
+            }
+            else if (po.largeProjectile != null) {
+                var p:LargeProjectile = po.largeProjectile.createCopyAt(
+                    entity,
+                    position.x,
+                    position.y,
+                    direction.x * po.velocity,
+                    direction.y * po.velocity,
+                    phys
+                    );
+                
+            }
+        }
     }
 }

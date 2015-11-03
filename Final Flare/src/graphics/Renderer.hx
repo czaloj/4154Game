@@ -24,7 +24,7 @@ import starling.display.Stage;
 import starling.textures.RenderTexture;
 import starling.textures.Texture;
 
-class Renderer {
+class Renderer implements IGameVisualizer {
     public static inline var PLAYER_WIDTH:Float = 0.9;
     public static inline var PLAYER_HEIGHT:Float = 1.9;
     public static inline var CAMERA_DEBUG_MOVE_SPEED:Float = 5.0;
@@ -36,8 +36,8 @@ class Renderer {
     private var stage3D:Stage;
     
     public var sprites:Array<Sprite> = [];
-    public var entityTbl:ObjectMap<game.Entity, AnimatedSprite> = new ObjectMap<game.Entity, AnimatedSprite>();
-    public var projTbl:ObjectMap<game.Projectile, AnimatedSprite> = new ObjectMap<game.Projectile, AnimatedSprite>();
+    public var entityTbl:ObjectMap<game.Entity, EntitySprite> = new ObjectMap<Entity, EntitySprite>();
+    public var projTbl:ObjectMap<game.Projectile, AnimatedSprite> = new ObjectMap<Projectile, AnimatedSprite>();
 
     // Camera parameters
     public var cameraX(get, set):Float;
@@ -125,60 +125,48 @@ class Renderer {
         Starling.current.viewPort = viewPortRectangle;
     }
 
+    /** IGameVisualizer **/
     public function onEntityAdded(s:game.GameState, o:game.Entity):Void {
         // Add a corresponding sprite to stage and track this entity
-        var enemy = new AnimatedSprite(pack.enemies, "Robot.Run", 3);
-        enemy.x = o.position.x - enemy.width * 0.5;
-        enemy.y = o.position.y - o.height * 0.5;
-        enemy.scaleX /= 32;
-        enemy.scaleY /= 32;
-        //trace(enemy.x, enemy.y);
-        hierarchy.enemy.addChild(enemy);
-        entityTbl.set(o,enemy);
-        //what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
+        var sprite:EntitySprite = new EntitySprite((o.team == Entity.TEAM_PLAYER) ? pack.characters : pack.enemies, pack.entityRenderData.get(o.id));
+        sprite.x = o.position.x;
+        sprite.y = o.position.y;
+        if (o.team == Entity.TEAM_PLAYER) {
+            hierarchy.player.addChild(sprite);            
+        }
+        else {
+            hierarchy.enemy.addChild(sprite);            
+        }
+        entityTbl.set(o, sprite);
     }
     public function onEntityRemoved(s:game.GameState, o:game.Entity):Void {
-        //idk about this function the implementation i was thinking of was sketchy.
-        //i need to figure out the mapping between objectModels and sprites
-        hierarchy.enemy.removeChild(entityTbl.get(o));
+        var e:EntitySprite = entityTbl.get(o);
+        e.parent.removeChild(e);
         entityTbl.remove(o);
-        // Remove this entity from the stage
     }
-
-    public function onBulletAdded(s:game.GameState, p:game.Projectile):Void {
-        // Add a corresponding sprite to stage and track this entity
-        var bullet = new AnimatedSprite(pack.projectiles, "Bullet.Fly", 1);
-        bullet.x = p.position.x;
-        bullet.y = p.position.y;
-        bullet.scaleX /= 32;
-        bullet.scaleY /= 32;
-        hierarchy.projectiles.addChild(bullet);
-        projTbl.set(p,bullet);
-        //what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
+    public function onBloodSpurt(sx:Float, sy:Float, dx:Float, dy:Float):Void {
+        var quad:Quad = new Quad(0.5, 0.5);
+        quad.x = sx - quad.width / 2.0;
+        quad.y = sy - quad.height / 2.0;
+        quad.color = 0xff0000;
+        quad.alpha = 0.2;
+        renderPermanence([quad], []);
+        
+        tracers.add(sx, sy, dx * 0.3, dy * 0.3, 0.4, 0.5, 0xff0000, 0.1);
     }
-    public function onBulletRemoved(s:game.GameState, p:game.Projectile):Void {
-        //idk about this function the implementation i was thinking of was sketchy.
-        //i need to figure out the mapping between objectModels and sprites
-        hierarchy.projectiles.removeChild(projTbl.get(p));
-        projTbl.remove(p);
-        // Remove this entity from the stage
+    public function onExplosion(sx:Float, sy:Float, r:Float):Void {
+        var quad:Quad = new Quad(1.0, 1.0);
+        quad.x = sx - quad.width / 2.0;
+        quad.y = sy - quad.height / 2.0;
+        quad.color = 0x333333;
+        quad.alpha = 0.1;
+        renderPermanence([quad], []);
     }
-
+    public function addBulletTrail(sx:Float, sy:Float, ex:Float, ey:Float, duration:Float):Void {
+        tracers.add(sx, sy, ex - sx, ey - sy, 0.04, duration, 0xffff00, (1 / 60) / duration);
+    }
+    
     private function load(state:game.GameState):Void {
-        // Register listener functions
-        state.onEntityAdded.add(onEntityAdded);
-        state.onEntityRemoved.add(onEntityRemoved);
-        state.onProjectileAdded.add(onBulletAdded);
-        state.onProjectileRemoved.add(onBulletRemoved);
-        
-        var man = new AnimatedSprite(pack.characters, "Man.Run", 3);
-        man.x = state.player.position.x - man.width*0.5;
-        man.y = state.player.position.y - PLAYER_HEIGHT * 0.5;
-        man.scaleX /= 32;
-        man.scaleY /= 32;
-        hierarchy.player.addChild(man);
-        entityTbl.set(state.player, man);
-        
         // Generate environment geometry
         tilesForeground = new QuadBatch();
         animatedForeground = [];
@@ -321,7 +309,6 @@ class Renderer {
         hierarchy.backgroundMask.addChild(qb);
         
     }
-    
     private function renderPermanence(backgroundObjects:Array<DisplayObject>, foregroundObjects:Array<DisplayObject>):Void {
         rtBackground.drawBundled(function():Void {
             for (obj in backgroundObjects) {
@@ -402,16 +389,7 @@ class Renderer {
         }
     }
     private function debugMouseClick(e:MouseEvent = null):Void {
-        var position:Point = new Point(e.stageX, e.stageY);
-        screenToWorldSpace(position);
-        
-        var quad:Quad = new Quad(1, 1);
-        quad.x = position.x - quad.width / 2.0;
-        quad.y = position.y - quad.height / 2.0;
-        quad.color = 0x000000;
-        renderPermanence([quad], []);
-        
-        tracers.add(cameraX, cameraY, position.x - cameraX, position.y - cameraY, 0.3, 5.0 / 60.0, 0xffff00, 1.0 / 5.0);
+        // Empty
     }
     
     public function screenToWorldSpace(pt:Point):Void {
@@ -422,15 +400,8 @@ class Renderer {
     public function update(s:game.GameState):Void {
         // TODO: Update sprite positions from entities
         for (o in entityTbl.keys()) {
-            var sprite:AnimatedSprite = entityTbl.get(o);
-            sprite.x = o.position.x - entityTbl.get(o).width * 0.5;
-            sprite.y = o.position.y - o.height * 0.5;
-            if (o.left && !o.right)  {
-                sprite.x += sprite.width;
-                sprite.scaleX = -Math.abs(sprite.scaleX);
-            } else {
-                sprite.scaleX = Math.abs(sprite.scaleX);
-            }
+            var sprite:EntitySprite = entityTbl.get(o);
+            sprite.recalculate(o);
         }
         var levelWidth:Float = s.width * World.TILE_HALF_WIDTH;
         var levelHeight:Float = s.height * World.TILE_HALF_WIDTH;

@@ -15,13 +15,14 @@ import weapon.Weapon;
 import weapon.WeaponGenerator;
 import weapon.WeaponGenParams;
 import openfl.Assets;
+import openfl.text.TextFormat;
+import openfl.text.TextField;
 import openfl.display.Sprite;
 import openfl.events.KeyboardEvent;
 import openfl.Lib;
 import openfl.ui.Keyboard;
 import starling.textures.Texture;
 import ui.UISpriteFactory;
-//import Logging;
 
 class GameplayScreen extends IGameScreen {
     private var state:game.GameState;
@@ -30,8 +31,9 @@ class GameplayScreen extends IGameScreen {
     private var renderer:Renderer;
     public var inputController:game.InputController;
     private var debugPhysicsView:Sprite;
-	//private var logger:Single;
-	
+    private var score:TextField;
+    private var hp:StaticSprite;
+
     public function new(sc: ScreenController) {
         super(sc);
     }
@@ -44,29 +46,26 @@ class GameplayScreen extends IGameScreen {
     }
 
     override function onEntry(gameTime:GameTime):Void {
-		
-		
-		var logger:Logging = Logging.getSingleton();
-		logger.initialize(121, 0, true);// , false);
-		logger.recordPageLoad();						
-		logger.recordLevelStart(1);									//should move to gamelevel start once menus are done
-		
-		
+        FFLog.recordArenaStart(42, 0);
+
         state = new game.GameState();
         inputController = new game.InputController();
-        gameplayController = new GameplayController( logger);
+        gameplayController = new GameplayController();
         aiController = new game.AIController();
         var pack:RenderPack = new RenderPack();
 
         var gl:game.GameLevel = screenController.loadedLevel;
         LevelCreator.createStateFromLevel(gl, state);
+        LevelCreator.modifyFromMenu(screenController.levelModifiers, state);
         gameplayController.init(state);
         LevelCreator.createPackFromLevel(gl, pack);
         renderer = new Renderer(screenController, pack, state);
+        gameplayController.setVisualizer(renderer);
 
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);
         openfl.Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, inputController.mouseDown);
+        openfl.Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, inputController.mouseMove);
         openfl.Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, inputController.mouseUp);
 
         // Debug view of physics
@@ -74,17 +73,33 @@ class GameplayScreen extends IGameScreen {
         gameplayController.initDebug(debugPhysicsView);
         Lib.current.stage.addChild(debugPhysicsView);
 
+
+        //Score
+        score = new TextField();
+        var myfmt:TextFormat = new TextFormat();
+        myfmt.color = 0xFFFFFF;
+        myfmt.size = 36;
+        myfmt.bold;
+        score.x = 400;
+        score.defaultTextFormat = myfmt;
+        score.text = Std.string(state.score);
+        openfl.Lib.current.stage.addChild(score);
+
         // TODO: Remove this test code
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         var hb:StaticSprite = uif.getTile("Health.Background");
         screenController.addChild(hb);
-        var ggp:WeaponGenParams = new WeaponGenParams();
-        var gunData = WeaponGenerator.generate(ggp);
-        var gun:Weapon = new Weapon(state.player, gunData);
-        
+
+        hp = uif.getTile("Health.Overlay");
+        hp.x = 20;
+        hp.y = 4;
+        hp.width = 201 * state.player.health / 100;
+        screenController.addChild(hp);
+
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
     }
     override function onExit(gameTime:GameTime):Void {
+        FFLog.recordArenaEnd();
         openfl.Lib.current.stage.removeEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
         openfl.Lib.current.stage.removeEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);
         openfl.Lib.current.stage.removeEventListener(MouseEvent.MOUSE_DOWN, inputController.mouseDown);
@@ -96,9 +111,15 @@ class GameplayScreen extends IGameScreen {
         // Update input first
         inputController.update(state, renderer.cameraX, renderer.cameraY, renderer.cameraScale);
         aiController.move(state);
-        
+
         // Update game logic
         gameplayController.update(state, gameTime);
+
+        //Update score
+        score.text = Std.string(state.score);
+
+        //Update Health Bar
+        hp.width = 201 * state.player.health / 100;
     }
     override function draw(gameTime:GameTime):Void {
         renderer.update(state);

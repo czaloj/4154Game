@@ -1,5 +1,6 @@
 package graphics;
 
+import openfl.Assets;
 import starling.textures.Texture;
 
 class SpriteSheetRegistry {
@@ -149,6 +150,92 @@ class SpriteSheetRegistry {
             default:
                 return null;
         }
+    }
+    
+    public static function fillEntityRenderData(e:EntityRenderData):Void {
+        // TODO: Determine the correct data
+        switch (e.entityType) {
+            // Enemies
+            case "Grunt":
+                e.animationDelays = [5, 3, 3, 3];
+                e.bodySpriteOffset.setTo(-0.6, -1.1);
+                e.widthBody = 1.0;
+                e.heightBody = 1.7;
+                e.headSpriteOffset.setTo( -0.45, -0.2);
+                e.widthHead = 0.9;
+                e.heightHead = 0.9;
+            
+            // Characters
+            case "Man":
+                e.animationDelays = [5, 3, 3, 3];
+                e.bodySpriteOffset.setTo(-0.6, -1.1);
+                e.widthBody = 1.0;
+                e.heightBody = 1.7;
+                e.headSpriteOffset.setTo( -0.45, -0.2);
+                e.widthHead = 0.9;
+                e.heightHead = 0.9;
+            case "Robot":
+                e.animationDelays = [5, 3, 3, 3];
+                e.bodySpriteOffset.setTo(-0.6, -1.1);
+                e.widthBody = 1.0;
+                e.heightBody = 1.7;
+                e.headSpriteOffset.setTo( -0.45, -0.2);
+                e.widthHead = 0.9;
+                e.heightHead = 0.9;
+            case "Wolf":
+                e.animationDelays = [5, 3, 3, 3];
+                e.bodySpriteOffset.setTo(-0.6, -1.1);
+                e.widthBody = 1.0;
+                e.heightBody = 1.7;
+                e.headSpriteOffset.setTo( -0.45, -0.2);
+                e.widthHead = 0.9;
+                e.heightHead = 0.9;
+            case "Zombie":
+                e.animationDelays = [5, 3, 3, 3];
+                e.bodySpriteOffset.setTo(-0.6, -1.1);
+                e.widthBody = 1.0;
+                e.heightBody = 1.7;
+                e.headSpriteOffset.setTo( -0.45, -0.2);
+                e.widthHead = 0.9;
+                e.heightHead = 0.9;
+            case "Alien":
+                e.animationDelays = [5, 3, 3, 3];
+                e.bodySpriteOffset.setTo(-0.6, -1.1);
+                e.widthBody = 1.0;
+                e.heightBody = 1.7;
+                e.headSpriteOffset.setTo( -0.45, -0.2);
+                e.widthHead = 0.9;
+                e.heightHead = 0.9;
+        }
+    }
+    public static function getCharacterSheet():SpriteSheet {
+        // TODO: Determine the correct data
+        return new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Characters.png")), [
+            new TileRegion( "Man.Head", 750, 0, 18, 18),
+            new StripRegion("Man.Rest", 0,   0, 30, 40, 1, 5,  5),
+            new StripRegion("Man.Run",  150, 0, 30, 40, 1, 12, 12),
+            new StripRegion("Man.Jump", 510, 0, 30, 40, 1, 8,  8),
+            
+            new TileRegion( "Robot.Head", 750, 40, 18, 18),
+            new StripRegion("Robot.Rest", 0,   40, 30, 40, 1, 5,  5),
+            new StripRegion("Robot.Run",  150, 40, 30, 40, 1, 12, 12),
+            new StripRegion("Robot.Jump", 510, 40, 30, 40, 1, 8,  8),
+
+            new TileRegion( "Wolf.Head", 750, 80, 18, 18),
+            new StripRegion("Wolf.Rest", 0,   80, 30, 40, 1, 5,  5),
+            new StripRegion("Wolf.Run",  150, 80, 30, 40, 1, 12, 12),
+            new StripRegion("Wolf.Jump", 510, 80, 30, 40, 1, 8,  8),
+
+            new TileRegion( "Zombie.Head", 750, 120, 18, 18),
+            new StripRegion("Zombie.Rest", 0,   120, 30, 40, 1, 5,  5),
+            new StripRegion("Zombie.Run",  150, 120, 30, 40, 1, 12, 12),
+            new StripRegion("Zombie.Jump", 510, 120, 30, 40, 1, 8,  8),
+
+            new TileRegion( "Alien.Head", 750, 160, 18, 18),
+            new StripRegion("Alien.Rest", 0,   160, 30, 40, 1, 5,  5),
+            new StripRegion("Alien.Run",  150, 160, 30, 40, 1, 12, 12),
+            new StripRegion("Alien.Jump", 510, 160, 30, 40, 1, 8,  8)
+        ]);
     }
     
     public function new() {

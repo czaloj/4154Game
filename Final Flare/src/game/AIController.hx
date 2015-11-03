@@ -8,8 +8,8 @@ class AIController {
     }
 
     public function move(state:GameState):Void {
-        for (entity in state.entities) {
-            if (entity.id != "player") {
+        for (entity in state.entitiesNonNull) {
+            if (entity.team == Entity.TEAM_ENEMY) {
                 followPlayer(entity, state);
             }
         }
@@ -20,52 +20,39 @@ class AIController {
         var target = state.player.position;
         var x:Float = entity.position.x;
         var y:Float = entity.position.y;
-        var dir = (x-target.x)/Math.abs(x-target.x);    // -1 for left, 1 for right
-        var onLeft = dir > 0;
+        entity.direction = x > target.x ? -1 : 1;
         
-        if (state.player.position.x - x <= 2) {
+        if (Math.abs(state.player.position.x - x) <= 2) {
             entity.useWeapon = true;
         }
         else {
             entity.useWeapon = false;
         }
         entity.up = false;
-        if (entity.grounded > 0) {
+        if (entity.isGrounded) {
             if (y > target.y) {
-                   entity.left = onLeft;
-                   entity.right = !onLeft;
             } 
             else if (y < target.y) {
                 var displacement = x - findPlatformAbove(state,Std.int(x),Std.int(y));
                 if (displacement == 0) {
-                    entity.left = onLeft;
-                    entity.right = !onLeft;
                 } 
                 else if (displacement > 5) {
-                    entity.left = true;
-                    entity.right = !entity.left;
                 }
                 else if (displacement < -5) {
-                    entity.right = true;
-                    entity.left = !entity.right;
                 } 
                 else {
-                    entity.up = true; entity.velocity.y = 9.5;
+                    entity.up = true;
                 }
             } else {
-                if (state.foreground[Std.int(y*state.width + x + dir)] > 0) {
-                    entity.left = onLeft;
-                    entity.right = !onLeft;
+                if (state.foreground[Std.int(y*state.width + x + entity.direction)] > 0) {
                 }
                 else {
-                    entity.up = true; entity.velocity.y = 9.5;
+                    entity.up = true;
                 }
             }
         }
         else {
             entity.up = true;
-            entity.left = false;
-            entity.right = false;
         }
     }
 

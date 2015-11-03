@@ -1,6 +1,9 @@
 package game;
 
+import box2D.collision.shapes.B2CircleShape;
 import box2D.collision.shapes.B2PolygonShape;
+import box2D.common.math.B2Mat22;
+import box2D.common.math.B2Transform;
 import box2D.common.math.B2Vec2;
 import box2D.dynamics.B2Body;
 import box2D.dynamics.B2BodyDef;
@@ -26,6 +29,7 @@ typedef RayCastInfo = Tuple4<B2Fixture, B2Vec2, B2Vec2, B2Vec2>;
 enum PhysicsUserDataType {
     ENTITY;
     PLATFORM;
+    PROJECTILE;
 }
 typedef PhysicsUserData = Pair<PhysicsUserDataType, Dynamic>;
 
@@ -57,14 +61,14 @@ class PhysicsController extends B2ContactListener {
     private static var FILTER_PLAYER:B2FilterData = {
         var fd:B2FilterData = new B2FilterData();
         fd.categoryBits = FILTER_CATEGORY_PLAYER;
-        fd.maskBits = FILTER_CATEGORY_PLATFORM | FILTER_CATEGORY_ENEMY_DAMAGE | FILTER_CATEGORY_NEUTRAL_DAMAGE;
+        fd.maskBits = FILTER_CATEGORY_PLATFORM | FILTER_CATEGORY_ENEMY_DAMAGE | FILTER_CATEGORY_NEUTRAL_DAMAGE | FILTER_CATEGORY_PHYSICAL_PROJECTILE;
         fd.groupIndex = 0;
         fd;
     }
     private static var FILTER_ENEMY:B2FilterData = {
         var fd:B2FilterData = new B2FilterData();
         fd.categoryBits = FILTER_CATEGORY_ENEMY;
-        fd.maskBits = FILTER_CATEGORY_PLATFORM | FILTER_CATEGORY_PLAYER_DAMAGE | FILTER_CATEGORY_NEUTRAL_DAMAGE;
+        fd.maskBits = FILTER_CATEGORY_PLATFORM | FILTER_CATEGORY_PLAYER_DAMAGE | FILTER_CATEGORY_NEUTRAL_DAMAGE | FILTER_CATEGORY_PHYSICAL_PROJECTILE;
         fd.groupIndex = 0;
         fd;
     }
@@ -96,6 +100,13 @@ class PhysicsController extends B2ContactListener {
         fd.groupIndex = 0;
         fd;
     }
+    private static var FILTER_NEUTRAL_PROJECTILE:B2FilterData = {
+        var fd:B2FilterData = new B2FilterData();
+        fd.categoryBits = FILTER_CATEGORY_PHYSICAL_PROJECTILE;
+        fd.maskBits = FILTER_CATEGORY_ENEMY | FILTER_CATEGORY_PLAYER | FILTER_CATEGORY_PLATFORM;
+        fd.groupIndex = 0;
+        fd;
+    }
 
     public var world:B2World;
     public var state:GameState;
@@ -104,6 +115,7 @@ class PhysicsController extends B2ContactListener {
     public var deleteList:Array<B2Body> = []; // List of entities that are marked for deletion
 
     private var rcContext:RayCastContext = null;
+    private var hitShapes:Array<PhysicsUserData> = null;
 
     public function new() {
         super();
@@ -111,7 +123,6 @@ class PhysicsController extends B2ContactListener {
 
     public function init(s:GameState) {
         state = s;
-        state.onEntityRemoved.add(onEntityRemoved);
 
         world = new B2World(GRAVITY, true);
         world.setContactListener(this);
@@ -120,52 +131,55 @@ class PhysicsController extends B2ContactListener {
 
     public function initEntity(e:Entity):Void {
         // Create body
-        e.bodyDef = new B2BodyDef();
-        e.bodyDef.position.set(e.position.x, e.position.y);
-        e.bodyDef.type = B2Body.b2_dynamicBody;
-        e.bodyDef.allowSleep = false;
-        e.bodyDef.fixedRotation = true;
-        e.body = world.createBody(e.bodyDef);
+        var bodyDef:B2BodyDef = new B2BodyDef();
+        bodyDef.position.set(e.position.x, e.position.y);
+        bodyDef.type = B2Body.b2_dynamicBody;
+        bodyDef.allowSleep = false;
+        bodyDef.fixedRotation = true;
+        e.body = world.createBody(bodyDef);
 
         // Create collision information
-        e.shape = new B2PolygonShape();
-        e.shape.setAsBox ((e.width) / 2, (e.height) / 2);
-        e.fixtureDef = new B2FixtureDef();
-        e.fixtureDef.shape = e.shape;
-        e.fixtureDef.friction = 1;
-        e.fixtureDef.density = 1;
-        switch (e.id) {
-            case "player":
-                e.fixtureDef.filter = FILTER_PLAYER.copy();
+        var shape:B2PolygonShape = new B2PolygonShape();
+        shape.setAsBox (e.width / 2, e.height / 2);
+        var fixtureDef:B2FixtureDef = new B2FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.friction = 1;
+        fixtureDef.density = 1;
+        switch (e.team) {
+            case Entity.TEAM_PLAYER:
+                fixtureDef.filter = FILTER_PLAYER.copy();
             default:
-                e.fixtureDef.filter = FILTER_ENEMY.copy();
+                fixtureDef.filter = FILTER_ENEMY.copy();
         }
-        e.fixture = e.body.createFixture(e.fixtureDef);
+        e.fixtureMain = e.body.createFixture(fixtureDef);
+        
+        // TODO: Create head and body fixtures for damage
 
         // Set initial entity data to the body
-        e.fixture.SetUserData(new PhysicsUserData(PhysicsUserDataType.ENTITY, e));
+        e.fixtureMain.SetUserData(new PhysicsUserData(PhysicsUserDataType.ENTITY, e));
         e.body.setLinearVelocity(e.velocity);
     }
     public function initPlatforms(state:GameState):Void {
         var halfSize:Float = GameplayController.TILE_HALF_WIDTH;
 
+        // Create the body
+        var bodyDef:B2BodyDef = new B2BodyDef();
+        bodyDef.position.set(0, 0);
+        bodyDef.type = B2Body.b2_staticBody;
+        var body:B2Body = world.createBody(bodyDef);
+        
         for (i in state.platforms) {
             var x:Float = (i.position.x) * halfSize + i.dimension.x * halfSize/2;
             var y:Float = (state.height - i.position.y) * halfSize - i.dimension.y * halfSize/2;
 
             if (i.id != 0) {
-                // Create the body
-                var bodyDef:B2BodyDef = new B2BodyDef();
-                bodyDef.position.set(x, y);
-                bodyDef.type = B2Body.b2_staticBody;
-                var body:B2Body = world.createBody(bodyDef);
-
                 // Create the box collision fixture
                 var fixtureDef:B2FixtureDef = new B2FixtureDef();
                 fixtureDef.filter = FILTER_PLATFORM.copy();
                 var polygon = new B2PolygonShape ();
-                polygon.setAsBox((i.dimension.x * halfSize) * 0.5, (i.dimension.y * halfSize) * 0.5);
+                polygon.setAsOrientedBox((i.dimension.x * halfSize) * 0.5, (i.dimension.y * halfSize) * 0.5, new B2Vec2(x, y), 0);
                 fixtureDef.shape = polygon;
+                
                 var fixture:B2Fixture = body.createFixture(fixtureDef);
 
                 // Set platform user data
@@ -173,7 +187,28 @@ class PhysicsController extends B2ContactListener {
             }
         }
     }
+    public function initLargeProjectile(p:LargeProjectile, x:Float, y:Float, vx:Float, vy:Float) {
+        // Create body
+        var bodyDef:B2BodyDef = new B2BodyDef();
+        bodyDef.position.set(x, y);
+        bodyDef.type = B2Body.b2_dynamicBody;
+        bodyDef.allowSleep = false;
+        bodyDef.fixedRotation = false;
+        p.body = world.createBody(bodyDef);
 
+        // Create collision information
+        var fixtureDef:B2FixtureDef = new B2FixtureDef();
+        fixtureDef.shape = new B2CircleShape(p.radius);
+        fixtureDef.friction = 1;
+        fixtureDef.density = 1;
+        fixtureDef.filter = FILTER_NEUTRAL_PROJECTILE.copy();
+        var fixtureMain:B2Fixture = p.body.createFixture(fixtureDef);
+        
+        // Set initial entity data to the body
+        fixtureMain.SetUserData(new PhysicsUserData(PhysicsUserDataType.PROJECTILE, p));
+        p.body.setLinearVelocity(new B2Vec2(vx, vy));
+    }
+    
     public function update(dt:Float) {
         world.step(dt, 5, 3);
         world.clearForces();
@@ -221,7 +256,7 @@ class PhysicsController extends B2ContactListener {
         state.contactList.add(c);
     }
     
-    private function onEntityRemoved(state:GameState, e:Entity) {
+    public function onEntityRemoved(state:GameState, e:Entity) {
         deleteList.push(e.body);
     }
 
@@ -297,7 +332,7 @@ class PhysicsController extends B2ContactListener {
             return 0;
         }
         else {
-            return -1;
+            return 1;
         }
     }
     private function onRayCastClosest(fixture:B2Fixture, location:B2Vec2, normal:B2Vec2, fraction:Float):Float {
@@ -314,7 +349,7 @@ class PhysicsController extends B2ContactListener {
         }
         else {
             // Ignore this intersection
-            return -1;
+            return 1;
         }
     }
     private function onRayCastN(fixture:B2Fixture, location:B2Vec2, normal:B2Vec2, fraction:Float):Float {
@@ -378,7 +413,7 @@ class PhysicsController extends B2ContactListener {
         }
         else {
             // Ignore this value
-            return -1;
+            return 1;
         }
     }
     private function onRayCastPierce(fixture:B2Fixture, location:B2Vec2, normal:B2Vec2, fraction:Float):Float {
@@ -397,10 +432,22 @@ class PhysicsController extends B2ContactListener {
             return rcContext.wallFraction;
         }
         else {
-            return -1;
+            return 1;
         }
     }
-
+    public function hitTest(x:Float, y:Float, radius:Float, hitPlayer:Bool, hitEnemies:Bool):Array<PhysicsUserData> {
+        hitShapes = [];
+        world.queryShape(onHitTest, new B2CircleShape(radius), new B2Transform(new B2Vec2(x, y), new B2Mat22()));
+        return hitShapes;
+    }
+    private function onHitTest(f:B2Fixture):Dynamic {
+        var d:Dynamic = f.getUserData();
+        if (d.first == PhysicsUserDataType.ENTITY) hitShapes.push(d);
+        return 1.0;
+    }
+    
+    
+    
     /**
      * Setup debugging information
      * @param sprite The target drawing sprite

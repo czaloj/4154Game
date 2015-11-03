@@ -14,7 +14,7 @@ class EnemyType
     }
     public static function make( id:String ) {
         return switch (id) {
-            case "Grunt": new game.EnemyType(120, 0);
+            case "Grunt": new game.EnemyType(360, 0);
             default: throw 'unknown enemy type!';
         }
     }

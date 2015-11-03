@@ -1,7 +1,9 @@
 package weapon;
 
 import game.ColorScheme;
+import game.LargeProjectile;
 import game.Projectile;
+import openfl.geom.Matrix;
 import openfl.geom.Point;
 
 enum FiringMode {
@@ -11,16 +13,18 @@ enum FiringMode {
 }
 
 class ProjectileOrigin {
-    // Origin point relative to the gun
-    public var oX:Float;
-    public var oY:Float;
+    // Transform relative to the gun
+    public var transform:Matrix = new Matrix();
     
     // Velocity relative to the gun
-    public var vX:Float;
-    public var vY:Float;
+    public var velocity:Float;
+    
+    // The variance in angle which a projectile can undergo (FOV angle)
+    public var exitAngle:Float;
     
     // Projectile to be generated
     public var projectile:Projectile;
+    public var largeProjectile:LargeProjectile;
     
     public function new() {
         // Empty
