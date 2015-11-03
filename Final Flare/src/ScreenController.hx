@@ -59,7 +59,7 @@ class ScreenController extends Sprite {
 
     private function load(e:Event = null):Void {
         // Initialize logging
-        FFLog.init(LOGGING_DEBUG_MODE);
+        FFLog.init(false);
         
         // Create the screens
         for (screen in screens) screen.build();
