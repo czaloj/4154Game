@@ -91,6 +91,9 @@ class MenuScreen extends IGameScreen {
         screenController.levelModifiers = mod;
     }
     override public function onExit(gameTime:GameTime):Void {
+        Lib.current.stage.removeEventListener(MouseEvent.CLICK, handleClick);
+        screenController.removeChild(button1);
+        screenController.removeChild(button2);
         FFLog.recordMenuEnd();
     }
     
@@ -124,9 +127,11 @@ class MenuScreen extends IGameScreen {
         var bound2 = button2.getBounds(screenController);
         if (bound1.contains(e.stageX, e.stageY)) {
             changeButtonState(1, 2);
+            screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/test.lvl");
+            screenController.switchToScreen(2);
         }
         else if (bound2.contains(e.stageX, e.stageY)) {
-            changeButtonState(2, 2);
+            //changeButtonState(2, 2);
         }
         
     }
