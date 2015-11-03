@@ -1,4 +1,5 @@
 package game.damage;
+import game.damage.DamageDealer;
 import game.Projectile;
 
 class DamageBullet extends DamageDealer {
@@ -12,10 +13,19 @@ class DamageBullet extends DamageDealer {
     public var velocityX:Float;
     public var velocityY:Float;
     
-    public var knockbackAmount:Float;
-    
     public function new(p:Projectile) {
         super(DamageDealer.TYPE_BULLET);
         projectile = p;
+    }
+    
+    override public function copyInto(d:DamageDealer):DamageDealer {
+        var v:DamageBullet = cast(super.copyInto(d), DamageBullet);
+        v.piercingAmount = piercingAmount;
+        v.projectile = projectile;
+        v.originX = originX;
+        v.originY = originY;
+        v.velocityX = velocityX;
+        v.velocityY = velocityY;
+        return v;
     }
 }

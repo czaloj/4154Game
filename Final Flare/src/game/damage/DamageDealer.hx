@@ -1,5 +1,6 @@
 package game.damage;
 import game.Entity;
+import starling.errors.AbstractMethodError;
 
 class DamageDealer {
     public static inline var TYPE_BULLET:Int = 1;
@@ -38,5 +39,15 @@ class DamageDealer {
         if ((team & teamSourceFlags) != 0) return friendlyDamage;
         else if ((team & teamDestinationFlags) != 0) return damage;
         else return 0;
+    }
+    
+    public function copyInto(d:DamageDealer):DamageDealer {
+        d.type = type;
+        d.source = source;
+        d.teamSourceFlags = teamSourceFlags;
+        d.teamDestinationFlags = teamDestinationFlags;
+        d.damage = damage;
+        d.friendlyDamage = friendlyDamage;
+        return d;
     }
 }

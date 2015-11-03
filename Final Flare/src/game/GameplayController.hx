@@ -261,7 +261,6 @@ class GameplayController {
         
         if (info.first.length > 0) {
             // TODO: All entities are damaged
-            trace("BULLET HIT: " + info.first.length);
             for (rci in info.first) {
                 var hitUD:PhysicsUserData = rci.first.getUserData();
                 if (hitUD.first == PhysicsUserDataType.ENTITY) {
@@ -275,13 +274,11 @@ class GameplayController {
                 bullet.piercingAmount -= info.first.length;
                 if (bullet.piercingAmount < 0) {
                     // Bullet has travelled through max enemies
-                    // TODO: Bullet is destroyed
                     return true;
                 }
             }
             else {
                 // Non-piercing bullet hit something
-                // TODO: Bullet is destroyed
                 return true;
             }
         }

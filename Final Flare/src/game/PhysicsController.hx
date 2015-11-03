@@ -300,7 +300,7 @@ class PhysicsController extends B2ContactListener {
             return 0;
         }
         else {
-            return -1;
+            return 1;
         }
     }
     private function onRayCastClosest(fixture:B2Fixture, location:B2Vec2, normal:B2Vec2, fraction:Float):Float {
@@ -317,7 +317,7 @@ class PhysicsController extends B2ContactListener {
         }
         else {
             // Ignore this intersection
-            return -1;
+            return 1;
         }
     }
     private function onRayCastN(fixture:B2Fixture, location:B2Vec2, normal:B2Vec2, fraction:Float):Float {
@@ -381,7 +381,7 @@ class PhysicsController extends B2ContactListener {
         }
         else {
             // Ignore this value
-            return -1;
+            return 1;
         }
     }
     private function onRayCastPierce(fixture:B2Fixture, location:B2Vec2, normal:B2Vec2, fraction:Float):Float {
@@ -400,7 +400,7 @@ class PhysicsController extends B2ContactListener {
             return rcContext.wallFraction;
         }
         else {
-            return -1;
+            return 1;
         }
     }
 

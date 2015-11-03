@@ -14,11 +14,7 @@ class Projectile {
     public var damage:DamageBullet;
     
     public function new(d:DamageBullet) {
-        damage = new DamageBullet(this);
-        damage.damage = d.damage;
-        damage.friendlyDamage = d.friendlyDamage;
-        damage.knockbackAmount = d.knockbackAmount;
-        damage.piercingAmount = d.piercingAmount;
+        damage = cast(d.copyInto(new DamageBullet(this)), DamageBullet);
     }
     
     /**
@@ -40,10 +36,11 @@ class Projectile {
     }
     
     public function update(dt:Float, s:GameState):Void {
-        damage.originX = position.x;
-        damage.originY = position.y;
-        damage.velocityX = velocity.x;
-        damage.velocityY = velocity.y;
-        s.damage.push(damage);
+        var d:DamageBullet = cast(damage.copyInto(new DamageBullet(this)), DamageBullet);
+        d.originX = position.x;
+        d.originY = position.y;
+        d.velocityX = velocity.x;
+        d.velocityY = velocity.y;
+        s.damage.push(d);
     }
 }
