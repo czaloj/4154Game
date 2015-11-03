@@ -91,8 +91,7 @@ class LevelCreator {
             new TileRegion("Robot.Head", 8, 2, 20, 20),
             new StripRegion("Robot.Rest", 0, 0, 36, 64, 1, 10, 10),
             new StripRegion("Robot.Run", 0, 0, 36, 64, 1, 10, 10),
-            new StripRegion("Robot.Jump", 0, 0, 36, 64, 1, 10, 10),
-            new StripRegion("Robot.Death", 0, 0, 36, 64, 1, 10, 10)
+            new StripRegion("Robot.Jump", 0, 0, 36, 64, 1, 10, 10)
         ]);
 
         // Load parallax layers
@@ -101,12 +100,11 @@ class LevelCreator {
         }
 
         //TODO: unhardcode
-        renderPack.characters = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Man.png")), [
-            new TileRegion("Man.Head", 12, 2, 24, 24),
-            new StripRegion("Man.Rest", 0, 270, 48, 90, 1, 7, 7),
-            new StripRegion("Man.Run", 0, 180, 48, 90, 1, 12, 12),
-            new StripRegion("Man.Jump", 0, 0, 48, 90, 2, 42, 80),
-            new StripRegion("Man.Death", 0, 0, 48, 90, 2, 42, 80)
+        renderPack.characters = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Characters.png")), [
+            new TileRegion("Man.Head", 750, 0, 18, 18),
+            new StripRegion("Man.Rest", 0, 0, 30, 40, 1, 5, 5),
+            new StripRegion("Man.Run", 150, 0, 30, 40, 1, 12, 12),
+            new StripRegion("Man.Jump", 510, 0, 30, 40, 1, 8, 8)
         ]);
         renderPack.projectiles = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Bullet.png")), [
             new StripRegion("Bullet.Fly", 0, 0, 5, 10, 1, 1, 1)

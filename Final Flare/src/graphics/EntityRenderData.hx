@@ -7,7 +7,6 @@ class EntityRenderData {
     public static inline var ANIMATION_REST:String = ".Rest";
     public static inline var ANIMATION_RUN:String = ".Run";
     public static inline var ANIMATION_JUMP:String = ".Jump";
-    public static inline var ANIMATION_DEATH:String = ".Death";
     
     // Placement and dimensions of the body sprite
     public var bodySpriteOffset:Point = new Point();

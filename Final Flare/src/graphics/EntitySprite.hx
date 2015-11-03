@@ -7,7 +7,6 @@ class EntitySprite extends Sprite {
     public static inline var POSE_REST:Int = 0;
     public static inline var POSE_RUN:Int = 1;
     public static inline var POSE_JUMP:Int = 2;
-    public static inline var POSE_DEATH:Int = 3;
     
     public var data:EntityRenderData;
     public var headCenter:Sprite;
@@ -33,15 +32,12 @@ class EntitySprite extends Sprite {
         bodyRun = new AnimatedSprite(s, data.entityType + EntityRenderData.ANIMATION_RUN, data.animationDelays[1]);
         bodyJump = new AnimatedSprite(s, data.entityType + EntityRenderData.ANIMATION_JUMP, data.animationDelays[2]);
         bodyJump.loop = false;
-        bodyDeath = new AnimatedSprite(s, data.entityType + EntityRenderData.ANIMATION_DEATH, data.animationDelays[3]);
-        bodyDeath.loop = false;
         bodyPoses = [
             bodyRest,
             bodyRun,
-            bodyJump,
-            bodyDeath
+            bodyJump
         ];
-        for (i in 0...4) {
+        for (i in 0...3) {
             bodyPoses[i].x = data.bodySpriteOffset.x;
             bodyPoses[i].y = data.bodySpriteOffset.y;
             bodyPoses[i].width = data.widthBody;

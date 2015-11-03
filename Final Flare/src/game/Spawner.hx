@@ -34,8 +34,9 @@ class Spawner {
         // Physical parameters
         e.position.set(x, y);
         e.velocity.set(0, 0);
-        e.width = 0.9;
+        e.width = 0.8;
         e.height = 1.9;
+        e.headOffset.set(0, 0.6);
 
         // Clear flags
         e.direction = 0;
