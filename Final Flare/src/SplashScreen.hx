@@ -21,10 +21,6 @@ class SplashScreen extends IGameScreen {
     
     public function new(sc:ScreenController) {
         super(sc);
-        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
-        buttonArray = uif.createButton(200, 66);
-        //Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, updateMouse);
-        Lib.current.stage.addEventListener(MouseEvent.CLICK, handleClick);
     }
     
     override public function build():Void {
@@ -35,6 +31,11 @@ class SplashScreen extends IGameScreen {
     }
     
     override public function onEntry(gameTime:GameTime):Void {
+        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
+        buttonArray = uif.createButton(200, 66);
+        //Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, updateMouse);
+        Lib.current.stage.addEventListener(MouseEvent.CLICK, handleClick);
+        
         startButton = buttonArray[0];        
         var tf:TextField = new TextField(175, 80, "Start Button", "Verdana", 20);
         startButton.addChild(tf);

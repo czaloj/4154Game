@@ -26,11 +26,6 @@ class MenuScreen extends IGameScreen {
     
     public function new(sc:ScreenController) {
         super(sc);
-        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
-        buttonArray1 = uif.createButton(175, 50);
-        buttonArray2 = uif.createButton(175, 50);
-        //Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, updateMouse);
-        Lib.current.stage.addEventListener(MouseEvent.CLICK, handleClick);
     }
     
     override public function build():Void {
@@ -41,6 +36,11 @@ class MenuScreen extends IGameScreen {
     }
     
     override public function onEntry(gameTime:GameTime):Void {
+        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
+        buttonArray1 = uif.createButton(175, 50);
+        buttonArray2 = uif.createButton(175, 50);
+        Lib.current.stage.addEventListener(MouseEvent.CLICK, handleClick);
+        
         //Arena 1 Button
         button1 = buttonArray1[0];        
         var tf1:TextField = new TextField(160, 50, "Level 1", "Verdana", 20);
@@ -115,6 +115,37 @@ class MenuScreen extends IGameScreen {
     }
     
     private function handleClick(e:MouseEvent):Void {
+        var bound1 = button1.getBounds(screenController);
+        var bound2 = button2.getBounds(screenController);
+        if (bound1.contains(e.stageX, e.stageY)) {
+            changeButtonState(1, 2);
+        }
+        else if (bound2.contains(e.stageX, e.stageY)) {
+            changeButtonState(2, 2);
+        }
         
+    }
+    
+    //Future Mark, I'm sorry
+    //This implementation is so disgusting. Change ASAP
+    public function changeButtonState(button:Int, state:Int):Void
+    {
+        if (button == 1) {
+            screenController.removeChild(button1);
+            button1 = buttonArray1[state];        
+            var tf:TextField = new TextField(150, 50, "Level 1", "Verdana", 20);
+            button1.addChild(tf);
+            button1.transformationMatrix.translate(170, 175);
+            screenController.addChild(button1);
+        }
+        
+        else if (button == 2) {
+            screenController.removeChild(button2);
+            button2 = buttonArray2[state];        
+            var tf:TextField = new TextField(150, 50, "Level 2", "Verdana", 20);
+            button2.addChild(tf);
+            button2.transformationMatrix.translate(170, 175);
+            screenController.addChild(button2);
+        }
     }
 }
