@@ -178,12 +178,12 @@ class GameplayController {
     public function updateTargeting():Void {
         for (e in state.entitiesEnabled) {
             e.headAngle = Math.atan2(
-                e.targetX - (e.position.x + e.headOffset.x * e.lookingDirection),
-                e.targetY - (e.position.y + e.headOffset.y)
+                e.targetY - (e.position.y + e.headOffset.y),
+                e.targetX - (e.position.x + e.headOffset.x * e.lookingDirection)
             );
             e.weaponAngle = Math.atan2(
-                e.targetX - (e.position.x + e.weaponOffset.x * e.lookingDirection),
-                e.targetY - (e.position.y + e.weaponOffset.y)
+                e.targetY - (e.position.y + e.weaponOffset.y),
+                e.targetX - (e.position.x + e.weaponOffset.x * e.lookingDirection)
             );
         }
     }
