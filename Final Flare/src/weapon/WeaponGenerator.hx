@@ -53,7 +53,7 @@ class WeaponGenerator {
         else {
             var damage:DamageExplosion = new DamageExplosion(null);
             damage.damage = 40;
-            damage.friendlyDamage = 0;
+            damage.friendlyDamage = 20;
             damage.radius = 2;
             data.projectileOrigins[0].largeProjectile = new LargeProjectile(damage);
             data.projectileOrigins[0].largeProjectile.radius = 0.2;
