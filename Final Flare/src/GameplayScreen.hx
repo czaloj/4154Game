@@ -60,6 +60,7 @@ class GameplayScreen extends IGameScreen {
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);
         openfl.Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, inputController.mouseDown);
+        openfl.Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, inputController.mouseMove);
         openfl.Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, inputController.mouseUp);
 
         // Debug view of physics

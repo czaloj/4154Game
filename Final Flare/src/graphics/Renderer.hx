@@ -425,12 +425,10 @@ class Renderer {
             var sprite:AnimatedSprite = entityTbl.get(o);
             sprite.x = o.position.x - entityTbl.get(o).width * 0.5;
             sprite.y = o.position.y - o.height * 0.5;
-            if (o.direction == -1)  {
+            if (o.lookingDirection < 0)  {
                 sprite.x += sprite.width;
-                sprite.scaleX = -Math.abs(sprite.scaleX);
-            } else {
-                sprite.scaleX = Math.abs(sprite.scaleX);
             }
+            sprite.scaleX = o.lookingDirection * Math.abs(sprite.scaleX);
         }
         var levelWidth:Float = s.width * World.TILE_HALF_WIDTH;
         var levelHeight:Float = s.height * World.TILE_HALF_WIDTH;

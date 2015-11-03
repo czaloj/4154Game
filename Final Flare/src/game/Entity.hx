@@ -26,7 +26,7 @@ class Entity extends EntityBase {
     public var headAngle:Float = 0.0;
     public var weaponOffset:B2Vec2 = new B2Vec2();
     public var weaponAngle:Float = 0.0;
-    public var lookingDirection:Float = 1.0; // The direction the entity is facing (1.0 for right, -1.0 for left)
+    public var lookingDirection(get, never):Float; // The direction the entity is facing (1.0 for right, -1.0 for left)
     
     // Other Logical information
     public var team:Int;
@@ -63,5 +63,8 @@ class Entity extends EntityBase {
     }
     public function get_isDead():Bool {
         return health < 0;
+    }
+    public function get_lookingDirection():Float {
+        return position.x < targetX ? 1.0 : -1.0;
     }
 }
