@@ -23,7 +23,8 @@ class SplashScreen extends IGameScreen {
     override public function onEntry(gameTime:GameTime):Void {
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         
-        var startButton = uif.createScaledButton(20,2);
+        var startButton = uif.createScaledButton(200, 66);
+        startButton.transformationMatrix.translate(300, 250);
         screenController.addChild(startButton);
         
         
