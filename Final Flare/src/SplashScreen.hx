@@ -1,16 +1,13 @@
 package;
 
 import lime.system.BackgroundWorker;
-import starling.events.Event;
 import openfl.events.MouseEvent;
 import starling.display.Sprite;
-import starling.geom.Rectangle;
 import starling.textures.Texture;
 import ui.UISpriteFactory;
 import openfl.Assets;
 import openfl.display.SimpleButton;
 import starling.text.TextField;
-import starling.utils.HAlign;
 import openfl.Lib;
 
 class SplashScreen extends IGameScreen {
@@ -26,6 +23,7 @@ class SplashScreen extends IGameScreen {
         super(sc);
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         buttonArray = uif.createButton(200, 66);
+        //Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, updateMouse);
         Lib.current.stage.addEventListener(MouseEvent.CLICK, handleClick);
     }
     
@@ -37,22 +35,34 @@ class SplashScreen extends IGameScreen {
     }
     
     override public function onEntry(gameTime:GameTime):Void {
-        startButton = buttonArray[0];
-        
+        startButton = buttonArray[0];        
         var tf:TextField = new TextField(175, 80, "Start Button", "Verdana", 20);
-        tf.hAlign = HAlign.CENTER;
         startButton.addChild(tf);
-        startButton.transformationMatrix.translate(300, 250);
+        startButton.transformationMatrix.translate(275, 250);
         screenController.addChild(startButton);
         
         
         
     }
     override public function onExit(gameTime:GameTime):Void {
-        // Empty
+        Lib.current.stage.removeEventListener(MouseEvent.CLICK, handleClick);
     }
     
     override public function update(gameTime:GameTime):Void {
+        var bound = startButton.getBounds(screenController);
+        if (bound.contains(mousePosX, mousePosY) && hover == false) 
+        {
+            changeButtonState(1);
+            hover = true;
+        }
+        if (bound.contains(mousePosX, mousePosY) == false && hover == true)
+        {
+            hover == false;
+            changeButtonState(0);
+  
+        }
+        
+        
         // Switch to the main menu
         if (clicked) {
             clicked = false;
@@ -63,14 +73,26 @@ class SplashScreen extends IGameScreen {
         // Empty
     }
     
-    public function handleHover(e:MouseEvent = null):Void {
-        trace("hover");
+    public function changeButtonState(state:Int) 
+    {
+        screenController.removeChild(startButton);
+        startButton = buttonArray[state];        
+        var tf:TextField = new TextField(175, 80, "Start Button", "Verdana", 20);
+        startButton.addChild(tf);
+        startButton.transformationMatrix.translate(275, 250);
+        screenController.addChild(startButton);
+    }
+    
+    public function updateMouse(e:MouseEvent):Void {
+        mousePosX = e.stageX;
+        mousePosY = e.stageY;
     }
     
     public function handleClick(e:MouseEvent):Void {
         var bound = startButton.getBounds(screenController);
         if (bound.contains(e.stageX, e.stageY)) {
             clicked = true;
+            changeButtonState(2);
         }
     }
     

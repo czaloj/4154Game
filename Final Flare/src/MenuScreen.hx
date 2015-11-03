@@ -8,10 +8,28 @@ import flash.net.FileReference;
 import flash.utils.ByteArray;
 import weapon.WeaponGenerator;
 import weapon.WeaponGenParams;
+import openfl.events.MouseEvent;
+import starling.display.Sprite;
+import starling.textures.Texture;
+import ui.UISpriteFactory;
+import openfl.Assets;
+import starling.text.TextField;
+import openfl.Lib;
+
 
 class MenuScreen extends IGameScreen {
+    private var buttonArray:Array<Sprite>;
+    private var button1:Sprite;
+    private var button2:Sprite;
+    private var button3:Sprite;
+    
+    
     public function new(sc:ScreenController) {
         super(sc);
+        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
+        buttonArray = uif.createButton(175, 50);
+        //Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, updateMouse);
+        Lib.current.stage.addEventListener(MouseEvent.CLICK, handleClick);
     }
     
     override public function build():Void {
@@ -22,6 +40,12 @@ class MenuScreen extends IGameScreen {
     }
     
     override public function onEntry(gameTime:GameTime):Void {
+        //Arena 1 Button
+        //Arena 2 Button
+        //Areana 3 Button
+        
+        
+        
         FFLog.recordMenuStart();
 
         // Begin loading a file
@@ -79,4 +103,6 @@ class MenuScreen extends IGameScreen {
 
         screenController.switchToScreen(2);
     }
+    
+    private function
 }
