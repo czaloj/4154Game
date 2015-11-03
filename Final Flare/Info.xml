@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<game>
+	<name>Final Flare</name>
+	<description>A description for your game.</description>
+	<team name="Cardboard Joe">
+	    <member>Amy Wang</member>
+	    <member>Cristian Zaloj</member>
+	    <member>Isabella Wang</member>
+	    <member>Mark Saad</member>
+	    <member>Michael O'Neill</member>
+	    <member>Sophie Huang</member>
+	</team>
+	<source>
+		<format>flash</format>
+	    <background>#ffffff</background>
+	    <width>800</width>
+	    <height>450</height>
+		<wmode>direct</wmode>
+	</source>
+	<lastupdated>Tuesday, 03 Nov 2015 10:10:00</lastupdated>
+</game>
