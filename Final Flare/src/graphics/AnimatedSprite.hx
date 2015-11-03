@@ -22,7 +22,19 @@ class AnimatedSprite extends Image {
         this.delay = delay;
         flippedTexture = flipTexture;
         
-        addEventListener(Event.ENTER_FRAME, update);
+        addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+        addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
+    }
+    
+    public function disposeListeners():Void {
+        removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+        removeEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
+    }
+    private function onAddedToStage(e:Event = null):Void {
+        addEventListener(Event.ENTER_FRAME, update);        
+    }
+    private function onRemovedFromStage(e:Event = null):Void {
+        removeEventListener(Event.ENTER_FRAME, update);
     }
     
     private function update(e:Event = null):Void {
