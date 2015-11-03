@@ -4,12 +4,14 @@ import lime.system.BackgroundWorker;
 import starling.events.Event;
 import openfl.events.MouseEvent;
 import starling.display.Sprite;
+import starling.geom.Rectangle;
 import starling.textures.Texture;
 import ui.UISpriteFactory;
 import openfl.Assets;
 import openfl.display.SimpleButton;
 import starling.text.TextField;
 import starling.utils.HAlign;
+import openfl.Lib;
 
 class SplashScreen extends IGameScreen {
     private var buttonArray:Array<Sprite>;
@@ -18,11 +20,13 @@ class SplashScreen extends IGameScreen {
     private var mousePosX:Float;
     private var mousePosY:Float;
     private var clicked:Bool = false;
+    private var hover:Bool = false;
     
     public function new(sc:ScreenController) {
         super(sc);
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         buttonArray = uif.createButton(200, 66);
+        Lib.current.stage.addEventListener(MouseEvent.CLICK, handleClick);
     }
     
     override public function build():Void {
@@ -39,7 +43,6 @@ class SplashScreen extends IGameScreen {
         tf.hAlign = HAlign.CENTER;
         startButton.addChild(tf);
         startButton.transformationMatrix.translate(300, 250);
-        startButton.addEventListener(MouseEvent.MOUSE_MOVE, handleHover);
         screenController.addChild(startButton);
         
         
@@ -64,8 +67,11 @@ class SplashScreen extends IGameScreen {
         trace("hover");
     }
     
-    public function handleClick(e:MouseEvent = null):Void {
-        trace("Click");
+    public function handleClick(e:MouseEvent):Void {
+        var bound = startButton.getBounds(screenController);
+        if (bound.contains(e.stageX, e.stageY)) {
+            clicked = true;
+        }
     }
     
 }
