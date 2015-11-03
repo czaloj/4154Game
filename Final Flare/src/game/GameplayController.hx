@@ -25,9 +25,6 @@ class GameplayController {
     public static var PLAYER_GROUND_FRICTION:Float = .3;
     public static var PLAYER_AIR_FRICTION:Float = .95;
     public static inline var TILE_HALF_WIDTH:Float = 0.5;
-    public static var BULLET_DAMAGE = 20;
-    public static var MELEE_DAMAGE = 20;
-    public static var E_DAMAGE = 100;
 
     public var state:game.GameState;
     public var physicsController:PhysicsController = new PhysicsController();
