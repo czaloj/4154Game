@@ -22,6 +22,8 @@ class MenuScreen extends IGameScreen {
     }
     
     override public function onEntry(gameTime:GameTime):Void {
+        FFLog.recordMenuStart();
+
         // Begin loading a file
         var fileRef:FileReference = new FileReference();
         fileRef.addEventListener(Event.SELECT, onFileBrowse);
@@ -50,7 +52,7 @@ class MenuScreen extends IGameScreen {
         screenController.levelModifiers = mod;
     }
     override public function onExit(gameTime:GameTime):Void {
-        // Empty
+        FFLog.recordMenuEnd();
     }
     
     override public function update(gameTime:GameTime):Void {

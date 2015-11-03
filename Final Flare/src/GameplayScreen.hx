@@ -42,7 +42,7 @@ class GameplayScreen extends IGameScreen {
     }
 
     override function onEntry(gameTime:GameTime):Void {
-        FFLog.recordLevelStart(42.0, "Test Level");
+        FFLog.recordArenaStart(42, 0);
         
         state = new game.GameState();
         inputController = new game.InputController();
@@ -76,7 +76,7 @@ class GameplayScreen extends IGameScreen {
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
     }
     override function onExit(gameTime:GameTime):Void {
-        FFLog.recordLevelEnd();
+        FFLog.recordArenaEnd();
         openfl.Lib.current.stage.removeEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
         openfl.Lib.current.stage.removeEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);
         openfl.Lib.current.stage.removeEventListener(MouseEvent.MOUSE_DOWN, inputController.mouseDown);
