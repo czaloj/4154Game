@@ -103,19 +103,19 @@ class UISpriteFactory {
         return button;        
     }
     
-    public function createRectButton():Sprite {
+    public function createScaledButton(sx:Float, sy:Float):Sprite {
         var button = new Sprite();
         
         //Create regions from sprite sheet
-        addScaledChildSprite("Region.Center", button, 9, 9, 20, 2);
+        addScaledChildSprite("Region.Center", button, 9, 9, sx, sy);
         addChildSprite("Region.TopLeft", button, 0, 0);
-        addScaledChildSprite("Region.Top", button, 9, 0, 20, 1);
-        addChildSprite("Region.TopRight", button, 29, 0);
-        addScaledChildSprite("Region.Right", button, 29, 9, 1, 2);
-        addChildSprite("Region.BottomRight", button, 29, 11);
-        addScaledChildSprite("Region.Bottom", button, 9, 11, 20, 1);
-        addChildSprite("Region.BottomLeft", button, 0, 11);
-        addScaledChildSprite("Region.Left", button, 0, 9, 1, 2);
+        addScaledChildSprite("Region.Top", button, 9, 0, sx, 1);
+        addChildSprite("Region.TopRight", button, sx + 9, 0);
+        addScaledChildSprite("Region.Right", button, sx + 9, 9, 1, sy);
+        addChildSprite("Region.BottomRight", button, 29, 9 + sy);
+        addScaledChildSprite("Region.Bottom", button, 9, 9 + sy, sx, 1);
+        addChildSprite("Region.BottomLeft", button, 0, 9 + sy);
+        addScaledChildSprite("Region.Left", button, 0, 9, 1, sy);
         
         return button;
     }
