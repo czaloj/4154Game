@@ -104,5 +104,7 @@ class MenuScreen extends IGameScreen {
         screenController.switchToScreen(2);
     }
     
-    private function
+    private function handleClick(e:MouseEvent):Void {
+        
+    }
 }
