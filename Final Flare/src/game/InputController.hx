@@ -56,9 +56,9 @@ class InputController {
 
     public function update(state:game.GameState, camX:Float, camY:Float, camScale:Float):Void {
         state.player.direction = switch([keysDown[keyLeft], keysDown[keyRight]]) {
-            case [true, true], [false, false]: 0;
             case [false, true]: 1;
             case [true, false]: -1;
+            default: 0;
         }
         state.player.up = keysDown[keyJump];
         state.player.useWeapon = click;
