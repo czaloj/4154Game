@@ -29,7 +29,7 @@ class GameplayController {
     private var debugPhysicsView:Sprite;
     private var deletingEntities:Array<Entity> = [];
 	private var time:GameTime;
-    
+
     private var vis:IGameVisualizer;
 
     public function new() {
@@ -38,11 +38,11 @@ class GameplayController {
 
     public function init(s:GameState):Void {
         state = s;
-        
+
         // Initialize physics from loaded GameState
         physicsController.init(state);
         physicsController.initPlatforms(state);
-        
+
         // Give all the players weapons
         for (i in 0...5) {
             if (state.entities[i] != null) {
@@ -52,16 +52,16 @@ class GameplayController {
                 }
             }
         }
-        
+
         // We begin with the first player
         state.player = state.entities[0];
     }
     public function setVisualizer(v:IGameVisualizer):Void {
         vis = v;
-        
+
         vis.onEntityAdded(state, state.player);
     }
-    
+
     public function initDebug(debugPhysicsView:Sprite):Void {
         // Create a debug view of the physics world
         debugPhysicsView.x = ScreenController.SCREEN_WIDTH / 2;
@@ -72,7 +72,7 @@ class GameplayController {
     public function drawDebug():Void {
         physicsController.renderDebug();
     }
-    
+
     public function handleCollisions():Void {
         for (contact in state.contactList) {
             if (contact == null) continue;
@@ -94,11 +94,11 @@ class GameplayController {
                     // No match found here
             }
         }
-        
+
         state.contactList.clear();
     }
     private function handleEntityPlatform(c:PhysicsContact, e:Entity) {
-        if (c.collisionNormal.y > 0.8) { 
+        if (c.collisionNormal.y > 0.8) {
             e.feetTouches += c.isBegin ? 1 : -1;
         }
         else if (c.collisionNormal.x > 0.8) {
@@ -114,10 +114,10 @@ class GameplayController {
         time = gameTime;
         // TODO: Spawner shouldn't need reference to this
         Spawner.spawn(this, state, gameTime);
-        
+
         // Update looking directions
         updateTargeting();
-        
+
         // Update game events
         if (state.gameEvents.length > 0) {
             for (event in state.gameEvents) {
@@ -128,20 +128,20 @@ class GameplayController {
             }
             state.gameEvents = [];
         }
-        
+
         // Create damage dealers
         for (projectile in state.projectiles) {
             projectile.update(time.elapsed, state);
         }
         for (entity in state.entitiesEnabled) {
             if (entity.weapon != null) {
-                entity.weapon.update(entity.useWeapon, time.elapsed, s);                
+                entity.weapon.update(entity.useWeapon, time.elapsed, s);
             }
         }
-        
+
         // Physics
         updatePhysics(gameTime);
-        
+
         // Interactions
         handleCollisions();
         for (damage in state.damage) {
@@ -158,23 +158,26 @@ class GameplayController {
             }
         }
         state.damage = [];
-        
+
         // Other game logic
         state.projectiles = state.projectiles.filter(function(p:Projectile){
-            return 
+            return
                 p.position.x >= 0 && p.position.x <= state.width * TILE_HALF_WIDTH &&
                 p.position.y >= 0 && p.position.y <= state.height * TILE_HALF_WIDTH;
         });
         for (entity in state.entitiesNonNull) {
-            if (entity.isDead) deletingEntities.push(entity);
+            if (entity.isDead) {
+                deletingEntities.push(entity);
+                state.score++;
+            }
         }
-        
+
         // Destroy all dead things
         if (deletingEntities.length > 0) {
             for (entity in deletingEntities) {
                 vis.onEntityRemoved(state, entity);
                 physicsController.onEntityRemoved(state, entity);
-                
+
                 // TODO: Make this work better
                 if (entity.team != Entity.TEAM_PLAYER) {
                     state.entities.remove(entity);
@@ -216,15 +219,15 @@ class GameplayController {
             if (entity.up && entity.isGrounded) {
                 entity.velocity.y = 9.5;
             }
-            
+
             // Update the body
             entity.body.setLinearVelocity(entity.velocity.copy());
             entity.body.setPosition(entity.position.copy());
         }
-        
+
         // Simulate the world
         physicsController.update(dt.elapsed);
-        
+
         // Reapply from physics
         for (entity in state.entitiesNonNull) {
             entity.velocity = entity.body.getLinearVelocity().copy();
@@ -241,7 +244,7 @@ class GameplayController {
             p.damage.originY = p.position.y;
         }
     }
-    
+
     // Application of game events
     public function applyEventSpawn(state:GameState, e:GameEventSpawn):Void {
         var enemy:Entity = new Entity();
@@ -261,7 +264,7 @@ class GameplayController {
             bullet.piercingAmount
             );
         vis.addBulletTrail(bullet.originX, bullet.originY, bullet.originX + bullet.velocityX * dt, bullet.originY + bullet.velocityY * dt, 0.2);
-        
+
         if (info.first.length > 0) {
             // TODO: All entities are damaged
             for (rci in info.first) {
@@ -272,7 +275,7 @@ class GameplayController {
                     vis.onBloodSpurt(rci.third.x, rci.third.y, rci.fourth.x, rci.fourth.y);
                 }
             }
-            
+
             // Apply piercing count
             if (bullet.piercingAmount > 0) {
                 bullet.piercingAmount -= info.first.length;
@@ -286,7 +289,7 @@ class GameplayController {
                 return true;
             }
         }
-        
+
         // Check for wall hit
         return info.second != null;
     }
@@ -294,6 +297,6 @@ class GameplayController {
         // TODO: Work magic
     }
     public function applyDamageExplosion(state:GameState, explosion:DamageExplosion):Void {
-        // TODO: Work magic        
+        // TODO: Work magic
     }
 }

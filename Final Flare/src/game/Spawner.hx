@@ -10,7 +10,7 @@ class Spawner {
     public static var PLAYER_MAX_SPEED:Float = 7;
     public static var PLAYER_GROUND_ACCEL:Float = .9;
     public static var PLAYER_AIR_ACCEL:Float = .3;
-    
+
     public var id:String; // Identifying tag
     public var position:Point = new Point(); // Spawner position
 
@@ -25,7 +25,8 @@ class Spawner {
         for (spawner in state.spawners) {
             var type = EnemyType.make(spawner.id);
             //TODO: factor in difficulty
-            if (gameTime.frame % type.spawnCooldown <= state.score/10) {
+            if (gameTime.frame % (type.spawnCooldown - 50 * Std.int(Math.log(state.score))) == 0) {
+                trace(type.spawnCooldown - 50 * Std.int(Math.log(state.score)));
                 state.gameEvents.push(new GameEventSpawn(spawner.position.x, spawner.position.y, spawner.id));
             }
         }
