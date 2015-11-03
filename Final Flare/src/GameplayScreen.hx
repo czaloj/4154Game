@@ -32,6 +32,7 @@ class GameplayScreen extends IGameScreen {
     public var inputController:game.InputController;
     private var debugPhysicsView:Sprite;
     private var score:TextField;
+    private var hp:StaticSprite;
 
     public function new(sc: ScreenController) {
         super(sc);
@@ -89,6 +90,12 @@ class GameplayScreen extends IGameScreen {
         var hb:StaticSprite = uif.getTile("Health.Background");
         screenController.addChild(hb);
 
+        hp = uif.getTile("Health.Overlay");
+        hp.x = 20;
+        hp.y = 4;
+        hp.width = 201 * state.player.health / 100;
+        screenController.addChild(hp);
+
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
     }
     override function onExit(gameTime:GameTime):Void {
@@ -110,6 +117,9 @@ class GameplayScreen extends IGameScreen {
 
         //Update score
         score.text = Std.string(state.score);
+
+        //Update Health Bar
+        hp.width = 201 * state.player.health / 100;
     }
     override function draw(gameTime:GameTime):Void {
         renderer.update(state);
