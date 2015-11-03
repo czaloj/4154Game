@@ -56,6 +56,7 @@ class GameplayScreen extends IGameScreen {
         gameplayController.init(state);
         LevelCreator.createPackFromLevel(gl, pack);
         renderer = new Renderer(screenController, pack, state);
+        gameplayController.setVisualizer(renderer);
 
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);

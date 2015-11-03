@@ -29,10 +29,10 @@ class WeaponGenerator {
         data.shadynessCost = params.shadynessPoints;
         
         data.firingMode = FiringMode.AUTOMATIC;
-        data.useCapacity = 10;
+        data.useCapacity = 36;
         data.usesPerActivation = 1;
-        data.reloadTime = 5;
-        data.activationCooldown = 0.25;
+        data.reloadTime = 2.4;
+        data.activationCooldown = 0.15;
         data.burstPause = 0;
         data.burstCount = 0;
         

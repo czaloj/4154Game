@@ -111,7 +111,6 @@ class PhysicsController extends B2ContactListener {
 
     public function init(s:GameState) {
         state = s;
-        state.onEntityRemoved.add(onEntityRemoved);
 
         world = new B2World(GRAVITY, true);
         world.setContactListener(this);
@@ -224,7 +223,7 @@ class PhysicsController extends B2ContactListener {
         state.contactList.add(c);
     }
     
-    private function onEntityRemoved(state:GameState, e:Entity) {
+    public function onEntityRemoved(state:GameState, e:Entity) {
         deleteList.push(e.body);
     }
 

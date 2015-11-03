@@ -96,13 +96,8 @@ class GameState {
 
     public var gameEvents:Array<GameEvent> = []; // The queue of game events that should occur during an update
     
-    // Broadcasting events
-    public var onEntityAdded:BroadcastEvent2<GameState, Entity> = new BroadcastEvent2<GameState, Entity>();
-    public var onEntityRemoved:BroadcastEvent2<GameState, Entity> = new BroadcastEvent2<GameState, Entity>();
-    public var onProjectileAdded:BroadcastEvent2<GameState, game.Projectile> = new BroadcastEvent2<GameState, game.Projectile>();
-    public var onProjectileRemoved:BroadcastEvent2<GameState, game.Projectile> = new BroadcastEvent2<GameState, game.Projectile>();
-
     public var score:Int = 0;
+    
     public function new() {
         entitiesNonNull = new EntityNonNullList(this);
         entitiesEnabled = new EntityEnabledList(this);

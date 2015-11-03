@@ -154,9 +154,12 @@ class Weapon {
     }
     
     private function fireBullets(s:GameState, timeOut:Float):Void {
-        var gunOrigin:Matrix = new Matrix(1, 0, 0, 1, 
+        var gunOrigin:Matrix = new Matrix();
+        gunOrigin.rotate(entity.weaponAngle);
+        gunOrigin.translate( 
             entity.position.x + entity.weaponOffset.x * entity.lookingDirection,
-            entity.position.y + entity.weaponOffset.y);
+            entity.position.y + entity.weaponOffset.y
+            );
         
         var pOrigin:Point = new Point();
         var pDirection:Point = new Point(1, 0);

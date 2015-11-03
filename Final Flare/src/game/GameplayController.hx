@@ -14,6 +14,7 @@ import game.PhysicsController.PhysicsContactBody;
 import game.PhysicsController.PhysicsUserData;
 import game.PhysicsController.PhysicsUserDataType;
 import game.PhysicsController.RayCastInfo;
+import graphics.IGameVisualizer;
 import openfl.display.Sprite;
 import openfl.geom.Point;
 import weapon.Weapon;
@@ -28,6 +29,8 @@ class GameplayController {
     private var debugPhysicsView:Sprite;
     private var deletingEntities:Array<Entity> = [];
 	private var time:GameTime;
+    
+    private var vis:IGameVisualizer;
 
     public function new() {
         // Empty
@@ -53,7 +56,12 @@ class GameplayController {
         // We begin with the first player
         state.player = state.entities[0];
     }
-
+    public function setVisualizer(v:IGameVisualizer):Void {
+        vis = v;
+        
+        vis.onEntityAdded(state, state.player);
+    }
+    
     public function initDebug(debugPhysicsView:Sprite):Void {
         // Create a debug view of the physics world
         debugPhysicsView.x = ScreenController.SCREEN_WIDTH / 2;
@@ -164,8 +172,9 @@ class GameplayController {
         // Destroy all dead things
         if (deletingEntities.length > 0) {
             for (entity in deletingEntities) {
-                state.onEntityRemoved.invoke(state, entity);
-
+                vis.onEntityRemoved(state, entity);
+                physicsController.onEntityRemoved(state, entity);
+                
                 // TODO: Make this work better
                 if (entity.team != Entity.TEAM_PLAYER) {
                     state.entities.remove(entity);
@@ -239,7 +248,7 @@ class GameplayController {
         Spawner.createEnemy(enemy, e.entity, e.x, e.y);
         physicsController.initEntity(enemy);
         state.entities.push(enemy);
-        state.onEntityAdded.invoke(state, enemy);
+        vis.onEntityAdded(state, enemy);
     }
 
     public function applyDamageBullet(state:GameState, bullet:DamageBullet, dt:Float):Bool {
@@ -251,6 +260,7 @@ class GameplayController {
             (bullet.teamDestinationFlags & DamageDealer.TEAM_ENEMY) != 0,
             bullet.piercingAmount
             );
+        vis.addBulletTrail(bullet.originX, bullet.originY, bullet.originX + bullet.velocityX * dt, bullet.originY + bullet.velocityY * dt, 0.2);
         
         if (info.first.length > 0) {
             // TODO: All entities are damaged
@@ -259,6 +269,7 @@ class GameplayController {
                 if (hitUD.first == PhysicsUserDataType.ENTITY) {
                     var hitEntity:Entity = cast(hitUD.second, Entity);
                     hitEntity.health -= bullet.damageFor((hitEntity.team == Entity.TEAM_PLAYER) ? DamageDealer.TEAM_PLAYER : DamageDealer.TEAM_ENEMY);
+                    vis.onBloodSpurt(rci.third.x, rci.third.y, rci.fourth.x, rci.fourth.y);
                 }
             }
             

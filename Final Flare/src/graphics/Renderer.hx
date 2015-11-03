@@ -24,7 +24,7 @@ import starling.display.Stage;
 import starling.textures.RenderTexture;
 import starling.textures.Texture;
 
-class Renderer {
+class Renderer implements IGameVisualizer {
     public static inline var PLAYER_WIDTH:Float = 0.9;
     public static inline var PLAYER_HEIGHT:Float = 1.9;
     public static inline var CAMERA_DEBUG_MOVE_SPEED:Float = 5.0;
@@ -125,6 +125,7 @@ class Renderer {
         Starling.current.viewPort = viewPortRectangle;
     }
 
+    /** IGameVisualizer **/
     public function onEntityAdded(s:game.GameState, o:game.Entity):Void {
         // Add a corresponding sprite to stage and track this entity
         var sprite:EntitySprite = new EntitySprite((o.team == Entity.TEAM_PLAYER) ? pack.characters : pack.enemies, pack.entityRenderData.get(o.id));
@@ -143,35 +144,29 @@ class Renderer {
         e.parent.removeChild(e);
         entityTbl.remove(o);
     }
-
-    public function onBulletAdded(s:game.GameState, p:game.Projectile):Void {
-        // Add a corresponding sprite to stage and track this entity
-        var bullet = new AnimatedSprite(pack.projectiles, "Bullet.Fly", 1);
-        bullet.x = p.position.x;
-        bullet.y = p.position.y;
-        bullet.scaleX /= 32;
-        bullet.scaleY /= 32;
-        hierarchy.projectiles.addChild(bullet);
-        projTbl.set(p,bullet);
-        //what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
+    public function onBloodSpurt(sx:Float, sy:Float, dx:Float, dy:Float):Void {
+        var quad:Quad = new Quad(0.5, 0.5);
+        quad.x = sx - quad.width / 2.0;
+        quad.y = sy - quad.height / 2.0;
+        quad.color = 0xff0000;
+        quad.alpha = 0.2;
+        renderPermanence([quad], []);
+        
+        tracers.add(sx, sy, dx * 0.3, dy * 0.3, 0.4, 0.5, 0xff0000, 0.1);
     }
-    public function onBulletRemoved(s:game.GameState, p:game.Projectile):Void {
-        //idk about this function the implementation i was thinking of was sketchy.
-        //i need to figure out the mapping between objectModels and sprites
-        hierarchy.projectiles.removeChild(projTbl.get(p));
-        projTbl.remove(p);
-        // Remove this entity from the stage
+    public function onExplosion(sx:Float, sy:Float, r:Float):Void {
+        var quad:Quad = new Quad(1.0, 1.0);
+        quad.x = sx - quad.width / 2.0;
+        quad.y = sy - quad.height / 2.0;
+        quad.color = 0x333333;
+        quad.alpha = 0.1;
+        renderPermanence([quad], []);
     }
-
+    public function addBulletTrail(sx:Float, sy:Float, ex:Float, ey:Float, duration:Float):Void {
+        tracers.add(sx, sy, ex - sx, ey - sy, 0.04, duration, 0xffff00, (1 / 60) / duration);
+    }
+    
     private function load(state:game.GameState):Void {
-        // Register listener functions
-        state.onEntityAdded.add(onEntityAdded);
-        state.onEntityRemoved.add(onEntityRemoved);
-        state.onProjectileAdded.add(onBulletAdded);
-        state.onProjectileRemoved.add(onBulletRemoved);
-        
-        onEntityAdded(state, state.player);
-        
         // Generate environment geometry
         tilesForeground = new QuadBatch();
         animatedForeground = [];
@@ -314,7 +309,6 @@ class Renderer {
         hierarchy.backgroundMask.addChild(qb);
         
     }
-    
     private function renderPermanence(backgroundObjects:Array<DisplayObject>, foregroundObjects:Array<DisplayObject>):Void {
         rtBackground.drawBundled(function():Void {
             for (obj in backgroundObjects) {
@@ -403,8 +397,6 @@ class Renderer {
         quad.y = position.y - quad.height / 2.0;
         quad.color = 0x000000;
         renderPermanence([quad], []);
-        
-        tracers.add(cameraX, cameraY, position.x - cameraX, position.y - cameraY, 0.3, 5.0 / 60.0, 0xffff00, 1.0 / 5.0);
     }
     
     public function screenToWorldSpace(pt:Point):Void {
