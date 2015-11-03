@@ -42,17 +42,22 @@ class MenuScreen extends IGameScreen {
         Lib.current.stage.addEventListener(MouseEvent.CLICK, handleClick);
         
         //Arena 1 Button
+        
         button1 = buttonArray1[0];        
         var tf1:TextField = new TextField(160, 50, "Level 1", "Verdana", 20);
         button1.addChild(tf1);
-        button1.transformationMatrix.translate(170, 175);
+        buttonArray1[0].transformationMatrix.translate(170, 175);
+        buttonArray1[1].transformationMatrix.translate(170, 175);
+        buttonArray1[2].transformationMatrix.translate(170, 175);
         screenController.addChild(button1);
         
         //Arena 2 Button
         button2 = buttonArray2[0];        
         var tf2:TextField = new TextField(150, 50, "Level 2", "Verdana", 20);
         button2.addChild(tf2);
-        button2.transformationMatrix.translate(425, 175);
+        buttonArray2[0].transformationMatrix.translate(425, 175);
+        buttonArray2[1].transformationMatrix.translate(425, 175);
+        buttonArray2[2].transformationMatrix.translate(425, 175);
         screenController.addChild(button2);        
         
         
@@ -135,7 +140,6 @@ class MenuScreen extends IGameScreen {
             button1 = buttonArray1[state];        
             var tf:TextField = new TextField(150, 50, "Level 1", "Verdana", 20);
             button1.addChild(tf);
-            button1.transformationMatrix.translate(170, 175);
             screenController.addChild(button1);
         }
         
@@ -144,7 +148,6 @@ class MenuScreen extends IGameScreen {
             button2 = buttonArray2[state];        
             var tf:TextField = new TextField(150, 50, "Level 2", "Verdana", 20);
             button2.addChild(tf);
-            button2.transformationMatrix.translate(170, 175);
             screenController.addChild(button2);
         }
     }

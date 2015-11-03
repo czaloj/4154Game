@@ -39,7 +39,8 @@ class SplashScreen extends IGameScreen {
         startButton = buttonArray[0];        
         var tf:TextField = new TextField(175, 80, "Start Button", "Verdana", 20);
         startButton.addChild(tf);
-        startButton.transformationMatrix.translate(275, 250);
+        buttonArray[0].transformationMatrix.translate(275, 250);
+        buttonArray[2].transformationMatrix.translate(275, 250);
         screenController.addChild(startButton);
         
         
@@ -51,13 +52,12 @@ class SplashScreen extends IGameScreen {
     }
     
     override public function update(gameTime:GameTime):Void {
-        var bound = startButton.getBounds(screenController);
-        if (bound.contains(mousePosX, mousePosY) && hover == false) 
+        if ((startButton.getBounds(screenController)).contains(mousePosX, mousePosY) && hover == false)
         {
             changeButtonState(1);
             hover = true;
         }
-        if (bound.contains(mousePosX, mousePosY) == false && hover == true)
+        if ((startButton.getBounds(screenController)).contains(mousePosX, mousePosY) == false && hover == true)
         {
             hover == false;
             changeButtonState(0);
@@ -81,7 +81,6 @@ class SplashScreen extends IGameScreen {
         startButton = buttonArray[state];        
         var tf:TextField = new TextField(175, 80, "Start Button", "Verdana", 20);
         startButton.addChild(tf);
-        startButton.transformationMatrix.translate(275, 250);
         screenController.addChild(startButton);
     }
     
