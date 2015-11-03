@@ -66,7 +66,7 @@ class MenuScreen extends IGameScreen {
         // Begin loading a file
         var fileRef:FileReference = new FileReference();
         fileRef.addEventListener(Event.SELECT, onFileBrowse);
-        //fileRef.browse();
+        fileRef.browse();
         
         // TODO: This is so badly hardcoded
         var mod:MenuLevelModifiers = new MenuLevelModifiers();
@@ -92,6 +92,8 @@ class MenuScreen extends IGameScreen {
     }
     override public function onExit(gameTime:GameTime):Void {
         FFLog.recordMenuEnd();
+        Lib.current.stage.removeEventListener(MouseEvent.CLICK, handleClick);
+
     }
     
     override public function update(gameTime:GameTime):Void {

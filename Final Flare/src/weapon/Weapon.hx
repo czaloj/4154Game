@@ -164,33 +164,39 @@ class Weapon {
         var pOrigin:Point = new Point();
         var pDirection:Point = new Point(1, 0);
         
-        for (projectile in data.projectileOrigins) {
+        for (po in data.projectileOrigins) {
             // Obtain a random firing angle
             var a:Float = Math.acos((Math.random() - 0.5) * 2) / Math.PI - 0.5;
-            a = a * a * a * projectile.exitAngle;
+            a = a * a * a * po.exitAngle;
             
             // Create the projectile's transformation matrix
             var t:Matrix = new Matrix();
             t.rotate(a);
-            t.concat(projectile.transform);
+            t.concat(po.transform);
             t.concat(gunOrigin);
             
             var position:Point = t.transformPoint(pOrigin);
             var direction:Point = t.deltaTransformPoint(pDirection);
-            var p:Projectile = projectile.projectile.createCopyAt(
-                entity,
-                position.x,
-                position.y,
-                direction.x * projectile.velocity,
-                direction.y * projectile.velocity
-                );
-            s.projectiles.push(p);
             
-            // Add a bit of damage if it's been out of the barrel
-            if (timeOut > 0) {
-                p.update(timeOut, s);
-                p.position.x += p.velocity.x * timeOut;
-                p.position.y += p.velocity.y * timeOut;
+            if (po.projectile != null) {
+                var p:Projectile = po.projectile.createCopyAt(
+                    entity,
+                    position.x,
+                    position.y,
+                    direction.x * po.velocity,
+                    direction.y * po.velocity
+                    );
+                s.projectiles.push(p);
+                
+                // Add a bit of damage if it's been out of the barrel
+                if (timeOut > 0) {
+                    p.update(timeOut, s);
+                    p.position.x += p.velocity.x * timeOut;
+                    p.position.y += p.velocity.y * timeOut;
+                }
+            }
+            else {
+                
             }
         }
     }
