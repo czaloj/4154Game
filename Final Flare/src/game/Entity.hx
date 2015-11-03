@@ -27,6 +27,9 @@ class Entity extends EntityBase {
     public var weaponOffset:B2Vec2 = new B2Vec2();
     public var weaponAngle:Float = 0.0;
     public var lookingDirection(get, never):Float; // The direction the entity is facing (1.0 for right, -1.0 for left)
+    public var maxMoveSpeed:Float = 1.0;
+    public var groundAcceleration:Float = 1.0;
+    public var airAcceleration:Float = 1.0;
     
     // Other Logical information
     public var team:Int;

@@ -19,11 +19,8 @@ import openfl.geom.Point;
 import weapon.Weapon;
 
 class GameplayController {
-    public static var PLAYER_MAX_SPEED:Float = 7;
-    public static var PLAYER_GROUND_ACCEL:Float = .9;
-    public static var PLAYER_AIR_ACCEL:Float = .3;
-    public static var PLAYER_GROUND_FRICTION:Float = .3;
-    public static var PLAYER_AIR_FRICTION:Float = .95;
+    public static var GROUND_FRICTION:Float = .3;
+    public static var AIR_FRICTION:Float = .95;
     public static inline var TILE_HALF_WIDTH:Float = 0.5;
 
     public var state:game.GameState;
@@ -165,13 +162,16 @@ class GameplayController {
         }
         
         // Destroy all dead things
-        for (entity in deletingEntities) {
-            state.onEntityRemoved.invoke(state, entity);
+        if (deletingEntities.length > 0) {
+            for (entity in deletingEntities) {
+                state.onEntityRemoved.invoke(state, entity);
 
-            // TODO: Make this work better
-            if (entity.id != "player") {
-                state.entities.remove(entity);
+                // TODO: Make this work better
+                if (entity.team != Entity.TEAM_PLAYER) {
+                    state.entities.remove(entity);
+                }
             }
+            deletingEntities = [];
         }
         physicsController.clearDeadBodies();
     }
@@ -191,20 +191,17 @@ class GameplayController {
         // Update entity movement input
         for (entity in state.entitiesNonNull) {
             // Add acceleration
-            var moveSpeed = entity.isGrounded ? PLAYER_GROUND_ACCEL : PLAYER_AIR_ACCEL;
-            if (entity.id == "enemy") {
-               moveSpeed /= 2;
-            }
+            var moveSpeed = entity.isGrounded ? entity.groundAcceleration : entity.airAcceleration;
             entity.velocity.x += entity.direction * moveSpeed;
 
             //Apply friction if there is no input command
             if (entity.direction == 0) {
-                var friction = entity.isGrounded ? PLAYER_GROUND_FRICTION : PLAYER_AIR_FRICTION;
+                var friction = entity.isGrounded ? GROUND_FRICTION : AIR_FRICTION;
                 entity.velocity.x *= friction;
             }
 
             // Clamp speed to a maximum value
-            entity.velocity.x = Math.min(PLAYER_MAX_SPEED, Math.max(-PLAYER_MAX_SPEED, entity.velocity.x));
+            entity.velocity.x = Math.min(entity.maxMoveSpeed, Math.max(-entity.maxMoveSpeed, entity.velocity.x));
 
             // Jump up
             if (entity.up && entity.isGrounded) {
@@ -240,7 +237,6 @@ class GameplayController {
     public function applyEventSpawn(state:GameState, e:GameEventSpawn):Void {
         var enemy:Entity = new Entity();
         Spawner.createEnemy(enemy, e.entity, e.x, e.y);
-        FFLog.recordEvent(2, "" + time.total +", " +e.x + ", " + e.y + ", nullenemid");
         physicsController.initEntity(enemy);
         state.entities.push(enemy);
         state.onEntityAdded.invoke(state, enemy);

@@ -9,7 +9,7 @@ class AIController {
 
     public function move(state:GameState):Void {
         for (entity in state.entitiesNonNull) {
-            if (entity.id != "player") {
+            if (entity.team == Entity.TEAM_ENEMY) {
                 followPlayer(entity, state);
             }
         }

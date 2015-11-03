@@ -76,7 +76,7 @@ class InputController {
             usingMouseInput = false;
             click = false;
         }
-        else if (keysDown[Keyboard.RIGHT]) {
+        else if (keysDown[keyShootRight]) {
             // Target towards the right
             state.player.targetX = state.player.position.x + VIEW_LOOKAHEAD;
             state.player.targetY = state.player.position.y;

@@ -127,19 +127,21 @@ class Renderer {
 
     public function onEntityAdded(s:game.GameState, o:game.Entity):Void {
         // Add a corresponding sprite to stage and track this entity
-        var enemy:EntitySprite = new EntitySprite(pack.enemies, pack.entityRenderData.get("Robot"));
-        enemy.x = o.position.x;
-        enemy.y = o.position.y;
-        hierarchy.enemy.addChild(enemy);
-        entityTbl.set(o, enemy);
-        //what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
+        var sprite:EntitySprite = new EntitySprite((o.team == Entity.TEAM_PLAYER) ? pack.characters : pack.enemies, pack.entityRenderData.get(o.id));
+        sprite.x = o.position.x;
+        sprite.y = o.position.y;
+        if (o.team == Entity.TEAM_PLAYER) {
+            hierarchy.player.addChild(sprite);            
+        }
+        else {
+            hierarchy.enemy.addChild(sprite);            
+        }
+        entityTbl.set(o, sprite);
     }
     public function onEntityRemoved(s:game.GameState, o:game.Entity):Void {
-        //idk about this function the implementation i was thinking of was sketchy.
-        //i need to figure out the mapping between objectModels and sprites
-        hierarchy.enemy.removeChild(entityTbl.get(o));
+        var e:EntitySprite = entityTbl.get(o);
+        e.parent.removeChild(e);
         entityTbl.remove(o);
-        // Remove this entity from the stage
     }
 
     public function onBulletAdded(s:game.GameState, p:game.Projectile):Void {
@@ -168,11 +170,7 @@ class Renderer {
         state.onProjectileAdded.add(onBulletAdded);
         state.onProjectileRemoved.add(onBulletRemoved);
         
-        var man = new EntitySprite(pack.characters, pack.entityRenderData.get("Man"));
-        man.x = state.player.position.x;
-        man.y = state.player.position.y;
-        hierarchy.player.addChild(man);
-        entityTbl.set(state.player, man);
+        onEntityAdded(state, state.player);
         
         // Generate environment geometry
         tilesForeground = new QuadBatch();

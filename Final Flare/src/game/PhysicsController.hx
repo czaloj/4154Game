@@ -134,8 +134,8 @@ class PhysicsController extends B2ContactListener {
         fixtureDef.shape = shape;
         fixtureDef.friction = 1;
         fixtureDef.density = 1;
-        switch (e.id) {
-            case "player":
+        switch (e.team) {
+            case Entity.TEAM_PLAYER:
                 fixtureDef.filter = FILTER_PLAYER.copy();
             default:
                 fixtureDef.filter = FILTER_ENEMY.copy();
