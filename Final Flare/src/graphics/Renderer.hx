@@ -389,14 +389,7 @@ class Renderer implements IGameVisualizer {
         }
     }
     private function debugMouseClick(e:MouseEvent = null):Void {
-        var position:Point = new Point(e.stageX, e.stageY);
-        screenToWorldSpace(position);
-        
-        var quad:Quad = new Quad(1, 1);
-        quad.x = position.x - quad.width / 2.0;
-        quad.y = position.y - quad.height / 2.0;
-        quad.color = 0x000000;
-        renderPermanence([quad], []);
+        // Empty
     }
     
     public function screenToWorldSpace(pt:Point):Void {
