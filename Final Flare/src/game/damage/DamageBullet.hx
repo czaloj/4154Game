@@ -1,4 +1,5 @@
 package game.damage;
+
 import game.damage.DamageDealer;
 import game.Projectile;
 

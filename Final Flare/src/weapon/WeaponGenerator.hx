@@ -2,6 +2,8 @@ package weapon;
 
 import game.ColorScheme;
 import game.damage.DamageBullet;
+import game.damage.DamageExplosion;
+import game.LargeProjectile;
 import game.Projectile;
 import openfl.display.BitmapData;
 import openfl.geom.Rectangle;
@@ -40,13 +42,24 @@ class WeaponGenerator {
             new ProjectileOrigin()
         ];
         data.projectileOrigins[0].exitAngle = 0.3;
-        var damage:DamageBullet = new DamageBullet(null);
-        damage.damage = 10;
-        damage.friendlyDamage = 0;
-        damage.piercingAmount = 0;
-        data.projectileOrigins[0].projectile = new Projectile(damage);
-        data.projectileOrigins[0].transform.translate(0.4, 0.1);
-        data.projectileOrigins[0].velocity = 1500;
+        if (data.shadynessCost == 0) {
+            var damage:DamageBullet = new DamageBullet(null);
+            damage.damage = 10;
+            damage.friendlyDamage = 0;
+            damage.piercingAmount = 0;
+            data.projectileOrigins[0].projectile = new Projectile(damage);
+            data.projectileOrigins[0].velocity = 1500;            
+        }
+        else {
+            var damage:DamageExplosion = new DamageExplosion(null);
+            damage.damage = 40;
+            damage.friendlyDamage = 0;
+            damage.radius = 2;
+            data.projectileOrigins[0].largeProjectile = new LargeProjectile(damage);
+            data.projectileOrigins[0].largeProjectile.radius = 0.2;
+            data.projectileOrigins[0].velocity = 30;
+        }
+        data.projectileOrigins[0].transform.translate(0.8, 0.1);
         return data;
     }
 

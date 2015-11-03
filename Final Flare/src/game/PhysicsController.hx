@@ -1,6 +1,9 @@
 package game;
 
+import box2D.collision.shapes.B2CircleShape;
 import box2D.collision.shapes.B2PolygonShape;
+import box2D.common.math.B2Mat22;
+import box2D.common.math.B2Transform;
 import box2D.common.math.B2Vec2;
 import box2D.dynamics.B2Body;
 import box2D.dynamics.B2BodyDef;
@@ -26,6 +29,7 @@ typedef RayCastInfo = Tuple4<B2Fixture, B2Vec2, B2Vec2, B2Vec2>;
 enum PhysicsUserDataType {
     ENTITY;
     PLATFORM;
+    PROJECTILE;
 }
 typedef PhysicsUserData = Pair<PhysicsUserDataType, Dynamic>;
 
@@ -57,14 +61,14 @@ class PhysicsController extends B2ContactListener {
     private static var FILTER_PLAYER:B2FilterData = {
         var fd:B2FilterData = new B2FilterData();
         fd.categoryBits = FILTER_CATEGORY_PLAYER;
-        fd.maskBits = FILTER_CATEGORY_PLATFORM | FILTER_CATEGORY_ENEMY_DAMAGE | FILTER_CATEGORY_NEUTRAL_DAMAGE;
+        fd.maskBits = FILTER_CATEGORY_PLATFORM | FILTER_CATEGORY_ENEMY_DAMAGE | FILTER_CATEGORY_NEUTRAL_DAMAGE | FILTER_CATEGORY_PHYSICAL_PROJECTILE;
         fd.groupIndex = 0;
         fd;
     }
     private static var FILTER_ENEMY:B2FilterData = {
         var fd:B2FilterData = new B2FilterData();
         fd.categoryBits = FILTER_CATEGORY_ENEMY;
-        fd.maskBits = FILTER_CATEGORY_PLATFORM | FILTER_CATEGORY_PLAYER_DAMAGE | FILTER_CATEGORY_NEUTRAL_DAMAGE;
+        fd.maskBits = FILTER_CATEGORY_PLATFORM | FILTER_CATEGORY_PLAYER_DAMAGE | FILTER_CATEGORY_NEUTRAL_DAMAGE | FILTER_CATEGORY_PHYSICAL_PROJECTILE;
         fd.groupIndex = 0;
         fd;
     }
@@ -96,6 +100,13 @@ class PhysicsController extends B2ContactListener {
         fd.groupIndex = 0;
         fd;
     }
+    private static var FILTER_NEUTRAL_PROJECTILE:B2FilterData = {
+        var fd:B2FilterData = new B2FilterData();
+        fd.categoryBits = FILTER_CATEGORY_PHYSICAL_PROJECTILE;
+        fd.maskBits = FILTER_CATEGORY_ENEMY | FILTER_CATEGORY_PLAYER | FILTER_CATEGORY_PLATFORM;
+        fd.groupIndex = 0;
+        fd;
+    }
 
     public var world:B2World;
     public var state:GameState;
@@ -104,6 +115,7 @@ class PhysicsController extends B2ContactListener {
     public var deleteList:Array<B2Body> = []; // List of entities that are marked for deletion
 
     private var rcContext:RayCastContext = null;
+    private var hitShapes:Array<PhysicsUserData> = null;
 
     public function new() {
         super();
@@ -175,7 +187,28 @@ class PhysicsController extends B2ContactListener {
             }
         }
     }
+    public function initLargeProjectile(p:LargeProjectile, x:Float, y:Float, vx:Float, vy:Float) {
+        // Create body
+        var bodyDef:B2BodyDef = new B2BodyDef();
+        bodyDef.position.set(x, y);
+        bodyDef.type = B2Body.b2_dynamicBody;
+        bodyDef.allowSleep = false;
+        bodyDef.fixedRotation = false;
+        p.body = world.createBody(bodyDef);
 
+        // Create collision information
+        var fixtureDef:B2FixtureDef = new B2FixtureDef();
+        fixtureDef.shape = new B2CircleShape(p.radius);
+        fixtureDef.friction = 1;
+        fixtureDef.density = 1;
+        fixtureDef.filter = FILTER_NEUTRAL_PROJECTILE.copy();
+        var fixtureMain:B2Fixture = p.body.createFixture(fixtureDef);
+        
+        // Set initial entity data to the body
+        fixtureMain.SetUserData(new PhysicsUserData(PhysicsUserDataType.PROJECTILE, p));
+        p.body.setLinearVelocity(new B2Vec2(vx, vy));
+    }
+    
     public function update(dt:Float) {
         world.step(dt, 5, 3);
         world.clearForces();
@@ -402,7 +435,19 @@ class PhysicsController extends B2ContactListener {
             return 1;
         }
     }
-
+    public function hitTest(x:Float, y:Float, radius:Float, hitPlayer:Bool, hitEnemies:Bool):Array<PhysicsUserData> {
+        hitShapes = [];
+        world.queryShape(onHitTest, new B2CircleShape(radius), new B2Transform(new B2Vec2(x, y), new B2Mat22()));
+        return hitShapes;
+    }
+    private function onHitTest(f:B2Fixture):Dynamic {
+        var d:Dynamic = f.getUserData();
+        if (d.first == PhysicsUserDataType.ENTITY) hitShapes.push(d);
+        return 1.0;
+    }
+    
+    
+    
     /**
      * Setup debugging information
      * @param sprite The target drawing sprite

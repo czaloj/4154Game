@@ -64,15 +64,16 @@ class MenuScreen extends IGameScreen {
         FFLog.recordMenuStart();
 
         // Begin loading a file
+        // TODO: Fully remove soon?
         var fileRef:FileReference = new FileReference();
         fileRef.addEventListener(Event.SELECT, onFileBrowse);
-        fileRef.browse();
+        //fileRef.browse();
         
         // TODO: This is so badly hardcoded
         var mod:MenuLevelModifiers = new MenuLevelModifiers();
         var weaponParams:WeaponGenParams = new WeaponGenParams();
         weaponParams.evolutionPoints = 100;
-        weaponParams.shadynessPoints = 0;
+        weaponParams.shadynessPoints = 1;
         weaponParams.historicalPoints = 0;
         mod.characterWeapons = [
             WeaponGenerator.generate(weaponParams),

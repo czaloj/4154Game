@@ -42,6 +42,7 @@ class GameplayController {
 		count20 = 1200;
 
         // Initialize physics from loaded GameState
+        Weapon.phys = physicsController;
         physicsController.init(state);
         physicsController.initPlatforms(state);
 
@@ -92,6 +93,16 @@ class GameplayController {
                 case [PhysicsUserDataType.PLATFORM, PhysicsUserDataType.ENTITY]:
                     handleEntityPlatform(contact, cast(object2.second, Entity));
                     // TODO: Add collision types
+                case [PhysicsUserDataType.ENTITY, PhysicsUserDataType.PROJECTILE]:
+                    contact.collisionNormal.negativeSelf();
+                    handleEntityProjectile(contact, cast(object1.second, Entity), cast(object2.second, LargeProjectile));
+                case [PhysicsUserDataType.PROJECTILE, PhysicsUserDataType.ENTITY]:
+                    handleEntityProjectile(contact, cast(object2.second, Entity), cast(object1.second, LargeProjectile));
+                case [PhysicsUserDataType.PROJECTILE, PhysicsUserDataType.PLATFORM]:
+                    contact.collisionNormal.negativeSelf();
+                    handleProjectilePlatform(contact, cast(object1.second, LargeProjectile));
+                case [PhysicsUserDataType.PLATFORM, PhysicsUserDataType.PROJECTILE]:
+                    handleProjectilePlatform(contact, cast(object2.second, LargeProjectile));
                 default:
                     // No match found here
             }
@@ -99,7 +110,7 @@ class GameplayController {
 
         state.contactList.clear();
     }
-    private function handleEntityPlatform(c:PhysicsContact, e:Entity) {
+    private function handleEntityPlatform(c:PhysicsContact, e:Entity):Void {
         if (c.collisionNormal.y > 0.8) {
             e.feetTouches += c.isBegin ? 1 : -1;
         }
@@ -109,6 +120,12 @@ class GameplayController {
         else if (c.collisionNormal.x < -0.8) {
             e.rightTouchingWall += c.isBegin ? 1 : -1;
         }
+    }
+    private function handleEntityProjectile(c:PhysicsContact, e:Entity, p:LargeProjectile):Void {
+        p.fOnHit(state);
+    }
+    private function handleProjectilePlatform(c:PhysicsContact, p:LargeProjectile):Void {
+        p.fOnHit(state);
     }
 
     public function update(s:GameState, gameTime:GameTime):Void {
@@ -321,6 +338,16 @@ class GameplayController {
         // TODO: Work magic
     }
     public function applyDamageExplosion(state:GameState, explosion:DamageExplosion):Void {
-        // TODO: Work magic
+        var hits:Array<PhysicsUserData> = physicsController.hitTest(explosion.x, explosion.y, explosion.radius, true, true);
+        for (hit in hits) {
+            var hitEntity:Entity = cast(hit.second, Entity);
+            hitEntity.health -= explosion.damageFor((hitEntity.team == Entity.TEAM_PLAYER) ? DamageDealer.TEAM_PLAYER : DamageDealer.TEAM_ENEMY);
+            if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_ENEMY) {
+                FFLog.recordEvent(1,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + time.total);
+            }
+            if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_PLAYER) {
+                FFLog.recordEvent(3,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + time.total);// missing character and reason of death
+            }
+        }
     }
 }

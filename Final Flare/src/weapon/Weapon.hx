@@ -3,6 +3,8 @@ package weapon;
 import game.EntityBase;
 import game.GameState;
 import game.Entity;
+import game.LargeProjectile;
+import game.PhysicsController;
 import game.Projectile;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
@@ -12,6 +14,8 @@ import weapon.WeaponData.FiringMode;
 import weapon.WeaponData.ProjectileOrigin;
 
 class Weapon {
+    public static var phys:PhysicsController; // TODO: Remove ASAP
+    
     public var entity:Entity;
     public var data:WeaponData;
     
@@ -195,7 +199,15 @@ class Weapon {
                     p.position.y += p.velocity.y * timeOut;
                 }
             }
-            else {
+            else if (po.largeProjectile != null) {
+                var p:LargeProjectile = po.largeProjectile.createCopyAt(
+                    entity,
+                    position.x,
+                    position.y,
+                    direction.x * po.velocity,
+                    direction.y * po.velocity,
+                    phys
+                    );
                 
             }
         }

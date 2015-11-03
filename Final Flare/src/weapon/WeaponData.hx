@@ -1,6 +1,7 @@
 package weapon;
 
 import game.ColorScheme;
+import game.LargeProjectile;
 import game.Projectile;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
@@ -23,6 +24,7 @@ class ProjectileOrigin {
     
     // Projectile to be generated
     public var projectile:Projectile;
+    public var largeProjectile:LargeProjectile;
     
     public function new() {
         // Empty
