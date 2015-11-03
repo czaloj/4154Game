@@ -181,7 +181,9 @@ class GameplayController {
         for (entity in state.entitiesNonNull) {
             if (entity.isDead) {
                 deletingEntities.push(entity);
-                state.score++;
+                if (entity.id != "player") {
+                    state.score++;
+                }
             }
         }
 
@@ -285,8 +287,8 @@ class GameplayController {
                 var hitUD:PhysicsUserData = rci.first.getUserData();
                 if (hitUD.first == PhysicsUserDataType.ENTITY) {
                     var hitEntity:Entity = cast(hitUD.second, Entity);
-					
-					
+
+
                     hitEntity.health -= bullet.damageFor((hitEntity.team == Entity.TEAM_PLAYER) ? DamageDealer.TEAM_PLAYER : DamageDealer.TEAM_ENEMY);
                     vis.onBloodSpurt(rci.third.x, rci.third.y, rci.fourth.x, rci.fourth.y);
 					if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_ENEMY) {
