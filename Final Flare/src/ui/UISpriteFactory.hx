@@ -8,6 +8,7 @@ import graphics.TileRegion;
 import starling.display.DisplayObject;
 import starling.display.Sprite;
 import starling.textures.Texture;
+import starling.display.Button;
 
 class UISpriteFactory {
     private var sheet:SpriteSheet;
@@ -85,7 +86,7 @@ class UISpriteFactory {
         return new StaticSprite(sheet, s, false);
     }
     
-    public function createButton():Sprite {
+    public function createSquareButton():Sprite {
         var button = new Sprite();
         
         //Create regions from sprite sheet
@@ -99,8 +100,24 @@ class UISpriteFactory {
         addChildSprite("Region.BottomLeft", button, 0, 9);
         addChildSprite("Region.Left", button, 0, 8);
         
-        return button;
+        return button;        
+    }
+    
+    public function createScaledButton(sx:Float, sy:Float):Sprite {
+        var button = new Sprite();
         
+        //Create regions from sprite sheet
+        addScaledChildSprite("Region.Center", button, 9, 9, sx, sy);
+        addChildSprite("Region.TopLeft", button, 0, 0);
+        addScaledChildSprite("Region.Top", button, 9, 0, sx, 1);
+        addChildSprite("Region.TopRight", button, sx + 9, 0);
+        addScaledChildSprite("Region.Right", button, sx + 9, 9, 1, sy);
+        addChildSprite("Region.BottomRight", button, 29, 9 + sy);
+        addScaledChildSprite("Region.Bottom", button, 9, 9 + sy, sx, 1);
+        addChildSprite("Region.BottomLeft", button, 0, 9 + sy);
+        addScaledChildSprite("Region.Left", button, 0, 9, 1, sy);
+        
+        return button;
     }
     
     public function addChildSprite(region:String, parent:Sprite, x:Float, y:Float) 
@@ -111,6 +128,12 @@ class UISpriteFactory {
         parent.addChild(piece);
     }
     
+    public function addScaledChildSprite(region:String, parent:Sprite, x:Float, y:Float, sx:Float, sy:Float) {
+        var piece:StaticSprite = getTile(region);
+        piece.transformationMatrix.translate(x, y);
+        piece.transformationMatrix.scale(sx, sy);
+        parent.addChild(piece);
+    }
     public function getAnimation(s:String, delay:Int = 1):AnimatedSprite {
         return new AnimatedSprite(sheet, s, delay, false);
     }

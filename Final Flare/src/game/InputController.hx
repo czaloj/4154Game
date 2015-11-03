@@ -47,6 +47,7 @@ class InputController {
             case [true, true], [false, false]: 0;
             case [false, true]: 1;
             case [true, false]: -1;
+            case[_, _]: 2;
         }
         state.player.up = keysDown[Keyboard.W];
         state.player.useWeapon = click;
