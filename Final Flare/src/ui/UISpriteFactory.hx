@@ -136,6 +136,17 @@ class UISpriteFactory {
         return button;
     }
     
+    public function createButton(sx:Float, sy:Float):Array<Sprite> {
+        var array: Array<Sprite> = new Array();
+        array.push(createButtonUp(sx, sy));
+        array.push(createButtonHover(sx, sy));
+        array.push(createButtonPressed(sx, sy));
+        
+        return array;
+        
+        
+    }
+    
     public function addChildSprite(region:String, parent:Sprite, x:Float, y:Float) 
     {
         addScaledChildSprite(region, parent, x, y, 1, 1);
