@@ -1,10 +1,13 @@
 package weapon;
 
 import game.ColorScheme;
+import game.damage.DamageBullet;
+import game.Projectile;
 import openfl.display.BitmapData;
 import openfl.geom.Rectangle;
 import openfl.utils.ByteArray;
 import weapon.WeaponData.FiringMode;
+import weapon.WeaponData.ProjectileOrigin;
 
 class WeaponGenerator {
     // Alpha mask levels for color generation
@@ -33,6 +36,17 @@ class WeaponGenerator {
         data.burstPause = 0;
         data.burstCount = 0;
         
+        data.projectileOrigins = [
+            new ProjectileOrigin()
+        ];
+        data.projectileOrigins[0].exitAngle = 0.3;
+        var damage:DamageBullet = new DamageBullet(null);
+        damage.damage = 10;
+        damage.friendlyDamage = 0;
+        damage.piercingAmount = 0;
+        data.projectileOrigins[0].projectile = new Projectile(damage);
+        data.projectileOrigins[0].transform.translate(0.4, 0.1);
+        data.projectileOrigins[0].velocity = 1500;
         return data;
     }
 

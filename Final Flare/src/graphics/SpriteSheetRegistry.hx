@@ -151,6 +151,27 @@ class SpriteSheetRegistry {
         }
     }
     
+    public static function fillEntityRenderData(e:EntityRenderData):Void {
+        switch (e.entityType) {
+            case "Man":
+                e.animationDelays = [5, 3, 3, 3];
+                e.bodySpriteOffset.setTo(-0.45, -0.95);
+                e.widthBody = 0.9;
+                e.heightBody = 1.9;
+                e.headSpriteOffset.setTo( -0.2, -0.2);
+                e.widthHead = 1.0;
+                e.heightHead = 1.0;
+            case "Robot":
+                e.animationDelays = [5, 3, 3, 3];
+                e.bodySpriteOffset.setTo(-0.45, -0.95);
+                e.widthBody = 0.9;
+                e.heightBody = 1.9;
+                e.headSpriteOffset.setTo( -0.2, -0.2);
+                e.widthHead = 0.4;
+                e.heightHead = 0.4;
+        }
+    }
+    
     public function new() {
         // Empty
     }

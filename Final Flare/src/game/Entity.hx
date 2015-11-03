@@ -12,15 +12,25 @@ import openfl.geom.Point;
 import weapon.Weapon;
 
 class Entity extends EntityBase {
+    public static inline var TEAM_PLAYER:Int = 0;
+    public static inline var TEAM_ENEMY:Int = 1;
+    
     public var id:String; // Identifying tag
-
+    
     // Gameplay physical data
     public var width:Float;        // The collision size of the entity
     public var height:Float;       // The collision size of the entity
     public var position:B2Vec2 = new B2Vec2();     // Object position
     public var velocity:B2Vec2 = new B2Vec2();     // Object velocity
-
+    public var headOffset:B2Vec2 = new B2Vec2();
+    public var headAngle:Float = 0.0;
+    public var weaponOffset:B2Vec2 = new B2Vec2();
+    public var weaponAngle:Float = 0.0;
+    public var lookingDirection(get, never):Float; // The direction the entity is facing (1.0 for right, -1.0 for left)
+    
     // Other Logical information
+    public var team:Int;
+    public var enabled:Bool = true;
     public var health:Int;
     public var isDead(get, never):Bool; // True if player is dead
     public var weapon:Weapon; // Weapon that the entity is holding
@@ -53,5 +63,8 @@ class Entity extends EntityBase {
     }
     public function get_isDead():Bool {
         return health < 0;
+    }
+    public function get_lookingDirection():Float {
+        return position.x < targetX ? 1.0 : -1.0;
     }
 }

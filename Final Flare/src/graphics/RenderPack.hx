@@ -1,5 +1,6 @@
 package graphics;
 
+import haxe.ds.ObjectMap;
 import starling.textures.Texture;
 
 // The rendering data used by a renderer for a level
@@ -7,6 +8,8 @@ class RenderPack {
     public var characters:SpriteSheet;
     public var enemies:SpriteSheet;
     public var projectiles:SpriteSheet;
+    
+    public var entityRenderData:ObjectMap<String, EntityRenderData>;
     
     // Level environment information
     public var environment:SpriteSheet;

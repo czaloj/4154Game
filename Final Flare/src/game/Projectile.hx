@@ -14,13 +14,7 @@ class Projectile {
     public var damage:DamageBullet;
     
     public function new(d:DamageBullet) {
-       damage = new DamageBullet();
-       damage.damage = d.damage;
-       damage.friendlyDamage = d.friendlyDamage;
-       damage.knockbackAmount = d.knockbackAmount;
-       damage.piercingAmount = d.piercingAmount;
-       damage.teamDestinationFlags = d.teamDestinationFlags;
-       damage.teamSourceFlags = d.teamSourceFlags;
+        damage = cast(d.copyInto(new DamageBullet(this)), DamageBullet);
     }
     
     /**
@@ -37,10 +31,16 @@ class Projectile {
         p.velocity.set(vx, vy);
         p.penetrationsLeft = penetrationsLeft;
         p.gravityScale = gravityScale;
+        p.damage.setParent(e, false); // TODO: Friendly fire input
         return p;
     }
     
     public function update(dt:Float, s:GameState):Void {
-        
+        var d:DamageBullet = cast(damage.copyInto(new DamageBullet(this)), DamageBullet);
+        d.originX = position.x;
+        d.originY = position.y;
+        d.velocityX = velocity.x;
+        d.velocityY = velocity.y;
+        s.damage.push(d);
     }
 }

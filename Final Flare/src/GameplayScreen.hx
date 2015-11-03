@@ -21,7 +21,6 @@ import openfl.Lib;
 import openfl.ui.Keyboard;
 import starling.textures.Texture;
 import ui.UISpriteFactory;
-//import Logging;
 
 class GameplayScreen extends IGameScreen {
     private var state:game.GameState;
@@ -30,7 +29,6 @@ class GameplayScreen extends IGameScreen {
     private var renderer:Renderer;
     public var inputController:game.InputController;
     private var debugPhysicsView:Sprite;
-	//private var logger:Single;
 	
     public function new(sc: ScreenController) {
         super(sc);
@@ -44,17 +42,11 @@ class GameplayScreen extends IGameScreen {
     }
 
     override function onEntry(gameTime:GameTime):Void {
-		
-		
-		var logger:Logging = Logging.getSingleton();
-		logger.initialize(121, 0, true);// , false);
-		logger.recordPageLoad();						
-		logger.recordLevelStart(1);									//should move to gamelevel start once menus are done
-		
-		
+        FFLog.recordLevelStart(42.0, "Test Level");
+        
         state = new game.GameState();
         inputController = new game.InputController();
-        gameplayController = new GameplayController( logger);
+        gameplayController = new GameplayController();
         aiController = new game.AIController();
         var pack:RenderPack = new RenderPack();
 
@@ -68,6 +60,7 @@ class GameplayScreen extends IGameScreen {
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
         openfl.Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);
         openfl.Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, inputController.mouseDown);
+        openfl.Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, inputController.mouseMove);
         openfl.Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, inputController.mouseUp);
 
         // Debug view of physics
@@ -83,6 +76,7 @@ class GameplayScreen extends IGameScreen {
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
     }
     override function onExit(gameTime:GameTime):Void {
+        FFLog.recordLevelEnd();
         openfl.Lib.current.stage.removeEventListener(KeyboardEvent.KEY_DOWN, inputController.keyDown);
         openfl.Lib.current.stage.removeEventListener(KeyboardEvent.KEY_UP, inputController.keyUp);
         openfl.Lib.current.stage.removeEventListener(MouseEvent.MOUSE_DOWN, inputController.mouseDown);

@@ -36,8 +36,8 @@ class Renderer {
     private var stage3D:Stage;
     
     public var sprites:Array<Sprite> = [];
-    public var entityTbl:ObjectMap<game.Entity, AnimatedSprite> = new ObjectMap<game.Entity, AnimatedSprite>();
-    public var projTbl:ObjectMap<game.Projectile, AnimatedSprite> = new ObjectMap<game.Projectile, AnimatedSprite>();
+    public var entityTbl:ObjectMap<game.Entity, EntitySprite> = new ObjectMap<Entity, EntitySprite>();
+    public var projTbl:ObjectMap<game.Projectile, AnimatedSprite> = new ObjectMap<Projectile, AnimatedSprite>();
 
     // Camera parameters
     public var cameraX(get, set):Float;
@@ -127,14 +127,11 @@ class Renderer {
 
     public function onEntityAdded(s:game.GameState, o:game.Entity):Void {
         // Add a corresponding sprite to stage and track this entity
-        var enemy = new AnimatedSprite(pack.enemies, "Robot.Run", 3);
-        enemy.x = o.position.x - enemy.width * 0.5;
-        enemy.y = o.position.y - o.height * 0.5;
-        enemy.scaleX /= 32;
-        enemy.scaleY /= 32;
-        //trace(enemy.x, enemy.y);
+        var enemy:EntitySprite = new EntitySprite(pack.enemies, pack.entityRenderData.get("Robot"));
+        enemy.x = o.position.x;
+        enemy.y = o.position.y;
         hierarchy.enemy.addChild(enemy);
-        entityTbl.set(o,enemy);
+        entityTbl.set(o, enemy);
         //what sprite gets added? where is this function called? should this be called "addEntitySprite" instead of onEntityAdded?
     }
     public function onEntityRemoved(s:game.GameState, o:game.Entity):Void {
@@ -171,11 +168,9 @@ class Renderer {
         state.onProjectileAdded.add(onBulletAdded);
         state.onProjectileRemoved.add(onBulletRemoved);
         
-        var man = new AnimatedSprite(pack.characters, "Man.Run", 3);
-        man.x = state.player.position.x - man.width*0.5;
-        man.y = state.player.position.y - PLAYER_HEIGHT * 0.5;
-        man.scaleX /= 32;
-        man.scaleY /= 32;
+        var man = new EntitySprite(pack.characters, pack.entityRenderData.get("Man"));
+        man.x = state.player.position.x;
+        man.y = state.player.position.y;
         hierarchy.player.addChild(man);
         entityTbl.set(state.player, man);
         
@@ -422,15 +417,8 @@ class Renderer {
     public function update(s:game.GameState):Void {
         // TODO: Update sprite positions from entities
         for (o in entityTbl.keys()) {
-            var sprite:AnimatedSprite = entityTbl.get(o);
-            sprite.x = o.position.x - entityTbl.get(o).width * 0.5;
-            sprite.y = o.position.y - o.height * 0.5;
-            if (o.direction == -1)  {
-                sprite.x += sprite.width;
-                sprite.scaleX = -Math.abs(sprite.scaleX);
-            } else {
-                sprite.scaleX = Math.abs(sprite.scaleX);
-            }
+            var sprite:EntitySprite = entityTbl.get(o);
+            sprite.recalculate(o);
         }
         var levelWidth:Float = s.width * World.TILE_HALF_WIDTH;
         var levelHeight:Float = s.height * World.TILE_HALF_WIDTH;
