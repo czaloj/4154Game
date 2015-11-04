@@ -77,7 +77,7 @@ class StarlingUtils
      *  number formatting options yet. */
     public static function formatString(format:String, args:Array<Dynamic>):String
     {
-        trace("CHECK");
+        //trace("CHECK");
         for (i in 0...args.length) {
             
             var r = new EReg("\\{" + i + "\\}", "g");

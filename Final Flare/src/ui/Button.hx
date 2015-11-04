@@ -3,15 +3,20 @@ package ui;
 import openfl.events.MouseEvent;
 import starling.display.DisplayObjectContainer;
 import starling.display.Sprite;
+import starling.events.TouchEvent;
+import starling.events.TouchPhase;
+import starling.text.TextField;
 
 class Button extends DisplayObjectContainer {
     
+    public var clicked:Bool;
     public var enabled:Bool;
     public var upState (default, set):Sprite;
     public var overState (default, set):Sprite;
     public var downState (default, set):Sprite;
     public var hitTestState (default, set):Sprite;
     public var currentState (default, set):Sprite;
+    public var text (default, set): TextField;
     
     
     /**
@@ -57,19 +62,11 @@ class Button extends DisplayObjectContainer {
             if (this.hitTestState != null && this.hitTestState.parent == this) {
                 removeChild (this.hitTestState);
             }
-            
-            removeEventListener (MouseEvent.MOUSE_DOWN, onMouseDown);
-            removeEventListener (MouseEvent.MOUSE_OUT, onMouseOut);
-            removeEventListener (MouseEvent.MOUSE_OVER, onMouseOver);
-            removeEventListener (MouseEvent.MOUSE_UP, onMouseUp);
+            this.removeEventListener (TouchEvent.TOUCH, onTouch);
             
             if (hitTestState != null) {
                 
-                addEventListener (MouseEvent.MOUSE_DOWN, onMouseDown);
-                addEventListener (MouseEvent.MOUSE_OUT, onMouseOut);
-                addEventListener (MouseEvent.MOUSE_OVER, onMouseOver);
-                addEventListener (MouseEvent.MOUSE_UP, onMouseUp);
-                
+                this.addEventListener (TouchEvent.TOUCH, onTouch);                
                 hitTestState.alpha = 0.0;
                 addChild (hitTestState);
             }
@@ -83,6 +80,10 @@ class Button extends DisplayObjectContainer {
         return currentState = state;
     }
     
+    public function set_text(text:TextField):TextField {
+        return text;
+    }
+    
     private function switchState (state:Sprite):Void {
         if (currentState != null && currentState.parent == this) {
             removeChild (currentState);
@@ -93,9 +94,32 @@ class Button extends DisplayObjectContainer {
     }
     
     //Event Handlers
-    private function onMouseDown (event:MouseEvent):Void {
-        trace("click");
-        currentState = downState;
+    override private function onTouch (event:TouchEvent):Void {
+        if(event.getTouch(this) != null) {
+            switch event.getTouch(this).phase {
+                case TouchPhase.BEGAN: 
+                    currentState = downState;
+                case TouchPhase.HOVER: 
+                    if (overState != currentState) {
+                        currentState = overState;
+                    }
+                case TouchPhase.ENDED:
+                    //Change this to fancy shmancy way Cristian uses b?t:f
+                    if (!(this.bounds.containsPoint(event.getTouch(this.get_parent()).getLocation(this.get_parent())))) {
+                        clicked = false;
+                    }
+                    else 
+                    {
+                        clicked = true;
+                    }
+                    currentState = upState;
+            default:
+            }
+        }
+        else 
+        {
+            currentState = upState;
+        }
     }
     
     private function onMouseOut (event:MouseEvent):Void {
@@ -105,9 +129,7 @@ class Button extends DisplayObjectContainer {
     }
     
     private function onMouseOver (event:MouseEvent):Void {
-        if (overState != currentState) {
-            currentState = overState;
-        }
+
     }
     
     private function onMouseUp (event:MouseEvent):Void {
