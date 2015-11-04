@@ -1,14 +1,16 @@
 package;
 
 import lime.system.BackgroundWorker;
-import openfl.events.MouseEvent;
+import ui.Button;
+import ui.Button.ButtonTextFormat;
+import ui.UISpriteFactory;
+import openfl.Assets;
 import starling.display.Sprite;
 import starling.textures.Texture;
-import ui.UISpriteFactory;
-import ui.Button;
-import openfl.Assets;
+import starling.utils.HAlign;
+import starling.utils.VAlign;
 import starling.text.TextField;
-import openfl.Lib;
+
 
 class SplashScreen extends IGameScreen {
     private var startButton:Button;
@@ -28,15 +30,9 @@ class SplashScreen extends IGameScreen {
     }
     
     override public function onEntry(gameTime:GameTime):Void {
-        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
-        startButton = uif.createButton(200, 66);  
-        //var tf:TextField = new TextField(175, 80, "Start Button", "Verdana", 20);
-        //startButton.addChild(tf);
-        screenController.addChild(startButton);
-        
-        
-                       
+
     }
+	
     override public function onExit(gameTime:GameTime):Void {
         screenController.removeChild(startButton);
     }
@@ -51,5 +47,27 @@ class SplashScreen extends IGameScreen {
     
     override public function draw(gameTime:GameTime):Void {
         // Empty
-    }    
+    }
+    
+	private function addStartButton() 
+	{
+		//Create button from UISpriteFactory
+		var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
+		
+		//Set up formatting stuff
+		/*var tf = new ButtonTextFormat();
+		tf.tx = 0;
+		tf.ty = 0;
+		tf.color = 0x0;
+		tf.hAlign = HAlign.CENTER;
+		tf.vAlign = VAlign.CENTER;
+		tf.bold = false;
+		tf.font = "Verdana";*/
+		
+		//Create Button and position it
+        startButton = uif.createButton(200, 66, "START GAME", tf);  
+        startButton.transformationMatrix.translate(screenController.width - startButton.width / 2, (startButton.height * 3) / 2);
+        screenController.addChild(startButton);
+	}
+
 }

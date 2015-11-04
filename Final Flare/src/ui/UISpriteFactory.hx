@@ -7,6 +7,7 @@ import graphics.StripRegion;
 import graphics.TileRegion;
 import starling.display.Sprite;
 import starling.textures.Texture;
+import ui.Button.ButtonTextFormat;
 
 
 class UISpriteFactory {
@@ -136,11 +137,11 @@ class UISpriteFactory {
         return sprite;
     }
 
-    public function createButton(sx:Float, sy:Float):Button {
+    public function createButton(sx:Float, sy:Float, text:String, tf:ButtonTextFormat):Button {
         var upSprite = createButtonUp(sx, sy);
         var hoverSprite = createButtonHover(sx, sy);
         var downSprite = createButtonPressed(sx, sy);
-        var button = new Button(upSprite, hoverSprite, downSprite);
+        var button = new Button(upSprite, hoverSprite, downSprite, text, tf);
         return button;
     }
 

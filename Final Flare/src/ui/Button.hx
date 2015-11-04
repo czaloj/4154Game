@@ -6,6 +6,20 @@ import starling.display.Sprite;
 import starling.events.TouchEvent;
 import starling.events.TouchPhase;
 import starling.text.TextField;
+import starling.utils.HAlign;
+import starling.utils.VAlign;
+import ui.Button.ButtonTextFormat;
+
+typedef ButtonTextFormat = {
+	var tx:Int;
+	var ty:Int;
+	var font:String;
+	var size:Int;
+	var color:UInt;
+	var bold:Bool;
+	var hAlign:HAlign;
+	var vAlign:VAlign;
+}
 
 class Button extends DisplayObjectContainer {
     
@@ -16,7 +30,6 @@ class Button extends DisplayObjectContainer {
     public var downState (default, set):Sprite;
     public var hitTestState (default, set):Sprite;
     public var currentState (default, set):Sprite;
-    public var text (default, set): TextField;
     
     
     /**
@@ -27,7 +40,10 @@ class Button extends DisplayObjectContainer {
      * @param downState    The initial value for the SimpleButton down state.
      * @param hitTestState The initial value for the SimpleButton hitTest state.
      */
-    public function new (upState:Sprite = null, overState:Sprite = null, downState:Sprite = null, hitTestState:Sprite = null) {
+	
+	 
+	 
+    public function new (upState:Sprite = null, overState:Sprite = null, downState:Sprite = null, hitTestState:Sprite = null, text:String = null, tf:ButtonTextFormat = null) {
         super ();
         
         enabled = true;        
@@ -80,8 +96,12 @@ class Button extends DisplayObjectContainer {
         return currentState = state;
     }
     
-    public function set_text(text:TextField):TextField {
-        return text;
+    public function addTextChild(text:String, btf:ButtonTextFormat):Void {
+        var textfield:TextField = new TextField(btf.tx, btf.ty, text, btf.font, btf.size); 
+		//TODO Add field to button
+		//TODO Set alignment and make sure text is in proper position 
+		//TODO Maybe just center text by default
+	
     }
     
     private function switchState (state:Sprite):Void {
