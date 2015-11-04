@@ -87,11 +87,8 @@ class Tile {
         tile.visible = false;
     }
 
-    public function setTileTexture(tileID:Int) {
-        tile.color = tiles[tileID];
+    public function IDTile(tileID:Int) {
         id = tileID;
-        tile.visible = true;
-        return this;
     }
 
     public function colorQuarterTile(tileID:Int) {
@@ -102,6 +99,15 @@ class Tile {
     }
 
     public function colorFullTile(tileID:Int) {
+        return this;
+    }
 
+    public function clearQuarterTile() {
+        tile.visible = false;
+        id = WHITE;
+    }
+
+    public function clearFullTile() {
+        
     }
 }

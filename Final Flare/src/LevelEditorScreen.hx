@@ -2,21 +2,20 @@ package;
 
 import game.GameLevel;
 import game.GameState;
-import game.InputController;
+import game.Spawner;
 import game.World;
-import graphics.Renderer;
-import graphics.RenderPack;
+// import graphics.Renderer;
+// import graphics.RenderPack;
 import graphics.SpriteSheetRegistry;
 import openfl.Lib;
+import openfl.geom.Point;
+import openfl.ui.Keyboard;
 import openfl.events.Event;
 import openfl.events.MouseEvent;
-import openfl.ui.Keyboard;
 import openfl.events.KeyboardEvent;
 import starling.utils.Color;
 import starling.text.TextField;
 import flash.net.FileReference;
-
-
 
 class LevelEditorScreen extends IGameScreen {
 
@@ -40,12 +39,14 @@ class LevelEditorScreen extends IGameScreen {
 
     private var level:game.GameLevel;
     private var state:game.GameState;
-    private var renderer:Renderer;
+    // private var renderer:Renderer;
     private var levelController:LevelEditorController;
 
     private var cameraX:Float;
     private var cameraY:Float;
     private var cameraScale:Float;
+    private var cameraHalfWidth:Float;
+    private var cameraHalfHeight:Float;
 
     private var options:Array<OptionBox> = [];
     private var editor_num = 0;
@@ -55,34 +56,17 @@ class LevelEditorScreen extends IGameScreen {
     private var sub_editors:Array<Array<String>> = [[],[],[]];
     private var layer_item:Array<Array<String>> = [[],[]];
     private var object_num = 0;
-    private var objects:Array<Array<String>> = [[],[],[]];
+    private var objects:Array<Array<String>> = [["Clear Tile"],["Clear Tile"],["Clear Item"]];
     private var tiles:Array<Array<Int>> = [[],[]];
     private var TILE_SHEET_SET:Bool = false;
+    private var TILE_CHILDREN_START:Int;
 
-    public var tileMap:TileMap;
+    public var foregroundMap:TileMap;
+    public var backgroundMap:TileMap;
 
     public function new(sc:ScreenController) {
         super(sc);
     }
-
-    // private function onMouseMove(e:MouseEvent):Void {
-    //     var levelWidth = state.width * World.TILE_HALF_WIDTH;
-    //     var levelHeight = state.height * World.TILE_HALF_WIDTH;
-    //     var curX = e.stageX/ScreenController.SCREEN_WIDTH;
-    //     var curY = e.stageY/ScreenController.SCREEN_HEIGHT;
-    //     var cameraHalfWidth = ScreenController.SCREEN_WIDTH / (2 * renderer.cameraScale);
-    //     var cameraHalfHeight = ScreenController.SCREEN_HEIGHT / (2 * renderer.cameraScale);
-    //     if (curX < ScreenController.SCREEN_WIDTH /(3*renderer.cameraScale)) {
-    //         renderer.cameraX = Math.max((0) + cameraHalfWidth, renderer.cameraX-=1);
-    //     } else if (curX > ScreenController.SCREEN_WIDTH*2 /(3*renderer.cameraScale)) {
-    //         renderer.cameraX = Math.min((levelWidth) - cameraHalfWidth, renderer.cameraX+=1);    
-    //     }
-    //     if (curX < ScreenController.SCREEN_HEIGHT /(3*renderer.cameraScale)) {
-    //         renderer.cameraY = Math.max((0) + cameraHalfHeight, renderer.cameraY-=1);
-    //     } else if (curX > ScreenController.SCREEN_HEIGHT*2 /(3*renderer.cameraScale)) {
-    //         renderer.cameraY = Math.min((levelHeight) - cameraHalfHeight, renderer.cameraY+=1);
-    //     }
-    // }
 
     private function onMouseDown(e:MouseEvent):Void {
         // (e.stageX - CAMERA_WIDTH / 2) / cameraScale + cameraX;
@@ -109,7 +93,35 @@ class LevelEditorScreen extends IGameScreen {
                 }
             }
         } else {
-
+            var map:TileMap = null;
+            switch (editor_num) {
+            case 1: map = backgroundMap;
+            case 2: map = foregroundMap;
+            }
+            var t:Tile = null;
+            var x = ((e.stageX - CAMERA_WIDTH / 2) / cameraScale + cameraX);
+            var y = (((ScreenController.SCREEN_HEIGHT - e.stageY) - ScreenController.SCREEN_HEIGHT / 2) / cameraScale + cameraY);
+            if (map != null) {
+                t = map.getTileByCoords(Std.int(x/World.TILE_HALF_WIDTH),Std.int(y/World.TILE_HALF_WIDTH));
+                if (object_num == 0) {
+                    switch (sub_editor_num) {
+                    case 0: t.clearQuarterTile();
+                    case 1: t.clearFullTile();
+                    }
+                } else {
+                    var type = tiles[sub_editor_num][object_num-1];
+                    switch (sub_editor_num) {
+                    case 0: t.colorQuarterTile(type);
+                    case 1: t.colorFullTile(type);
+                    }
+                }
+            } else {
+                // object editing
+                switch (object_num) {
+                case 0: level.playerPt = new Point(x,y);
+                case 1: level.spawners.push(new Spawner("Grunt",x,y));
+                }
+            }
         }
     }
 
@@ -149,10 +161,11 @@ class LevelEditorScreen extends IGameScreen {
             }
         } else {
 
+            
         }
     }
 
-    private function findSheet(e:openfl.events.Event):Void {
+    private function findSheet(e:Event):Void {
         var fileReference:FileReference = cast(e.target, FileReference);
         fileReference.removeEventListener(Event.SELECT, findSheet);
         fileReference.addEventListener(Event.COMPLETE, loadSheet);
@@ -160,7 +173,7 @@ class LevelEditorScreen extends IGameScreen {
         fileReference.load();
     }
 
-    private function loadSheet(e:openfl.events.Event):Void {
+    private function loadSheet(e:Event):Void {
         var fileReference:FileReference = cast(e.target, FileReference);
         fileReference.removeEventListener(Event.COMPLETE, onFileLoaded);
 
@@ -170,7 +183,7 @@ class LevelEditorScreen extends IGameScreen {
         level.environmentType = type[type.length-1].split(".")[0];
     }
 
-    private function onFileBrowse(e:openfl.events.Event):Void {
+    private function onFileBrowse(e:Event):Void {
         var fileReference:FileReference = cast(e.target, FileReference);
         fileReference.removeEventListener(Event.SELECT, onFileBrowse);
         fileReference.addEventListener(Event.COMPLETE, onFileLoaded);
@@ -178,7 +191,7 @@ class LevelEditorScreen extends IGameScreen {
         fileReference.load();
     }
 
-    private function onFileLoaded(e:openfl.events.Event):Void {
+    private function onFileLoaded(e:Event):Void {
         var fileReference:FileReference = cast(e.target, FileReference);
         fileReference.removeEventListener(Event.COMPLETE, onFileLoaded);
 
@@ -186,6 +199,49 @@ class LevelEditorScreen extends IGameScreen {
         box.text = fileReference.name;
         layer_item[0][object_num] = fileReference.name;
     }
+
+    private function onKeyDown(e:KeyboardEvent):Void {
+        switch (e.keyCode) {
+        case Keyboard.F8:
+            level.foreground = foregroundMap.toIDArray();
+            level.background = backgroundMap.toIDArray();
+            level.parallax = [];
+            for (i in 0...layer_item[0].length) {
+                var item = layer_item[0][i];
+                if (item != "Add Layer") {
+                    level.parallax.push(item);
+                }
+            }
+            LevelCreator.saveToFile(level);
+        case Keyboard.W:
+            cameraY = Math.max(0 + cameraHalfHeight, cameraY -= cameraScale);
+        case Keyboard.A:
+            cameraX = Math.max(0 + cameraHalfWidth, cameraY -= cameraScale);
+        case Keyboard.S:
+            cameraY = Math.min(MIN_LEVEL_HEIGHT - cameraHalfHeight, cameraY += cameraScale);
+        case Keyboard.D:
+            cameraX = Math.min(MIN_LEVEL_WIDTH - cameraHalfWidth, cameraX += cameraScale);
+        }
+    }
+
+// private function onMouseMove(e:MouseEvent):Void {
+    //     var levelWidth = state.width * World.TILE_HALF_WIDTH;
+    //     var levelHeight = state.height * World.TILE_HALF_WIDTH;
+    //     var curX = e.stageX/ScreenController.SCREEN_WIDTH;
+    //     var curY = e.stageY/ScreenController.SCREEN_HEIGHT;
+    //     var cameraHalfWidth = ScreenController.SCREEN_WIDTH / (2 * renderer.cameraScale);
+    //     var cameraHalfHeight = ScreenController.SCREEN_HEIGHT / (2 * renderer.cameraScale);
+    //     if (curX < ScreenController.SCREEN_WIDTH /(3*renderer.cameraScale)) {
+    //         renderer.cameraX = Math.max((0) + cameraHalfWidth, renderer.cameraX-=1);
+    //     } else if (curX > ScreenController.SCREEN_WIDTH*2 /(3*renderer.cameraScale)) {
+    //         renderer.cameraX = Math.min((levelWidth) - cameraHalfWidth, renderer.cameraX+=1);    
+    //     }
+    //     if (curX < ScreenController.SCREEN_HEIGHT /(3*renderer.cameraScale)) {
+    //         renderer.cameraY = Math.max((0) + cameraHalfHeight, renderer.cameraY-=1);
+    //     } else if (curX > ScreenController.SCREEN_HEIGHT*2 /(3*renderer.cameraScale)) {
+    //         renderer.cameraY = Math.min((levelHeight) - cameraHalfHeight, renderer.cameraY+=1);
+    //     }
+    // }
 
     override public function build():Void {
         // Empty
@@ -205,17 +261,19 @@ class LevelEditorScreen extends IGameScreen {
         level.width = Std.int(MIN_LEVEL_WIDTH/16);
         level.environmentType = "Simple";
         level.environmentSprites = "assets/img/Factory.png";
+        level.playerPt = new Point(0,0);
+        level.spawners = [];
 
-        tileMap = new TileMap(level.height,level.width);
-        level.foreground = tileMap.toIDArray();
+        foregroundMap = new TileMap(level.height,level.width);
+        level.foreground = foregroundMap.toIDArray();
         LevelCreator.createStateFromLevel(level, state);
 
         // set up camera
         cameraScale = 32;
-        var cameraHalfWidth = CAMERA_WIDTH / (2*cameraScale);
-        var cameraHalfHeight = ScreenController.SCREEN_HEIGHT / (2*cameraScale);
+        cameraHalfWidth = CAMERA_WIDTH / (2*cameraScale);
+        cameraHalfHeight = ScreenController.SCREEN_HEIGHT / (2*cameraScale);
         cameraX = cameraHalfWidth;
-        cameraY = cameraHalfHeight;
+        cameraY = MIN_LEVEL_HEIGHT - cameraHalfHeight;
 
         // set up UI
         for (i in 0...Std.int(ScreenController.SCREEN_HEIGHT/BOX_HEIGHT)) {
@@ -227,6 +285,7 @@ class LevelEditorScreen extends IGameScreen {
 
             layer_item[0].push("Add Layer");
         }
+        TILE_CHILDREN_START = screenController.numChildren;
 
         for (i in 0...NUM_EDITORS) {
             switch i {
@@ -268,32 +327,36 @@ class LevelEditorScreen extends IGameScreen {
         Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
         Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 
-        Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, function (e:KeyboardEvent):Void {
-            switch (e.keyCode) {
-                case Keyboard.F8:
-                    LevelCreator.saveToFile(level);
-            }
-        });
+        Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 
     }
     override public function onExit(gameTime:GameTime):Void {
         // Empty
+        Lib.current.stage.removeEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+        Lib.current.stage.removeEventListener(MouseEvent.MOUSE_DOWN, onMouseUp);
+        Lib.current.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+
     }
 
     override public function update(gameTime:GameTime):Void {
-        // state.foreground = tileMap.toIDArray();
         updateOptions();
-
-        level.parallax = [];
-        for (i in 0...layer_item[0].length) {
-            var item = layer_item[0][i];
-            if (item != "Add Layer") {
-                level.parallax.push(item);
-            }
-        }
     }
     override public function draw(gameTime:GameTime):Void {
         // renderer.update(state);
+        screenController.removeChildren(TILE_CHILDREN_START);
+
+    }
+
+    public function drawTiles(map:TileMap):Void {
+        for (i in 0...map.height) {
+            if (i >= cameraY - cameraHalfHeight && i <= cameraY + cameraHalfHeight) {
+                for (j in 0...map.width) {
+                    if (j >= cameraX - cameraHalfWidth && j <= cameraX + cameraHalfWidth) {
+                        screenController.addChild(map.getTileByCoords(i,j).tile);
+                    }
+                }
+            }
+        }
     }
 
     public function updateOptions():Void {
