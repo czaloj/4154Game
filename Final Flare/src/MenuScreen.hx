@@ -36,7 +36,7 @@ class MenuScreen extends IGameScreen {
     }
     
     override public function onEntry(gameTime:GameTime):Void {
-        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
+        /*var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         buttonArray1 = uif.createButton(175, 50);
         buttonArray2 = uif.createButton(175, 50);
         Lib.current.stage.addEventListener(MouseEvent.CLICK, handleClick);
@@ -58,7 +58,7 @@ class MenuScreen extends IGameScreen {
         buttonArray2[0].transformationMatrix.translate(425, 175);
         buttonArray2[1].transformationMatrix.translate(425, 175);
         buttonArray2[2].transformationMatrix.translate(425, 175);
-        screenController.addChild(button2);        
+        screenController.addChild(button2);    */    
         
         
         FFLog.recordMenuStart();
