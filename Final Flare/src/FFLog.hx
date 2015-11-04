@@ -47,10 +47,10 @@ class FFLog {
         levelInvariant = Std.int(Math.random() * LEVEL_INVARIANT_MAX);
         logger.recordEvent(FFLogEvent.LEVEL_INVARIANT, "" + levelInvariant);
     }
-	public static function recordEvent(actionId:UInt, ?actionDetail:String):Void {
+    public static function recordEvent(actionId:UInt, ?actionDetail:String):Void {
         logger.recordEvent(actionId, actionDetail);
     }
-	private static function recordLevelEnd():Void {
+    private static function recordLevelEnd():Void {
         logger.recordEvent(FFLogEvent.LEVEL_INVARIANT, "" + levelInvariant);
         logger.recordLevelEnd();
     }
