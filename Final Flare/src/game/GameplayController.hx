@@ -343,17 +343,25 @@ class GameplayController {
         return info.second != null;
     }
     public function applyDamagePolygon(state:GameState, polygon:DamagePolygon, time:GameTime):Void {
-        if (physicsController.bumpPlayerTest(state.player.position.x, state.player.position.y,
-            state.player.width, state.player.height,
-            polygon.x, polygon.y,
-            polygon.width, polygon.height)) {
-            if ((state.player.damage.lastDamageTime == 0 ) || (time.frame - state.player.damage.lastDamageTime > INVINCIBILITY_TIME)){
-                state.player.health -= polygon.damage;
-                state.player.damage.lastDamageTime = time.frame;
+        if (polygon.teamDestinationFlags == Entity.TEAM_PLAYER) {
+            if (physicsController.bumpPlayerTest(state.player.position.x, state.player.position.y,
+                state.player.width, state.player.height,
+                polygon.x, polygon.y,
+                polygon.width, polygon.height)) {
+                if ((state.player.damage.lastDamageTime == 0 ) || (time.frame - state.player.damage.lastDamageTime > INVINCIBILITY_TIME)){
+                    state.player.health -= polygon.damage;
+                    state.player.damage.lastDamageTime = time.frame;
+                }
             }
-            if ((polygon.lastDamageTime == 0 ) || (time.frame - polygon.lastDamageTime > INVINCIBILITY_TIME)){
-                polygon.source.health -= state.player.damage.damage;
-                polygon.lastDamageTime = time.frame;
+        } else {
+            for (entity in state.entities) {
+                if ((entity != null) && (entity.team != Entity.TEAM_PLAYER) && (physicsController.bumpPlayerTest(entity.position.x, entity.position.y,
+                    entity.width, entity.height,
+                    polygon.x, polygon.y,
+                    polygon.width, polygon.height))) {
+                    entity.health -= polygon.damage;
+                    entity.damage.lastDamageTime = time.frame;
+                }
             }
         }
     }
