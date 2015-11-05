@@ -40,7 +40,7 @@ class PhysicsContact {
     public var object2:PhysicsContactBody;
     public var collisionNormal:B2Vec2 = new B2Vec2();
     public var isBegin:Bool = true;
-    
+
     public function new() {
         // Empty
     }
@@ -152,7 +152,7 @@ class PhysicsController extends B2ContactListener {
                 fixtureDef.filter = FILTER_ENEMY.copy();
         }
         e.fixtureMain = e.body.createFixture(fixtureDef);
-        
+
         // TODO: Create head and body fixtures for damage
 
         // Set initial entity data to the body
@@ -167,7 +167,7 @@ class PhysicsController extends B2ContactListener {
         bodyDef.position.set(0, 0);
         bodyDef.type = B2Body.b2_staticBody;
         var body:B2Body = world.createBody(bodyDef);
-        
+
         for (i in state.platforms) {
             var x:Float = (i.position.x) * halfSize + i.dimension.x * halfSize/2;
             var y:Float = (state.height - i.position.y) * halfSize - i.dimension.y * halfSize/2;
@@ -179,7 +179,7 @@ class PhysicsController extends B2ContactListener {
                 var polygon = new B2PolygonShape ();
                 polygon.setAsOrientedBox((i.dimension.x * halfSize) * 0.5, (i.dimension.y * halfSize) * 0.5, new B2Vec2(x, y), 0);
                 fixtureDef.shape = polygon;
-                
+
                 var fixture:B2Fixture = body.createFixture(fixtureDef);
 
                 // Set platform user data
@@ -203,12 +203,12 @@ class PhysicsController extends B2ContactListener {
         fixtureDef.density = 1;
         fixtureDef.filter = FILTER_NEUTRAL_PROJECTILE.copy();
         var fixtureMain:B2Fixture = p.body.createFixture(fixtureDef);
-        
+
         // Set initial entity data to the body
         fixtureMain.SetUserData(new PhysicsUserData(PhysicsUserDataType.PROJECTILE, p));
         p.body.setLinearVelocity(new B2Vec2(vx, vy));
     }
-    
+
     public function update(dt:Float) {
         world.step(dt, 5, 3);
         world.clearForces();
@@ -235,12 +235,12 @@ class PhysicsController extends B2ContactListener {
 
         // Get collision normal
         c.collisionNormal.setV(contact.getManifold().m_localPlaneNormal);
-        
+
         state.contactList.add(c);
     }
     override function endContact(contact:B2Contact):Void {
         super.endContact(contact);
-        
+
         var c:PhysicsContact = new PhysicsContact();
         c.isBegin = false;
 
@@ -252,10 +252,10 @@ class PhysicsController extends B2ContactListener {
 
         // Get collision normal
         c.collisionNormal.setV(contact.getManifold().m_localPlaneNormal);
-        
+
         state.contactList.add(c);
     }
-    
+
     public function onEntityRemoved(state:GameState, e:Entity) {
         deleteList.push(e.body);
     }
@@ -440,14 +440,17 @@ class PhysicsController extends B2ContactListener {
         world.queryShape(onHitTest, new B2CircleShape(radius), new B2Transform(new B2Vec2(x, y), new B2Mat22()));
         return hitShapes;
     }
+
     private function onHitTest(f:B2Fixture):Dynamic {
         var d:Dynamic = f.getUserData();
         if (d.first == PhysicsUserDataType.ENTITY) hitShapes.push(d);
         return 1.0;
     }
-    
-    
-    
+
+    public function bumpPlayerTest(px:Float, py:Float, pw:Float, ph: Float, x:Float, y:Float, w:Float, h: Float):Bool {
+        return !((x - w/2 > px + pw/2) || (x + w/2 < px - pw/2) || (y - h/2 > py + ph/2) ||(y + h/2 < py - ph/2));
+    }
+
     /**
      * Setup debugging information
      * @param sprite The target drawing sprite
