@@ -168,7 +168,13 @@ class GameplayController {
                 entity.weapon.update(entity.useWeapon, time.elapsed, s);
             }
         }
-
+        for (entity in state.entities) {
+            if ((entity != null) && (entity.id == "Grunt")) {
+                entity.damage.x = entity.position.x;
+                entity.damage.y = entity.position.y;
+                state.damage.push(entity.damage);
+            }
+        }
         // Physics
         updatePhysics(gameTime);
 
@@ -282,6 +288,7 @@ class GameplayController {
 		FFLog.recordEvent(2, e.x + ", " + e.y + ", " + time.total);
         var enemy:Entity = new Entity();
         Spawner.createEnemy(enemy, e.entity, e.x, e.y);
+        state.damage.push(enemy.damage);
         physicsController.initEntity(enemy);
         state.entities.push(enemy);
         vis.onEntityAdded(state, enemy);
@@ -335,7 +342,13 @@ class GameplayController {
         return info.second != null;
     }
     public function applyDamagePolygon(state:GameState, polygon:DamagePolygon):Void {
-        // TODO: Work magic
+        if (physicsController.bumpPlayerTest(state.player.position.x, state.player.position.y,
+        state.player.width, state.player.height,
+        polygon.x, polygon.y,
+        polygon.width, polygon.height)) {
+           state.player.health -= polygon.damage;
+           trace(state.player.health);
+        }
     }
     public function applyDamageExplosion(state:GameState, explosion:DamageExplosion):Void {
         var hits:Array<PhysicsUserData> = physicsController.hitTest(explosion.x, explosion.y, explosion.radius, true, true);

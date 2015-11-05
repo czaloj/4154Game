@@ -25,8 +25,7 @@ class Spawner {
         for (spawner in state.spawners) {
             var type = EnemyType.make(spawner.id);
             //TODO: factor in difficulty
-            if (gameTime.frame % (type.spawnCooldown - 50 * Std.int(Math.log(state.score))) == 0) {
-                trace(type.spawnCooldown - 50 * Std.int(Math.log(state.score)));
+            if (gameTime.frame % (10000 - 50 * Std.int(Math.log(state.score))) == 201) {
                 state.gameEvents.push(new GameEventSpawn(spawner.position.x, spawner.position.y, spawner.id));
             }
         }
@@ -81,5 +80,10 @@ class Spawner {
         e.rightTouchingWall = 0;
         e.leftTouchingWall = 0;
         e.feetTouches = 0;
+
+        e.damage.x = e.position.x;
+        e.damage.y = e.position.y;
+        e.damage.width = e.width;
+        e.damage.height = e.height;
     }
 }
