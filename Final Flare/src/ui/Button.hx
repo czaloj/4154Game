@@ -22,7 +22,6 @@ typedef ButtonTextFormat = {
 }
 
 class Button extends DisplayObjectContainer {
-    
     public var clicked:Bool;
     public var enabled:Bool;
     public var upState (default, set):Sprite;
@@ -30,7 +29,6 @@ class Button extends DisplayObjectContainer {
     public var downState (default, set):Sprite;
     public var hitTestState (default, set):Sprite;
     public var currentState (default, set):Sprite;
-    
     
     /**
      * Creates a new Button instance.
@@ -40,19 +38,19 @@ class Button extends DisplayObjectContainer {
      * @param downState    The initial value for the SimpleButton down state.
      * @param hitTestState The initial value for the SimpleButton hitTest state.
      */
-	
-	 
-	 
-    public function new (upState:Sprite = null, overState:Sprite = null, downState:Sprite = null, hitTestState:Sprite = null, text:String = null, tf:ButtonTextFormat = null) {
-        super ();
-        
-        enabled = true;        
+    public function new (upState:Sprite = null, overState:Sprite = null, downState:Sprite = null, hitTestState:Sprite = null, text:String = null, btf:ButtonTextFormat = null) {
+        super();
+        clicked = false;
+        enabled = true;
         this.upState = (upState != null) ? upState : generateDefaultState ();
         this.overState = (overState != null) ? overState : generateDefaultState ();
         this.downState = (downState != null) ? downState : generateDefaultState ();
-        this.hitTestState = (hitTestState != null) ? hitTestState : generateDefaultState ();
-        
+        this.hitTestState = (hitTestState != null) ? hitTestState : generateDefaultState ();        
         currentState = this.upState;
+        addTextChild(upState, text, btf);
+        addTextChild(downState, text, btf);
+        addTextChild(overState, text, btf);
+
     }
     
     private function generateDefaultState ():Sprite {
@@ -83,7 +81,7 @@ class Button extends DisplayObjectContainer {
             if (hitTestState != null) {
                 
                 this.addEventListener (TouchEvent.TOUCH, onTouch);                
-                hitTestState.alpha = 0.0;
+                hitTestState.alpha = 1;
                 addChild (hitTestState);
             }
         }
@@ -96,12 +94,13 @@ class Button extends DisplayObjectContainer {
         return currentState = state;
     }
     
-    public function addTextChild(text:String, btf:ButtonTextFormat):Void {
-        var textfield:TextField = new TextField(btf.tx, btf.ty, text, btf.font, btf.size); 
-		//TODO Add field to button
-		//TODO Set alignment and make sure text is in proper position 
-		//TODO Maybe just center text by default
-	
+    public function addTextChild(state:Sprite, text:String, btf:ButtonTextFormat):Void {
+        var textField = new TextField(btf.tx, btf.ty, text, btf.font, btf.size, btf.color, btf.bold);
+        textField.hAlign = btf.hAlign;
+        textField.vAlign = btf.vAlign;
+        textField.autoScale = true;
+        textField.transformationMatrix.translate(this.width / 2 - textField.width / 2, this.height / 2 - textField.height / 2);
+        state.addChild(textField);
     }
     
     private function switchState (state:Sprite):Void {
@@ -140,20 +139,6 @@ class Button extends DisplayObjectContainer {
         {
             currentState = upState;
         }
-    }
-    
-    private function onMouseOut (event:MouseEvent):Void {
-        if (upState != currentState) {
-            currentState = upState;
-        }
-    }
-    
-    private function onMouseOver (event:MouseEvent):Void {
-
-    }
-    
-    private function onMouseUp (event:MouseEvent):Void {
-        currentState = overState;
     }
 }
     
