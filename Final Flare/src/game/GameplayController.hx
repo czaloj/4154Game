@@ -351,6 +351,10 @@ class GameplayController {
                 state.player.health -= polygon.damage;
                 state.player.damage.lastDamageTime = time.frame;
             }
+            if ((polygon.lastDamageTime == 0 ) || (time.frame - polygon.lastDamageTime > INVINCIBILITY_TIME)){
+                polygon.source.health -= state.player.damage.damage;
+                polygon.lastDamageTime = time.frame;
+            }
         }
     }
     public function applyDamageExplosion(state:GameState, explosion:DamageExplosion):Void {
