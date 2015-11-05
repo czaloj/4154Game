@@ -6,7 +6,8 @@ import starling.textures.Texture;
 
 class FontLoader{
     public static function loadFonts():Void {
-        TextField.registerBitmapFont(loadFont("assets/Font_0.png", "assets/Font.fnt"), "Font");
+        TextField.registerBitmapFont(loadFont("assets/BitFont.png", "assets/BitFont.fnt"), "BitFont");
+        TextField.registerBitmapFont(loadFont("assets/BitFontFill.png", "assets/BitFont.fnt"), "BitFontFill");
     }
     private static function loadFont(img:String, fnt:String):BitmapFont {
         var t:Texture = Texture.fromBitmapData(Assets.getBitmapData(img));
