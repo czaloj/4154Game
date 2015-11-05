@@ -5,7 +5,9 @@ class DamagePolygon extends DamageDealer {
     public var y:Float;
     public var width:Float;
     public var height:Float;
+    public var lastDamageTime:Float;
     public function new() {
         super(DamageDealer.TYPE_COLLISION_POLYGON);
+        lastDamageTime = 0;
     }
 }

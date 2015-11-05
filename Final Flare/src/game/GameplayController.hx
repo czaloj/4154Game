@@ -23,6 +23,7 @@ class GameplayController {
     public static var GROUND_FRICTION:Float = .3;
     public static var AIR_FRICTION:Float = .95;
     public static inline var TILE_HALF_WIDTH:Float = 0.5;
+    public static var INVINCIBILITY_TIME = 120;
 
     public var state:game.GameState;
     public var physicsController:PhysicsController = new PhysicsController();
@@ -188,7 +189,7 @@ class GameplayController {
                         state.projectiles.remove(damageBullet.projectile);
                     }
                 case DamageDealer.TYPE_COLLISION_POLYGON:
-                    applyDamagePolygon(state, cast(damage, DamagePolygon));
+                    applyDamagePolygon(state, cast(damage, DamagePolygon), time);
                 case DamageDealer.TYPE_RADIAL_EXPLOSION:
                     applyDamageExplosion(state, cast(damage, DamageExplosion));
             }
@@ -341,13 +342,27 @@ class GameplayController {
         // Check for wall hit
         return info.second != null;
     }
-    public function applyDamagePolygon(state:GameState, polygon:DamagePolygon):Void {
-        if (physicsController.bumpPlayerTest(state.player.position.x, state.player.position.y,
-        state.player.width, state.player.height,
-        polygon.x, polygon.y,
-        polygon.width, polygon.height)) {
-           state.player.health -= polygon.damage;
-           trace(state.player.health);
+    public function applyDamagePolygon(state:GameState, polygon:DamagePolygon, time:GameTime):Void {
+        if (polygon.teamDestinationFlags == Entity.TEAM_PLAYER) {
+            if (physicsController.bumpPlayerTest(state.player.position.x, state.player.position.y,
+                state.player.width, state.player.height,
+                polygon.x, polygon.y,
+                polygon.width, polygon.height)) {
+                if ((state.player.damage.lastDamageTime == 0 ) || (time.frame - state.player.damage.lastDamageTime > INVINCIBILITY_TIME)){
+                    state.player.health -= polygon.damage;
+                    state.player.damage.lastDamageTime = time.frame;
+                }
+            }
+        } else {
+            for (entity in state.entities) {
+                if ((entity != null) && (entity.team != Entity.TEAM_PLAYER) && (physicsController.bumpPlayerTest(entity.position.x, entity.position.y,
+                    entity.width, entity.height,
+                    polygon.x, polygon.y,
+                    polygon.width, polygon.height))) {
+                    entity.health -= polygon.damage;
+                    entity.damage.lastDamageTime = time.frame;
+                }
+            }
         }
     }
     public function applyDamageExplosion(state:GameState, explosion:DamageExplosion):Void {

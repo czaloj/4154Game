@@ -66,6 +66,7 @@ class Entity extends EntityBase {
         damage.damage = 5;
         damage.x = 0;
         damage.y = 0;
+        damage.setParent(this, false);
     }
 
     public function get_isGrounded():Bool {
