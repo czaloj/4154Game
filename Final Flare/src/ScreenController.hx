@@ -7,6 +7,7 @@ import openfl.Lib;
 import openfl.ui.Keyboard;
 import starling.display.Sprite;
 import starling.events.Event;
+import ui.FontLoader;
 
 class ScreenController extends Sprite {
     public static var FRAME_TIME:Float = 1.0 / 60.0;
@@ -60,6 +61,9 @@ class ScreenController extends Sprite {
     private function load(e:Event = null):Void {
         // Initialize logging
         FFLog.init(LOGGING_DEBUG_MODE);
+        
+        // Load fonts
+        FontLoader.loadFonts();
         
         // Create the screens
         for (screen in screens) screen.build();

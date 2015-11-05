@@ -31,9 +31,10 @@ class GameUI extends Sprite {
         addChild(healthBar);
 
         // Score text
-        scoreText = new TextField(200, 40, "0", "Courier New", 36, 0xffffff, true);
+        scoreText = new TextField(200, 10, "0", "BitFont", 36, 0xffffff);
+        scoreText.scaleX *= 2;
+        scoreText.scaleY *= 2;
         addChild(scoreText);
-        scoreText.x = (ScreenController.SCREEN_WIDTH - scoreText.width) * 0.5;
         
         // Reset values
         health = 1;
@@ -53,6 +54,7 @@ class GameUI extends Sprite {
         if (score != v) {
             score = v;
             scoreText.text = Std.string(score);
+            scoreText.x = (ScreenController.SCREEN_WIDTH - scoreText.width) * 0.5;
         }
         return score;
     }

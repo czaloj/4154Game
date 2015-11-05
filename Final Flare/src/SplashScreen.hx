@@ -37,7 +37,7 @@ class SplashScreen extends IGameScreen {
         Lib.current.stage.addEventListener(MouseEvent.CLICK, handleClick);
         
         startButton = buttonArray[0];        
-        var tf:TextField = new TextField(175, 80, "Start Button", "Verdana", 20);
+        var tf:TextField = new TextField(175, 80, "Start Button", "BitFont", 20);
         startButton.addChild(tf);
         buttonArray[0].transformationMatrix.translate(275, 250);
         buttonArray[2].transformationMatrix.translate(275, 250);
@@ -79,7 +79,7 @@ class SplashScreen extends IGameScreen {
     {
         screenController.removeChild(startButton);
         startButton = buttonArray[state];        
-        var tf:TextField = new TextField(175, 80, "Start Button", "Verdana", 20);
+        var tf:TextField = new TextField(175, 80, "Start Button", "BitFont", 20);
         startButton.addChild(tf);
         screenController.addChild(startButton);
     }

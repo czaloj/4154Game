@@ -44,7 +44,7 @@ class MenuScreen extends IGameScreen {
         //Arena 1 Button
         
         button1 = buttonArray1[0];        
-        var tf1:TextField = new TextField(160, 50, "Level 1", "Verdana", 20);
+        var tf1:TextField = new TextField(160, 50, "Level 1", "BitFont", 32);
         button1.addChild(tf1);
         buttonArray1[0].transformationMatrix.translate(170, 175);
         buttonArray1[1].transformationMatrix.translate(170, 175);
@@ -53,7 +53,7 @@ class MenuScreen extends IGameScreen {
         
         //Arena 2 Button
         button2 = buttonArray2[0];        
-        var tf2:TextField = new TextField(150, 50, "Level 2", "Verdana", 20);
+        var tf2:TextField = new TextField(150, 50, "Level 2", "BitFont", 32);
         button2.addChild(tf2);
         buttonArray2[0].transformationMatrix.translate(425, 175);
         buttonArray2[1].transformationMatrix.translate(425, 175);
@@ -146,7 +146,7 @@ class MenuScreen extends IGameScreen {
         if (button == 1) {
             screenController.removeChild(button1);
             button1 = buttonArray1[state];        
-            var tf:TextField = new TextField(150, 50, "Level 1", "Verdana", 20);
+            var tf:TextField = new TextField(150, 50, "Level 1", "BitFont", 20);
             button1.addChild(tf);
             screenController.addChild(button1);
         }
@@ -154,7 +154,7 @@ class MenuScreen extends IGameScreen {
         else if (button == 2) {
             screenController.removeChild(button2);
             button2 = buttonArray2[state];        
-            var tf:TextField = new TextField(150, 50, "Level 2", "Verdana", 20);
+            var tf:TextField = new TextField(150, 50, "Level 2", "BitFont", 20);
             button2.addChild(tf);
             screenController.addChild(button2);
         }
