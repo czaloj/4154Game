@@ -80,9 +80,11 @@ class UISpriteFactory {
         ]);
     }
 
-    // TODO: Remove these two functions
     public function getTile(s:String):StaticSprite {
         return new StaticSprite(sheet, s, false);
+    }
+    public function getAnimation(s:String, delay:Int = 1):AnimatedSprite {
+        return new AnimatedSprite(sheet, s, delay, false);
     }
 
     public function createButtonUp(sx:Float, sy:Float):Sprite {
@@ -101,7 +103,6 @@ class UISpriteFactory {
 
         return button;
     }
-
     public function createButtonHover(sx:Float, sy:Float):Sprite {
         var button = new Sprite();
 
@@ -118,7 +119,6 @@ class UISpriteFactory {
 
         return button;
     }
-
     public function createButtonPressed(sx:Float, sy:Float):Sprite {
         var button = new Sprite();
 
@@ -135,7 +135,6 @@ class UISpriteFactory {
 
         return button;
     }
-
     public function createButton(sx:Float, sy:Float):Array<Sprite> {
         var array: Array<Sprite> = new Array();
         array.push(createButtonUp(sx, sy));
@@ -147,18 +146,13 @@ class UISpriteFactory {
 
     }
 
-    public function addChildSprite(region:String, parent:Sprite, x:Float, y:Float)
-    {
+    public function addChildSprite(region:String, parent:Sprite, x:Float, y:Float) {
         addScaledChildSprite(region, parent, x, y, 1, 1);
     }
-
     public function addScaledChildSprite(region:String, parent:Sprite, x:Float, y:Float, sx:Float, sy:Float) {
         var piece:StaticSprite = getTile(region);
         piece.transformationMatrix.scale(sx, sy);
         piece.transformationMatrix.translate(x, y);
         parent.addChild(piece);
-    }
-    public function getAnimation(s:String, delay:Int = 1):AnimatedSprite {
-        return new AnimatedSprite(sheet, s, delay, false);
     }
 }

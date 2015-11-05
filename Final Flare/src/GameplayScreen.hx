@@ -11,6 +11,7 @@ import game.PhysicsController;
 import graphics.Renderer;
 import graphics.RenderPack;
 import graphics.StaticSprite;
+import ui.GameUI;
 import weapon.Weapon;
 import weapon.WeaponGenerator;
 import weapon.WeaponGenParams;
@@ -31,8 +32,7 @@ class GameplayScreen extends IGameScreen {
     private var renderer:Renderer;
     public var inputController:game.InputController;
     private var debugPhysicsView:Sprite;
-    private var score:TextField;
-    private var hp:StaticSprite;
+    private var gameUI:GameUI;
 
     public function new(sc: ScreenController) {
         super(sc);
@@ -73,28 +73,9 @@ class GameplayScreen extends IGameScreen {
         gameplayController.initDebug(debugPhysicsView);
         Lib.current.stage.addChild(debugPhysicsView);
 
-
-        //Score
-        score = new TextField();
-        var myfmt:TextFormat = new TextFormat();
-        myfmt.color = 0xFFFFFF;
-        myfmt.size = 36;
-        myfmt.bold;
-        score.x = 400;
-        score.defaultTextFormat = myfmt;
-        score.text = Std.string(state.score);
-        openfl.Lib.current.stage.addChild(score);
-
-        // TODO: Remove this test code
-        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
-        var hb:StaticSprite = uif.getTile("Health.Background");
-        screenController.addChild(hb);
-
-        hp = uif.getTile("Health.Overlay");
-        hp.x = 20;
-        hp.y = 4;
-        hp.width = 201 * state.player.health / 100;
-        screenController.addChild(hp);
+        // Add the game UI
+        gameUI = new GameUI(new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png"))));
+        screenController.addChild(gameUI);
 
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
     }
@@ -114,15 +95,13 @@ class GameplayScreen extends IGameScreen {
 
         // Update game logic
         gameplayController.update(state, gameTime);
-
-        //Update score
-        score.text = Std.string(state.score);
-
-        //Update Health Bar
-        hp.width = 201 * state.player.health / 100;
     }
     override function draw(gameTime:GameTime):Void {
+        // Update game renderering
         renderer.update(state);
+
+        // Update game UI
+        gameUI.update(state, gameTime.elapsed);
 
         // Update the view for the debug physics
         debugPhysicsView.x = renderer.cameraScale * -renderer.cameraX + ScreenController.SCREEN_WIDTH / 2;
