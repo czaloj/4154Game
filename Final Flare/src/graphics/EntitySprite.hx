@@ -57,9 +57,8 @@ class EntitySprite extends Sprite {
             removeChild(bodyPoses[pose]);
             pose = p;
             addChild(bodyPoses[pose]);
+            bodyPoses[pose].reset();
         }
-        
-        bodyPoses[pose].reset();
     }
     
     public function recalculate(e:Entity) {
