@@ -401,6 +401,16 @@ class Renderer implements IGameVisualizer {
         // TODO: Update sprite positions from entities
         for (o in entityTbl.keys()) {
             var sprite:EntitySprite = entityTbl.get(o);
+            if (!o.isGrounded) {
+                sprite.switchTo(EntitySprite.POSE_JUMP);
+            }
+            else if (o.direction != 0) {
+                sprite.switchTo(EntitySprite.POSE_RUN);
+            }
+            else {
+                sprite.switchTo(EntitySprite.POSE_REST);
+            }
+            
             sprite.recalculate(o);
         }
         var levelWidth:Float = s.width * World.TILE_HALF_WIDTH;
