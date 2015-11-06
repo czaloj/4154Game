@@ -31,7 +31,7 @@ class SplashScreen extends IGameScreen {
     override public function onEntry(gameTime:GameTime):Void {
         addStartButton();
     }
-	
+    
     override public function onExit(gameTime:GameTime):Void {
         screenController.removeChild(startButton);
     }
@@ -47,13 +47,13 @@ class SplashScreen extends IGameScreen {
         // Empty
     }
     
-	private function addStartButton() 
-	{
-		//Create button from UISpriteFactory
-		var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
-		
-		//Set up formatting stuff
-		var btf:ButtonTextFormat = {
+    private function addStartButton() 
+    {
+        //Create button from UISpriteFactory
+        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
+        
+        //Set up formatting stuff
+        var btf:ButtonTextFormat = {
             tx:150,
             ty:75,
             font:"Verdana", 
@@ -64,10 +64,10 @@ class SplashScreen extends IGameScreen {
             vAlign:VAlign.CENTER
         };
 
-		//Create Button and position it
+        //Create Button and position it
         startButton = uif.createButton(200, 66, "START GAME", btf);  
         startButton.transformationMatrix.translate(400 - startButton.width / 2, 250);
         
         screenController.addChild(startButton);
-	}
+    }
 }

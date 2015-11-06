@@ -111,11 +111,11 @@ class MenuScreen extends IGameScreen {
     }
     
     private function addButtons() {
-		//Create button from UISpriteFactory
-		var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
-		
-		//Set up formatting stuff
-		var btf:ButtonTextFormat = {
+        //Create button from UISpriteFactory
+        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
+        
+        //Set up formatting stuff
+        var btf:ButtonTextFormat = {
             tx:120,
             ty:60,
             font:"Verdana", 
@@ -126,7 +126,7 @@ class MenuScreen extends IGameScreen {
             vAlign:VAlign.CENTER
         };
 
-		//Create Button and position it
+        //Create Button and position it
         playButton = uif.createButton(175, 50, "PLAY", btf);  
         tutorialButton = uif.createButton(175, 50, "TUTORIAL", btf);
         optionsButton = uif.createButton(175, 50, "OPTIONS", btf);
@@ -139,7 +139,7 @@ class MenuScreen extends IGameScreen {
         screenController.addChild(playButton);
         screenController.addChild(tutorialButton);
         screenController.addChild(optionsButton);
-	}
+    }
     
     private function checkButtonStates():Void {
         

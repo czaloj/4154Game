@@ -11,14 +11,14 @@ import starling.utils.VAlign;
 import ui.Button.ButtonTextFormat;
 
 typedef ButtonTextFormat = {
-	var tx:Int;
-	var ty:Int;
-	var font:String;
-	var size:Int;
-	var color:UInt;
-	var bold:Bool;
-	var hAlign:HAlign;
-	var vAlign:VAlign;
+    var tx:Int;
+    var ty:Int;
+    var font:String;
+    var size:Int;
+    var color:UInt;
+    var bold:Bool;
+    var hAlign:HAlign;
+    var vAlign:VAlign;
 }
 
 class Button extends DisplayObjectContainer {
