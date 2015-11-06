@@ -10,6 +10,7 @@ import starling.textures.Texture;
 import starling.utils.HAlign;
 import starling.utils.VAlign;
 import starling.text.TextField;
+import openfl.Lib;
 
 
 class SplashScreen extends IGameScreen {
@@ -20,6 +21,7 @@ class SplashScreen extends IGameScreen {
     
     public function new(sc:ScreenController) {
         super(sc);
+        screenController = sc;
     }
     
     override public function build():Void {
@@ -55,8 +57,8 @@ class SplashScreen extends IGameScreen {
 		
 		//Set up formatting stuff
 		var btf:ButtonTextFormat = {
-            tx:300, 
-            ty:100, 
+            tx:150,
+            ty:75,
             font:"Verdana", 
             size:20, 
             color:0x0, 
@@ -67,7 +69,8 @@ class SplashScreen extends IGameScreen {
 
 		//Create Button and position it
         startButton = uif.createButton(200, 66, "START GAME", btf);  
-        //startButton.transformationMatrix.translate();
+        trace(screenController.stage.width);
+        startButton.transformationMatrix.translate(400 - startButton.width/2, 250);
         screenController.addChild(startButton);
 	}
 
