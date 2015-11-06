@@ -5,9 +5,10 @@ import graphics.SpriteSheet;
 import graphics.StaticSprite;
 import graphics.StripRegion;
 import graphics.TileRegion;
-import openfl.display.DisplayObject;
 import starling.display.Sprite;
 import starling.textures.Texture;
+import ui.Button.ButtonTextFormat;
+
 
 class UISpriteFactory {
     private var sheet:SpriteSheet;
@@ -88,67 +89,66 @@ class UISpriteFactory {
     }
 
     public function createButtonUp(sx:Float, sy:Float):Sprite {
-        var button = new Sprite();
+        var sprite = new Sprite();
 
         //Create regions from sprite sheet
-        addScaledChildSprite("Region.Center", button, 8, 8, sx, sy);
-        addChildSprite("Region.TopLeft", button, 0, 0);
-        addScaledChildSprite("Region.Top", button, 8, 0, sx, 1);
-        addChildSprite("Region.TopRight", button, sx + 8, 0);
-        addScaledChildSprite("Region.Right", button, sx + 8, 8, 1, sy);
-        addChildSprite("Region.BottomRight", button, 8 + sx, 8 + sy);
-        addScaledChildSprite("Region.Bottom", button, 8, 8 + sy, sx, 1);
-        addChildSprite("Region.BottomLeft", button, 0, 8 + sy);
-        addScaledChildSprite("Region.Left", button, 0, 8, 1, sy);
+        addScaledChildSprite("Region.Center", sprite, 8, 8, sx, sy);
+        addChildSprite("Region.TopLeft", sprite, 0, 0);
+        addScaledChildSprite("Region.Top", sprite, 8, 0, sx, 1);
+        addChildSprite("Region.TopRight", sprite, sx + 8, 0);
+        addScaledChildSprite("Region.Right", sprite, sx + 8, 8, 1, sy);
+        addChildSprite("Region.BottomRight", sprite, 8 + sx, 8 + sy);
+        addScaledChildSprite("Region.Bottom", sprite, 8, 8 + sy, sx, 1);
+        addChildSprite("Region.BottomLeft", sprite, 0, 8 + sy);
+        addScaledChildSprite("Region.Left", sprite, 0, 8, 1, sy);
 
-        return button;
+        return sprite;
     }
     public function createButtonHover(sx:Float, sy:Float):Sprite {
-        var button = new Sprite();
+        var sprite = new Sprite();
 
         //Create regions from sprite sheet
-        addScaledChildSprite("Region.Hover.Center", button, 8, 8, sx, sy);
-        addChildSprite("Region.Hover.TopLeft", button, 0, 0);
-        addScaledChildSprite("Region.Hover.Top", button, 8, 0, sx, 1);
-        addChildSprite("Region.Hover.TopRight", button, sx + 8, 0);
-        addScaledChildSprite("Region.Hover.Right", button, sx + 8, 8, 1, sy);
-        addChildSprite("Region.Hover.BottomRight", button, 8 + sx, 8 + sy);
-        addScaledChildSprite("Region.Hover.Bottom", button, 8, 8 + sy, sx, 1);
-        addChildSprite("Region.Hover.BottomLeft", button, 0, 8 + sy);
-        addScaledChildSprite("Region.Hover.Left", button, 0, 8, 1, sy);
+        addScaledChildSprite("Region.Hover.Center", sprite, 8, 8, sx, sy);
+        addChildSprite("Region.Hover.TopLeft", sprite, 0, 0);
+        addScaledChildSprite("Region.Hover.Top", sprite, 8, 0, sx, 1);
+        addChildSprite("Region.Hover.TopRight", sprite, sx + 8, 0);
+        addScaledChildSprite("Region.Hover.Right", sprite, sx + 8, 8, 1, sy);
+        addChildSprite("Region.Hover.BottomRight", sprite, 8 + sx, 8 + sy);
+        addScaledChildSprite("Region.Hover.Bottom", sprite, 8, 8 + sy, sx, 1);
+        addChildSprite("Region.Hover.BottomLeft", sprite, 0, 8 + sy);
+        addScaledChildSprite("Region.Hover.Left", sprite, 0, 8, 1, sy);
 
-        return button;
+        return sprite;
     }
     public function createButtonPressed(sx:Float, sy:Float):Sprite {
-        var button = new Sprite();
+        var sprite = new Sprite();
 
         //Create regions from sprite sheet
-        addScaledChildSprite("Region.Press.Center", button, 8, 8, sx, sy);
-        addChildSprite("Region.Press.TopLeft", button, 0, 0);
-        addScaledChildSprite("Region.Press.Top", button, 8, 0, sx, 1);
-        addChildSprite("Region.Press.TopRight", button, sx + 8, 0);
-        addScaledChildSprite("Region.Press.Right", button, sx + 8, 8, 1, sy);
-        addChildSprite("Region.Press.BottomRight", button, 8 + sx, 8 + sy);
-        addScaledChildSprite("Region.Press.Bottom", button, 8, 8 + sy, sx, 1);
-        addChildSprite("Region.Press.BottomLeft", button, 0, 8 + sy);
-        addScaledChildSprite("Region.Press.Left", button, 0, 8, 1, sy);
+        addScaledChildSprite("Region.Press.Center", sprite, 8, 8, sx, sy);
+        addChildSprite("Region.Press.TopLeft", sprite, 0, 0);
+        addScaledChildSprite("Region.Press.Top", sprite, 8, 0, sx, 1);
+        addChildSprite("Region.Press.TopRight", sprite, sx + 8, 0);
+        addScaledChildSprite("Region.Press.Right", sprite, sx + 8, 8, 1, sy);
+        addChildSprite("Region.Press.BottomRight", sprite, 8 + sx, 8 + sy);
+        addScaledChildSprite("Region.Press.Bottom", sprite, 8, 8 + sy, sx, 1);
+        addChildSprite("Region.Press.BottomLeft", sprite, 0, 8 + sy);
+        addScaledChildSprite("Region.Press.Left", sprite, 0, 8, 1, sy);
 
-        return button;
+        return sprite;
     }
-    public function createButton(sx:Float, sy:Float):Array<Sprite> {
-        var array: Array<Sprite> = new Array();
-        array.push(createButtonUp(sx, sy));
-        array.push(createButtonHover(sx, sy));
-        array.push(createButtonPressed(sx, sy));
 
-        return array;
-
-
+    public function createButton(sx:Float, sy:Float, text:String, tf:ButtonTextFormat):Button {
+        var upSprite = createButtonUp(sx, sy);
+        var hoverSprite = createButtonHover(sx, sy);
+        var downSprite = createButtonPressed(sx, sy);
+        var button = new Button(upSprite, hoverSprite, downSprite, text, tf);
+        return button;
     }
 
     public function addChildSprite(region:String, parent:Sprite, x:Float, y:Float) {
         addScaledChildSprite(region, parent, x, y, 1, 1);
     }
+    
     public function addScaledChildSprite(region:String, parent:Sprite, x:Float, y:Float, sx:Float, sy:Float) {
         var piece:StaticSprite = getTile(region);
         piece.transformationMatrix.scale(sx, sy);

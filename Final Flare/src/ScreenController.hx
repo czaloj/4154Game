@@ -16,7 +16,7 @@ class ScreenController extends Sprite {
     public static inline var VERSION_MAJOR:UInt = 0;
     public static inline var VERSION_MINOR:UInt = 1;
     public static inline var VERSION_REVISION:UInt = 2;
-    public static inline var VERSION_ID:Int = VERSION_MAJOR << 16 | VERSION_MINOR << 8 | VERSION_REVISION;
+    public static inline var VERSION_ID:Int = 0 << 16 | 1 << 8 | 2;
     public static inline var LOGGING_DEBUG_MODE:Bool = true;
 
     public var dt:GameTime = new GameTime();

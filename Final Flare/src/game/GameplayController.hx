@@ -29,8 +29,8 @@ class GameplayController {
     public var physicsController:PhysicsController = new PhysicsController();
     private var debugPhysicsView:Sprite;
     private var deletingEntities:Array<Entity> = [];
-	private var time:GameTime;
-	var count20:Int;
+    private var time:GameTime;
+    var count20:Int;
 
     private var vis:IGameVisualizer;
 
@@ -40,7 +40,7 @@ class GameplayController {
 
     public function init(s:GameState):Void {
         state = s;
-		count20 = 1200;
+        count20 = 1200;
 
         // Initialize physics from loaded GameState
         Weapon.phys = physicsController;
@@ -132,17 +132,17 @@ class GameplayController {
     public function update(s:GameState, gameTime:GameTime):Void {
         state = s;
         time = gameTime;
-		count20 -= 1;
-		if (count20 <= 0)
-		{
-			count20 = 1200;
-			var str:String;
-			str = "";
-			for (ent in s.entitiesNonNull) {
-				str += ent.position.x + ", "+ ent.position.y+", ";
-			}
-			FFLog.recordEvent(8, str + time.total);
-		}
+        count20 -= 1;
+        if (count20 <= 0)
+        {
+            count20 = 1200;
+            var str:String;
+            str = "";
+            for (ent in s.entitiesNonNull) {
+                str += ent.position.x + ", "+ ent.position.y+", ";
+            }
+            FFLog.recordEvent(8, str + time.total);
+        }
         // TODO: Spawner shouldn't need reference to this
         Spawner.spawn(this, state, gameTime);
 
@@ -286,7 +286,7 @@ class GameplayController {
 
     // Application of game events
     public function applyEventSpawn(state:GameState, e:GameEventSpawn):Void {
-		FFLog.recordEvent(2, e.x + ", " + e.y + ", " + time.total);
+        FFLog.recordEvent(2, e.x + ", " + e.y + ", " + time.total);
         var enemy:Entity = new Entity();
         Spawner.createEnemy(enemy, e.entity, e.x, e.y);
         state.damage.push(enemy.damage);
@@ -316,12 +316,12 @@ class GameplayController {
 
                     hitEntity.health -= bullet.damageFor((hitEntity.team == Entity.TEAM_PLAYER) ? DamageDealer.TEAM_PLAYER : DamageDealer.TEAM_ENEMY);
                     vis.onBloodSpurt(rci.third.x, rci.third.y, rci.fourth.x, rci.fourth.y);
-					if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_ENEMY) {
-							FFLog.recordEvent(1,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + time.total);
-					}
-					if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_PLAYER) {
-							FFLog.recordEvent(3,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + time.total);// missing character and reason of death
-					}
+                    if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_ENEMY) {
+                            FFLog.recordEvent(1,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + time.total);
+                    }
+                    if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_PLAYER) {
+                            FFLog.recordEvent(3,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + time.total);// missing character and reason of death
+                    }
                 }
             }
 

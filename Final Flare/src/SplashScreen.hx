@@ -1,23 +1,23 @@
 package;
 
 import lime.system.BackgroundWorker;
-import openfl.events.MouseEvent;
-import starling.display.Sprite;
-import starling.textures.Texture;
+import ui.Button;
+import ui.Button.ButtonTextFormat;
 import ui.UISpriteFactory;
 import openfl.Assets;
-import openfl.display.SimpleButton;
+import starling.display.Sprite;
+import starling.textures.Texture;
+import starling.utils.HAlign;
+import starling.utils.VAlign;
 import starling.text.TextField;
 import openfl.Lib;
 
+
 class SplashScreen extends IGameScreen {
-    private var buttonArray:Array<Sprite>;
-    private var startButton:Sprite;
-    
+    private var startButton:Button;
     private var mousePosX:Float;
     private var mousePosY:Float;
     private var clicked:Bool = false;
-    private var hover:Bool = false;
     
     public function new(sc:ScreenController) {
         super(sc);
@@ -31,70 +31,45 @@ class SplashScreen extends IGameScreen {
     }
     
     override public function onEntry(gameTime:GameTime):Void {
-        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
-        buttonArray = uif.createButton(200, 66);
-        //Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, updateMouse);
-        Lib.current.stage.addEventListener(MouseEvent.CLICK, handleClick);
-        
-        startButton = buttonArray[0];        
-        var tf:TextField = new TextField(175, 80, "Start Button", "BitFont", 20);
-        startButton.addChild(tf);
-        buttonArray[0].transformationMatrix.translate(275, 250);
-        buttonArray[2].transformationMatrix.translate(275, 250);
-        screenController.addChild(startButton);
-        
-        
-        
+        addStartButton();
     }
+	
     override public function onExit(gameTime:GameTime):Void {
-        Lib.current.stage.removeEventListener(MouseEvent.CLICK, handleClick);
         screenController.removeChild(startButton);
     }
     
     override public function update(gameTime:GameTime):Void {
-        if ((startButton.getBounds(screenController)).contains(mousePosX, mousePosY) && hover == false)
-        {
-            changeButtonState(1);
-            hover = true;
-        }
-        if ((startButton.getBounds(screenController)).contains(mousePosX, mousePosY) == false && hover == true)
-        {
-            hover == false;
-            changeButtonState(0);
-  
-        }
-        
-        
         // Switch to the main menu
-        if (clicked) {
-            clicked = false;
+        if (startButton.clicked) {
             screenController.switchToScreen(1);
         }
     }
+    
     override public function draw(gameTime:GameTime):Void {
         // Empty
     }
     
-    public function changeButtonState(state:Int) 
-    {
-        screenController.removeChild(startButton);
-        startButton = buttonArray[state];        
-        var tf:TextField = new TextField(175, 80, "Start Button", "BitFont", 20);
-        startButton.addChild(tf);
+	private function addStartButton() 
+	{
+		//Create button from UISpriteFactory
+		var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
+		
+		//Set up formatting stuff
+		var btf:ButtonTextFormat = {
+            tx:150,
+            ty:75,
+            font:"Verdana", 
+            size:20, 
+            color:0x0, 
+            bold:false, 
+            hAlign:HAlign.CENTER, 
+            vAlign:VAlign.CENTER
+        };
+
+		//Create Button and position it
+        startButton = uif.createButton(200, 66, "START GAME", btf);  
+        startButton.transformationMatrix.translate(400 - startButton.width / 2, 250);
+        
         screenController.addChild(startButton);
-    }
-    
-    public function updateMouse(e:MouseEvent):Void {
-        mousePosX = e.stageX;
-        mousePosY = e.stageY;
-    }
-    
-    public function handleClick(e:MouseEvent):Void {
-        var bound = startButton.getBounds(screenController);
-        if (bound.contains(e.stageX, e.stageY)) {
-            clicked = true;
-            changeButtonState(2);
-        }
-    }
-    
+	}
 }
