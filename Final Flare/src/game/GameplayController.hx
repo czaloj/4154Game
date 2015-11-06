@@ -286,13 +286,15 @@ class GameplayController {
 
     // Application of game events
     public function applyEventSpawn(state:GameState, e:GameEventSpawn):Void {
-        FFLog.recordEvent(2, e.x + ", " + e.y + ", " + time.total);
-        var enemy:Entity = new Entity();
-        Spawner.createEnemy(enemy, e.entity, e.x, e.y);
-        state.damage.push(enemy.damage);
-        physicsController.initEntity(enemy);
-        state.entities.push(enemy);
-        vis.onEntityAdded(state, enemy);
+        if (state.entities.length < 100) {
+            FFLog.recordEvent(2, e.x + ", " + e.y + ", " + time.total);
+            var enemy:Entity = new Entity();
+            Spawner.createEnemy(enemy, e.entity, e.x, e.y);
+            state.damage.push(enemy.damage);
+            physicsController.initEntity(enemy);
+            state.entities.push(enemy);
+            vis.onEntityAdded(state, enemy);
+        }
     }
 
     public function applyDamageBullet(state:GameState, bullet:DamageBullet, dt:Float):Bool {
