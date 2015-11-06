@@ -10,8 +10,6 @@ import starling.textures.Texture;
 import starling.utils.HAlign;
 import starling.utils.VAlign;
 import starling.text.TextField;
-import openfl.Lib;
-
 
 class SplashScreen extends IGameScreen {
     private var startButton:Button;

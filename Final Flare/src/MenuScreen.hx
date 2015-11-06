@@ -8,20 +8,27 @@ import flash.net.FileReference;
 import flash.utils.ByteArray;
 import weapon.WeaponGenerator;
 import weapon.WeaponGenParams;
-import openfl.events.MouseEvent;
-import starling.display.Sprite;
-import starling.textures.Texture;
+import ui.Button;
+import ui.Button.ButtonTextFormat;
 import ui.UISpriteFactory;
 import openfl.Assets;
+import starling.display.Sprite;
+import starling.textures.Texture;
+import starling.utils.HAlign;
+import starling.utils.VAlign;
 import starling.text.TextField;
-import openfl.Lib;
 
 
 class MenuScreen extends IGameScreen {
-    private var buttonArray1:Array<Sprite>;
-    private var buttonArray2:Array<Sprite>;
-    private var button1:Sprite;
-    private var button2:Sprite;
+    //Booleans for screen transitions
+    private var play:Bool = false;
+    private var tutorial:Bool = false;
+    private var options:Bool = false;
+    
+    //Buttons
+    private var playButton:Button;
+    private var tutorialButton:Button;
+    private var optionsButton:Button;
     
     
     public function new(sc:ScreenController) {
@@ -36,13 +43,15 @@ class MenuScreen extends IGameScreen {
     }
     
     override public function onEntry(gameTime:GameTime):Void {
+        addButtons();
+        
         FFLog.recordMenuStart();
 
         // Begin loading a file
         // TODO: Fully remove soon?
         var fileRef:FileReference = new FileReference();
         fileRef.addEventListener(Event.SELECT, onFileBrowse);
-        fileRef.browse();
+        //fileRef.browse();
         
         // TODO: This is so badly hardcoded
         var mod:MenuLevelModifiers = new MenuLevelModifiers();
@@ -72,8 +81,13 @@ class MenuScreen extends IGameScreen {
     }
     
     override public function update(gameTime:GameTime):Void {
-        // Empty
+        checkButtonStates();
+        if (play) { 
+            screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/test.lvl");
+            screenController.switchToScreen(2);
+        }
     }
+        
     override public function draw(gameTime:GameTime):Void {
         // Empty
     }
@@ -94,5 +108,46 @@ class MenuScreen extends IGameScreen {
         screenController.loadedLevel = cast(Unserializer.run(data.toString()), GameLevel);
 
         screenController.switchToScreen(2);
+    }
+    
+    private function addButtons() {
+		//Create button from UISpriteFactory
+		var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
+		
+		//Set up formatting stuff
+		var btf:ButtonTextFormat = {
+            tx:120,
+            ty:60,
+            font:"Verdana", 
+            size:20, 
+            color:0x0, 
+            bold:false, 
+            hAlign:HAlign.CENTER, 
+            vAlign:VAlign.CENTER
+        };
+
+		//Create Button and position it
+        playButton = uif.createButton(175, 50, "PLAY", btf);  
+        tutorialButton = uif.createButton(175, 50, "TUTORIAL", btf);
+        optionsButton = uif.createButton(175, 50, "OPTIONS", btf);
+        
+        //Translations
+        playButton.transformationMatrix.translate(400 + playButton.width / 2, 170);
+        tutorialButton.transformationMatrix.translate(400 + playButton.width / 2, 180 + tutorialButton.height);
+        optionsButton.transformationMatrix.translate(400 + playButton.width / 2, 190 + 2*optionsButton.height);
+        
+        screenController.addChild(playButton);
+        screenController.addChild(tutorialButton);
+        screenController.addChild(optionsButton);
+	}
+    
+    private function checkButtonStates():Void {
+        
+        if (playButton.clicked) { play = true; }
+        else { play = false; }
+        if (tutorialButton.clicked) { tutorial = true; }
+        else { tutorial = false; }
+        if (optionsButton.clicked = true) { options = true; }
+        else { options = false; }        
     }
 }
