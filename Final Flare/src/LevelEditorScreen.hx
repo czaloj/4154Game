@@ -103,17 +103,18 @@ class LevelEditorScreen extends IGameScreen {
             var y = (((ScreenController.SCREEN_HEIGHT - e.stageY) - ScreenController.SCREEN_HEIGHT / 2) / cameraScale + cameraY);
             if (map != null) {
                 // tile editing
-                t = map.getTileByCoords(Std.int(x/World.TILE_HALF_WIDTH),Std.int(y/World.TILE_HALF_WIDTH));
+                var tx = Std.int(x/World.TILE_HALF_WIDTH);
+                var ty = Std.int(y/World.TILE_HALF_WIDTH);
                 if (object_num == 0) {
                     switch (sub_editor_num) {
-                    case 0: t.clearQuarterTile();
-                    case 1: t.clearFullTile(map);
+                    case 0: map.clearQuarterTile(tx,ty);
+                    case 1: map.clearFullTile(tx,ty);
                     }
                 } else {
-                    var type = tiles[sub_editor_num][object_num-1];
+                    var color = tiles[sub_editor_num][object_num-1];
                     switch (sub_editor_num) {
-                    case 0: t.colorQuarterTile(type);
-                    case 1: t.colorFullTile(type,map);
+                    case 0: map.setID(tx,ty,color);
+                    case 1: map.setFullTile(tx,ty,color);
                     }
                 }
             } else {
@@ -204,8 +205,8 @@ class LevelEditorScreen extends IGameScreen {
     private function onKeyDown(e:KeyboardEvent):Void {
         switch (e.keyCode) {
         case Keyboard.F8:
-            level.foreground = foregroundMap.toIDArray();
-            level.background = backgroundMap.toIDArray();
+            level.foreground = foregroundMap.tmap;
+            level.background = backgroundMap.tmap;
             level.parallax = [];
             for (i in 0...layer_item[0].length) {
                 var item = layer_item[0][i];
@@ -265,10 +266,8 @@ class LevelEditorScreen extends IGameScreen {
         level.playerPt = new Point(0,0);
         level.spawners = [];
 
-        // foregroundMap = new TileMap(level.height,level.width);
-        // level.foreground = foregroundMap.toIDArray();
-        // backgroundMap = new TileMap(level.height,level.width);
-        // level.background = backgroundMap.toIDArray();
+        foregroundMap = new TileMap(level.height,level.width);
+        backgroundMap = new TileMap(level.height,level.width);
         // LevelCreator.createStateFromLevel(level, state);
 
         // set up camera
@@ -360,7 +359,7 @@ class LevelEditorScreen extends IGameScreen {
                 for (j in 0...map.width) {
                     var jw = j * World.TILE_HALF_WIDTH;
                     if (jw >= cameraX - cameraHalfWidth && jw <= cameraX + cameraHalfWidth) {
-                        screenController.addChild(map.getTileByCoords(j,i).tile);
+                        // screenController.addChild(map.getTileByCoords(j,i).tile);
                     }
                 }
             }

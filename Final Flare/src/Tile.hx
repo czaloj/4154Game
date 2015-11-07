@@ -76,47 +76,47 @@ class Tile {
         0x6b4801
     ];
 
-    public var tile:Quad;
-    public var id:Int;
+    // public var tile:Quad;
+    // public var id:Int;
     
-    public function new(tx,ty) {
-        tile = new Quad(TWIDTH,TWIDTH,tiles[0]);
-        id = WHITE;
-        tile.x = Std.int(tx*TWIDTH);
-        tile.y = Std.int(ty*TWIDTH);
-        tile.visible = false;
-    }
+    // public function new(tx,ty) {
+        // tile = new Quad(TWIDTH,TWIDTH,tiles[0]);
+        // id = WHITE;
+        // tile.x = Std.int(tx*TWIDTH);
+        // tile.y = Std.int(ty*TWIDTH);
+        // tile.visible = false;
+    // }
 
-    public function IDTile(tileID:Int) {
-        id = tileID;
-    }
+    // public function IDTile(tileID:Int) {
+    //     id = tileID;
+    // }
 
-    public function colorQuarterTile(tileID:Int):Tile {
-        tile.color = tiles[tileID];
-        id = tileID;
-        tile.visible = true;
-        return this;
-    }
+    // public function colorQuarterTile(tileID:Int):Tile {
+    //     tile.color = tiles[tileID];
+    //     id = tileID;
+    //     tile.visible = true;
+    //     return this;
+    // }
 
-    public function colorFullTile(tileID:Int, map:TileMap):Tile {
-        colorQuarterTile(tileID);
+    // public function colorFullTile(tileID:Int, map:TileMap):Tile {
+    //     colorQuarterTile(tileID);
 
-        return this;
-    }
+    //     return this;
+    // }
 
-    public function clearQuarterTile() {
-        tile.visible = false;
-        id = WHITE;
-    }
+    // public function clearQuarterTile() {
+    //     tile.visible = false;
+    //     id = WHITE;
+    // }
 
-    public function clearFullTile(map:TileMap) {
-        clearQuarterTile();
-    }
+    // public function clearFullTile(map:TileMap) {
+    //     clearQuarterTile();
+    // }
 
-    // array order: top left, top right, bottom left, bottom right
-    public function getCorners(map:TileMap):Array<Tile> {
-        var arr = [];
-        arr.push(this);
-        return null;
-    }
+    // // array order: top left, top right, bottom left, bottom right
+    // public function getCorners(map:TileMap):Array<Tile> {
+    //     var arr = [];
+    //     arr.push(this);
+    //     return null;
+    // }
 }
