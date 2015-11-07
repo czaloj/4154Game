@@ -1,7 +1,7 @@
 package;
 
 import game.GameLevel;
-import game.GameState;
+// import game.GameState;
 import game.Spawner;
 import game.World;
 // import graphics.Renderer;
@@ -38,7 +38,7 @@ class LevelEditorScreen extends IGameScreen {
     public static var MIN_LEVEL_HEIGHT:Int = 900;
 
     private var level:game.GameLevel;
-    private var state:game.GameState;
+    // private var state:game.GameState;
     // private var renderer:Renderer;
     private var levelController:LevelEditorController;
 
@@ -102,17 +102,18 @@ class LevelEditorScreen extends IGameScreen {
             var x = ((e.stageX - CAMERA_WIDTH / 2) / cameraScale + cameraX);
             var y = (((ScreenController.SCREEN_HEIGHT - e.stageY) - ScreenController.SCREEN_HEIGHT / 2) / cameraScale + cameraY);
             if (map != null) {
+                // tile editing
                 t = map.getTileByCoords(Std.int(x/World.TILE_HALF_WIDTH),Std.int(y/World.TILE_HALF_WIDTH));
                 if (object_num == 0) {
                     switch (sub_editor_num) {
                     case 0: t.clearQuarterTile();
-                    case 1: t.clearFullTile();
+                    case 1: t.clearFullTile(map);
                     }
                 } else {
                     var type = tiles[sub_editor_num][object_num-1];
                     switch (sub_editor_num) {
                     case 0: t.colorQuarterTile(type);
-                    case 1: t.colorFullTile(type);
+                    case 1: t.colorFullTile(type,map);
                     }
                 }
             } else {
@@ -216,7 +217,7 @@ class LevelEditorScreen extends IGameScreen {
         case Keyboard.W:
             cameraY = Math.max(0 + cameraHalfHeight, cameraY -= cameraScale);
         case Keyboard.A:
-            cameraX = Math.max(0 + cameraHalfWidth, cameraY -= cameraScale);
+            cameraX = Math.max(0 + cameraHalfWidth, cameraX -= cameraScale);
         case Keyboard.S:
             cameraY = Math.min(MIN_LEVEL_HEIGHT - cameraHalfHeight, cameraY += cameraScale);
         case Keyboard.D:
@@ -251,22 +252,24 @@ class LevelEditorScreen extends IGameScreen {
     }
 
     override public function onEntry(gameTime:GameTime):Void {
-        state = new game.GameState();
-        levelController = new LevelEditorController();
+        // state = new game.GameState();
+        // levelController = new LevelEditorController();
         // var pack:RenderPack = new RenderPack();
 
-        // set up startup level
+        // set up level
         level = new game.GameLevel();
-        level.height = Std.int(MIN_LEVEL_HEIGHT/16);
-        level.width = Std.int(MIN_LEVEL_WIDTH/16);
+        level.height = Std.int(MIN_LEVEL_HEIGHT/World.TILE_HALF_WIDTH);
+        level.width = Std.int(MIN_LEVEL_WIDTH/World.TILE_HALF_WIDTH);
         level.environmentType = "Simple";
         level.environmentSprites = "assets/img/Factory.png";
         level.playerPt = new Point(0,0);
         level.spawners = [];
 
-        foregroundMap = new TileMap(level.height,level.width);
-        level.foreground = foregroundMap.toIDArray();
-        LevelCreator.createStateFromLevel(level, state);
+        // foregroundMap = new TileMap(level.height,level.width);
+        // level.foreground = foregroundMap.toIDArray();
+        // backgroundMap = new TileMap(level.height,level.width);
+        // level.background = backgroundMap.toIDArray();
+        // LevelCreator.createStateFromLevel(level, state);
 
         // set up camera
         cameraScale = 32;
@@ -311,17 +314,18 @@ class LevelEditorScreen extends IGameScreen {
             }
         }
 
-        layer_item[1].push("Player Spawn");
-        layer_item[1].push("Enemy Spawn");
+        // for (i in 0...level.width) {
+        //     foregroundMap.setTileByIndex(i, foregroundMap.getTileByIndex(i).colorQuarterTile(tiles[0][0]));
+        // }
+        // for (i in 0...level.height) {
+        //     foregroundMap.setTileByCoords(0,i,foregroundMap.getTileByCoords(0,i).colorQuarterTile(tiles[0][0]));
+        //     foregroundMap.setTileByCoords(level.width-1,i,foregroundMap.getTileByCoords(level.width-1,i).colorQuarterTile(tiles[0][0]));
+        // }
 
-        // for (i in 0...state.width) {
-        //     screenController.addChild(tileMap.getTileByIndex(i).setTileTexture(Tile.BLUE).tile);
-        // }
-        // for (i in 0...state.height) {
-        //     screenController.addChild(tileMap.getTileByIndex((i+1)*state.width-1).setTileTexture(Tile.BLUE).tile);
-        //     screenController.addChild(tileMap.getTileByIndex(i*state.width).setTileTexture(Tile.BLUE).tile);
-        // }
-        // end startup level set up
+        layer_item[1].push("Player Spawn");
+        layer_item[1].push("Grunt Spawn");
+        layer_item[1].push("Enemy 2 Spawn");
+        layer_item[1].push("Enemy 3 Spawn");
 
         // Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
         Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
@@ -341,18 +345,22 @@ class LevelEditorScreen extends IGameScreen {
     override public function update(gameTime:GameTime):Void {
         updateOptions();
     }
+
     override public function draw(gameTime:GameTime):Void {
         // renderer.update(state);
         screenController.removeChildren(TILE_CHILDREN_START);
-
+        // drawTiles(backgroundMap);
+        // drawTiles(foregroundMap);
     }
 
     public function drawTiles(map:TileMap):Void {
         for (i in 0...map.height) {
-            if (i >= cameraY - cameraHalfHeight && i <= cameraY + cameraHalfHeight) {
+            var iw = i * World.TILE_HALF_WIDTH;
+            if (iw >= cameraY - cameraHalfHeight && iw <= cameraY + cameraHalfHeight) {
                 for (j in 0...map.width) {
-                    if (j >= cameraX - cameraHalfWidth && j <= cameraX + cameraHalfWidth) {
-                        screenController.addChild(map.getTileByCoords(i,j).tile);
+                    var jw = j * World.TILE_HALF_WIDTH;
+                    if (jw >= cameraX - cameraHalfWidth && jw <= cameraX + cameraHalfWidth) {
+                        screenController.addChild(map.getTileByCoords(j,i).tile);
                     }
                 }
             }

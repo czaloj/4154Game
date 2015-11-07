@@ -1,7 +1,7 @@
 package;
 
 import game.World;
-import graphics.Renderer;
+// import graphics.Renderer;
 // import openfl.geom.Rectangle;
 // import openfl.display;
 import starling.display.Quad;
@@ -80,7 +80,7 @@ class Tile {
     public var id:Int;
     
     public function new(tx,ty) {
-        tile = new Quad(TWIDTH,TWIDTH,tiles[WHITE]);
+        tile = new Quad(TWIDTH,TWIDTH,tiles[0]);
         id = WHITE;
         tile.x = Std.int(tx*TWIDTH);
         tile.y = Std.int(ty*TWIDTH);
@@ -91,14 +91,16 @@ class Tile {
         id = tileID;
     }
 
-    public function colorQuarterTile(tileID:Int) {
+    public function colorQuarterTile(tileID:Int):Tile {
         tile.color = tiles[tileID];
         id = tileID;
         tile.visible = true;
         return this;
     }
 
-    public function colorFullTile(tileID:Int) {
+    public function colorFullTile(tileID:Int, map:TileMap):Tile {
+        colorQuarterTile(tileID);
+
         return this;
     }
 
@@ -107,7 +109,14 @@ class Tile {
         id = WHITE;
     }
 
-    public function clearFullTile() {
-        
+    public function clearFullTile(map:TileMap) {
+        clearQuarterTile();
+    }
+
+    // array order: top left, top right, bottom left, bottom right
+    public function getCorners(map:TileMap):Array<Tile> {
+        var arr = [];
+        arr.push(this);
+        return null;
     }
 }
