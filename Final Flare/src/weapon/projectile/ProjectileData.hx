@@ -1,7 +1,9 @@
 package weapon.projectile;
 
 import box2D.collision.shapes.B2Shape;
+import game.Entity;
 import openfl.geom.Matrix;
+import openfl.geom.Point;
 
 class ProjectileChildData {
     public var offset:Matrix;
@@ -28,5 +30,9 @@ class ProjectileData {
     
     public function new() {
         // Empty
+    }
+
+    public function constructProjectile(origin:Point, velocity:Point, source:Entity):Projectile { 
+        
     }
 }
