@@ -1,9 +1,12 @@
-package game;
+package weapon.projectile;
 
 import game.damage.DamageBullet;
 import box2D.common.math.B2Vec2;
+import game.Entity;
+import game.PhysicsController;
+import game.GameState;
 
-class Projectile {
+class BulletProjectile {
     private static var BULLET_SPEED:Float = 20;
 
     public var position:B2Vec2 = new B2Vec2();     //Object position
@@ -25,8 +28,8 @@ class Projectile {
      * @param vx Initial velocity X
      * @param vy Initial velocity Y
      */
-    public function createCopyAt(e:Entity, x:Float, y:Float, vx:Float, vy:Float):Projectile {
-        var p:Projectile = new Projectile(damage);
+    public function createCopyAt(e:Entity, x:Float, y:Float, vx:Float, vy:Float):BulletProjectile {
+        var p:BulletProjectile = new BulletProjectile(damage);
         p.position.set(x, y);
         p.velocity.set(vx, vy);
         p.penetrationsLeft = penetrationsLeft;

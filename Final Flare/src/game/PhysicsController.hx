@@ -21,6 +21,7 @@ import game.Entity;
 import game.PhysicsController.PhysicsContactBody;
 import game.PhysicsController.PhysicsUserData;
 import game.RayCastContext.RayCastInstance;
+import weapon.projectile.LargeProjectile;
 
 // Collided fixture, ray origin, collision point, normal
 typedef RayCastInfo = Tuple4<B2Fixture, B2Vec2, B2Vec2, B2Vec2>;

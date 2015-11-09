@@ -3,9 +3,9 @@ package weapon;
 import game.EntityBase;
 import game.GameState;
 import game.Entity;
-import game.LargeProjectile;
+import weapon.projectile.LargeProjectile;
 import game.PhysicsController;
-import game.Projectile;
+import weapon.projectile.BulletProjectile;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Transform;
@@ -183,7 +183,7 @@ class Weapon {
             var direction:Point = t.deltaTransformPoint(pDirection);
             
             if (po.projectile != null) {
-                var p:Projectile = po.projectile.createCopyAt(
+                var p:BulletProjectile = po.projectile.createCopyAt(
                     entity,
                     position.x,
                     position.y,

@@ -6,6 +6,7 @@ import game.damage.DamageDealer;
 import game.events.GameEvent;
 import game.GameState.EntityNonNullList;
 import game.PhysicsController.PhysicsContact;
+import weapon.projectile.BulletProjectile;
 import weapon.WeaponData;
 
 //{ Non-null Entities Iterator
@@ -92,7 +93,7 @@ class GameState {
     public var damage:Array<DamageDealer> =  new Array<DamageDealer>();
 
     public var contactList:List<PhysicsContact> = new List<PhysicsContact>();
-    public var projectiles:Array<Projectile> = [];
+    public var projectiles:Array<BulletProjectile> = [];
 
     public var gameEvents:Array<GameEvent> = []; // The queue of game events that should occur during an update
     

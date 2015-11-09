@@ -17,6 +17,8 @@ import game.PhysicsController.RayCastInfo;
 import graphics.IGameVisualizer;
 import openfl.display.Sprite;
 import openfl.geom.Point;
+import weapon.projectile.BulletProjectile;
+import weapon.projectile.LargeProjectile;
 import weapon.Weapon;
 
 class GameplayController {
@@ -197,7 +199,7 @@ class GameplayController {
         state.damage = [];
 
         // Other game logic
-        state.projectiles = state.projectiles.filter(function(p:Projectile){
+        state.projectiles = state.projectiles.filter(function(p:BulletProjectile){
             return
                 p.position.x >= 0 && p.position.x <= state.width * TILE_HALF_WIDTH &&
                 p.position.y >= 0 && p.position.y <= state.height * TILE_HALF_WIDTH;

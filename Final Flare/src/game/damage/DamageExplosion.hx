@@ -1,7 +1,7 @@
 package game.damage;
 
 import game.damage.DamageDealer;
-import game.LargeProjectile;
+import weapon.projectile.LargeProjectile;
 
 class DamageExplosion extends DamageDealer {
     public var x:Float;

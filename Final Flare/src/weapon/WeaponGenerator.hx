@@ -3,8 +3,8 @@ package weapon;
 import game.ColorScheme;
 import game.damage.DamageBullet;
 import game.damage.DamageExplosion;
-import game.LargeProjectile;
-import game.Projectile;
+import weapon.projectile.LargeProjectile;
+import weapon.projectile.BulletProjectile;
 import openfl.display.BitmapData;
 import openfl.geom.Rectangle;
 import openfl.utils.ByteArray;
@@ -47,7 +47,7 @@ class WeaponGenerator {
             damage.damage = 10;
             damage.friendlyDamage = 0;
             damage.piercingAmount = 0;
-            data.projectileOrigins[0].projectile = new Projectile(damage);
+            data.projectileOrigins[0].projectile = new BulletProjectile(damage);
             data.projectileOrigins[0].velocity = 1500;            
         }
         else {

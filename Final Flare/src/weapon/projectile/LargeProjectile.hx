@@ -1,8 +1,11 @@
-package game;
+package weapon.projectile;
 
 import box2D.dynamics.B2Body;
 import game.damage.DamageExplosion;
 import weapon.Weapon;
+import game.GameState;
+import game.Entity;
+import game.PhysicsController;
 
 class LargeProjectile {
     public var body:B2Body;
