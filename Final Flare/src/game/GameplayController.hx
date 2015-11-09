@@ -17,8 +17,7 @@ import game.PhysicsController.RayCastInfo;
 import graphics.IGameVisualizer;
 import openfl.display.Sprite;
 import openfl.geom.Point;
-import weapon.projectile.BulletProjectile;
-import weapon.projectile.LargeProjectile;
+import weapon.projectile.Projectile;
 import weapon.Weapon;
 
 class GameplayController {
@@ -98,14 +97,14 @@ class GameplayController {
                     // TODO: Add collision types
                 case [PhysicsUserDataType.ENTITY, PhysicsUserDataType.PROJECTILE]:
                     contact.collisionNormal.negativeSelf();
-                    handleEntityProjectile(contact, cast(object1.second, Entity), cast(object2.second, LargeProjectile));
+                    handleEntityProjectile(contact, cast(object1.second, Entity), cast(object2.second, Projectile));
                 case [PhysicsUserDataType.PROJECTILE, PhysicsUserDataType.ENTITY]:
-                    handleEntityProjectile(contact, cast(object2.second, Entity), cast(object1.second, LargeProjectile));
+                    handleEntityProjectile(contact, cast(object2.second, Entity), cast(object1.second, Projectile));
                 case [PhysicsUserDataType.PROJECTILE, PhysicsUserDataType.PLATFORM]:
                     contact.collisionNormal.negativeSelf();
-                    handleProjectilePlatform(contact, cast(object1.second, LargeProjectile));
+                    handleProjectilePlatform(contact, cast(object1.second, Projectile));
                 case [PhysicsUserDataType.PLATFORM, PhysicsUserDataType.PROJECTILE]:
-                    handleProjectilePlatform(contact, cast(object2.second, LargeProjectile));
+                    handleProjectilePlatform(contact, cast(object2.second, Projectile));
                 default:
                     // No match found here
             }
@@ -124,10 +123,10 @@ class GameplayController {
             e.rightTouchingWall += c.isBegin ? 1 : -1;
         }
     }
-    private function handleEntityProjectile(c:PhysicsContact, e:Entity, p:LargeProjectile):Void {
+    private function handleEntityProjectile(c:PhysicsContact, e:Entity, p:Projectile):Void {
         p.fOnHit(state);
     }
-    private function handleProjectilePlatform(c:PhysicsContact, p:LargeProjectile):Void {
+    private function handleProjectilePlatform(c:PhysicsContact, p:Projectile):Void {
         p.fOnHit(state);
     }
 
@@ -199,7 +198,7 @@ class GameplayController {
         state.damage = [];
 
         // Other game logic
-        state.projectiles = state.projectiles.filter(function(p:BulletProjectile){
+        state.projectiles = state.projectiles.filter(function(p:Projectile){
             return
                 p.position.x >= 0 && p.position.x <= state.width * TILE_HALF_WIDTH &&
                 p.position.y >= 0 && p.position.y <= state.height * TILE_HALF_WIDTH;
@@ -279,10 +278,6 @@ class GameplayController {
         for (p in state.projectiles) {
             p.position.x += p.velocity.x * dt.elapsed;
             p.position.y += p.velocity.y * dt.elapsed;
-            p.damage.velocityX = p.velocity.x;
-            p.damage.velocityY = p.velocity.y;
-            p.damage.originX = p.position.x;
-            p.damage.originY = p.position.y;
         }
     }
 

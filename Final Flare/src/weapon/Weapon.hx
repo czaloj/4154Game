@@ -10,6 +10,7 @@ import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Transform;
 import starling.display.Sprite;
+import weapon.projectile.Projectile;
 import weapon.WeaponData.FiringMode;
 import weapon.WeaponData.ProjectileOrigin;
 
@@ -182,14 +183,10 @@ class Weapon {
             var position:Point = t.transformPoint(pOrigin);
             var direction:Point = t.deltaTransformPoint(pDirection);
             
-            if (po.projectile != null) {
-                var p:BulletProjectile = po.projectile.createCopyAt(
-                    entity,
-                    position.x,
-                    position.y,
-                    direction.x * po.velocity,
-                    direction.y * po.velocity
-                    );
+            if (po.projectileData != null) {
+                direction.x *= po.velocity;
+                direction.y *= po.velocity;
+                var p:Projectile = po.projectileData.constructProjectile(position, direction, entity);
                 s.projectiles.push(p);
                 
                 // Add a bit of damage if it's been out of the barrel
@@ -198,17 +195,6 @@ class Weapon {
                     p.position.x += p.velocity.x * timeOut;
                     p.position.y += p.velocity.y * timeOut;
                 }
-            }
-            else if (po.largeProjectile != null) {
-                var p:LargeProjectile = po.largeProjectile.createCopyAt(
-                    entity,
-                    position.x,
-                    position.y,
-                    direction.x * po.velocity,
-                    direction.y * po.velocity,
-                    phys
-                    );
-                
             }
         }
     }
