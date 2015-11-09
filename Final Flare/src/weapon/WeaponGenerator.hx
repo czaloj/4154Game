@@ -44,6 +44,7 @@ class WeaponGenerator {
         ];
         data.projectileOrigins[0].exitAngle = 0.3;
         if (data.shadynessCost == 0) {
+            // Example conventional gun
             var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_BULLET);
             pd.damage = 10;
             pd.damageFriendly = 0;
@@ -52,7 +53,8 @@ class WeaponGenerator {
             data.projectileOrigins[0].projectileData = pd;
             data.projectileOrigins[0].velocity = 1500;            
         }
-        else {
+        else if (data.shadynessCost == 1) {
+            // Example grenade launcher
             var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_LARGE);
             pd.damage = 40;
             pd.damageFriendly = 20;
@@ -61,6 +63,17 @@ class WeaponGenerator {
             pd.radius = 0.2;
             data.projectileOrigins[0].projectileData = pd;
             data.projectileOrigins[0].velocity = 30;
+        }
+        else {
+            // Example flare gun
+            var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_LARGE);
+            pd.damage = 0;
+            pd.damageFriendly = 0;
+            pd.timer = 3.0;
+            pd.explosiveRadius = 1.0;
+            pd.radius = 0.05;
+            data.projectileOrigins[0].projectileData = pd;
+            data.projectileOrigins[0].velocity = 15;
         }
         data.projectileOrigins[0].transform.translate(0.8, 0.1);
         return data;

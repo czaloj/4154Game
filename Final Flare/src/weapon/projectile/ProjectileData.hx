@@ -17,6 +17,7 @@ class ProjectileChildData {
 class ProjectileData {
     public static inline var TYPE_BULLET = 1;
     public static inline var TYPE_LARGE = 2;
+    public static inline var TYPE_FLARE = 3;
     
     // The projectiles that this one can spawn either after X time, X collisions, or some other predication
     public var children:Array<ProjectileChildData> = [];
@@ -50,6 +51,7 @@ class ProjectileData {
         var projectile:Projectile = (switch (constructionType) {
             case TYPE_BULLET: new BulletProjectile(this, source);
             case TYPE_LARGE: new LargeProjectile(this, source);
+            case TYPE_FLARE: new FlareProjectile(this, source);
             case _: null;
         });
         projectile.buildBehavior();

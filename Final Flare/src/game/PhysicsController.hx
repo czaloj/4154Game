@@ -101,6 +101,20 @@ class PhysicsController extends B2ContactListener {
         fd.groupIndex = 0;
         fd;
     }
+    private static var FILTER_PLAYER_PROJECTILE:B2FilterData = {
+        var fd:B2FilterData = new B2FilterData();
+        fd.categoryBits = FILTER_CATEGORY_PHYSICAL_PROJECTILE;
+        fd.maskBits = FILTER_CATEGORY_ENEMY | FILTER_CATEGORY_PLATFORM;
+        fd.groupIndex = 0;
+        fd;
+    }
+    private static var FILTER_ENEMY_PROJECTILE:B2FilterData = {
+        var fd:B2FilterData = new B2FilterData();
+        fd.categoryBits = FILTER_CATEGORY_PHYSICAL_PROJECTILE;
+        fd.maskBits = FILTER_CATEGORY_PLAYER | FILTER_CATEGORY_PLATFORM;
+        fd.groupIndex = 0;
+        fd;
+    }
     private static var FILTER_NEUTRAL_PROJECTILE:B2FilterData = {
         var fd:B2FilterData = new B2FilterData();
         fd.categoryBits = FILTER_CATEGORY_PHYSICAL_PROJECTILE;
@@ -202,7 +216,11 @@ class PhysicsController extends B2ContactListener {
         fixtureDef.shape = new B2CircleShape(p.data.radius);
         fixtureDef.friction = 1;
         fixtureDef.density = 1;
-        fixtureDef.filter = FILTER_NEUTRAL_PROJECTILE.copy();
+        fixtureDef.filter = (switch([p.source.team, p.data.hitFriendly]) {
+            case [Entity.TEAM_PLAYER, false]: FILTER_PLAYER_PROJECTILE;
+            case [Entity.TEAM_ENEMY, false]: FILTER_ENEMY_PROJECTILE;
+            default: FILTER_NEUTRAL_PROJECTILE; 
+        }).copy();
         var fixtureMain:B2Fixture = p.body.createFixture(fixtureDef);
 
         // Set initial entity data to the body
