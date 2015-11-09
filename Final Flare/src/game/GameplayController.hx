@@ -30,6 +30,7 @@ class GameplayController {
     public var physicsController:PhysicsController = new PhysicsController();
     private var debugPhysicsView:Sprite;
     private var deletingEntities:Array<Entity> = [];
+    private var deletingProjectiles:Array<Projectile> = [];
     private var time:GameTime;
     var count20:Int;
 
@@ -179,7 +180,7 @@ class GameplayController {
         }
         // Physics
         updatePhysics(gameTime);
-
+        
         // Interactions
         handleCollisions();
         for (damage in state.damage) {
@@ -198,11 +199,6 @@ class GameplayController {
         state.damage = [];
 
         // Other game logic
-        state.projectiles = state.projectiles.filter(function(p:Projectile){
-            return
-                p.position.x >= 0 && p.position.x <= state.width * TILE_HALF_WIDTH &&
-                p.position.y >= 0 && p.position.y <= state.height * TILE_HALF_WIDTH;
-        });
         for (entity in state.entitiesNonNull) {
             if (entity.isDead) {
                 deletingEntities.push(entity);
@@ -211,7 +207,15 @@ class GameplayController {
                 }
             }
         }
-
+        for (p in state.projectiles) {
+            if (p.killFlag || (
+                p.position.x < 0 || p.position.x > state.width * TILE_HALF_WIDTH ||
+                p.position.y < 0 || p.position.y > state.height * TILE_HALF_WIDTH
+                )) {
+                deletingProjectiles.push(p);
+            }
+        }
+        
         // Destroy all dead things
         if (deletingEntities.length > 0) {
             for (entity in deletingEntities) {
@@ -224,6 +228,13 @@ class GameplayController {
                 }
             }
             deletingEntities = [];
+        }
+        if (deletingProjectiles.length > 0) {
+            for (p in deletingProjectiles) {
+                p.fOnDeath(state);
+                state.projectiles.remove(p);
+            }
+            deletingProjectiles = [];
         }
         physicsController.clearDeadBodies();
     }
@@ -276,8 +287,7 @@ class GameplayController {
 
         // Update raycast projectiles
         for (p in state.projectiles) {
-            p.position.x += p.velocity.x * dt.elapsed;
-            p.position.y += p.velocity.y * dt.elapsed;
+            p.updatePostPhysics(dt.elapsed, state);
         }
     }
 

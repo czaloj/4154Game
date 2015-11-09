@@ -195,6 +195,8 @@ class Weapon {
                     p.position.x += p.velocity.x * timeOut;
                     p.position.y += p.velocity.y * timeOut;
                 }
+                
+                p.initPhysics(phys);
             }
         }
     }

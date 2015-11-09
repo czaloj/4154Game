@@ -7,34 +7,41 @@ import game.GameState;
 import game.Entity;
 import game.PhysicsController;
 
-class LargeProjectile {
+class LargeProjectile extends Projectile {
     public var body:B2Body;
-    public var fOnHit:GameState->Void;
     
-    public var radius:Float;
-    public var explosiveDamage:DamageExplosion;
-    
-    public function new(d:DamageExplosion) {
-        fOnHit = onHitExplode;
-        explosiveDamage = cast(d.copyInto(new DamageExplosion(this)), DamageExplosion);
+    public function new(d:ProjectileData, e:Entity) {
+        super(d, e);
     }
     
-    public function createCopyAt(e:Entity, x:Float, y:Float, vx:Float, vy:Float, phys:PhysicsController):LargeProjectile {
-        var p:LargeProjectile = new LargeProjectile(explosiveDamage);
-        p.radius = radius;
-        phys.initLargeProjectile(p, x, y, vx, vy);
-        p.explosiveDamage.setParent(e, true); // TODO: Friendly fire input
-        return p;
+    override public function buildBehavior():Void {
+        fUpdatePostPhysics = updateFromBody;
+        fOnHit = onHitDeath;
+        fOnDeath = onHitExplode;
+    }
+    override public function initPhysics(phys:PhysicsController):Void {
+        phys.initLargeProjectile(this, position.x, position.y, velocity.x, velocity.y);
+    }
+    
+    public function onHitDeath(state:GameState):Void {
+        killFlag = true;
+    }
+    
+    public function updateFromBody(dt:Float, state:GameState):Void {
+        position.setV(body.getPosition());
+        velocity.setV(body.getLinearVelocity());
     }
     
     public function onHitExplode(state:GameState):Void {
         var damage:DamageExplosion = new DamageExplosion(this);
-        explosiveDamage.copyInto(damage);
-        damage.x = body.getPosition().x;
-        damage.y = body.getPosition().y;
+        setupDamage(damage);
+        damage.x = position.x;
+        damage.y = position.y;
+        damage.radius = data.explosiveRadius;
         state.damage.push(damage);
         
         // Remove from the physics world
         body.m_world.destroyBody(body);
+        killFlag = true;
     }
 }

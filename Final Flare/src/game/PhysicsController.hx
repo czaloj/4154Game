@@ -199,7 +199,7 @@ class PhysicsController extends B2ContactListener {
 
         // Create collision information
         var fixtureDef:B2FixtureDef = new B2FixtureDef();
-        fixtureDef.shape = new B2CircleShape(p.radius);
+        fixtureDef.shape = new B2CircleShape(p.data.radius);
         fixtureDef.friction = 1;
         fixtureDef.density = 1;
         fixtureDef.filter = FILTER_NEUTRAL_PROJECTILE.copy();

@@ -57,7 +57,8 @@ class WeaponGenerator {
             pd.damage = 40;
             pd.damageFriendly = 20;
             pd.timer = 0.5;
-            pd.radius = 2.0;
+            pd.explosiveRadius = 2.0;
+            pd.radius = 0.2;
             data.projectileOrigins[0].projectileData = pd;
             data.projectileOrigins[0].velocity = 30;
         }

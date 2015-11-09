@@ -23,23 +23,14 @@ class BulletProjectile extends Projectile {
         velocity.y += data.gravityAcceleration * dt;
         
         var d = new DamageBullet(this);
+        setupDamage(d);
         d.originX = position.x;
         d.originY = position.y;
         d.velocityX = velocity.x;
         d.velocityY = velocity.y;
         d.piercingAmount = penetrationsLeft;
-        d.damage = data.damage;
-        d.friendlyDamage = data.damageFriendly;
-        
-        if (source.team == Entity.TEAM_PLAYER) {
-            d.teamDestinationFlags = DamageDealer.TEAM_ENEMY | (data.hitFriendly ? DamageDealer.TEAM_PLAYER : 0);
-            d.teamSourceFlags = DamageDealer.TEAM_PLAYER;
-        }
-        else {
-            d.teamDestinationFlags = DamageDealer.TEAM_PLAYER | (data.hitFriendly ? DamageDealer.TEAM_ENEMY : 0);
-            d.teamSourceFlags = DamageDealer.TEAM_ENEMY;
-        }
         
         s.damage.push(d);
     }
+    
 }

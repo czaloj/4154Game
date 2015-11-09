@@ -30,11 +30,14 @@ class ProjectileData {
     // Bullet information
     public var penetrationCount:Int = -1; // -1 For single penetration, 0 for full penetration, N >= 1 for N penetrations
     public var gravityAcceleration:Float = 0.0;
-    
-    // Explosive information
+
+    // Large projectile information
     public var timer:Float; // Amount of time alive either after spawn or after it's collided a certain amount of times
+    public var radius:Float; // Radius of the projectile
     public var collisionCount:Int; // Number of times projectile is allowed to collide
-    public var radius:Float;
+
+    // Explosive information
+    public var explosiveRadius:Float;
     
     // Melee information
     public var damageShape:B2Shape;
@@ -46,6 +49,7 @@ class ProjectileData {
     public function constructProjectile(origin:Point, velocity:Point, source:Entity):Projectile {
         var projectile:Projectile = (switch (constructionType) {
             case TYPE_BULLET: new BulletProjectile(this, source);
+            case TYPE_LARGE: new LargeProjectile(this, source);
             case _: null;
         });
         projectile.buildBehavior();
