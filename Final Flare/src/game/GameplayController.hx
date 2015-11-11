@@ -21,6 +21,8 @@ import weapon.projectile.Projectile;
 import weapon.Weapon;
 
 class GameplayController {
+    public static var COMBO_COOLDOWN:Float = 0.4;
+    public static var COMBO_COOLDOWN_DELAY:Float = 2.0;
     public static var GROUND_FRICTION:Float = .3;
     public static var AIR_FRICTION:Float = .95;
     public static inline var TILE_HALF_WIDTH:Float = 0.5;
@@ -31,8 +33,10 @@ class GameplayController {
     private var debugPhysicsView:Sprite;
     private var deletingEntities:Array<Entity> = [];
     private var deletingProjectiles:Array<Projectile> = [];
-    private var time:GameTime;
     var count20:Int;
+    
+    private var comboCooldownDelay:Float = COMBO_COOLDOWN_DELAY;
+    private var flaresReceived:Int = 0;
 
     private var vis:IGameVisualizer;
 
@@ -133,7 +137,9 @@ class GameplayController {
 
     public function update(s:GameState, gameTime:GameTime):Void {
         state = s;
-        time = gameTime;
+        updateTime(gameTime);
+        
+        // TODO: Super old logging code, excise
         count20 -= 1;
         if (count20 <= 0)
         {
@@ -143,10 +149,10 @@ class GameplayController {
             for (ent in s.entitiesNonNull) {
                 str += ent.position.x + ", "+ ent.position.y+", ";
             }
-            FFLog.recordEvent(8, str + time.total);
+            FFLog.recordEvent(8, str + state.time.total);
         }
         // TODO: Spawner shouldn't need reference to this
-        Spawner.spawn(this, state, gameTime);
+        Spawner.spawn(this, state, state.time);
 
         // Update looking directions
         updateTargeting();
@@ -164,11 +170,11 @@ class GameplayController {
 
         // Create damage dealers
         for (projectile in state.projectiles) {
-            projectile.update(time.elapsed, state);
+            projectile.update(state.time.elapsed, state);
         }
         for (entity in state.entitiesEnabled) {
             if (entity.weapon != null) {
-                entity.weapon.update(entity.useWeapon, time.elapsed, s);
+                entity.weapon.update(entity.useWeapon, state.time.elapsed, s);
             }
         }
         for (entity in state.entities) {
@@ -178,8 +184,9 @@ class GameplayController {
                 state.damage.push(entity.damage);
             }
         }
+        
         // Physics
-        updatePhysics(gameTime);
+        updatePhysics(state.time);
         
         // Interactions
         handleCollisions();
@@ -187,11 +194,11 @@ class GameplayController {
             switch (damage.type) {
                 case DamageDealer.TYPE_BULLET:
                     var damageBullet:DamageBullet = cast(damage, DamageBullet);
-                    if (applyDamageBullet(state, damageBullet, time.elapsed)) {
+                    if (applyDamageBullet(state, damageBullet, state.time.elapsed)) {
                         state.projectiles.remove(damageBullet.projectile);
                     }
                 case DamageDealer.TYPE_COLLISION_POLYGON:
-                    applyDamagePolygon(state, cast(damage, DamagePolygon), time);
+                    applyDamagePolygon(state, cast(damage, DamagePolygon), state.time);
                 case DamageDealer.TYPE_RADIAL_EXPLOSION:
                     applyDamageExplosion(state, cast(damage, DamageExplosion));
             }
@@ -237,6 +244,48 @@ class GameplayController {
             deletingProjectiles = [];
         }
         physicsController.clearDeadBodies();
+        
+        // Update current score for other modules to interface with it
+        updateScoring();
+    }
+    public function updateTime(gameTime:GameTime):Void {
+        state.time.elapsed = gameTime.elapsed * state.timeMultiplier;
+        state.time.total += state.time.elapsed;
+        
+        // Frame must always increase by 1, no matter the multiplier
+        state.time.frame += 1;
+        
+        // Update flare information
+        state.flareCountdown -= state.time.elapsed;
+        if (state.flareCountdown < 0.0) {
+            state.flareCountdown = flaresReceived * 30 + 120;
+            state.flares += 1;
+            flaresReceived += 1;
+        }
+    }
+    public function updateScoring():Void {
+        if (comboCooldownDelay < 0) {
+            // Combo meter deteriorates just as fast on every level
+            state.comboPercentComplete -= state.time.elapsed * COMBO_COOLDOWN;
+            if (state.comboPercentComplete < 0) {
+                if (state.comboMultiplier > 1) {
+                    state.comboPercentComplete = 1.0;
+                    state.comboMultiplier -= 1;
+                }
+                else {
+                    // Rock bottom
+                    state.comboPercentComplete = 0.0;
+                }
+            }
+        }
+        else {
+            // Wait until it's time to decrease the combo
+            comboCooldownDelay -= state.time.elapsed;
+        }
+        
+        if (state.score == 80085) {
+            // TODO: Achievement get...
+        }
     }
     public function updateTargeting():Void {
         for (e in state.entitiesEnabled) {
@@ -293,7 +342,7 @@ class GameplayController {
 
     // Application of game events
     public function applyEventSpawn(state:GameState, e:GameEventSpawn):Void {
-        FFLog.recordEvent(2, e.x + ", " + e.y + ", " + time.total);
+        FFLog.recordEvent(2, e.x + ", " + e.y + ", " + state.time.total);
         var enemy:Entity = new Entity();
         Spawner.createEnemy(enemy, e.entity, e.x, e.y);
         state.damage.push(enemy.damage);
@@ -302,6 +351,7 @@ class GameplayController {
         vis.onEntityAdded(state, enemy);
     }
 
+    // Damage events
     public function applyDamageBullet(state:GameState, bullet:DamageBullet, dt:Float):Bool {
         // Apply the raycast
         var info:Pair<Array<RayCastInfo>, RayCastInfo> = physicsController.rayCastCollisions(
@@ -324,10 +374,10 @@ class GameplayController {
                     hitEntity.health -= bullet.damageFor((hitEntity.team == Entity.TEAM_PLAYER) ? DamageDealer.TEAM_PLAYER : DamageDealer.TEAM_ENEMY);
                     vis.onBloodSpurt(rci.third.x, rci.third.y, rci.fourth.x, rci.fourth.y);
                     if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_ENEMY) {
-                            FFLog.recordEvent(1,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + time.total);
+                            FFLog.recordEvent(1,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + state.time.total);
                     }
                     if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_PLAYER) {
-                            FFLog.recordEvent(3,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + time.total);// missing character and reason of death
+                            FFLog.recordEvent(3,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + state.time.total);// missing character and reason of death
                     }
                 }
             }
@@ -378,10 +428,10 @@ class GameplayController {
             var hitEntity:Entity = cast(hit.second, Entity);
             hitEntity.health -= explosion.damageFor((hitEntity.team == Entity.TEAM_PLAYER) ? DamageDealer.TEAM_PLAYER : DamageDealer.TEAM_ENEMY);
             if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_ENEMY) {
-                FFLog.recordEvent(1,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + time.total);
+                FFLog.recordEvent(1,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + state.time.total);
             }
             if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_PLAYER) {
-                FFLog.recordEvent(3,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + time.total);// missing character and reason of death
+                FFLog.recordEvent(3,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + state.time.total);// missing character and reason of death
             }
         }
     }

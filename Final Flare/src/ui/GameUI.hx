@@ -119,5 +119,7 @@ class GameUI extends Sprite {
     public function update(state:GameState, dt:Float) {
         setHealth(state.player.health);
         setScore(state.score);
+        setFlareCount(state.flares);
+        setFlareTimer(state.flareCountdown);
     }
 }
