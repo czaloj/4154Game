@@ -8,6 +8,7 @@ import openfl.ui.Keyboard;
 /** Handlers for input events **/
 class InputController {
     public static inline var VIEW_LOOKAHEAD:Float = 1000.0;
+    public static inline var VIEW_LOOK_TIME:Float = 2.0;
     
     // Array of booleans, indexed by key code.
     // Element is true when corresponding key is pressed. False otherwise.
@@ -19,6 +20,8 @@ class InputController {
     private var stageHalfWidth:Int;
     private var stageHalfHeight:Int;
     private var lastKeyboardViewDirection:Float = 1.0;
+    private var lastMovementDirection:Float = 1.0;
+    private var viewShootCooldown:Float = VIEW_LOOK_TIME;
 
     // Keyboard input variables (configurable)
     public var keyLeft = Keyboard.A;
@@ -49,19 +52,22 @@ class InputController {
         x = e.stageX;
         y = e.stageY;
         usingMouseInput = true;
+        viewShootCooldown = VIEW_LOOK_TIME;
     }
     public function mouseUp(e:MouseEvent):Void {
         click = false;
     }
 
-    public function update(state:game.GameState, camX:Float, camY:Float, camScale:Float):Void {
+    public function update(state:game.GameState, camX:Float, camY:Float, camScale:Float, dt:Float):Void {
         state.player.direction = switch([keysDown[keyLeft], keysDown[keyRight]]) {
-            case [false, true]: 1;
-            case [true, false]: -1;
+            case [false, true]: lastMovementDirection = 1; 1;
+            case [true, false]: lastMovementDirection = -1; -1;
             default: 0;
         }
         state.player.up = keysDown[keyJump];
         state.player.useWeapon = click;
+        
+        if (viewShootCooldown > 0.0) viewShootCooldown -= dt;
         
         // Keyboard and mouse targeting logic
         if (keysDown[keyShootLeft]) {
@@ -70,6 +76,7 @@ class InputController {
             state.player.targetY = state.player.position.y;
             state.player.useWeapon = true;
             lastKeyboardViewDirection = -1;
+            viewShootCooldown = VIEW_LOOK_TIME;
             
             // Disable mouse
             usingMouseInput = false;
@@ -81,6 +88,7 @@ class InputController {
             state.player.targetY = state.player.position.y;
             state.player.useWeapon = true;
             lastKeyboardViewDirection = 1;
+            viewShootCooldown = VIEW_LOOK_TIME;
             
             // Disable mouse
             usingMouseInput = false;
@@ -92,9 +100,16 @@ class InputController {
             state.player.targetY = ((ScreenController.SCREEN_HEIGHT - y) - ScreenController.SCREEN_HEIGHT / 2) / camScale + camY;
         }
         else {
-            // View in the last known keyboard direction
-            state.player.targetX = state.player.position.x + VIEW_LOOKAHEAD * lastKeyboardViewDirection;
-            state.player.targetY = state.player.position.y;
+            if (viewShootCooldown > 0.0) {
+                // View in the last known keyboard shooting direction
+                state.player.targetX = state.player.position.x + VIEW_LOOKAHEAD * lastKeyboardViewDirection;
+                state.player.targetY = state.player.position.y;
+            }
+            else {
+                // View in the player's last known movement direction
+                state.player.targetX = state.player.position.x + VIEW_LOOKAHEAD * lastMovementDirection;
+                state.player.targetY = state.player.position.y;
+            }
         }
     }
 }
