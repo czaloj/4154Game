@@ -21,12 +21,15 @@ class Spawner {
     }
     public static function spawn(gameplayController:GameplayController, state: GameState, gameTime:GameTime) {
         // TODO: Use advanced spawning logic
-        var spawnCooldown;
+        // TODO: factor in difficulty
+        var spawnCount:Int = 0;
         for (spawner in state.spawners) {
-            var type = EnemyType.make(spawner.id);
-            //TODO: factor in difficulty
-            if (gameTime.frame % (10000 - 50 * Std.int(Math.log(state.score))) == 201) {
-                state.gameEvents.push(new GameEventSpawn(spawner.position.x, spawner.position.y, spawner.id));
+            if ((state.entities.length + spawnCount - 5) < 100) {
+                var type = EnemyType.make(spawner.id);
+                if (gameTime.frame % (10000 - 50 * Std.int(Math.log(state.score))) == 201) {
+                    state.gameEvents.push(new GameEventSpawn(spawner.position.x, spawner.position.y, spawner.id));
+                    spawnCount++;
+                }
             }
         }
     }

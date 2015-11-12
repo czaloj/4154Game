@@ -55,7 +55,6 @@ class ScreenController extends Sprite {
                     LevelCreator.saveToFile(loadedLevel);
             }
         });
-        
     }
 
     private function load(e:Event = null):Void {
