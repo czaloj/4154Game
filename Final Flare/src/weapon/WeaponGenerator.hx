@@ -3,11 +3,12 @@ package weapon;
 import game.ColorScheme;
 import game.damage.DamageBullet;
 import game.damage.DamageExplosion;
-import game.LargeProjectile;
-import game.Projectile;
+import weapon.projectile.LargeProjectile;
+import weapon.projectile.BulletProjectile;
 import openfl.display.BitmapData;
 import openfl.geom.Rectangle;
 import openfl.utils.ByteArray;
+import weapon.projectile.ProjectileData;
 import weapon.WeaponData.FiringMode;
 import weapon.WeaponData.ProjectileOrigin;
 
@@ -43,21 +44,39 @@ class WeaponGenerator {
         ];
         data.projectileOrigins[0].exitAngle = 0.3;
         if (data.shadynessCost == 0) {
-            var damage:DamageBullet = new DamageBullet(null);
-            damage.damage = 10;
-            damage.friendlyDamage = 0;
-            damage.piercingAmount = 0;
-            data.projectileOrigins[0].projectile = new Projectile(damage);
+            // Example conventional gun
+            var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_BULLET);
+            pd.damage = 10;
+            pd.damageFriendly = 0;
+            pd.penetrationCount = 0;
+            pd.gravityAcceleration = 0.0;
+            data.projectileOrigins[0].projectileData = pd;
             data.projectileOrigins[0].velocity = 1500;            
         }
-        else {
-            var damage:DamageExplosion = new DamageExplosion(null);
-            damage.damage = 40;
-            damage.friendlyDamage = 20;
-            damage.radius = 2;
-            data.projectileOrigins[0].largeProjectile = new LargeProjectile(damage);
-            data.projectileOrigins[0].largeProjectile.radius = 0.2;
+        else if (data.shadynessCost == 1) {
+            // Example grenade launcher
+            var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_LARGE);
+            pd.damage = 40;
+            pd.damageFriendly = 20;
+            pd.timer = 0.5;
+            pd.explosiveRadius = 2.0;
+            pd.radius = 0.2;
+            data.projectileOrigins[0].projectileData = pd;
             data.projectileOrigins[0].velocity = 30;
+        }
+        else {
+            // Example flare gun
+            var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_LARGE);
+            pd.damage = 0;
+            pd.damageFriendly = 0;
+            pd.timer = 3.0;
+            pd.explosiveRadius = 1.0;
+            pd.radius = 0.05;
+            data.projectileOrigins[0].projectileData = pd;
+            data.projectileOrigins[0].velocity = 15;
+            data.reloadTime = 10.0;
+            data.useCapacity = 1;
+            data.firingMode = FiringMode.SINGLE;
         }
         data.projectileOrigins[0].transform.translate(0.8, 0.1);
         return data;

@@ -2,7 +2,7 @@ package graphics;
 
 import game.GameState;
 import game.Entity;
-import game.Projectile;
+import weapon.projectile.BulletProjectile;
 import game.World;
 import graphics.particles.TracerList;
 import haxe.ds.ObjectMap;
@@ -23,6 +23,7 @@ import starling.display.Sprite;
 import starling.display.Stage;
 import starling.textures.RenderTexture;
 import starling.textures.Texture;
+import weapon.projectile.BulletProjectile;
 
 class Renderer implements IGameVisualizer {
     public static inline var PLAYER_WIDTH:Float = 0.9;
@@ -37,7 +38,7 @@ class Renderer implements IGameVisualizer {
     
     public var sprites:Array<Sprite> = [];
     public var entityTbl:ObjectMap<game.Entity, EntitySprite> = new ObjectMap<Entity, EntitySprite>();
-    public var projTbl:ObjectMap<game.Projectile, AnimatedSprite> = new ObjectMap<Projectile, AnimatedSprite>();
+    public var projTbl:ObjectMap<BulletProjectile, AnimatedSprite> = new ObjectMap<BulletProjectile, AnimatedSprite>();
 
     // Camera parameters
     public var cameraX(get, set):Float;

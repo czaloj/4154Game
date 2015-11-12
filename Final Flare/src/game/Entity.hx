@@ -37,8 +37,11 @@ class Entity extends EntityBase {
     public var enabled:Bool = true;
     public var health:Int;
     public var isDead(get, never):Bool; // True if player is dead
+    public var damageTimer:Float;
+    public var canBeDamaged(get, never):Bool;
     public var weapon:Weapon; // Weapon that the entity is holding
-
+    public var flareGun:Weapon; // Flare gun that the entity is holding (if at all)
+    
     //Physics data
     public var body:B2Body; // The physics body
     public var fixtureMain:B2Fixture; // Main fixture for terrain collisions
@@ -49,6 +52,7 @@ class Entity extends EntityBase {
     public var direction:Int; //  Direction of desired lateral movement (-1 for left, 1 for right, 0 otherwise)
     public var up:Bool; // Jump up is being pressed
     public var useWeapon:Bool; // Entity desires to use the weapon
+    public var useFlare:Bool; // Entity desires to use the flare
     public var targetX:Float; // The location the entity is targeting (X)
     public var targetY:Float; // The location the entity is targeting (Y)
 
@@ -58,15 +62,8 @@ class Entity extends EntityBase {
     public var leftTouchingWall:Int = 0;
     public var rightTouchingWall:Int = 0;
 
-    public var damage:DamagePolygon;
-
     public function new() {
         super();
-        damage = new DamagePolygon();
-        damage.damage = 5;
-        damage.x = 0;
-        damage.y = 0;
-        damage.setParent(this, false);
     }
 
     public function get_isGrounded():Bool {
@@ -77,5 +74,8 @@ class Entity extends EntityBase {
     }
     public function get_lookingDirection():Float {
         return position.x < targetX ? 1.0 : -1.0;
+    }
+    public function get_canBeDamaged():Bool {
+        return damageTimer <= 0.0;
     }
 }

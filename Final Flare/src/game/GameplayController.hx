@@ -17,20 +17,26 @@ import game.PhysicsController.RayCastInfo;
 import graphics.IGameVisualizer;
 import openfl.display.Sprite;
 import openfl.geom.Point;
+import weapon.projectile.Projectile;
 import weapon.Weapon;
 
 class GameplayController {
+    public static var COMBO_COOLDOWN:Float = 0.4;
+    public static var COMBO_COOLDOWN_DELAY:Float = 2.0;
     public static var GROUND_FRICTION:Float = .3;
     public static var AIR_FRICTION:Float = .95;
     public static inline var TILE_HALF_WIDTH:Float = 0.5;
-    public static var INVINCIBILITY_TIME = 120;
+    public static var INVINCIBILITY_TIME = 2.0;
 
     public var state:game.GameState;
     public var physicsController:PhysicsController = new PhysicsController();
     private var debugPhysicsView:Sprite;
     private var deletingEntities:Array<Entity> = [];
-    private var time:GameTime;
+    private var deletingProjectiles:Array<Projectile> = [];
     var count20:Int;
+    
+    private var comboCooldownDelay:Float = COMBO_COOLDOWN_DELAY;
+    private var flaresReceived:Int = 0;
 
     private var vis:IGameVisualizer;
 
@@ -54,6 +60,7 @@ class GameplayController {
                 if (state.characterWeapons[i] != null) {
                     state.entities[i].weapon = new Weapon(state.entities[i], state.characterWeapons[i]);
                 }
+                state.entities[i].flareGun = new Weapon(state.entities[i], state.characterWeapons[5]);
             }
         }
 
@@ -96,14 +103,14 @@ class GameplayController {
                     // TODO: Add collision types
                 case [PhysicsUserDataType.ENTITY, PhysicsUserDataType.PROJECTILE]:
                     contact.collisionNormal.negativeSelf();
-                    handleEntityProjectile(contact, cast(object1.second, Entity), cast(object2.second, LargeProjectile));
+                    handleEntityProjectile(contact, cast(object1.second, Entity), cast(object2.second, Projectile));
                 case [PhysicsUserDataType.PROJECTILE, PhysicsUserDataType.ENTITY]:
-                    handleEntityProjectile(contact, cast(object2.second, Entity), cast(object1.second, LargeProjectile));
+                    handleEntityProjectile(contact, cast(object2.second, Entity), cast(object1.second, Projectile));
                 case [PhysicsUserDataType.PROJECTILE, PhysicsUserDataType.PLATFORM]:
                     contact.collisionNormal.negativeSelf();
-                    handleProjectilePlatform(contact, cast(object1.second, LargeProjectile));
+                    handleProjectilePlatform(contact, cast(object1.second, Projectile));
                 case [PhysicsUserDataType.PLATFORM, PhysicsUserDataType.PROJECTILE]:
-                    handleProjectilePlatform(contact, cast(object2.second, LargeProjectile));
+                    handleProjectilePlatform(contact, cast(object2.second, Projectile));
                 default:
                     // No match found here
             }
@@ -122,16 +129,18 @@ class GameplayController {
             e.rightTouchingWall += c.isBegin ? 1 : -1;
         }
     }
-    private function handleEntityProjectile(c:PhysicsContact, e:Entity, p:LargeProjectile):Void {
+    private function handleEntityProjectile(c:PhysicsContact, e:Entity, p:Projectile):Void {
         p.fOnHit(state);
     }
-    private function handleProjectilePlatform(c:PhysicsContact, p:LargeProjectile):Void {
+    private function handleProjectilePlatform(c:PhysicsContact, p:Projectile):Void {
         p.fOnHit(state);
     }
 
     public function update(s:GameState, gameTime:GameTime):Void {
         state = s;
-        time = gameTime;
+        updateTime(gameTime);
+        
+        // TODO: Super old logging code, excise
         count20 -= 1;
         if (count20 <= 0)
         {
@@ -141,10 +150,10 @@ class GameplayController {
             for (ent in s.entitiesNonNull) {
                 str += ent.position.x + ", "+ ent.position.y+", ";
             }
-            FFLog.recordEvent(8, str + time.total);
+            FFLog.recordEvent(8, str + state.time.total);
         }
         // TODO: Spawner shouldn't need reference to this
-        Spawner.spawn(this, state, gameTime);
+        Spawner.spawn(this, state, state.time);
 
         // Update looking directions
         updateTargeting();
@@ -162,34 +171,34 @@ class GameplayController {
 
         // Create damage dealers
         for (projectile in state.projectiles) {
-            projectile.update(time.elapsed, state);
+            projectile.update(state.time.elapsed, state);
         }
         for (entity in state.entitiesEnabled) {
+            if (entity.damageTimer > 0) {
+                entity.damageTimer -= state.time.elapsed;
+            }
             if (entity.weapon != null) {
-                entity.weapon.update(entity.useWeapon, time.elapsed, s);
+                entity.weapon.update(entity.useWeapon, state.time.elapsed, s);
+            }
+            if (entity.flareGun != null) {
+                entity.flareGun.update(entity.useFlare, state.time.elapsed, s);
             }
         }
-        for (entity in state.entities) {
-            if ((entity != null) && (entity.id == "Grunt")) {
-                entity.damage.x = entity.position.x;
-                entity.damage.y = entity.position.y;
-                state.damage.push(entity.damage);
-            }
-        }
+        
         // Physics
-        updatePhysics(gameTime);
-
+        updatePhysics(state.time);
+        
         // Interactions
         handleCollisions();
         for (damage in state.damage) {
             switch (damage.type) {
                 case DamageDealer.TYPE_BULLET:
                     var damageBullet:DamageBullet = cast(damage, DamageBullet);
-                    if (applyDamageBullet(state, damageBullet, time.elapsed)) {
+                    if (applyDamageBullet(state, damageBullet, state.time.elapsed)) {
                         state.projectiles.remove(damageBullet.projectile);
                     }
                 case DamageDealer.TYPE_COLLISION_POLYGON:
-                    applyDamagePolygon(state, cast(damage, DamagePolygon), time);
+                    applyDamagePolygon(state, cast(damage, DamagePolygon), state.time);
                 case DamageDealer.TYPE_RADIAL_EXPLOSION:
                     applyDamageExplosion(state, cast(damage, DamageExplosion));
             }
@@ -197,11 +206,6 @@ class GameplayController {
         state.damage = [];
 
         // Other game logic
-        state.projectiles = state.projectiles.filter(function(p:Projectile){
-            return
-                p.position.x >= 0 && p.position.x <= state.width * TILE_HALF_WIDTH &&
-                p.position.y >= 0 && p.position.y <= state.height * TILE_HALF_WIDTH;
-        });
         for (entity in state.entitiesNonNull) {
             if (entity.isDead) {
                 deletingEntities.push(entity);
@@ -210,7 +214,15 @@ class GameplayController {
                 }
             }
         }
-
+        for (p in state.projectiles) {
+            if (p.killFlag || (
+                p.position.x < 0 || p.position.x > state.width * TILE_HALF_WIDTH ||
+                p.position.y < 0 || p.position.y > state.height * TILE_HALF_WIDTH
+                )) {
+                deletingProjectiles.push(p);
+            }
+        }
+        
         // Destroy all dead things
         if (deletingEntities.length > 0) {
             for (entity in deletingEntities) {
@@ -221,10 +233,60 @@ class GameplayController {
                 if (entity.team != Entity.TEAM_PLAYER) {
                     state.entities.remove(entity);
                 }
+                
             }
             deletingEntities = [];
         }
+        if (deletingProjectiles.length > 0) {
+            for (p in deletingProjectiles) {
+                p.fOnDeath(state);
+                state.projectiles.remove(p);
+            }
+            deletingProjectiles = [];
+        }
         physicsController.clearDeadBodies();
+        
+        // Update current score for other modules to interface with it
+        updateScoring();
+    }
+    public function updateTime(gameTime:GameTime):Void {
+        state.time.elapsed = gameTime.elapsed * state.timeMultiplier;
+        state.time.total += state.time.elapsed;
+        
+        // Frame must always increase by 1, no matter the multiplier
+        state.time.frame += 1;
+        
+        // Update flare information
+        state.flareCountdown -= state.time.elapsed;
+        if (state.flareCountdown < 0.0) {
+            state.flareCountdown = flaresReceived * 30 + 120;
+            state.flares += 1;
+            flaresReceived += 1;
+        }
+    }
+    public function updateScoring():Void {
+        if (comboCooldownDelay < 0) {
+            // Combo meter deteriorates just as fast on every level
+            state.comboPercentComplete -= state.time.elapsed * COMBO_COOLDOWN;
+            if (state.comboPercentComplete < 0) {
+                if (state.comboMultiplier > 1) {
+                    state.comboPercentComplete = 1.0;
+                    state.comboMultiplier -= 1;
+                }
+                else {
+                    // Rock bottom
+                    state.comboPercentComplete = 0.0;
+                }
+            }
+        }
+        else {
+            // Wait until it's time to decrease the combo
+            comboCooldownDelay -= state.time.elapsed;
+        }
+        
+        if (state.score == 80085) {
+            // TODO: Achievement get...
+        }
     }
     public function updateTargeting():Void {
         for (e in state.entitiesEnabled) {
@@ -275,28 +337,21 @@ class GameplayController {
 
         // Update raycast projectiles
         for (p in state.projectiles) {
-            p.position.x += p.velocity.x * dt.elapsed;
-            p.position.y += p.velocity.y * dt.elapsed;
-            p.damage.velocityX = p.velocity.x;
-            p.damage.velocityY = p.velocity.y;
-            p.damage.originX = p.position.x;
-            p.damage.originY = p.position.y;
+            p.updatePostPhysics(dt.elapsed, state);
         }
     }
 
     // Application of game events
     public function applyEventSpawn(state:GameState, e:GameEventSpawn):Void {
-        if (state.entities.length < 100) {
-            FFLog.recordEvent(2, e.x + ", " + e.y + ", " + time.total);
-            var enemy:Entity = new Entity();
-            Spawner.createEnemy(enemy, e.entity, e.x, e.y);
-            state.damage.push(enemy.damage);
-            physicsController.initEntity(enemy);
-            state.entities.push(enemy);
-            vis.onEntityAdded(state, enemy);
-        }
+        var enemy:Entity = new Entity();
+        Spawner.createEnemy(enemy, e.entity, e.x, e.y);
+        physicsController.initEntity(enemy);
+        state.entities.push(enemy);
+        vis.onEntityAdded(state, enemy);
+        FFLog.recordEvent(2, enemy.position.x + ", " + enemy.position.y + ", " + state.time.total);
     }
 
+    // Damage events
     public function applyDamageBullet(state:GameState, bullet:DamageBullet, dt:Float):Bool {
         // Apply the raycast
         var info:Pair<Array<RayCastInfo>, RayCastInfo> = physicsController.rayCastCollisions(
@@ -313,20 +368,12 @@ class GameplayController {
             for (rci in info.first) {
                 var hitUD:PhysicsUserData = rci.first.getUserData();
                 if (hitUD.first == PhysicsUserDataType.ENTITY) {
-                    var hitEntity:Entity = cast(hitUD.second, Entity);
-
-
-                    hitEntity.health -= bullet.damageFor((hitEntity.team == Entity.TEAM_PLAYER) ? DamageDealer.TEAM_PLAYER : DamageDealer.TEAM_ENEMY);
-                    vis.onBloodSpurt(rci.third.x, rci.third.y, rci.fourth.x, rci.fourth.y);
-                    if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_ENEMY) {
-                            FFLog.recordEvent(1,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + time.total);
-                    }
-                    if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_PLAYER) {
-                            FFLog.recordEvent(3,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + time.total);// missing character and reason of death
+                    if (attemptDamage(cast(hitUD.second, Entity), bullet)) {
+                        vis.onBloodSpurt(rci.third.x, rci.third.y, rci.fourth.x, rci.fourth.y);
                     }
                 }
             }
-
+            
             // Apply piercing count
             if (bullet.piercingAmount > 0) {
                 bullet.piercingAmount -= info.first.length;
@@ -345,39 +392,32 @@ class GameplayController {
         return info.second != null;
     }
     public function applyDamagePolygon(state:GameState, polygon:DamagePolygon, time:GameTime):Void {
-        if (polygon.teamDestinationFlags == Entity.TEAM_PLAYER) {
-            if (physicsController.bumpPlayerTest(state.player.position.x, state.player.position.y,
-                state.player.width, state.player.height,
-                polygon.x, polygon.y,
-                polygon.width, polygon.height)) {
-                if ((state.player.damage.lastDamageTime == 0 ) || (time.frame - state.player.damage.lastDamageTime > INVINCIBILITY_TIME)){
-                    state.player.health -= polygon.damage;
-                    state.player.damage.lastDamageTime = time.frame;
-                }
-            }
-        } else {
-            for (entity in state.entities) {
-                if ((entity != null) && (entity.team != Entity.TEAM_PLAYER) && (physicsController.bumpPlayerTest(entity.position.x, entity.position.y,
-                    entity.width, entity.height,
-                    polygon.x, polygon.y,
-                    polygon.width, polygon.height))) {
-                    entity.health -= polygon.damage;
-                    entity.damage.lastDamageTime = time.frame;
-                }
-            }
-        }
+        // TODO: Use Query instead of multiple entity tests
     }
     public function applyDamageExplosion(state:GameState, explosion:DamageExplosion):Void {
         var hits:Array<PhysicsUserData> = physicsController.hitTest(explosion.x, explosion.y, explosion.radius, true, true);
         for (hit in hits) {
-            var hitEntity:Entity = cast(hit.second, Entity);
-            hitEntity.health -= explosion.damageFor((hitEntity.team == Entity.TEAM_PLAYER) ? DamageDealer.TEAM_PLAYER : DamageDealer.TEAM_ENEMY);
-            if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_ENEMY) {
-                FFLog.recordEvent(1,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + time.total);
-            }
-            if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_PLAYER) {
-                FFLog.recordEvent(3,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + time.total);// missing character and reason of death
-            }
+            attemptDamage(cast(hit.second, Entity), explosion);
         }
+    }
+    
+    private function attemptDamage(e:Entity, d:DamageDealer):Bool {
+        if (e.enabled && e.canBeDamaged) {
+            var damage:Int = d.damageFor((e.team == Entity.TEAM_PLAYER) ? DamageDealer.TEAM_PLAYER : DamageDealer.TEAM_ENEMY);
+            e.health -= damage;
+            e.damageTimer = INVINCIBILITY_TIME;
+            // TODO: Record damage?
+            
+            // TODO: Causes of death
+            if (e.isDead && e.team == Entity.TEAM_ENEMY) {
+                FFLog.recordEvent(1,  e.position.x + ", " + e.position.y + ", " + state.time.total);
+            }
+            if (e.isDead && e.team == Entity.TEAM_PLAYER) {
+                FFLog.recordEvent(3,  e.position.x + ", " + e.position.y + ", " + state.time.total); 
+            }
+            
+            return damage > 0;
+        }
+        return false;
     }
 }

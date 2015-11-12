@@ -1,10 +1,11 @@
 package weapon;
 
 import game.ColorScheme;
-import game.LargeProjectile;
-import game.Projectile;
+import weapon.projectile.LargeProjectile;
+import weapon.projectile.BulletProjectile;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
+import weapon.projectile.ProjectileData;
 
 enum FiringMode {
     SINGLE;
@@ -23,8 +24,7 @@ class ProjectileOrigin {
     public var exitAngle:Float;
     
     // Projectile to be generated
-    public var projectile:Projectile;
-    public var largeProjectile:LargeProjectile;
+    public var projectileData:ProjectileData;
     
     public function new() {
         // Empty

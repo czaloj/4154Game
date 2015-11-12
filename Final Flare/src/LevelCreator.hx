@@ -118,7 +118,13 @@ class LevelCreator {
         Spawner.createPlayer(state.entities[1], "Robot", 0, 0);
         Spawner.createPlayer(state.entities[2], "Wolf", 0, 0);
         Spawner.createPlayer(state.entities[3], "Zombie", 0, 0);
-
+        
+        // Disable all but the first character
+        for (i in 1...5) {
+            if (state.entities[i] != null) {
+                state.entities[i].enabled = false;
+            }
+        }
         
         state.characterWeapons = mod.characterWeapons.copy();
         state.enemyWeapons = mod.enemyWeapons.copy();

@@ -21,12 +21,15 @@ class Spawner {
     }
     public static function spawn(gameplayController:GameplayController, state: GameState, gameTime:GameTime) {
         // TODO: Use advanced spawning logic
-        var spawnCooldown;
+        // TODO: factor in difficulty
+        var spawnCount:Int = 0;
         for (spawner in state.spawners) {
-            var type = EnemyType.make(spawner.id);
-            //TODO: factor in difficulty
-            if (gameTime.frame % (10000 - 50 * Std.int(Math.log(state.score))) == 201) {
-                state.gameEvents.push(new GameEventSpawn(spawner.position.x, spawner.position.y, spawner.id));
+            if ((state.entities.length + spawnCount - 5) < 100) {
+                var type = EnemyType.make(spawner.id);
+                if (gameTime.frame % (10000 - 50 * Std.int(Math.log(state.score))) == 201) {
+                    state.gameEvents.push(new GameEventSpawn(spawner.position.x, spawner.position.y, spawner.id));
+                    spawnCount++;
+                }
             }
         }
     }
@@ -35,6 +38,7 @@ class Spawner {
         e.id = type;
         e.team = Entity.TEAM_PLAYER;
         e.health = 100;
+        e.damageTimer = GameplayController.INVINCIBILITY_TIME;
 
         // Physical parameters
         e.position.set(x, y);
@@ -60,7 +64,8 @@ class Spawner {
         e.id = type;
         e.team = Entity.TEAM_ENEMY;
         e.health = 50;
-
+        e.damageTimer = GameplayController.INVINCIBILITY_TIME;
+        
         // Physical parameters
         e.position.set(x, y);
         e.velocity.set(0, 0);
@@ -80,10 +85,5 @@ class Spawner {
         e.rightTouchingWall = 0;
         e.leftTouchingWall = 0;
         e.feetTouches = 0;
-
-        e.damage.x = e.position.x;
-        e.damage.y = e.position.y;
-        e.damage.width = e.width;
-        e.damage.height = e.height;
     }
 }
