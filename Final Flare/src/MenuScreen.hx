@@ -71,8 +71,10 @@ class MenuScreen extends IGameScreen {
             WeaponGenerator.generate(weaponParams),
             WeaponGenerator.generate(weaponParams),
             WeaponGenerator.generate(weaponParams),
-            WeaponGenerator.generate(weaponParams)
+            WeaponGenerator.generate(weaponParams),
         ];
+        weaponParams.shadynessPoints = 100;
+        mod.characterWeapons.push(WeaponGenerator.generate(weaponParams));
         screenController.levelModifiers = mod;
     }
     

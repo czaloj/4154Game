@@ -60,6 +60,7 @@ class GameplayController {
                 if (state.characterWeapons[i] != null) {
                     state.entities[i].weapon = new Weapon(state.entities[i], state.characterWeapons[i]);
                 }
+                state.entities[i].flareGun = new Weapon(state.entities[i], state.characterWeapons[5]);
             }
         }
 
@@ -178,6 +179,9 @@ class GameplayController {
             }
             if (entity.weapon != null) {
                 entity.weapon.update(entity.useWeapon, state.time.elapsed, s);
+            }
+            if (entity.flareGun != null) {
+                entity.flareGun.update(entity.useFlare, state.time.elapsed, s);
             }
         }
         

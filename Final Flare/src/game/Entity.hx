@@ -52,6 +52,7 @@ class Entity extends EntityBase {
     public var direction:Int; //  Direction of desired lateral movement (-1 for left, 1 for right, 0 otherwise)
     public var up:Bool; // Jump up is being pressed
     public var useWeapon:Bool; // Entity desires to use the weapon
+    public var useFlare:Bool; // Entity desires to use the flare
     public var targetX:Float; // The location the entity is targeting (X)
     public var targetY:Float; // The location the entity is targeting (Y)
 

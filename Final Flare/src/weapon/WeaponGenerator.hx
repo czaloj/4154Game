@@ -74,6 +74,9 @@ class WeaponGenerator {
             pd.radius = 0.05;
             data.projectileOrigins[0].projectileData = pd;
             data.projectileOrigins[0].velocity = 15;
+            data.reloadTime = 10.0;
+            data.useCapacity = 1;
+            data.firingMode = FiringMode.SINGLE;
         }
         data.projectileOrigins[0].transform.translate(0.8, 0.1);
         return data;

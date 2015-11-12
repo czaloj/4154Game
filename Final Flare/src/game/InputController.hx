@@ -111,5 +111,8 @@ class InputController {
                 state.player.targetY = state.player.position.y;
             }
         }
+        
+        // Flare gun is an addition to normal targetting logic
+        state.player.useFlare = keysDown[keyShootFlare];
     }
 }
