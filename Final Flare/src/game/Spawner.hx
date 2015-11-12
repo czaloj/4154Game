@@ -35,6 +35,7 @@ class Spawner {
         e.id = type;
         e.team = Entity.TEAM_PLAYER;
         e.health = 100;
+        e.damageTimer = GameplayController.INVINCIBILITY_TIME;
 
         // Physical parameters
         e.position.set(x, y);
@@ -60,7 +61,8 @@ class Spawner {
         e.id = type;
         e.team = Entity.TEAM_ENEMY;
         e.health = 50;
-
+        e.damageTimer = GameplayController.INVINCIBILITY_TIME;
+        
         // Physical parameters
         e.position.set(x, y);
         e.velocity.set(0, 0);
@@ -80,10 +82,5 @@ class Spawner {
         e.rightTouchingWall = 0;
         e.leftTouchingWall = 0;
         e.feetTouches = 0;
-
-        e.damage.x = e.position.x;
-        e.damage.y = e.position.y;
-        e.damage.width = e.width;
-        e.damage.height = e.height;
     }
 }

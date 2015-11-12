@@ -26,7 +26,7 @@ class GameplayController {
     public static var GROUND_FRICTION:Float = .3;
     public static var AIR_FRICTION:Float = .95;
     public static inline var TILE_HALF_WIDTH:Float = 0.5;
-    public static var INVINCIBILITY_TIME = 120;
+    public static var INVINCIBILITY_TIME = 2.0;
 
     public var state:game.GameState;
     public var physicsController:PhysicsController = new PhysicsController();
@@ -173,15 +173,11 @@ class GameplayController {
             projectile.update(state.time.elapsed, state);
         }
         for (entity in state.entitiesEnabled) {
+            if (entity.damageTimer > 0) {
+                entity.damageTimer -= state.time.elapsed;
+            }
             if (entity.weapon != null) {
                 entity.weapon.update(entity.useWeapon, state.time.elapsed, s);
-            }
-        }
-        for (entity in state.entities) {
-            if ((entity != null) && (entity.id == "Grunt")) {
-                entity.damage.x = entity.position.x;
-                entity.damage.y = entity.position.y;
-                state.damage.push(entity.damage);
             }
         }
         
@@ -233,6 +229,7 @@ class GameplayController {
                 if (entity.team != Entity.TEAM_PLAYER) {
                     state.entities.remove(entity);
                 }
+                
             }
             deletingEntities = [];
         }
@@ -342,13 +339,12 @@ class GameplayController {
 
     // Application of game events
     public function applyEventSpawn(state:GameState, e:GameEventSpawn):Void {
-        FFLog.recordEvent(2, e.x + ", " + e.y + ", " + state.time.total);
         var enemy:Entity = new Entity();
         Spawner.createEnemy(enemy, e.entity, e.x, e.y);
-        state.damage.push(enemy.damage);
         physicsController.initEntity(enemy);
         state.entities.push(enemy);
         vis.onEntityAdded(state, enemy);
+        FFLog.recordEvent(2, enemy.position.x + ", " + enemy.position.y + ", " + state.time.total);
     }
 
     // Damage events
@@ -368,20 +364,12 @@ class GameplayController {
             for (rci in info.first) {
                 var hitUD:PhysicsUserData = rci.first.getUserData();
                 if (hitUD.first == PhysicsUserDataType.ENTITY) {
-                    var hitEntity:Entity = cast(hitUD.second, Entity);
-
-
-                    hitEntity.health -= bullet.damageFor((hitEntity.team == Entity.TEAM_PLAYER) ? DamageDealer.TEAM_PLAYER : DamageDealer.TEAM_ENEMY);
-                    vis.onBloodSpurt(rci.third.x, rci.third.y, rci.fourth.x, rci.fourth.y);
-                    if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_ENEMY) {
-                            FFLog.recordEvent(1,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + state.time.total);
-                    }
-                    if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_PLAYER) {
-                            FFLog.recordEvent(3,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + state.time.total);// missing character and reason of death
+                    if (attemptDamage(cast(hitUD.second, Entity), bullet)) {
+                        vis.onBloodSpurt(rci.third.x, rci.third.y, rci.fourth.x, rci.fourth.y);
                     }
                 }
             }
-
+            
             // Apply piercing count
             if (bullet.piercingAmount > 0) {
                 bullet.piercingAmount -= info.first.length;
@@ -400,39 +388,32 @@ class GameplayController {
         return info.second != null;
     }
     public function applyDamagePolygon(state:GameState, polygon:DamagePolygon, time:GameTime):Void {
-        if (polygon.teamDestinationFlags == Entity.TEAM_PLAYER) {
-            if (physicsController.bumpPlayerTest(state.player.position.x, state.player.position.y,
-                state.player.width, state.player.height,
-                polygon.x, polygon.y,
-                polygon.width, polygon.height)) {
-                if ((state.player.damage.lastDamageTime == 0 ) || (time.frame - state.player.damage.lastDamageTime > INVINCIBILITY_TIME)){
-                    state.player.health -= polygon.damage;
-                    state.player.damage.lastDamageTime = time.frame;
-                }
-            }
-        } else {
-            for (entity in state.entities) {
-                if ((entity != null) && (entity.team != Entity.TEAM_PLAYER) && (physicsController.bumpPlayerTest(entity.position.x, entity.position.y,
-                    entity.width, entity.height,
-                    polygon.x, polygon.y,
-                    polygon.width, polygon.height))) {
-                    entity.health -= polygon.damage;
-                    entity.damage.lastDamageTime = time.frame;
-                }
-            }
-        }
+        // TODO: Use Query instead of multiple entity tests
     }
     public function applyDamageExplosion(state:GameState, explosion:DamageExplosion):Void {
         var hits:Array<PhysicsUserData> = physicsController.hitTest(explosion.x, explosion.y, explosion.radius, true, true);
         for (hit in hits) {
-            var hitEntity:Entity = cast(hit.second, Entity);
-            hitEntity.health -= explosion.damageFor((hitEntity.team == Entity.TEAM_PLAYER) ? DamageDealer.TEAM_PLAYER : DamageDealer.TEAM_ENEMY);
-            if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_ENEMY) {
-                FFLog.recordEvent(1,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + state.time.total);
-            }
-            if (hitEntity.health <= 0 && hitEntity.team == Entity.TEAM_PLAYER) {
-                FFLog.recordEvent(3,  hitEntity.position.x + ", " + hitEntity.position.y + ", " + state.time.total);// missing character and reason of death
-            }
+            attemptDamage(cast(hit.second, Entity), explosion);
         }
+    }
+    
+    private function attemptDamage(e:Entity, d:DamageDealer):Bool {
+        if (e.enabled && e.canBeDamaged) {
+            var damage:Int = d.damageFor((e.team == Entity.TEAM_PLAYER) ? DamageDealer.TEAM_PLAYER : DamageDealer.TEAM_ENEMY);
+            e.health -= damage;
+            e.damageTimer = INVINCIBILITY_TIME;
+            // TODO: Record damage?
+            
+            // TODO: Causes of death
+            if (e.isDead && e.team == Entity.TEAM_ENEMY) {
+                FFLog.recordEvent(1,  e.position.x + ", " + e.position.y + ", " + state.time.total);
+            }
+            if (e.isDead && e.team == Entity.TEAM_PLAYER) {
+                FFLog.recordEvent(3,  e.position.x + ", " + e.position.y + ", " + state.time.total); 
+            }
+            
+            return damage > 0;
+        }
+        return false;
     }
 }
