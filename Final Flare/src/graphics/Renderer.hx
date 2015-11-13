@@ -2,6 +2,7 @@ package graphics;
 
 import game.GameState;
 import game.Entity;
+import openfl.geom.Matrix;
 import weapon.projectile.BulletProjectile;
 import game.World;
 import graphics.particles.TracerList;
@@ -62,6 +63,9 @@ class Renderer implements IGameVisualizer {
     
     // Particles
     private var tracers:TracerList;
+    
+    // Screen-shake tracking information
+    private var screenShakeOffset:Point = new Point();
     
     // This is for debug camera movement
     private var debugViewing:Bool = false;
@@ -165,6 +169,10 @@ class Renderer implements IGameVisualizer {
     }
     public function addBulletTrail(sx:Float, sy:Float, ex:Float, ey:Float, duration:Float):Void {
         tracers.add(sx, sy, ex - sx, ey - sy, 0.04, duration, 0xffff00, (1 / 60) / duration);
+    }
+    public function addScreenShake(x:Float, y:Float):Void {
+        screenShakeOffset.x += x;
+        screenShakeOffset.y += y;
     }
     
     private function load(state:game.GameState):Void {
@@ -342,7 +350,7 @@ class Renderer implements IGameVisualizer {
             }
         });
     }
-    
+
     private function debugMoveListening(e:KeyboardEvent = null):Void {
         if (e.keyCode == Keyboard.C) {
             debugViewing = !debugViewing;
@@ -428,6 +436,15 @@ class Renderer implements IGameVisualizer {
             cameraX += CAMERA_DEBUG_MOVE_SPEED * ((debugViewMoves[1] - debugViewMoves[0]) / 60);
             cameraY += CAMERA_DEBUG_MOVE_SPEED * ((debugViewMoves[3] - debugViewMoves[2]) / 60);
             cameraScale *= [ 0.95, 1, 1.15 ] [1 + (debugViewMoves[5] - debugViewMoves[4])];
+        }
+        
+        // Apply screen-shake
+        if (screenShakeOffset.length > 0.01) {
+            var m:Matrix = new Matrix(0.9, 0, 0, 0.9, 0, 0);
+            m.rotate((Math.random() - 0.5) * 1.0);
+            screenShakeOffset = m.deltaTransformPoint(screenShakeOffset);
+            cameraX += screenShakeOffset.x;
+            cameraY += screenShakeOffset.y;
         }
 
         // Update parallax layers
