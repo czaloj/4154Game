@@ -11,4 +11,5 @@ interface IGameVisualizer {
     public function onExplosion(sx:Float, sy:Float, r:Float):Void;
     
     public function addBulletTrail(sx:Float, sy:Float, ex:Float, ey:Float, duration:Float):Void;
+    public function addScreenShake(x:Float, y:Float):Void;
 }

@@ -399,6 +399,8 @@ class GameplayController {
         for (hit in hits) {
             attemptDamage(cast(hit.second, Entity), explosion);
         }
+        vis.onExplosion(explosion.x, explosion.y, explosion.radius);
+        vis.addScreenShake((Math.random() - 0.5), -1.0);
     }
     
     private function attemptDamage(e:Entity, d:DamageDealer):Bool {

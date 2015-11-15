@@ -78,6 +78,11 @@ class UISpriteFactory {
             //new TileRegion("Menu", , , , ),
             //new TileRegion("Time", , , , ),
             //new TileRegion("Character", , , , ) // Healthbars over the character tiles will be Quads
+            // TODO: Use real ones
+            new TileRegion("EnemyHealthBar.Main", 1023, 1023, 1, 1),
+            new TileRegion("EnemyHealthBar.Strip", 1023, 1023, 1, 1),
+            
+            new TileRegion("Pixel", 1023, 1023, 1, 1)
         ]);
     }
 
