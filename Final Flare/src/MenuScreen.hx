@@ -20,10 +20,16 @@ import starling.text.TextField;
 
 
 class MenuScreen extends IGameScreen {
+    
+    //Level select 
+    private static var MAX_LEVEL:Int = 0;
+    private var selectedLevel:Int = 0;
+    
     //Booleans for screen transitions
     private var play:Bool = false;
     private var tutorial:Bool = false;
     private var options:Bool = false;
+    
     
     //Buttons
     private var playButton:Button;
@@ -150,14 +156,6 @@ class MenuScreen extends IGameScreen {
         screenController.removeChild(optionsButton);
     }
     
-    private function exitLevelSelect() 
-    {
-        screenController.removeChild(prevButton);
-        screenController.removeChild(nextButton);
-        screenController.removeChild(levelButton);
-        screenController.removeChild(menuButton);
-    }
-    
     private function initLevelSelect():Void 
     {
         //Remove existing buttons
@@ -178,6 +176,7 @@ class MenuScreen extends IGameScreen {
             vAlign:VAlign.CENTER
         };
         
+        //TODO make custon btf for each button if necessary
         prevButton = uif.createButton(100, 35, "BACK", btf);
         nextButton = uif.createButton(100, 35, "NEXT", btf);
         levelButton = uif.createButton(400, 200, "LEVEL 1", btf);
@@ -189,24 +188,50 @@ class MenuScreen extends IGameScreen {
         levelButton.transformationMatrix.translate(400 - levelButton.width / 2, 200 - levelButton.height / 2);
         menuButton.transformationMatrix.translate(25, 25);
         
+        //Add buttons to screen
         screenController.addChild(prevButton);
         screenController.addChild(nextButton);
         screenController.addChild(levelButton);
         screenController.addChild(menuButton);
         
+        //Add functions to event subscribers lists
+        prevButton.bEvent.add(decrementLevel);
+        nextButton.bEvent.add(incrementLevel);
         levelButton.bEvent.add(startLevel);
         menuButton.bEvent.add(exitLevelSelect);
         menuButton.bEvent.add(initMainMenu);
     }
     
-    private function changeLevel():Void {
-        
+    private function exitLevelSelect() {
+        screenController.removeChild(prevButton);
+        screenController.removeChild(nextButton);
+        screenController.removeChild(levelButton);
+        screenController.removeChild(menuButton);
     }
     
+    private function changeLevel(delta:Int):Void {
+        selectedLevel += delta;
+        if (selectedLevel < 0) { selectedLevel = 0; }
+        if (selectedLevel > MAX_LEVEL) { selectedLevel = MAX_LEVEL; }
+    }
+    
+    private function decrementLevel():Void {
+        changeLevel(-1);
+    }
+    
+    private function incrementLevel():Void {
+        changeLevel(1);
+    }    
     
     //TODO change to BroadcastEvent1 with a string argument for level
     private function startLevel():Void {
-        screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/test.lvl");
+        switch selectedLevel {
+            case 0: 
+                screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/test.lvl");
+            default:
+        }
+        
+        exitLevelSelect();
         screenController.switchToScreen(2);
     }
     
