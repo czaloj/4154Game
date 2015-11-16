@@ -230,25 +230,6 @@ class LevelEditorScreen extends IGameScreen {
         cameraMove[e.keyCode] = false;
     }
 
-// private function onMouseMove(e:MouseEvent):Void {
-    //     var levelWidth = state.width * World.TILE_HALF_WIDTH;
-    //     var levelHeight = state.height * World.TILE_HALF_WIDTH;
-    //     var curX = e.stageX/ScreenController.SCREEN_WIDTH;
-    //     var curY = e.stageY/ScreenController.SCREEN_HEIGHT;
-    //     var cameraHalfWidth = ScreenController.SCREEN_WIDTH / (2 * renderer.cameraScale);
-    //     var cameraHalfHeight = ScreenController.SCREEN_HEIGHT / (2 * renderer.cameraScale);
-    //     if (curX < ScreenController.SCREEN_WIDTH /(3*renderer.cameraScale)) {
-    //         renderer.cameraX = Math.max((0) + cameraHalfWidth, renderer.cameraX-=1);
-    //     } else if (curX > ScreenController.SCREEN_WIDTH*2 /(3*renderer.cameraScale)) {
-    //         renderer.cameraX = Math.min((levelWidth) - cameraHalfWidth, renderer.cameraX+=1);    
-    //     }
-    //     if (curX < ScreenController.SCREEN_HEIGHT /(3*renderer.cameraScale)) {
-    //         renderer.cameraY = Math.max((0) + cameraHalfHeight, renderer.cameraY-=1);
-    //     } else if (curX > ScreenController.SCREEN_HEIGHT*2 /(3*renderer.cameraScale)) {
-    //         renderer.cameraY = Math.min((levelHeight) - cameraHalfHeight, renderer.cameraY+=1);
-    //     }
-    // }
-
     override public function build():Void {
         // Empty
     }
@@ -303,7 +284,8 @@ class LevelEditorScreen extends IGameScreen {
                 sub_editors[i].push("Objects");
             case 3:
                 sub_editors[i].push("Entity Placement");
-                sub_editors[i].push("Entity Cues");
+                sub_editors[i].push("Regions");
+                sub_editors[i].push("Region Connections")
             }
             NUM_SUBS.push(sub_editors[i].length);
         }
@@ -330,7 +312,8 @@ class LevelEditorScreen extends IGameScreen {
         env_item[0].push("Grunt Spawn");
         env_item[0].push("Enemy 2 Spawn");
         env_item[0].push("Enemy 3 Spawn");
-        env_item[1].push("Jump Region");
+        env_item[1].push("Draw Region");
+        env_item[2].push("Jump Connection");
 
         // Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
         Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
