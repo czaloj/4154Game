@@ -31,7 +31,10 @@ class Entity extends EntityBase {
     public var maxMoveSpeed:Float = 1.0;
     public var groundAcceleration:Float = 1.0;
     public var airAcceleration:Float = 1.0;
-
+	
+	public var controlDefault:Bool = true;
+	public var yProblem:Float;
+	
     // Other Logical information
     public var team:Int;
     public var enabled:Bool = true;

@@ -20,8 +20,15 @@ class AIController {
         var target = state.player.position;
         var x:Float = entity.position.x;
         var y:Float = entity.position.y;
-        entity.direction = x > target.x ? -1 : 1;
-        
+		//var controlDefault:Bool = true;
+		if(entity.controlDefault){
+			entity.direction = x > target.x ? -1 : 1;
+		}
+		
+		//entity.yProblem = 1000;
+		var prevX:Float = x;
+        var count:Int = 1;
+		
         if (Math.abs(state.player.position.x - x) <= 2) {
             entity.useWeapon = true;
         }
@@ -29,8 +36,31 @@ class AIController {
             entity.useWeapon = false;
         }
         entity.up = false;
-        if (entity.isGrounded) {
-            if (y > target.y) {
+        //if (entity.isGrounded) {
+			if(y < entity.yProblem -.05) {
+					entity.controlDefault = true;
+				}
+            if (y>target.y+.05) {
+				if (x < target.x+.05 && x > target.x -.05) {
+					entity.yProblem = y;
+					prevX = x;
+					count = 1;
+					entity.direction = x<10? 1:-1;
+					entity.controlDefault = false;
+				}
+				
+				if(!(y < entity.yProblem -.05)) {
+					count++;
+					if (count % 7 == 0) {
+						if (prevX == x) {
+							entity.direction *= -1;	
+						}
+						prevX = x;
+					}
+					
+					
+				}
+				
             } 
             else if (y < target.y) {
                 var displacement = x - findPlatformAbove(state,Std.int(x),Std.int(y));
@@ -50,11 +80,11 @@ class AIController {
                     entity.up = true;
                 }
             }
+        
+        //else {
+            //entity.up = true;
         }
-        else {
-            entity.up = true;
-        }
-    }
+    
 
     public function findPlatformLateral(state:GameState, curX:Int, curY:Int, dir:Int):Int {
         return 0; // ?
