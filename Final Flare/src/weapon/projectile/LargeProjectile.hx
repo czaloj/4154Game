@@ -13,6 +13,8 @@ class LargeProjectile extends Projectile {
 
     public function new(d:ProjectileData, e:Entity) {
         super(d, e);
+        
+        timeLeft = data.timer;
     }
     
     override public function buildBehavior():Void {
