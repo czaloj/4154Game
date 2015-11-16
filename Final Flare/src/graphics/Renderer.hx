@@ -31,6 +31,7 @@ class Renderer implements IGameVisualizer {
     public static inline var PLAYER_HEIGHT:Float = 1.9;
     public static inline var CAMERA_DEBUG_MOVE_SPEED:Float = 5.0;
     public static inline var DESATURATION_LEVEL:Float = 0.7;
+    public static inline var CAMERA_LERP_SPEED:Float = 0.1;
 
     private var stageHalfSize:Point = new Point();
     private var hierarchy:RenderHierarchy = new RenderHierarchy();
@@ -428,8 +429,10 @@ class Renderer implements IGameVisualizer {
         var cameraHalfHeight = stage3D.stageHeight / (2 * cameraScale);
         if (!debugViewing) {
             // Center camera on player and constrict to level bounds
-            cameraX = Math.min((levelWidth) - cameraHalfWidth, Math.max((0) + cameraHalfWidth, s.player.position.x));
-            cameraY = Math.min((levelHeight) - cameraHalfHeight, Math.max((0) + cameraHalfHeight, s.player.position.y));
+            var targetX:Float = (1.0 - CAMERA_LERP_SPEED) * cameraX + CAMERA_LERP_SPEED * s.player.position.x;
+            var targetY:Float = (1.0 - CAMERA_LERP_SPEED) * cameraY + CAMERA_LERP_SPEED * s.player.position.y;
+            cameraX = Math.min((levelWidth) - cameraHalfWidth, Math.max((0) + cameraHalfWidth, targetX));
+            cameraY = Math.min((levelHeight) - cameraHalfHeight, Math.max((0) + cameraHalfHeight, targetY));
         }
         else {
             // Move the camera according to keyboard input
