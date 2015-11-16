@@ -39,8 +39,8 @@ class LevelEditorScreen extends IGameScreen {
     private static var CAMDOWN = Keyboard.S;
     private static var CAMRIGHT = Keyboard.D;
 
-    public static var MIN_LEVEL_WIDTH:Int = 2500;//1600;
-    public static var MIN_LEVEL_HEIGHT:Int = 1600;//900;
+    public static var MIN_LEVEL_WIDTH:Int = 1600;
+    public static var MIN_LEVEL_HEIGHT:Int = 900;
 
     private var level:game.GameLevel;
     // private var state:game.GameState;
