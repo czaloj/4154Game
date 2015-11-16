@@ -101,7 +101,7 @@ class MenuScreen extends IGameScreen {
         
         //Set up formatting stuff
         var btf:ButtonTextFormat = {
-            tx:120,
+            tx:150,
             ty:50,
             font:"Verdana", 
             size:20, 
@@ -112,11 +112,10 @@ class MenuScreen extends IGameScreen {
         };
 
         //Create Button and position it
-        playButton = uif.createButton(120, 50, "PLAY", btf, false);
-        tutorialButton = uif.createButton(120, 50, "TUTORIAL", btf, false);
-        loadoutButton = uif.createButton(120, 50, "LOADOUT", btf, true);
-        shopButton = uif.createButton(120, 50, "SHOP", btf, false);
-        levelEditorButton = uif.createButton(120, 50, "LEVEL EDITOR", btf, false);
+        playButton = uif.createButton(150, 50, "PLAY", btf, false);
+        tutorialButton = uif.createButton(150, 50, "TUTORIAL", btf, false);
+        shopButton = uif.createButton(150, 50, "SHOP", btf, false);
+        levelEditorButton = uif.createButton(150, 50, "LEVEL EDITOR", btf, false);
         
         //Vertical Layout
         //playButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 60);
@@ -126,17 +125,15 @@ class MenuScreen extends IGameScreen {
         //levelEditorButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 100 + 4 * shopButton.height);
         
         //Horizontal Layout
-        playButton.transformationMatrix.translate(20, 410 - playButton.height);
-        tutorialButton.transformationMatrix.translate(40 + tutorialButton.width, 410 - playButton.height);
-        loadoutButton.transformationMatrix.translate(60 + 2 * loadoutButton.width, 410 - playButton.height);
-        shopButton.transformationMatrix.translate(80 + 3* shopButton.width, 410 - playButton.height);
-        levelEditorButton.transformationMatrix.translate(100 + 4 * levelEditorButton.width, 410 - playButton.height);
+        playButton.transformationMatrix.translate(28, 410 - playButton.height);
+        tutorialButton.transformationMatrix.translate(56 + tutorialButton.width, 410 - playButton.height);
+        shopButton.transformationMatrix.translate(84 + 2* shopButton.width, 410 - playButton.height);
+        levelEditorButton.transformationMatrix.translate(112 + 3 * levelEditorButton.width, 410 - playButton.height);
         
         //Add buttons to screen
         screenController.addChild(playButton);
         screenController.addChild(tutorialButton);
         screenController.addChild(shopButton);
-        screenController.addChild(loadoutButton);
         screenController.addChild(levelEditorButton);
         
         //Add button functions
@@ -151,7 +148,6 @@ class MenuScreen extends IGameScreen {
         screenController.removeChild(playButton);
         screenController.removeChild(tutorialButton);
         screenController.removeChild(shopButton);
-        screenController.removeChild(loadoutButton);
         screenController.removeChild(levelEditorButton);
     }
     
