@@ -24,6 +24,7 @@ class MenuScreen extends IGameScreen {
     //Level select 
     private static var MAX_LEVEL:Int = 9;
     private var selectedLevel:Int = 0;
+    //private var squad:Array<Entity>;
     
     //Booleans for screen transitions
     private var play:Bool = false;
@@ -35,7 +36,9 @@ class MenuScreen extends IGameScreen {
     private var levelButtonArray:Array<Button> = new Array<Button>();
     private var playButton:Button;
     private var tutorialButton:Button;
-    private var optionsButton:Button;
+    private var loadoutButton:Button;
+    private var shopButton:Button;
+    private var levelEditorButton:Button;
     private var nextButton:Button;
     private var prevButton:Button;
     private var levelButton:Button;
@@ -126,7 +129,7 @@ class MenuScreen extends IGameScreen {
         //Set up formatting stuff
         var btf:ButtonTextFormat = {
             tx:120,
-            ty:60,
+            ty:50,
             font:"Verdana", 
             size:20, 
             color:0x0, 
@@ -136,28 +139,47 @@ class MenuScreen extends IGameScreen {
         };
 
         //Create Button and position it
-        playButton = uif.createButton(175, 50, "PLAY", btf);
-        tutorialButton = uif.createButton(175, 50, "TUTORIAL", btf);
-        optionsButton = uif.createButton(175, 50, "SHOP", btf);
+        playButton = uif.createButton(120, 50, "PLAY", btf);
+        tutorialButton = uif.createButton(120, 50, "TUTORIAL", btf);
+        loadoutButton = uif.createButton(120, 50, "LOADOUT", btf);
+        shopButton = uif.createButton(120, 50, "SHOP", btf);
+        levelEditorButton = uif.createButton(120, 50, "LEVEL EDITOR", btf);
         
-        //Translations
-        playButton.transformationMatrix.translate(400 + playButton.width / 2, 170);
-        tutorialButton.transformationMatrix.translate(400 + playButton.width / 2, 180 + tutorialButton.height);
-        optionsButton.transformationMatrix.translate(400 + playButton.width / 2, 190 + 2*optionsButton.height);
+        //Vertical Layout
+        //playButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 60);
+        //tutorialButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 70 + tutorialButton.height);
+        //loadoutButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 80 + 2 * shopButton.height);
+        //shopButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 90 + 3 * shopButton.height);
+        //levelEditorButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 100 + 4 * shopButton.height);
         
+        //Horizontal Layout
+        playButton.transformationMatrix.translate(20, 410 - playButton.height);
+        tutorialButton.transformationMatrix.translate(40 + tutorialButton.width, 410 - playButton.height);
+        loadoutButton.transformationMatrix.translate(60 + 2 * loadoutButton.width, 410 - playButton.height);
+        shopButton.transformationMatrix.translate(80 + 3* shopButton.width, 410 - playButton.height);
+        levelEditorButton.transformationMatrix.translate(100 + 4 * levelEditorButton.width, 410 - playButton.height);
+        
+        //Add buttons to screen
         screenController.addChild(playButton);
         screenController.addChild(tutorialButton);
-        screenController.addChild(optionsButton);
+        screenController.addChild(shopButton);
+        screenController.addChild(loadoutButton);
+        screenController.addChild(levelEditorButton);
         
+        //Add button functions
         playButton.bEvent.add(initLevelSelect);
+        levelEditorButton.bEvent.add(function():Void {
+            exitMainMenu();
+            screenController.switchToScreen(3);
+        });
     }
     
     private function exitMainMenu():Void {
         screenController.removeChild(playButton);
         screenController.removeChild(tutorialButton);
-        screenController.removeChild(optionsButton);
-        screenController.removeChild(levelButton);
-        screenController.removeChild(confirmButton);
+        screenController.removeChild(shopButton);
+        screenController.removeChild(loadoutButton);
+        screenController.removeChild(levelEditorButton);
     }
     
     private function initLevelSelect():Void 
@@ -220,6 +242,7 @@ class MenuScreen extends IGameScreen {
         screenController.removeChild(levelButton);
         screenController.removeChild(menuButton);
         screenController.removeChild(confirmButton);
+        //TODO MAYBE clear the levelButton array, idk
     }
     
     //Initialize the array of level buttons (one for each level)
@@ -251,7 +274,12 @@ class MenuScreen extends IGameScreen {
     
     private function incrementLevel():Void {
         changeLevel(1);
-    }    
+    }
+    
+    private function initSquadSelect():Void {
+        exitLevelSelect();
+    }
+    
     
     //TODO change to BroadcastEvent1 with a string argument for level
     private function startLevel():Void {
@@ -272,7 +300,7 @@ class MenuScreen extends IGameScreen {
         else { play = false; }
         if (tutorialButton.clicked) { tutorial = true; }
         else { tutorial = false; }
-        if (optionsButton.clicked = true) { options = true; }
+        if (shopButton.clicked = true) { options = true; }
         else { options = false; }        
     }
 }
