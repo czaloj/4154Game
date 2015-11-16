@@ -14,11 +14,11 @@ import weapon.WeaponData.ProjectileOrigin;
 
 class WeaponGenerator {
     // Alpha mask levels for color generation
-    public static var ALPHA_LEVEL_TRUE_COLOR:UInt = 21;
-    public static var ALPHA_LEVEL_TEXTURE:UInt = 16;
-    public static var ALPHA_LEVEL_PRIMARY:UInt = 11;
-    public static var ALPHA_LEVEL_SECONDARY:UInt = 6;
-    public static var ALPHA_LEVEL_TERTIARY:UInt = 1;
+    public static var ALPHA_LEVEL_TRUE_COLOR:UInt = 101;
+    public static var ALPHA_LEVEL_TEXTURE:UInt = 81;
+    public static var ALPHA_LEVEL_PRIMARY:UInt = 61;
+    public static var ALPHA_LEVEL_SECONDARY:UInt = 41;
+    public static var ALPHA_LEVEL_TERTIARY:UInt = 21;
     public static var ALPHA_LEVEL_INVISIBLE:UInt = 0;
     
     public static function generate(params:WeaponGenParams):WeaponData {
@@ -86,7 +86,7 @@ class WeaponGenerator {
         // Empty
     }
 
-    private static function convertColors(bmp:BitmapData, rect:Rectangle, scheme:ColorScheme):ByteArray {
+    public static function convertColors(bmp:BitmapData, rect:Rectangle, scheme:ColorScheme):ByteArray {
         // Get original pixels
         bmp.lock();
         var pixels:ByteArray = bmp.getPixels(rect);
@@ -97,25 +97,27 @@ class WeaponGenerator {
         nba.position = 0;
 
         // Traverse and convert color values
+        pixels.position = 0;
         var i:UInt = 0;
-        while (i < (pixels.length * 4)) {
-            var rgba:UInt = pixels.readUnsignedInt();
-            rgba = buildColor((rgba >> 24) & 0xff, (rgba >> 16) & 0xff, (rgba >> 8) & 0xff, rgba & 0xff, scheme);
-            nba.writeUnsignedInt(rgba);
+        while (i < (pixels.length / 4)) {
+            var argb:UInt = pixels.readUnsignedInt();
+            argb = buildColor((argb >> 24) & 0xff, (argb >> 16) & 0xff, (argb >> 8) & 0xff, argb & 0xff, scheme);
+            nba.writeUnsignedInt(argb);
             i++;
         }
         
         // Unlock for others
         bmp.unlock();
+        nba.position = 0;
         return nba;
     }
-    private static function buildColor(r:UInt, g:UInt, b:UInt, a:UInt, scheme:ColorScheme):UInt {
+    private static function buildColor(a:UInt, r:UInt, g:UInt, b:UInt, scheme:ColorScheme):UInt {
         if (a > ALPHA_LEVEL_TRUE_COLOR) {
-            return (r << 24) | (g << 16) | (b << 8) | a;
-        } else if (a == ALPHA_LEVEL_INVISIBLE) {
+            return (a << 24) | (r << 16) | (g << 8) | b;
+        } else if (a < ALPHA_LEVEL_TERTIARY) {
             return 0x00000000;
         } else {
-            var schemeColor:UInt = 0xff00ffff;
+            var schemeColor:UInt = 0xffff00ff;
             if (a > ALPHA_LEVEL_TEXTURE) {
                 // TODO: Texture
             } else if (a > ALPHA_LEVEL_PRIMARY) {
@@ -126,10 +128,10 @@ class WeaponGenerator {
                 schemeColor = scheme.tertiary;
             }
             
-            var fr:Float = (schemeColor >> 24) & 0xff;
-            var fg:Float = (schemeColor >> 16) & 0xff;
-            var fb:Float = (schemeColor >> 8) & 0xff;
-            var fa:Float = schemeColor & 0xff;
+            var fa:Float = (schemeColor >> 24) & 0xff;
+            var fr:Float = (schemeColor >> 16) & 0xff;
+            var fg:Float = (schemeColor >> 8) & 0xff;
+            var fb:Float = schemeColor & 0xff;
             var tint = r / 128.0;
             var opacity = g / 255.0;
             fr *= tint;
@@ -140,7 +142,65 @@ class WeaponGenerator {
             var cg:UInt = cast(Std.int(Math.min(255, Math.max(0, fg))), UInt);
             var cb:UInt = cast(Std.int(Math.min(255, Math.max(0, fb))), UInt);
             var ca:UInt = cast(Std.int(Math.min(255, Math.max(0, fa))), UInt);
-            return (cr << 24) | (cg << 16) | (cb << 8) | ca;
+            return (ca << 24) | (cr << 16) | (cg << 8) | cb;
         }
+    }
+    
+    public static function composeLayers():Void {
+        var bmpTint:BitmapData = null;
+        var bmpOpacity:BitmapData = null;
+        var bmpColor:BitmapData = null;
+        var bmpAlpha:BitmapData = null;
+        QuickIO.loadBitmap(function (o:BitmapData):Void { bmpTint = o;
+        QuickIO.loadBitmap(function (o:BitmapData):Void { bmpOpacity = o;
+        QuickIO.loadBitmap(function (o:BitmapData):Void { bmpColor = o;
+        QuickIO.loadBitmap(function (o:BitmapData):Void { bmpAlpha = o;
+        
+        var rect:Rectangle = new Rectangle(0, 0, bmpTint.width, bmpTint.height);
+        
+        // Get original pixels
+        bmpTint.lock();
+        var pixelsTint:ByteArray = bmpTint.getPixels(rect);
+        bmpOpacity.lock();
+        var pixelsOpacity:ByteArray = bmpOpacity.getPixels(rect);
+        bmpColor.lock();
+        var pixelsColor:ByteArray = bmpColor.getPixels(rect);
+        bmpAlpha.lock();
+        var pixelsAlpha:ByteArray = bmpAlpha.getPixels(rect);
+        
+        // Create output stream
+        var nba:ByteArray = new ByteArray();
+        nba.length = pixelsTint.length;
+        nba.position = 0;
+
+        // Traverse and convert color values
+        pixelsTint.position = 0;
+        pixelsOpacity.position = 0;
+        pixelsColor.position = 0;
+        pixelsAlpha.position = 0;
+        var i:UInt = 0;
+        while (i < (pixelsTint.length / 4)) {
+            var argbTint:UInt = pixelsTint.readUnsignedInt();
+            var argbOpacity:UInt = pixelsOpacity.readUnsignedInt();
+            var argbColor:UInt = pixelsColor.readUnsignedInt();
+            var argbAlpha:UInt = pixelsAlpha.readUnsignedInt();
+
+            var argb:UInt = ((argbTint & 0x00ff0000) | (argbOpacity & 0x0000ff00) | (argbColor & 0x00ffffff)) | ((argbAlpha & 0x00ff0000) << 8);
+            nba.writeUnsignedInt(argb);
+            i++;
+        }
+        
+        // Unlock for others
+        bmpTint.unlock();
+        bmpOpacity.unlock();
+        bmpColor.unlock();
+        bmpAlpha.unlock();
+        nba.position = 0;
+        
+        // Save pixels in new bitmap
+        var bmp:BitmapData = new BitmapData(bmpTint.width, bmpTint.height, true, 0x00000000);
+        bmp.setPixels(new Rectangle(0, 0, bmp.width, bmp.height), nba);
+        QuickIO.saveBitmap(bmp);
+        } );} );} );} );
     }
 }

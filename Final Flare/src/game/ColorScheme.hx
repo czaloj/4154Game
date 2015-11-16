@@ -8,6 +8,7 @@ class ColorScheme{
     public var tertiary:UInt;
     public var texture:Rectangle;
     
+    // Colors are ARGB
     public function new(p:UInt, s:UInt, t:UInt, tx:Int, ty:Int, tw:Int, th:Int) {
         primary = p;
         secondary = s;

@@ -8,6 +8,7 @@ import openfl.ui.Keyboard;
 import starling.display.Sprite;
 import starling.events.Event;
 import ui.FontLoader;
+import weapon.WeaponGenerator;
 
 class ScreenController extends Sprite {
     public static var FRAME_TIME:Float = 1.0 / 60.0;
@@ -53,6 +54,8 @@ class ScreenController extends Sprite {
                     switchToScreen(1);
                 case Keyboard.F8:
                     LevelCreator.saveToFile(loadedLevel);
+                case Keyboard.F9:
+                    WeaponGenerator.composeLayers();
             }
         });
     }
