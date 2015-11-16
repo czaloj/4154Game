@@ -364,16 +364,21 @@ class GameplayController {
         FFLog.recordEvent(2, enemy.position.x + ", " + enemy.position.y + ", " + state.time.total);
     }
     public function applyEventFlare(state:GameState, e:GameEventFlare):Void {
-        disableEntity(state.player);
-        state.player = state.entities[state.flaredEntity];
-        enableEntity(state.player);
-        state.player.position.set(e.x, e.y + state.player.height * 0.5);
-        
+        // Flares only work when you have them available
+        if (state.flares < 1) return;
+        state.flares--;
+
         // TODO: Make the GameUI set this up.
         do {
             state.flaredEntity++;
             state.flaredEntity %= 5;
         } while (state.entities[state.flaredEntity] == null);
+        
+        // Switch out characters
+        disableEntity(state.player);
+        state.player = state.entities[state.flaredEntity];
+        enableEntity(state.player);
+        state.player.position.set(e.x, e.y + state.player.height * 0.5);
     }
     
     // Damage events
