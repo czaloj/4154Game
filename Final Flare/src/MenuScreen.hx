@@ -250,6 +250,9 @@ class MenuScreen extends IGameScreen {
     
     private function initSquadSelect():Void {
         exitLevelSelect();
+        //do something with ShareObject
+        //TODO Create 5 ToggleButtons/Checkboxes
+        //
     }
     
     
