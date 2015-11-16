@@ -127,6 +127,7 @@ class UISpriteFactory {
     }
     public function createButtonPressed(sx:Float, sy:Float):Sprite {
         var sprite = new Sprite();
+        addScaledChildSprite("Region.Center", sprite, 8, 8, sx, sy);
 
         //Create regions from sprite sheet
         addScaledChildSprite("Region.Press.Center", sprite, 8, 8, sx, sy);
@@ -142,12 +143,21 @@ class UISpriteFactory {
         return sprite;
     }
 
-    public function createButton(sx:Float, sy:Float, text:String, tf:ButtonTextFormat):Button {
+    public function createButton(sx:Float, sy:Float, text:String, tf:ButtonTextFormat, toggle:Bool):Button {
         var upSprite = createButtonUp(sx, sy);
         var hoverSprite = createButtonHover(sx, sy);
         var downSprite = createButtonPressed(sx, sy);
-        var button = new Button(upSprite, hoverSprite, downSprite, text, tf);
+        var button = new Button(upSprite, hoverSprite, downSprite, text, tf, toggle);
         return button;
+    }
+    
+    public function createCheckbox(sx:Float, sy:Float):Checkbox {
+        var upSprite = new Sprite();
+        addScaledChildSprite("Checkbox", upSprite, 8, 8, sx, sy);
+        var downSprite = new Sprite();
+        addScaledChildSprite("Checkbox.Checked", downSprite, 8, 8, sx, sy);
+        var checkbox = new Checkbox(upSprite, downSprite);
+        return checkbox;
     }
 
     public function addChildSprite(region:String, parent:Sprite, x:Float, y:Float) {

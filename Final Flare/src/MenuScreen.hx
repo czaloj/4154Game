@@ -6,6 +6,7 @@ import haxe.Unserializer;
 import openfl.events.Event;
 import flash.net.FileReference;
 import flash.utils.ByteArray;
+import ui.Checkbox;
 import weapon.WeaponData;
 import weapon.WeaponGenerator;
 import weapon.WeaponGenParams;
@@ -111,11 +112,11 @@ class MenuScreen extends IGameScreen {
         };
 
         //Create Button and position it
-        playButton = uif.createButton(120, 50, "PLAY", btf);
-        tutorialButton = uif.createButton(120, 50, "TUTORIAL", btf);
-        loadoutButton = uif.createButton(120, 50, "LOADOUT", btf);
-        shopButton = uif.createButton(120, 50, "SHOP", btf);
-        levelEditorButton = uif.createButton(120, 50, "LEVEL EDITOR", btf);
+        playButton = uif.createButton(120, 50, "PLAY", btf, false);
+        tutorialButton = uif.createButton(120, 50, "TUTORIAL", btf, false);
+        loadoutButton = uif.createButton(120, 50, "LOADOUT", btf, true);
+        shopButton = uif.createButton(120, 50, "SHOP", btf, false);
+        levelEditorButton = uif.createButton(120, 50, "LEVEL EDITOR", btf, false);
         
         //Vertical Layout
         //playButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 60);
@@ -179,10 +180,10 @@ class MenuScreen extends IGameScreen {
         initLevelButtonArray(uif, btf);
         
         //TODO make custon btf for each button if necessary
-        prevButton = uif.createButton(100, 35, "BACK", btf);
-        nextButton = uif.createButton(100, 35, "NEXT", btf);
-        menuButton = uif.createButton(100, 35, "MAIN MENU", btf);
-        confirmButton = uif.createButton(100, 35, "CONFIRM", btf);        
+        prevButton = uif.createButton(100, 35, "BACK", btf, false);
+        nextButton = uif.createButton(100, 35, "NEXT", btf, false);
+        menuButton = uif.createButton(100, 35, "MAIN MENU", btf, false);
+        confirmButton = uif.createButton(100, 35, "CONFIRM", btf, false);        
         levelButton = levelButtonArray[selectedLevel];
     
         //Translations
@@ -221,7 +222,7 @@ class MenuScreen extends IGameScreen {
     private function initLevelButtonArray(uif:UISpriteFactory, btf:ButtonTextFormat):Void {
         var i:Int = 0;
         while (i <= MAX_LEVEL) {
-            var button = uif.createButton(450, 225, "LEVEL " + (i + 1) , btf);
+            var button = uif.createButton(450, 225, "LEVEL " + (i + 1) , btf, false);
             button.transformationMatrix.translate(400 - button.width / 2, 200 - button.height / 2);
             levelButtonArray.push(button);
             i++;
