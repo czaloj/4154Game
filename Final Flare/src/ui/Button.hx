@@ -29,6 +29,7 @@ class Button extends DisplayObjectContainer {
     public var downState (default, set):Sprite;
     public var hitTestState (default, set):Sprite;
     public var currentState (default, set):Sprite;
+    public var bEvent:BroadcastEvent;
     
     /**
      * Creates a new Button instance.
@@ -42,6 +43,7 @@ class Button extends DisplayObjectContainer {
         super();
         clicked = false;
         enabled = true;
+        bEvent = new BroadcastEvent();
         this.upState = (upState != null) ? upState : generateDefaultState ();
         this.overState = (overState != null) ? overState : generateDefaultState ();
         this.downState = (downState != null) ? downState : generateDefaultState ();
@@ -130,6 +132,8 @@ class Button extends DisplayObjectContainer {
                     else 
                     {
                         clicked = true;
+                        bEvent.invoke();
+                        
                     }
                     currentState = upState;
             default:

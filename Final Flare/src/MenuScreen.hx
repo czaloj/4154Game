@@ -29,7 +29,10 @@ class MenuScreen extends IGameScreen {
     private var playButton:Button;
     private var tutorialButton:Button;
     private var optionsButton:Button;
-    
+    private var nextButton:Button;
+    private var prevButton:Button;
+    private var levelButton:Button;
+    private var menuButton:Button;
     
     public function new(sc:ScreenController) {
         super(sc);
@@ -43,7 +46,7 @@ class MenuScreen extends IGameScreen {
     }
     
     override public function onEntry(gameTime:GameTime):Void {
-        addButtons();
+        initMainMenu();
         
         FFLog.recordMenuStart();
 
@@ -112,7 +115,7 @@ class MenuScreen extends IGameScreen {
         screenController.switchToScreen(2);
     }
     
-    private function addButtons() {
+    private function initMainMenu():Void {
         //Create button from UISpriteFactory
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         
@@ -129,7 +132,7 @@ class MenuScreen extends IGameScreen {
         };
 
         //Create Button and position it
-        playButton = uif.createButton(175, 50, "PLAY", btf);  
+        playButton = uif.createButton(175, 50, "PLAY", btf);
         tutorialButton = uif.createButton(175, 50, "TUTORIAL", btf);
         optionsButton = uif.createButton(175, 50, "OPTIONS", btf);
         
@@ -141,15 +144,68 @@ class MenuScreen extends IGameScreen {
         screenController.addChild(playButton);
         screenController.addChild(tutorialButton);
         screenController.addChild(optionsButton);
+        
+        playButton.bEvent.add(initLevelSelect);
+    }
+    
+    private function exitMainMenu():Void {
+        screenController.removeChild(playButton);
+        screenController.removeChild(tutorialButton);
+        screenController.removeChild(optionsButton);
+    }
+    
+    private function exitLevelSelect() 
+    {
+        screenController.removeChild(prevButton);
+        screenController.removeChild(nextButton);
+        screenController.removeChild(levelButton);
+        screenController.removeChild(menuButton);
+    }
+    
+    private function initLevelSelect():Void 
+    {
+        //Remove existing buttons
+        exitMainMenu();
+        
+        //Create button from UISpriteFactory
+        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
+        
+        //Set up formatting stuff
+        var btf:ButtonTextFormat = {
+            tx:100,
+            ty:35,
+            font:"Verdana", 
+            size:20, 
+            color:0x0, 
+            bold:false, 
+            hAlign:HAlign.CENTER, 
+            vAlign:VAlign.CENTER
+        };
+        
+        prevButton = uif.createButton(100, 35, "BACK", btf);
+        nextButton = uif.createButton(100, 35, "NEXT", btf);
+        levelButton = uif.createButton(400, 200, "LEVEL 1", btf);
+        menuButton = uif.createButton(100, 35, "MAIN MENU", btf);
+        
+        //Translations
+        prevButton.transformationMatrix.translate(400 - levelButton.width / 2, 375);
+        nextButton.transformationMatrix.translate(400 - levelButton.width / 2 + levelButton.width - nextButton.width, 375);
+        levelButton.transformationMatrix.translate(400 - levelButton.width / 2, 200 - levelButton.height / 2);
+        menuButton.transformationMatrix.translate(25, 25);
+        
+        screenController.addChild(prevButton);
+        screenController.addChild(nextButton);
+        screenController.addChild(levelButton);
+        screenController.addChild(menuButton);
     }
     
     private function checkButtonStates():Void {
         
-        if (playButton.clicked) { play = true; }
-        else { play = false; }
-        if (tutorialButton.clicked) { tutorial = true; }
-        else { tutorial = false; }
-        if (optionsButton.clicked = true) { options = true; }
-        else { options = false; }        
+        //if (playButton.clicked) { play = true; }
+        //else { play = false; }
+        //if (tutorialButton.clicked) { tutorial = true; }
+        //else { tutorial = false; }
+        //if (optionsButton.clicked = true) { options = true; }
+        //else { options = false; }        
     }
 }
