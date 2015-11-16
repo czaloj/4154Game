@@ -8,6 +8,7 @@ import game.damage.DamageDealer;
 import game.damage.DamageExplosion;
 import game.damage.DamagePolygon;
 import game.events.GameEvent;
+import game.events.GameEventFlare;
 import game.events.GameEventSpawn;
 import game.PhysicsController.PhysicsContact;
 import game.PhysicsController.PhysicsContactBody;
@@ -84,6 +85,16 @@ class GameplayController {
         physicsController.renderDebug();
     }
 
+    private function enableEntity(e:Entity):Void {
+        e.enabled = true;
+        vis.onEntityAdded(state, e);
+    }
+    private function disableEntity(e:Entity):Void {
+        e.enabled = false;
+        vis.onEntityRemoved(state, e);
+        e.position.set(-10, -10);
+    }
+    
     public function handleCollisions():Void {
         for (contact in state.contactList) {
             if (contact == null) continue;
@@ -164,6 +175,8 @@ class GameplayController {
                 switch(event.type) {
                     case GameEvent.TYPE_SPAWN:
                         applyEventSpawn(state, cast(event, GameEventSpawn));
+                    case GameEvent.TYPE_FLARE:
+                        applyEventFlare(state, cast(event, GameEventFlare));
                 }
             }
             state.gameEvents = [];
@@ -350,7 +363,19 @@ class GameplayController {
         vis.onEntityAdded(state, enemy);
         FFLog.recordEvent(2, enemy.position.x + ", " + enemy.position.y + ", " + state.time.total);
     }
-
+    public function applyEventFlare(state:GameState, e:GameEventFlare):Void {
+        disableEntity(state.player);
+        state.player = state.entities[state.flaredEntity];
+        enableEntity(state.player);
+        state.player.position.set(e.x, e.y + state.player.height * 0.5);
+        
+        // TODO: Make the GameUI set this up.
+        do {
+            state.flaredEntity++;
+            state.flaredEntity %= 5;
+        } while (state.entities[state.flaredEntity] == null);
+    }
+    
     // Damage events
     public function applyDamageBullet(state:GameState, bullet:DamageBullet, dt:Float):Bool {
         // Apply the raycast

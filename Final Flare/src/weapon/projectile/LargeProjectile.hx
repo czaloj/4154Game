@@ -9,7 +9,8 @@ import game.PhysicsController;
 
 class LargeProjectile extends Projectile {
     public var body:B2Body;
-    
+    public var timeLeft:Float;
+
     public function new(d:ProjectileData, e:Entity) {
         super(d, e);
     }
@@ -23,8 +24,16 @@ class LargeProjectile extends Projectile {
         phys.initLargeProjectile(this, position.x, position.y, velocity.x, velocity.y);
     }
     
+    public function updateTimedDeath(dt:Float, state:GameState):Void {
+        timeLeft -= dt;
+        killFlag = timeLeft < 0;
+    }
+    
     public function onHitDeath(state:GameState):Void {
         killFlag = true;
+    }
+    public function onHitStartTimer(state:GameState):Void {
+        fUpdate = updateTimedDeath;
     }
     
     public function updateFromBody(dt:Float, state:GameState):Void {

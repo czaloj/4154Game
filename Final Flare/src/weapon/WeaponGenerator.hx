@@ -66,7 +66,7 @@ class WeaponGenerator {
         }
         else {
             // Example flare gun
-            var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_LARGE);
+            var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_FLARE);
             pd.damage = 0;
             pd.damageFriendly = 0;
             pd.timer = 3.0;
