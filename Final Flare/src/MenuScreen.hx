@@ -6,6 +6,7 @@ import haxe.Unserializer;
 import openfl.events.Event;
 import flash.net.FileReference;
 import flash.utils.ByteArray;
+import weapon.WeaponData;
 import weapon.WeaponGenerator;
 import weapon.WeaponGenParams;
 import ui.Button;
@@ -20,17 +21,14 @@ import starling.text.TextField;
 
 
 class MenuScreen extends IGameScreen {
-    
     //Level select 
     private static var MAX_LEVEL:Int = 9;
     private var selectedLevel:Int = 0;
-    //private var squad:Array<Entity>;
     
     //Booleans for screen transitions
     private var play:Bool = false;
     private var tutorial:Bool = false;
     private var options:Bool = false;
-    
     
     //Buttons
     private var levelButtonArray:Array<Button> = new Array<Button>();
@@ -58,38 +56,30 @@ class MenuScreen extends IGameScreen {
     
     override public function onEntry(gameTime:GameTime):Void {
         initMainMenu();
-
         FFLog.recordMenuStart();
-
-        // Begin loading a file
-        // TODO: Fully remove soon?
-        var fileRef:FileReference = new FileReference();
-        fileRef.addEventListener(Event.SELECT, onFileBrowse);
-        //fileRef.browse();
         
         // TODO: This is so badly hardcoded
-        var mod:MenuLevelModifiers = new MenuLevelModifiers();
+        screenController.levelModifiers = new MenuLevelModifiers();
+        var initialWeapons:Array<WeaponData> = WeaponGenerator.generateInitialWeapons();
+        screenController.levelModifiers.characterWeapons = [
+            initialWeapons[0],
+            initialWeapons[1],
+            initialWeapons[0],
+            initialWeapons[1],
+            null, // For testing only
+            initialWeapons[2]
+        ];
         var weaponParams:WeaponGenParams = new WeaponGenParams();
         weaponParams.evolutionPoints = 100;
         weaponParams.shadynessPoints = 1;
         weaponParams.historicalPoints = 0;
-        mod.characterWeapons = [
-            WeaponGenerator.generate(weaponParams),
-            WeaponGenerator.generate(weaponParams),
-            WeaponGenerator.generate(weaponParams),
-            WeaponGenerator.generate(weaponParams),
-            null // For testing only
-        ];
-        mod.enemyWeapons = [
+        screenController.levelModifiers.enemyWeapons = [
             WeaponGenerator.generate(weaponParams),
             WeaponGenerator.generate(weaponParams),
             WeaponGenerator.generate(weaponParams),
             WeaponGenerator.generate(weaponParams),
             WeaponGenerator.generate(weaponParams),
         ];
-        weaponParams.shadynessPoints = 100;
-        mod.characterWeapons.push(WeaponGenerator.generate(weaponParams));
-        screenController.levelModifiers = mod;
     }
     
     override public function onExit(gameTime:GameTime):Void {
@@ -97,29 +87,11 @@ class MenuScreen extends IGameScreen {
     }
     
     override public function update(gameTime:GameTime):Void {
-        
+        // Empty
     }
         
     override public function draw(gameTime:GameTime):Void {
         // Empty
-    }
-    
-    // TODO: Remove startup load once menu is implemented
-    public function onFileBrowse(e:openfl.events.Event):Void {
-        var fileReference:FileReference = cast(e.target, FileReference);
-        fileReference.removeEventListener(Event.SELECT, onFileBrowse);
-        fileReference.addEventListener(Event.COMPLETE, onFileLoaded);
-
-        fileReference.load();
-    }
-    public function onFileLoaded(e:openfl.events.Event):Void {
-        var fileReference:FileReference = cast(e.target, FileReference);
-        fileReference.removeEventListener(Event.COMPLETE, onFileLoaded);
-
-        var data:ByteArray = fileReference.data;
-        screenController.loadedLevel = cast(Unserializer.run(data.toString()), GameLevel);
-
-        screenController.switchToScreen(2);
     }
     
     private function initMainMenu():Void {
