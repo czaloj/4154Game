@@ -64,7 +64,7 @@ class LevelEditorScreen extends IGameScreen {
     private var object_num = 0;
     private var objects:Array<Array<String>> = [["Clear Tile"],["Clear Tile"],["Clear Item"]];
     private var tiles:Array<Array<Int>> = [[],[]];
-    private var env_item:Array<Array<String>> = [[],[]];
+    private var env_item:Array<Array<String>> = [[],[],[]];
 
     private var TILE_SHEET_SET:Bool = false;
     private var TILE_CHILDREN_START:Int;
@@ -125,10 +125,15 @@ class LevelEditorScreen extends IGameScreen {
                     }
                 }
             } else {
-                // object editing
-                switch (object_num) {
-                case 0: level.playerPt = new Point(x,y);
-                case 1: level.spawners.push(new Spawner("Grunt",x,y));
+                // environment editing
+                switch (sub_editor_num) {
+                case 0: // entity placement
+                    switch (object_num) {
+                    case 0: level.playerPt = new Point(x,y);
+                    case 1: level.spawners.push(new Spawner("Grunt",x,y));
+                    }
+                case 1: // draw regions
+                case 2: // link regions
                 }
             }
         }
@@ -284,8 +289,8 @@ class LevelEditorScreen extends IGameScreen {
                 sub_editors[i].push("Objects");
             case 3:
                 sub_editors[i].push("Entity Placement");
-                sub_editors[i].push("Regions");
-                sub_editors[i].push("Region Connections")
+                sub_editors[i].push("Region Editor");
+                sub_editors[i].push("Region Links Editor");
             }
             NUM_SUBS.push(sub_editors[i].length);
         }
@@ -313,6 +318,7 @@ class LevelEditorScreen extends IGameScreen {
         env_item[0].push("Enemy 2 Spawn");
         env_item[0].push("Enemy 3 Spawn");
         env_item[1].push("Draw Region");
+        env_item[2].push("Walk Connection");
         env_item[2].push("Jump Connection");
 
         // Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
