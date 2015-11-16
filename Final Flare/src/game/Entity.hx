@@ -32,8 +32,12 @@ class Entity extends EntityBase {
     public var groundAcceleration:Float = 1.0;
     public var airAcceleration:Float = 1.0;
 	
+	//pathfinding
 	public var controlDefault:Bool = true;
 	public var yProblem:Float;
+	public var count:Int;
+	public var prevX:Float;
+	
 	
     // Other Logical information
     public var team:Int;

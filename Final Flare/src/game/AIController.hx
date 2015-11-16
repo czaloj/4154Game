@@ -37,25 +37,25 @@ class AIController {
         }
         entity.up = false;
         //if (entity.isGrounded) {
-			if(y < entity.yProblem -.05) {
+			if(y < entity.yProblem -.05) { //return controls to default
 					entity.controlDefault = true;
 				}
             if (y>target.y+.05) {
 				if (x < target.x+.05 && x > target.x -.05) {
 					entity.yProblem = y;
-					prevX = x;
-					count = 1;
+					entity.prevX = x;
+					entity.count = 1;
 					entity.direction = x<10? 1:-1;
 					entity.controlDefault = false;
 				}
 				
 				if(!(y < entity.yProblem -.05)) {
-					count++;
-					if (count % 7 == 0) {
-						if (prevX == x) {
+					entity.count++;
+					if (entity.count % 17 == 0) {
+						if (x==entity.prevX) {
 							entity.direction *= -1;	
 						}
-						prevX = x;
+						entity.prevX = x;
 					}
 					
 					
