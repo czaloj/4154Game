@@ -8,15 +8,6 @@ package;
 import starling.utils.Color;
 
 class Tile {
-    // private static inline var TWIDTH:Float = World.TILE_HALF_WIDTH;
-
-    // private static inline var RED:UInt = 0xFF0000;
-    // private static inline var BLUE:UInt = 0x000FFF;
-    // private static inline var GREEN:UInt = 0x008000;
-    // private static var RED_TILE:Quad = new Quad(TWIDTH,TWIDTH,RED);
-    // private static var BLUE_TILE:Quad = new Quad(TWIDTH,TWIDTH,BLUE,true);
-    // private static var GREEN_TILE:Quad = new Quad(TWIDTH,TWIDTH,GREEN,true);
-
     public static inline var NUM_TILES:Int = 27;
     
     public static inline var WHITE:Int = 0;
@@ -75,48 +66,4 @@ class Tile {
         0xfa508c,
         0x6b4801
     ];
-
-    // public var tile:Quad;
-    // public var id:Int;
-    
-    // public function new(tx,ty) {
-        // tile = new Quad(TWIDTH,TWIDTH,tiles[0]);
-        // id = WHITE;
-        // tile.x = Std.int(tx*TWIDTH);
-        // tile.y = Std.int(ty*TWIDTH);
-        // tile.visible = false;
-    // }
-
-    // public function IDTile(tileID:Int) {
-    //     id = tileID;
-    // }
-
-    // public function colorQuarterTile(tileID:Int):Tile {
-    //     tile.color = tiles[tileID];
-    //     id = tileID;
-    //     tile.visible = true;
-    //     return this;
-    // }
-
-    // public function colorFullTile(tileID:Int, map:TileMap):Tile {
-    //     colorQuarterTile(tileID);
-
-    //     return this;
-    // }
-
-    // public function clearQuarterTile() {
-    //     tile.visible = false;
-    //     id = WHITE;
-    // }
-
-    // public function clearFullTile(map:TileMap) {
-    //     clearQuarterTile();
-    // }
-
-    // // array order: top left, top right, bottom left, bottom right
-    // public function getCorners(map:TileMap):Array<Tile> {
-    //     var arr = [];
-    //     arr.push(this);
-    //     return null;
-    // }
 }

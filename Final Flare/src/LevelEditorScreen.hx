@@ -347,7 +347,6 @@ class LevelEditorScreen extends IGameScreen {
         } if (cameraMove[CAMRIGHT]) {
             cameraX = Math.min(MIN_LEVEL_WIDTH - cameraHalfWidth, cameraX += 2*TILE_HALF_WIDTH);
         }
-        // trace("(" + cameraX + "," + cameraY + ")");
     }
 
     override public function draw(gameTime:GameTime):Void {
@@ -367,7 +366,7 @@ class LevelEditorScreen extends IGameScreen {
                     if (jw >= cameraX - cameraHalfWidth && jw <= cameraX + cameraHalfWidth && id > 0) {
                         var js = jw - cameraX + cameraHalfWidth + BOX_WIDTH;
                         var is = iw - cameraY + cameraHalfHeight;
-                        screenController.addChild(map.drawTile(Std.int(js),Std.int(is),Tile.tiles[id]));
+                        screenController.addChild(map.drawTile(Std.int(js),Std.int(is),id));
                     }
                 }
             }
