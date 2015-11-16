@@ -1,6 +1,8 @@
 package graphics;
 
 import game.Entity;
+import starling.display.DisplayObject;
+import starling.display.Quad;
 import starling.display.Sprite;
 
 class EntitySprite extends Sprite {
@@ -10,6 +12,7 @@ class EntitySprite extends Sprite {
     
     public var data:EntityRenderData;
     public var headCenter:Sprite;
+    public var weaponCenter:Sprite;
     public var head:StaticSprite;
     public var bodyRest:AnimatedSprite;
     public var bodyRun:AnimatedSprite;
@@ -47,18 +50,27 @@ class EntitySprite extends Sprite {
         // Initial view
         headCenter = new Sprite();
         headCenter.addChild(head);
+        weaponCenter = new Sprite();
         pose = 0;
         addChild(bodyPoses[pose]);
         addChild(headCenter);
+        addChild(weaponCenter);
+
+        // Debugging
+        setWeapon(new Quad(1.0, 0.4));
     }
     
     public function switchTo(p:Int) {
         if (p != pose) {
             removeChild(bodyPoses[pose]);
             pose = p;
-            addChild(bodyPoses[pose]);
+            addChildAt(bodyPoses[pose], 0);
             bodyPoses[pose].reset();
         }
+    }
+    public function setWeapon(w:DisplayObject) {
+        weaponCenter.removeChildren();
+        weaponCenter.addChild(w);
     }
     
     public function recalculate(e:Entity) {
@@ -71,5 +83,9 @@ class EntitySprite extends Sprite {
         headCenter.y = e.headOffset.y;
         headCenter.rotation = e.headAngle;
         headCenter.scaleY = e.lookingDirection;
+        weaponCenter.x = e.weaponOffset.x * e.lookingDirection;
+        weaponCenter.y = e.weaponOffset.y;
+        weaponCenter.rotation = e.weaponAngle;
+        weaponCenter.scaleY = e.lookingDirection;
     }
 }
