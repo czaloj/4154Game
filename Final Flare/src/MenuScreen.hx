@@ -86,11 +86,7 @@ class MenuScreen extends IGameScreen {
     }
     
     override public function update(gameTime:GameTime):Void {
-        checkButtonStates();
-        if (play) { 
-            screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/test.lvl");
-            screenController.switchToScreen(2);
-        }
+        
     }
         
     override public function draw(gameTime:GameTime):Void {
@@ -197,15 +193,31 @@ class MenuScreen extends IGameScreen {
         screenController.addChild(nextButton);
         screenController.addChild(levelButton);
         screenController.addChild(menuButton);
+        
+        levelButton.bEvent.add(startLevel);
+        menuButton.bEvent.add(exitLevelSelect);
+        menuButton.bEvent.add(initMainMenu);
     }
     
+    private function changeLevel():Void {
+        
+    }
+    
+    
+    //TODO change to BroadcastEvent1 with a string argument for level
+    private function startLevel():Void {
+        screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/test.lvl");
+        screenController.switchToScreen(2);
+    }
+    
+    //Dead function 
     private function checkButtonStates():Void {
         
-        //if (playButton.clicked) { play = true; }
-        //else { play = false; }
-        //if (tutorialButton.clicked) { tutorial = true; }
-        //else { tutorial = false; }
-        //if (optionsButton.clicked = true) { options = true; }
-        //else { options = false; }        
+        if (playButton.clicked) { play = true; }
+        else { play = false; }
+        if (tutorialButton.clicked) { tutorial = true; }
+        else { tutorial = false; }
+        if (optionsButton.clicked = true) { options = true; }
+        else { options = false; }        
     }
 }
