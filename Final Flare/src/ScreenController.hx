@@ -5,6 +5,7 @@ import game.MenuLevelModifiers;
 import openfl.events.KeyboardEvent;
 import openfl.Lib;
 import openfl.ui.Keyboard;
+import sound.Composer;
 import starling.display.Sprite;
 import starling.events.Event;
 import ui.FontLoader;
@@ -64,8 +65,9 @@ class ScreenController extends Sprite {
         // Initialize logging
         FFLog.init(LOGGING_DEBUG_MODE);
         
-        // Load fonts
+        // Load persistent assets
         FontLoader.loadFonts();
+        Composer.loadTracks();
         
         // Create the screens
         for (screen in screens) screen.build();

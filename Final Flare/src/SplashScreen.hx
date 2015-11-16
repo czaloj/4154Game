@@ -1,6 +1,7 @@
 package;
 
 import lime.system.BackgroundWorker;
+import sound.Composer;
 import ui.Button;
 import ui.Button.ButtonTextFormat;
 import ui.UISpriteFactory;
@@ -30,6 +31,8 @@ class SplashScreen extends IGameScreen {
     
     override public function onEntry(gameTime:GameTime):Void {
         addStartButton();
+        
+        Composer.playMusicTrack("Menu");
     }
     
     override public function onExit(gameTime:GameTime):Void {
@@ -38,7 +41,7 @@ class SplashScreen extends IGameScreen {
     
     override public function update(gameTime:GameTime):Void {
         // Switch to the main menu
-        if (startButton.clicked) {
+        if (startButton.clicked && Composer.isLoadingComplete) {
             screenController.switchToScreen(1);
         }
     }
