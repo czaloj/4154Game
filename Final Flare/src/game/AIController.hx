@@ -20,12 +20,15 @@ class AIController {
         var target = state.player.position;
         var x:Float = entity.position.x;
         var y:Float = entity.position.y;
-		//var controlDefault:Bool = true;
-		if(entity.controlDefault){
+		if (y ==target.y)//< target.y+.05 && y > target.y-.05)
+		{
+			entity.controlDefault = true;
+		}
+		if(entity.controlDefault){ //simply looks for player. hopefully this is only true if player is on same level or a level that can be fallen to from current one
 			entity.direction = x > target.x ? -1 : 1;
 		}
 		
-		//entity.yProblem = 1000;
+		
 		var prevX:Float = x;
         var count:Int = 1;
 		
@@ -41,11 +44,11 @@ class AIController {
 					entity.controlDefault = true;
 				}
             if (y>target.y+.05) {
-				if (x < target.x+.05 && x > target.x -.05) {
+				if (x < target.x+.05 && x > target.x -.05 && entity.get_isGrounded()) {
 					entity.yProblem = y;
 					entity.prevX = x;
 					entity.count = 1;
-					entity.direction = x<10? 1:-1;
+					entity.direction = x<20? 1:-1;
 					entity.controlDefault = false;
 				}
 				
@@ -62,22 +65,40 @@ class AIController {
 				}
 				
             } 
-            else if (y < target.y) {
-                var displacement = x - findPlatformAbove(state,Std.int(x),Std.int(y));
+            if (y < target.y-.05) {
+				
+                var displacement = x - findPlatformAbove(state, Std.int(x), Std.int(y));
+				if(x < target.x+.05 && x > target.x -.05 ){
+					entity.direction = displacement < 0 ? -1:1;
+					entity.controlDefault = false;
+				
+				}
+				entity.count++;
+				if (entity.count % 17 == 0) {
+					if (x==entity.prevX) {
+							entity.direction *= -1;	
+						}
+						entity.prevX = x;
+					}
                 if (displacement == 0) {
+					entity.controlDefault = false;
                 } 
                 else if (displacement > 5) {
+					
+					return;
                 }
                 else if (displacement < -5) {
+					//entity.direction = -1;
+					return;
                 } 
                 else {
                     entity.up = true;
                 }
             } else {
-                if (state.foreground[Std.int(y*state.width + x + entity.direction)] > 0) {
+                if (state.foreground[Std.int(y*state.width + x + entity.direction)] > 0) { //confused what this even does
                 }
                 else {
-                    entity.up = true;
+                   // entity.up = true;
                 }
             }
         
@@ -90,7 +111,7 @@ class AIController {
         return 0; // ?
     }
 
-    public function findPlatformAbove(state:GameState, curx:Int, cury:Int):Int {
+    public function findPlatformAbove(state:GameState, curx:Int, cury:Int):Int { //what does this return
         var lastY = cury;
         var lowestY = -1;
         var closestX = -1;
