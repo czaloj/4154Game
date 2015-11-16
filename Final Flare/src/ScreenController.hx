@@ -44,7 +44,7 @@ class ScreenController extends Sprite {
             new GameplayScreen(this),
             new LevelEditorScreen(this)
         ];
-        activeScreen = screens[3];
+        activeScreen = screens[0];
         
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, function (e:KeyboardEvent):Void {
             switch (e.keyCode) {
