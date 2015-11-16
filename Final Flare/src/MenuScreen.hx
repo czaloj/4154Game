@@ -179,7 +179,7 @@ class MenuScreen extends IGameScreen {
         //TODO make custon btf for each button if necessary
         prevButton = uif.createButton(100, 35, "BACK", btf);
         nextButton = uif.createButton(100, 35, "NEXT", btf);
-        levelButton = uif.createButton(400, 200, "LEVEL 1", btf);
+        levelButton = uif.createButton(450, 225, "LEVEL " + (selectedLevel + 1), btf);
         menuButton = uif.createButton(100, 35, "MAIN MENU", btf);
         
         //Translations
