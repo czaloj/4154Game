@@ -219,6 +219,7 @@ class MenuScreen extends IGameScreen {
         screenController.removeChild(nextButton);
         screenController.removeChild(levelButton);
         screenController.removeChild(menuButton);
+        screenController.removeChild(confirmButton);
     }
     
     //Initialize the array of level buttons (one for each level)
