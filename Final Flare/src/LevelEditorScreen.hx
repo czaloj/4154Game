@@ -3,7 +3,6 @@ package;
 import game.GameLevel;
 // import game.GameState;
 import game.Spawner;
-import game.World;
 // import graphics.Renderer;
 // import graphics.RenderPack;
 import graphics.SpriteSheetRegistry;
@@ -19,6 +18,8 @@ import flash.net.FileReference;
 
 class LevelEditorScreen extends IGameScreen {
 
+    private static inline var TILE_HALF_WIDTH = 16;
+
     private static inline var BOX_WIDTH:Int = 100;
     private static inline var BOX_HEIGHT:Int = 20;
     private static inline var FONT_SIZE:Int = 12;
@@ -26,13 +27,17 @@ class LevelEditorScreen extends IGameScreen {
     private static var FONT_COLOR:UInt = Color.BLACK;
     private static var CLICK_COLOR:UInt = Color.BLUE;
 
-    private static inline var NUM_EDITORS:Int = 3;
+    private static inline var NUM_EDITORS:Int = 4;
     private static inline var PARENT_EDITOR:Int = 0;
     private static var NUM_SUBS:Array<Int> = [];
     private static inline var SUB_EDITOR:Int = 2;
     private static inline var START_INDEX:Int = 4;
 
     private static inline var CAMERA_WIDTH:Int = ScreenController.SCREEN_WIDTH - BOX_WIDTH;
+    private static var CAMUP = Keyboard.W;
+    private static var CAMLEFT = Keyboard.A;
+    private static var CAMDOWN = Keyboard.S;
+    private static var CAMRIGHT = Keyboard.D;
 
     public static var MIN_LEVEL_WIDTH:Int = 1600;
     public static var MIN_LEVEL_HEIGHT:Int = 900;
@@ -47,17 +52,20 @@ class LevelEditorScreen extends IGameScreen {
     private var cameraScale:Float;
     private var cameraHalfWidth:Float;
     private var cameraHalfHeight:Float;
+    private var cameraMove:Array<Bool> = [];
 
     private var options:Array<OptionBox> = [];
     private var editor_num = 0;
-    private var editors:Array<String> = ["Layer Editor","Background Editor","Foreground Editor"];
+    private var editors:Array<String> = ["Layer Editor","Background Editor","Foreground Editor","Environment Editor"];
     // private var numLayers:Int = 2; 
     private var sub_editor_num = 0;
-    private var sub_editors:Array<Array<String>> = [[],[],[]];
+    private var sub_editors:Array<Array<String>> = [[],[],[],[]];
     private var layer_item:Array<Array<String>> = [[],[]];
     private var object_num = 0;
     private var objects:Array<Array<String>> = [["Clear Tile"],["Clear Tile"],["Clear Item"]];
     private var tiles:Array<Array<Int>> = [[],[]];
+    private var env_item:Array<Array<String>> = [[],[],[]];
+
     private var TILE_SHEET_SET:Bool = false;
     private var TILE_CHILDREN_START:Int;
 
@@ -98,13 +106,12 @@ class LevelEditorScreen extends IGameScreen {
             case 1: map = backgroundMap;
             case 2: map = foregroundMap;
             }
-            var t:Tile = null;
-            var x = ((e.stageX - CAMERA_WIDTH / 2) / cameraScale + cameraX);
-            var y = (((ScreenController.SCREEN_HEIGHT - e.stageY) - ScreenController.SCREEN_HEIGHT / 2) / cameraScale + cameraY);
+            var x = (e.stageX - cameraHalfWidth - BOX_WIDTH + cameraX);
+            var y = (e.stageY - cameraHalfHeight + cameraY);
             if (map != null) {
                 // tile editing
-                var tx = Std.int(x/World.TILE_HALF_WIDTH);
-                var ty = Std.int(y/World.TILE_HALF_WIDTH);
+                var tx = Std.int(x/TILE_HALF_WIDTH);
+                var ty = Std.int(y/TILE_HALF_WIDTH);
                 if (object_num == 0) {
                     switch (sub_editor_num) {
                     case 0: map.clearQuarterTile(tx,ty);
@@ -118,10 +125,15 @@ class LevelEditorScreen extends IGameScreen {
                     }
                 }
             } else {
-                // object editing
-                switch (object_num) {
-                case 0: level.playerPt = new Point(x,y);
-                case 1: level.spawners.push(new Spawner("Grunt",x,y));
+                // environment editing
+                switch (sub_editor_num) {
+                case 0: // entity placement
+                    switch (object_num) {
+                    case 0: level.playerPt = new Point(x,y);
+                    case 1: level.spawners.push(new Spawner("Grunt",x,y));
+                    }
+                case 1: // draw regions
+                case 2: // link regions
                 }
             }
         }
@@ -203,8 +215,9 @@ class LevelEditorScreen extends IGameScreen {
     }
 
     private function onKeyDown(e:KeyboardEvent):Void {
-        switch (e.keyCode) {
-        case Keyboard.F8:
+        cameraMove[e.keyCode] = true;
+
+        if (e.keyCode == Keyboard.F8) {
             level.foreground = foregroundMap.tmap;
             level.background = backgroundMap.tmap;
             level.parallax = [];
@@ -215,35 +228,12 @@ class LevelEditorScreen extends IGameScreen {
                 }
             }
             LevelCreator.saveToFile(level);
-        case Keyboard.W:
-            cameraY = Math.max(0 + cameraHalfHeight, cameraY -= cameraScale);
-        case Keyboard.A:
-            cameraX = Math.max(0 + cameraHalfWidth, cameraX -= cameraScale);
-        case Keyboard.S:
-            cameraY = Math.min(MIN_LEVEL_HEIGHT - cameraHalfHeight, cameraY += cameraScale);
-        case Keyboard.D:
-            cameraX = Math.min(MIN_LEVEL_WIDTH - cameraHalfWidth, cameraX += cameraScale);
         }
     }
 
-// private function onMouseMove(e:MouseEvent):Void {
-    //     var levelWidth = state.width * World.TILE_HALF_WIDTH;
-    //     var levelHeight = state.height * World.TILE_HALF_WIDTH;
-    //     var curX = e.stageX/ScreenController.SCREEN_WIDTH;
-    //     var curY = e.stageY/ScreenController.SCREEN_HEIGHT;
-    //     var cameraHalfWidth = ScreenController.SCREEN_WIDTH / (2 * renderer.cameraScale);
-    //     var cameraHalfHeight = ScreenController.SCREEN_HEIGHT / (2 * renderer.cameraScale);
-    //     if (curX < ScreenController.SCREEN_WIDTH /(3*renderer.cameraScale)) {
-    //         renderer.cameraX = Math.max((0) + cameraHalfWidth, renderer.cameraX-=1);
-    //     } else if (curX > ScreenController.SCREEN_WIDTH*2 /(3*renderer.cameraScale)) {
-    //         renderer.cameraX = Math.min((levelWidth) - cameraHalfWidth, renderer.cameraX+=1);    
-    //     }
-    //     if (curX < ScreenController.SCREEN_HEIGHT /(3*renderer.cameraScale)) {
-    //         renderer.cameraY = Math.max((0) + cameraHalfHeight, renderer.cameraY-=1);
-    //     } else if (curX > ScreenController.SCREEN_HEIGHT*2 /(3*renderer.cameraScale)) {
-    //         renderer.cameraY = Math.min((levelHeight) - cameraHalfHeight, renderer.cameraY+=1);
-    //     }
-    // }
+    private function onKeyUp(e:KeyboardEvent):Void {
+        cameraMove[e.keyCode] = false;
+    }
 
     override public function build():Void {
         // Empty
@@ -259,8 +249,8 @@ class LevelEditorScreen extends IGameScreen {
 
         // set up level
         level = new game.GameLevel();
-        level.height = Std.int(MIN_LEVEL_HEIGHT/World.TILE_HALF_WIDTH);
-        level.width = Std.int(MIN_LEVEL_WIDTH/World.TILE_HALF_WIDTH);
+        level.height = Std.int(MIN_LEVEL_HEIGHT/TILE_HALF_WIDTH);
+        level.width = Std.int(MIN_LEVEL_WIDTH/TILE_HALF_WIDTH);
         level.environmentType = "Simple";
         level.environmentSprites = "assets/img/Factory.png";
         level.playerPt = new Point(0,0);
@@ -271,7 +261,7 @@ class LevelEditorScreen extends IGameScreen {
         // LevelCreator.createStateFromLevel(level, state);
 
         // set up camera
-        cameraScale = 32;
+        cameraScale = 1;
         cameraHalfWidth = CAMERA_WIDTH / (2*cameraScale);
         cameraHalfHeight = ScreenController.SCREEN_HEIGHT / (2*cameraScale);
         cameraX = cameraHalfWidth;
@@ -293,12 +283,14 @@ class LevelEditorScreen extends IGameScreen {
             switch i {
             case 0:
                 sub_editors[i].push("Parallax Editor");
-                sub_editors[i].push("Entity Editor");
-                // sub_editors[i].push("Tile Sheet");
-            default:
+            case 1,2:
                 sub_editors[i].push("Quarter Tiles");
                 sub_editors[i].push("Full Tiles");
                 sub_editors[i].push("Objects");
+            case 3:
+                sub_editors[i].push("Entity Placement");
+                sub_editors[i].push("Region Editor");
+                sub_editors[i].push("Region Links Editor");
             }
             NUM_SUBS.push(sub_editors[i].length);
         }
@@ -313,25 +305,27 @@ class LevelEditorScreen extends IGameScreen {
             }
         }
 
-        // for (i in 0...level.width) {
-        //     foregroundMap.setTileByIndex(i, foregroundMap.getTileByIndex(i).colorQuarterTile(tiles[0][0]));
-        // }
-        // for (i in 0...level.height) {
-        //     foregroundMap.setTileByCoords(0,i,foregroundMap.getTileByCoords(0,i).colorQuarterTile(tiles[0][0]));
-        //     foregroundMap.setTileByCoords(level.width-1,i,foregroundMap.getTileByCoords(level.width-1,i).colorQuarterTile(tiles[0][0]));
-        // }
+        for (i in 0...level.width) {
+            foregroundMap.setFullTileByIndex(i,tiles[1][0]);
+        }
+        for (i in 0...level.height-2) {
+            foregroundMap.setFullTile(0,2*i,tiles[1][0]);
+            foregroundMap.setFullTile(level.width-1,2*i,tiles[1][0]);
+        }
 
-        layer_item[1].push("Player Spawn");
-        layer_item[1].push("Grunt Spawn");
-        layer_item[1].push("Enemy 2 Spawn");
-        layer_item[1].push("Enemy 3 Spawn");
+        env_item[0].push("Player Spawn");
+        env_item[0].push("Grunt Spawn");
+        env_item[0].push("Enemy 2 Spawn");
+        env_item[0].push("Enemy 3 Spawn");
+        env_item[1].push("Draw Region");
+        env_item[2].push("Walk Connection");
+        env_item[2].push("Jump Connection");
 
         // Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
         Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
         Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-
     }
     override public function onExit(gameTime:GameTime):Void {
         // Empty
@@ -343,23 +337,36 @@ class LevelEditorScreen extends IGameScreen {
 
     override public function update(gameTime:GameTime):Void {
         updateOptions();
+        // update camera
+        if (cameraMove[CAMUP]) {
+            cameraY = Math.max(0 + cameraHalfHeight, cameraY -= TILE_HALF_WIDTH);
+        } if (cameraMove[CAMLEFT]) {
+            cameraX = Math.max(0 + cameraHalfWidth, cameraX -= TILE_HALF_WIDTH);
+        } if (cameraMove[CAMDOWN]) {
+            cameraY = Math.min(MIN_LEVEL_HEIGHT - cameraHalfHeight, cameraY += TILE_HALF_WIDTH);
+        } if (cameraMove[CAMRIGHT]) {
+            cameraX = Math.min(MIN_LEVEL_WIDTH - cameraHalfWidth, cameraX += TILE_HALF_WIDTH);
+        }
     }
 
     override public function draw(gameTime:GameTime):Void {
         // renderer.update(state);
         screenController.removeChildren(TILE_CHILDREN_START);
-        // drawTiles(backgroundMap);
-        // drawTiles(foregroundMap);
+        drawTiles(backgroundMap);
+        drawTiles(foregroundMap);
     }
 
     public function drawTiles(map:TileMap):Void {
         for (i in 0...map.height) {
-            var iw = i * World.TILE_HALF_WIDTH;
+            var iw = i * TILE_HALF_WIDTH;
             if (iw >= cameraY - cameraHalfHeight && iw <= cameraY + cameraHalfHeight) {
                 for (j in 0...map.width) {
-                    var jw = j * World.TILE_HALF_WIDTH;
-                    if (jw >= cameraX - cameraHalfWidth && jw <= cameraX + cameraHalfWidth) {
-                        // screenController.addChild(map.getTileByCoords(j,i).tile);
+                    var jw = j * TILE_HALF_WIDTH;
+                    var id = Std.int(Math.abs(map.getID(j,i)));
+                    if (jw >= cameraX - cameraHalfWidth && jw <= cameraX + cameraHalfWidth && id > 0) {
+                        var js = jw - cameraX + cameraHalfWidth + BOX_WIDTH;
+                        var is = iw - cameraY + cameraHalfHeight;
+                        screenController.addChild(map.drawTile(Std.int(js),Std.int(is),Tile.tiles[id]));
                     }
                 }
             }
@@ -394,6 +401,13 @@ class LevelEditorScreen extends IGameScreen {
             for (i in 0...objects[sub_editor_num].length) {
                 box = options[i+START_INDEX];
                 box.text = objects[sub_editor_num][i];
+                box.visible = true;
+            }
+        // Environment Editor
+        case 3:
+            for (i in 0...options.length-START_INDEX) {
+                box = options[i+START_INDEX];
+                box.text = env_item[sub_editor_num][i];
                 box.visible = true;
             }
         }

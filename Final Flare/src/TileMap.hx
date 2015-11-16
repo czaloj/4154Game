@@ -2,6 +2,8 @@ package;
 import starling.display.Quad;
 
 class TileMap {
+    private static inline var TILE_HALF_WIDTH = 16;
+
     public var tmap:Array<Int>;
     public var height:Int;
     public var width:Int;
@@ -26,6 +28,21 @@ class TileMap {
 
     public function getID(x:Int,y:Int):Int {
         return getIDByIndex(x + y*width);
+    }
+
+    public function drawTileByIndex(i:Int,tileID:Int):Quad {
+        var x = i % width;
+        var y = Std.int((i - x) / width);
+        return drawTile(x,y,tileID);
+    }
+
+    public function drawTile(x:Int,y:Int,tileID:Int):Quad {
+        var t = new Quad(TILE_HALF_WIDTH,TILE_HALF_WIDTH,Tile.tiles[tileID]);
+        //drawTileByIndex(x + y*width,tileID);
+        t.visible = true;
+        t.x = Std.int(x);//*World.TILE_HALF_WIDTH);
+        t.y = Std.int(y);//*World.TILE_HALF_WIDTH);
+        return t;
     }
 
     public function setIDByIndex(index:Int,t:Int):Void {

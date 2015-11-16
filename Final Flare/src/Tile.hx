@@ -1,14 +1,14 @@
 package;
 
-import game.World;
+// import game.World;
 // import graphics.Renderer;
 // import openfl.geom.Rectangle;
 // import openfl.display;
-import starling.display.Quad;
+// import starling.display.Quad;
 import starling.utils.Color;
 
 class Tile {
-    private static inline var TWIDTH:Float = World.TILE_HALF_WIDTH;
+    // private static inline var TWIDTH:Float = World.TILE_HALF_WIDTH;
 
     // private static inline var RED:UInt = 0xFF0000;
     // private static inline var BLUE:UInt = 0x000FFF;
