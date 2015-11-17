@@ -88,13 +88,34 @@ class GameplayController {
     private function enableEntity(e:Entity):Void {
         e.enabled = true;
         vis.onEntityAdded(state, e);
+        e.body.setActive(true);
     }
     private function disableEntity(e:Entity):Void {
         e.enabled = false;
         vis.onEntityRemoved(state, e);
+        e.body.setActive(false);
         e.position.set(-10, -10);
     }
-
+    private function onEnemyKilled(e:Entity):Void {
+        addScore(1, e.position.x, e.position.y);
+        addCombo(1.0);
+        disableEntity(e);
+        physicsController.onEntityRemoved(state, e);
+        state.entities.remove(e);
+    }
+    private function addCombo(v:Float):Void {
+        state.comboPercentComplete += v;
+        while (state.comboPercentComplete > 1.0) {
+            state.comboMultiplier += 1;
+            state.comboPercentComplete -= 1;
+            // TODO: Signal Game UI
+        }
+    }
+    private function addScore(v:Int, x:Float, y:Float):Void {
+        state.score += v * state.comboMultiplier;
+        // TODO: Signal Game UI
+    }
+    
     public function handleCollisions():Void {
         for (contact in state.contactList) {
             if (contact == null) continue;
@@ -222,9 +243,6 @@ class GameplayController {
         for (entity in state.entitiesNonNull) {
             if (entity.isDead) {
                 deletingEntities.push(entity);
-                if (entity.team == Entity.TEAM_ENEMY) {
-                    state.score++;
-                }
             }
         }
         for (p in state.projectiles) {
@@ -239,14 +257,12 @@ class GameplayController {
         // Destroy all dead things
         if (deletingEntities.length > 0) {
             for (entity in deletingEntities) {
-                vis.onEntityRemoved(state, entity);
-                physicsController.onEntityRemoved(state, entity);
-
-                // TODO: Make this work better
-                if (entity.team != Entity.TEAM_PLAYER) {
-                    state.entities.remove(entity);
+                if (entity.team == Entity.TEAM_PLAYER) {
+                    disableEntity(entity);
                 }
-
+                else {
+                    onEnemyKilled(entity);
+                }
             }
             deletingEntities = [];
         }

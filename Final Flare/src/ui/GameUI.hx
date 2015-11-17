@@ -8,13 +8,16 @@ import starling.display.Quad;
 import starling.display.Sprite;
 import starling.filters.ColorMatrixFilter;
 import starling.text.TextField;
+import starling.utils.HAlign;
+import starling.utils.VAlign;
 
 class GameUI extends Sprite {
     private var sheet:UISpriteFactory;
     
     // Internal tracking variables
-    private var health:Int;
-    private var maxHealth:Int = 100;
+    private var health:Float;
+    private var comboMeter:Float;
+    private var comboCount:Int;
     private var score:Int;
     private var flareCount:Int;
     private var flareTimer:Float;
@@ -30,6 +33,7 @@ class GameUI extends Sprite {
     private var combo:StaticSprite;
     private var comboBar:AnimatedSprite;
     private var comboBarMask:Quad;
+    private var comboCountText:TextField;
     private var points:StaticSprite;
     
     public function new(s:UISpriteFactory) {
@@ -75,11 +79,9 @@ class GameUI extends Sprite {
         scoreTextTransform.x = points.x + points.width * 0.5;
         scoreTextTransform.y = points.y + points.height * 0.5;
         addChild(scoreTextTransform);
-        scoreText = new TextField(60, 36, "----", "BitFont", 36, 0xffffff);
+        scoreText = new TextField(204, 72, "----", "BitFont", 72, 0xffffff);
         scoreText.x = -scoreText.width * 0.5;
         scoreText.y = -48;
-        scoreText.scaleX *= 2;
-        scoreText.scaleY *= 2;
         scoreTextTransform.addChild(scoreText);
         flareCountText = new TextField(40, 36, "----", "BitFont", 36, 0xffffff);
         flareCountText.x = 0;
@@ -89,6 +91,12 @@ class GameUI extends Sprite {
         flareTimerText.x = 60;
         flareTimerText.y = healthBack.height;
         addChild(flareTimerText);
+        comboCountText = new TextField(41, 36, "", "BitFont", 36, 0xffffff);
+        comboCountText.hAlign = HAlign.CENTER;
+        comboCountText.vAlign = VAlign.CENTER;
+        comboCountText.x = combo.x + 2;
+        comboCountText.y = combo.y - 10;
+        addChild(comboCountText);
         
         // Reset values
         health = 1;
@@ -99,21 +107,38 @@ class GameUI extends Sprite {
         setFlareCount(0);
         flareTimer = 1.0;
         setFlareTimer(0.0);
+        comboMeter = 1.0;
+        setComboMeter(0.5);
     }
     
-    public function setHealth(v:Int):Void {
-        if (health != v) {
-            health = v;
-            var damage:Float = (maxHealth - health) / maxHealth;
-            healthBar.color = Std.int(255 * (damage)) << 16 | Std.int(255 * (1 - damage)) << 8 | 102;
-            healthBar.x = 20 - (201 * damage);
+    public function setHealth(r:Float):Void {
+        if (health != r) {
+            health = r;
+            healthBar.color = Std.int(255 * (1 - r)) << 16 | Std.int(255 * r) << 8 | 102;
+            healthBar.x = 20 - (healthBar.width * (1 - r));
+        }
+    }
+    public function setComboMeter(r:Float):Void {
+        if (comboMeter != r) {
+            comboMeter = r;
+            comboBar.color = (Std.int(100 * r) + 155) | 0xcccc00;
+            comboBar.x = (combo.x + 54) - (comboBar.width * (1 - r));
+        }
+    }
+    public function setComboCount(v:Int):Void {
+        if (comboCount != v) {
+            comboCount = v;
+            comboCountText.text = Std.string(comboCount);
+            var r:Float = Math.min(1, comboCount / 12);
+            var g:Float = Math.max(0, (12 - comboCount) / 12);
+            comboCountText.color = Std.int(255 * r) << 16 | Std.int(255 * g) << 8 | 0x000060;
+            combo.color = Std.int(120 * r) << 16 | Std.int(120 * g) << 8 | 0x000060;
         }
     }
     public function setScore(v:Int):Void {
         if (score != v) {
             score = v;
             scoreText.text = Std.string(score);
-            scoreText.x = -scoreText.width * 0.5;
         }
     }
     public function setFlareCount(v:Int):Void {
@@ -160,9 +185,11 @@ class GameUI extends Sprite {
     }
     
     public function update(state:GameState, dt:Float) {
-        setHealth(state.player.health);
+        setHealth(state.player.health / 100.0);
         setScore(state.score);
         setFlareCount(state.flares);
         setFlareTimer(state.flareCountdown);
+        setComboCount(state.comboMultiplier);
+        setComboMeter(state.comboPercentComplete);
     }
 }

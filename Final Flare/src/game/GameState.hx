@@ -110,7 +110,6 @@ class GameState {
     
     // Scoring information
     public var score:Int = 0;
-    public var comboPoints:Float = 0.0; // Amount of combo points to be used for various purposes
     public var comboMultiplier:Int = 1; // How much score is multiplied before being applied to the total score
     public var comboPercentComplete:Float = 0.0; // Ratio of how many points left until the next combo level (0-1)
     
