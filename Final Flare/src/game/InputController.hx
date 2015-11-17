@@ -70,7 +70,7 @@ class InputController {
         if (viewShootCooldown > 0.0) viewShootCooldown -= dt;
         
         // Keyboard and mouse targeting logic
-        if (keysDown[keyShootLeft]) {
+        if (FFLog.testID == 0 && keysDown[keyShootLeft]) {
             // Target towards the left
             state.player.targetX = state.player.position.x - VIEW_LOOKAHEAD;
             state.player.targetY = state.player.position.y;
@@ -82,7 +82,7 @@ class InputController {
             usingMouseInput = false;
             click = false;
         }
-        else if (keysDown[keyShootRight]) {
+        else if (FFLog.testID == 0 && keysDown[keyShootRight]) {
             // Target towards the right
             state.player.targetX = state.player.position.x + VIEW_LOOKAHEAD;
             state.player.targetY = state.player.position.y;
@@ -94,7 +94,7 @@ class InputController {
             usingMouseInput = false;
             click = false;
         }
-        else if (click || usingMouseInput) {
+        else if (FFLog.testID == 1 && (click || usingMouseInput)) {
             // Look towards the mouse
             state.player.targetX = (x - ScreenController.SCREEN_WIDTH / 2) / camScale + camX;
             state.player.targetY = ((ScreenController.SCREEN_HEIGHT - y) - ScreenController.SCREEN_HEIGHT / 2) / camScale + camY;
