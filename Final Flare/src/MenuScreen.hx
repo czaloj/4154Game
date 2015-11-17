@@ -494,8 +494,6 @@ class MenuScreen extends IGameScreen {
                 numSelected--;
                 
             case 2:
-                trace(numSelected);
-                trace(i);
                 var x2 = secondSelectedSprite.bounds.x;
                 var y2 = secondSelectedSprite.bounds.y;
                 secondSelectedSprite.transformationMatrix.translate( -x2, -y2);
