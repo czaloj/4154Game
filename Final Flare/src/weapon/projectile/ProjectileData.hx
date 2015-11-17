@@ -8,7 +8,7 @@ import openfl.geom.Point;
 class ProjectileChildData {
     public var offset:Matrix;
     public var data:ProjectileData;
-    
+
     public function new() {
         // Empty
     }
@@ -18,16 +18,16 @@ class ProjectileData {
     public static inline var TYPE_BULLET = 1;
     public static inline var TYPE_LARGE = 2;
     public static inline var TYPE_FLARE = 3;
-    
+    public static inline var TYPE_MELEE = 4;
     // The projectiles that this one can spawn either after X time, X collisions, or some other predication
     public var children:Array<ProjectileChildData> = [];
-    
+
     public var constructionType:Int = TYPE_BULLET;
-    
+
     public var damage:Int = 1;
     public var damageFriendly:Int = 1;
     public var hitFriendly:Bool = false;
-    
+
     // Bullet information
     public var penetrationCount:Int = -1; // -1 For single penetration, 0 for full penetration, N >= 1 for N penetrations
     public var gravityAcceleration:Float = 0.0;
@@ -39,10 +39,10 @@ class ProjectileData {
 
     // Explosive information
     public var explosiveRadius:Float;
-    
+
     // Melee information
     public var damageShape:B2Shape;
-    
+
     public function new(t:Int) {
         constructionType = t;
     }
@@ -52,6 +52,7 @@ class ProjectileData {
             case TYPE_BULLET: new BulletProjectile(this, source);
             case TYPE_LARGE: new LargeProjectile(this, source);
             case TYPE_FLARE: new FlareProjectile(this, source);
+            case TYPE_MELEE: new MeleeProjectile(this, source);
             case _: null;
         });
         projectile.buildBehavior();
