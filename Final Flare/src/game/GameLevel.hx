@@ -9,6 +9,7 @@ class GameLevel {
     // 2D array starting from upper left, coordinate (x,y) translate to index x + y * width in the array
     public var foreground:Array<Int>; // Array of identifiers for foreground tiles
     public var background:Array<Int>; // Array of identifiers for background tiles
+    public var regions:Array<Int>;
 
     public var spawners:Array<Spawner>; // List of spawn points for enemies
     public var playerPt:Point; // Initial spawn point for the player
