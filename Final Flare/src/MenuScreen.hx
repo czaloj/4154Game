@@ -80,6 +80,8 @@ class MenuScreen extends IGameScreen {
     }
     
     override public function onEntry(gameTime:GameTime):Void {
+        screenController.playerData = new PlayerData("Player"); // TODO: Allow others to play?
+        
         initMainMenu();
         FFLog.recordMenuStart();
         
