@@ -80,7 +80,7 @@ class WeaponGenerator {
         } else {
             // Example melee
             var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_MELEE);
-            pd.damage = 25;
+            pd.damage = 10;
             pd.damageFriendly = 0;
             data.projectileOrigins[0].projectileData = pd;
             data.projectileOrigins[0].velocity = 0;

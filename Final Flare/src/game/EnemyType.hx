@@ -36,9 +36,9 @@ class EnemyType
                 //headOffset
                 new B2Vec2(0, 0.6),
                 //maxMoveSpeed
-                7,
+                6,
                 //groundAcceleration
-                0.9,
+                0.8,
                 //airAcceleration
                 0.3);
             case "Shooter": new game.EnemyType(
@@ -66,9 +66,9 @@ class EnemyType
                 //headOffset
                 new B2Vec2(0, 0.6),
                 //maxMoveSpeed
-                7,
+                5,
                 //groundAcceleration
-                0.9,
+                0.6,
                 //airAcceleration
                 0.3);
             default: throw 'unknown enemy type!';
