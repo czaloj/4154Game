@@ -22,9 +22,6 @@ import starling.text.TextField;
 
 
 class MenuScreen extends IGameScreen {
-    //Background
-    private var backGround:Sprite;
-    
     //Level select 
     private static var MAX_LEVEL:Int = 9;
     private var selectedLevel:Int = 0;
@@ -65,7 +62,6 @@ class MenuScreen extends IGameScreen {
     }
     
     override public function onEntry(gameTime:GameTime):Void {
-        addBackground();
         initMainMenu();
         FFLog.recordMenuStart();
         
@@ -94,7 +90,6 @@ class MenuScreen extends IGameScreen {
     }
     
     override public function onExit(gameTime:GameTime):Void {
-        screenController.removeChild(backGround);
         FFLog.recordMenuEnd();
     }
     
@@ -104,12 +99,6 @@ class MenuScreen extends IGameScreen {
         
     override public function draw(gameTime:GameTime):Void {
         // Empty
-    }
-    
-    private function addBackground() {
-        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/TitleScreen.png")));
-        backGround = uif.createBackgroundSprite();
-        screenController.addChild(backGround);
     }
     
     private function initMainMenu():Void {

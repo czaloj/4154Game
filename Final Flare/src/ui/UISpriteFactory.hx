@@ -158,12 +158,6 @@ class UISpriteFactory {
         return checkbox;
     }
 
-    public function createBackgroundSprite():Sprite {
-        var bg = new Sprite();
-        addChildSprite("Background", bg, 0, 0);
-        return bg;
-    }
-    
     public function addChildSprite(region:String, parent:Sprite, x:Float, y:Float) {
         addScaledChildSprite(region, parent, x, y, 1, 1);
     }
