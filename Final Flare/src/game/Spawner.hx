@@ -38,7 +38,8 @@ class Spawner {
         e.id = type;
         e.team = Entity.TEAM_PLAYER;
         e.health = 100;
-        e.damageTimer = GameplayController.INVINCIBILITY_TIME;
+        e.invincibilityAfterHit = 0.5;
+        e.damageTimer = e.invincibilityAfterHit;
 
         // Physical parameters
         e.position.set(x, y);
@@ -64,8 +65,9 @@ class Spawner {
         var enemyInfo = EnemyType.make(type);
         e.id = type;
         e.team = Entity.TEAM_ENEMY;
-        e.health =enemyInfo.health;
-        e.damageTimer = GameplayController.INVINCIBILITY_TIME;
+        e.health = enemyInfo.health;
+        e.invincibilityAfterHit = 0.0;
+        e.damageTimer = e.invincibilityAfterHit;
 
         // Physical parameters
         e.position.set(x, y);

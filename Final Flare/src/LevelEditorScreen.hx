@@ -106,12 +106,12 @@ class LevelEditorScreen extends IGameScreen {
             case 1: map = backgroundMap;
             case 2: map = foregroundMap;
             }
-            var x = (e.stageX - cameraHalfWidth - BOX_WIDTH + cameraX);
-            var y = (e.stageY - cameraHalfHeight + cameraY);
+            var x = (e.stageX - cameraHalfWidth - BOX_WIDTH + cameraX)/TILE_HALF_WIDTH;
+            var y = (e.stageY - cameraHalfHeight + cameraY)/TILE_HALF_WIDTH;
             if (map != null) {
                 // tile editing
-                var tx = Std.int(x/TILE_HALF_WIDTH);
-                var ty = Std.int(y/TILE_HALF_WIDTH);
+                var tx = Std.int(x);//TILE_HALF_WIDTH);
+                var ty = Std.int(y);//TILE_HALF_WIDTH);
                 if (object_num == 0) {
                     switch (sub_editor_num) {
                     case 0: map.clearQuarterTile(tx,ty);
@@ -131,6 +131,8 @@ class LevelEditorScreen extends IGameScreen {
                     switch (object_num) {
                     case 0: level.playerPt = new Point(x,y);
                     case 1: level.spawners.push(new Spawner("Grunt",x,y));
+                    case 2: level.spawners.push(new Spawner("Shooter",x,y));
+                    case 3: level.spawners.push(new Spawner("Tank",x,y));
                     }
                 case 1: // draw regions
                 case 2: // link regions
@@ -192,9 +194,9 @@ class LevelEditorScreen extends IGameScreen {
         fileReference.removeEventListener(Event.COMPLETE, onFileLoaded);
 
         TILE_SHEET_SET = true;
-        level.environmentSprites = fileReference.name;
         var type = fileReference.name.split("/");
         level.environmentType = type[type.length-1].split(".")[0];
+        level.environmentSprites = "assets/img/" + level.environmentType + ".png";
     }
 
     private function onFileBrowse(e:Event):Void {
@@ -224,10 +226,23 @@ class LevelEditorScreen extends IGameScreen {
             for (i in 0...layer_item[0].length) {
                 var item = layer_item[0][i];
                 if (item != "Add Layer") {
-                    level.parallax.push(item);
+                    level.parallax.push("assets/img/" + item);
                 }
             }
             LevelCreator.saveToFile(level);
+        } else if (e.keyCode == Keyboard.F7) {
+            level.foreground = foregroundMap.tmap;
+            level.background = backgroundMap.tmap;
+            level.parallax = [];
+            for (i in 0...layer_item[0].length) {
+                var item = layer_item[0][i];
+                if (item != "Add Layer") {
+                    level.parallax.push("assets/img/" + item);
+                }
+            }
+            screenController.removeChildren();
+            screenController.loadedLevel = level;
+            screenController.switchToScreen(2);
         }
     }
 
@@ -307,21 +322,24 @@ class LevelEditorScreen extends IGameScreen {
 
         for (i in 0...level.width) {
             foregroundMap.setFullTileByIndex(i,tiles[1][0]);
+            foregroundMap.setFullTile(i,level.height-2,tiles[1][0]);
         }
         for (i in 0...level.height-2) {
             foregroundMap.setFullTile(0,2*i,tiles[1][0]);
-            foregroundMap.setFullTile(level.width-1,2*i,tiles[1][0]);
+            foregroundMap.setFullTile(level.width-2,2*i,tiles[1][0]);
         }
 
         env_item[0].push("Player Spawn");
         env_item[0].push("Grunt Spawn");
-        env_item[0].push("Enemy 2 Spawn");
-        env_item[0].push("Enemy 3 Spawn");
+        env_item[0].push("Shooter Spawn");
+        env_item[0].push("Tank Spawn");
+        env_item[0].push("Remove Enemy Spawn");
+        env_item[1].push("Remove Region");
         env_item[1].push("Draw Region");
+        env_item[2].push("Remove Connection");
         env_item[2].push("Walk Connection");
         env_item[2].push("Jump Connection");
 
-        // Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
         Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
         Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 
@@ -354,6 +372,7 @@ class LevelEditorScreen extends IGameScreen {
         screenController.removeChildren(TILE_CHILDREN_START);
         drawTiles(backgroundMap);
         drawTiles(foregroundMap);
+
     }
 
     public function drawTiles(map:TileMap):Void {

@@ -69,7 +69,7 @@ class UISpriteFactory {
             //new StripRegion("Health.BarMain", , , , , , 1, 6),
             //new StripRegion("Health.BarTip", , , , , , 1, 6),
             new TileRegion("Health.Background", 794, 0, 230, 30),
-            new TileRegion("Health.Overlay",794, 30, 201, 22),
+            new StripRegion("Health.Overlay",823, 30, 201, 22, 8, 1, 8),
             //new TileRegion("Flare", , , , ),
             //new TileRegion("Points", , , , ),
             //new TileRegion("Combo", , , , ),

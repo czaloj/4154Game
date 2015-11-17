@@ -446,7 +446,7 @@ class GameplayController {
         if (e.enabled && e.canBeDamaged) {
             var damage:Int = d.damageFor((e.team == Entity.TEAM_PLAYER) ? DamageDealer.TEAM_PLAYER : DamageDealer.TEAM_ENEMY);
             e.health -= damage;
-            e.damageTimer = INVINCIBILITY_TIME;
+            e.damageTimer = e.invincibilityAfterHit;
             // TODO: Record damage?
 
             // TODO: Causes of death
