@@ -37,22 +37,28 @@ class InputController {
 
     // Raw input event handlers
     public function keyDown(e:KeyboardEvent):Void {
-        keysDown[e.keyCode] = true;
+        if (FFLog.testID == 0) { 
+            keysDown[e.keyCode] = true;
+        }
     }
     public function keyUp(e:KeyboardEvent):Void {
         keysDown[e.keyCode] = false;
     }
     public function mouseDown(e:MouseEvent):Void {
-        click = true;
-        x = e.stageX;
-        y = e.stageY;
-        usingMouseInput = true;
+        if (FFLog.testID == 1) {
+            click = true;
+            x = e.stageX;
+            y = e.stageY;
+            usingMouseInput = true;
+        }
     }
     public function mouseMove(e:MouseEvent):Void {
-        x = e.stageX;
-        y = e.stageY;
-        usingMouseInput = true;
-        viewShootCooldown = VIEW_LOOK_TIME;
+        if (FFLog.testID == 1) {
+            x = e.stageX;
+            y = e.stageY;
+            usingMouseInput = true;
+            viewShootCooldown = VIEW_LOOK_TIME;
+        }
     }
     public function mouseUp(e:MouseEvent):Void {
         click = false;
@@ -70,7 +76,7 @@ class InputController {
         if (viewShootCooldown > 0.0) viewShootCooldown -= dt;
         
         // Keyboard and mouse targeting logic
-        if (FFLog.testID == 0 && keysDown[keyShootLeft]) {
+        if (keysDown[keyShootLeft]) {
             // Target towards the left
             state.player.targetX = state.player.position.x - VIEW_LOOKAHEAD;
             state.player.targetY = state.player.position.y;
@@ -82,7 +88,7 @@ class InputController {
             usingMouseInput = false;
             click = false;
         }
-        else if (FFLog.testID == 0 && keysDown[keyShootRight]) {
+        else if (keysDown[keyShootRight]) {
             // Target towards the right
             state.player.targetX = state.player.position.x + VIEW_LOOKAHEAD;
             state.player.targetY = state.player.position.y;
@@ -94,7 +100,7 @@ class InputController {
             usingMouseInput = false;
             click = false;
         }
-        else if (FFLog.testID == 1 && (click || usingMouseInput)) {
+        else if (click || usingMouseInput) {
             // Look towards the mouse
             state.player.targetX = (x - ScreenController.SCREEN_WIDTH / 2) / camScale + camX;
             state.player.targetY = ((ScreenController.SCREEN_HEIGHT - y) - ScreenController.SCREEN_HEIGHT / 2) / camScale + camY;

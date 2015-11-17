@@ -69,7 +69,7 @@ class MenuScreen extends IGameScreen {
     private var charWeaponSprite3:Sprite;
     private var charWeaponSprite4:Sprite;
     private var charWeaponSprite5:Sprite;
-    
+    private var charButtonArray:Array<Button>;    
     private var firstSelectedSprite:Sprite;
     private var secondSelectedSprite:Sprite;
     private var thirdSelectedSprite:Sprite;
@@ -89,8 +89,6 @@ class MenuScreen extends IGameScreen {
     }
 
     override public function onEntry(gameTime:GameTime):Void {
-        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/testBack.png")));
-        screenController.addChild(backGround);
         screenController.playerData = new PlayerData("Player"); // TODO: Allow others to play?
 
         
@@ -138,6 +136,9 @@ class MenuScreen extends IGameScreen {
     }
 
     private function initMainMenu():Void {
+        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/TitleScreen.png")));
+        screenController.addChild(backGround);
+        
         //Create button from UISpriteFactory
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
 
@@ -197,6 +198,9 @@ class MenuScreen extends IGameScreen {
 
     private function initLevelSelect():Void
     {
+        screenController.removeChild(backGround);
+        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/testBack.png")));
+        screenController.addChild(backGround);
 
         //Remove existing buttons
         exitMainMenu();
@@ -356,9 +360,39 @@ class MenuScreen extends IGameScreen {
         screenController.addChild(nextWeaponButton4);
         screenController.addChild(nextWeaponButton5);
         screenController.addChild(confirmButton);
+        
+        firstSelectedSprite = new Sprite();
+        var tf1:TextField = new TextField(30, 30, "1", "Verdana", 20, 0xFFFFFF, true);
+        tf1.hAlign = HAlign.CENTER;
+        tf1.vAlign = VAlign.CENTER;
+        firstSelectedSprite.addChild(tf1);
+        
+        secondSelectedSprite = new Sprite();
+        var tf2:TextField = new TextField(30, 30, "2", "Verdana", 20, 0xFFFFFF, true);
+        tf2.hAlign = HAlign.CENTER;
+        tf2.vAlign = VAlign.CENTER;
+        secondSelectedSprite.addChild(tf2);
+        
+        thirdSelectedSprite = new Sprite();
+        var tf3:TextField = new TextField(30, 30, "3", "Verdana", 20, 0xFFFFFF, true);
+        tf3.hAlign = HAlign.CENTER;
+        tf3.vAlign = VAlign.CENTER;
+        thirdSelectedSprite.addChild(tf3);
+        
+        charButtonArray = new Array<Button>();
+        charButtonArray.push(charButton1);
+        charButtonArray.push(charButton2);
+        charButtonArray.push(charButton3);
+        charButtonArray.push(charButton4);
+        charButtonArray.push(charButton5);
 
         //Add button functions        
         confirmButton.bEvent.add(startLevel);
+        charButton1.bEvent1.add(selectChar);
+        charButton2.bEvent1.add(selectChar);
+        charButton3.bEvent1.add(selectChar);
+        charButton4.bEvent1.add(selectChar);
+        charButton5.bEvent1.add(selectChar);
     }
 
     //Initialize the array of level buttons (one for each level)
@@ -403,6 +437,47 @@ class MenuScreen extends IGameScreen {
             default:
         }
     }
+    
+    private function selectChar(b:Button) {
+        numSelected++;
+        if (numSelected > 4) { numSelected = 4; }
+        switch numSelected {
+            case 1:
+                firstSelectedSprite.transformationMatrix.translate(b.bounds.x + b.width/2 - 15, b.bounds.y - 35);
+                screenController.addChild(firstSelectedSprite);
+                b.customData = 1;
+            case 2:
+                secondSelectedSprite.transformationMatrix.translate(b.bounds.x + b.width/2 - 15, b.bounds.y - 35);
+                screenController.addChild(secondSelectedSprite);
+                b.customData = 2;
+            case 3:
+                thirdSelectedSprite.transformationMatrix.translate(b.bounds.x + b.width/2 - 15, b.bounds.y - 30);
+                screenController.addChild(thirdSelectedSprite);
+                b.customData = 3;
+            default:
+        }
+        
+        if (numSelected == 3) {
+            var b = 0;
+            while (b < charButtonArray.length) {
+                if (charButtonArray[b].clicked = false) { charButtonArray[b].enabled = false; }
+                b++;
+            }
+        }
+        
+        
+    }
+    
+    /*
+     * private function adjustSelected() {
+        case 4:
+        trace("3");
+        //loop over buttons, if button clicked is third button
+            //remove third number
+            //shift other 2
+            //enable other buttons
+        }
+    */
 
     //Dead function
     private function checkButtonStates():Void {
