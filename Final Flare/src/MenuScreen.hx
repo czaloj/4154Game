@@ -23,17 +23,17 @@ import starling.text.TextField;
 
 
 class MenuScreen extends IGameScreen {
-    //Level select 
+    //Level select
     private static var MAX_LEVEL:Int = 0;
     private var selectedLevel:Int = 0;
-    
+
     //Booleans for screen transitions
     private var backGround:Image;  //Background
     
     private var play:Bool = false;
     private var tutorial:Bool = false;
     private var options:Bool = false;
-    
+
     //Buttons
     private var levelButtonArray:Array<Button> = new Array<Button>();
     private var playButton:Button;
@@ -46,7 +46,7 @@ class MenuScreen extends IGameScreen {
     private var levelButton:Button;
     private var menuButton:Button;
     private var confirmButton:Button;
-    
+
     //Squad select pane
     //There will be many buttons and sprites
     private var charButton1:Button;
@@ -76,26 +76,27 @@ class MenuScreen extends IGameScreen {
     
     //Weapon select stuff
     private var numSelected:Int = 0;
-    
+
     public function new(sc:ScreenController) {
         super(sc);
     }
-    
+
     override public function build():Void {
         // Empty
     }
     override public function destroy():Void {
         // Empty
     }
-    
+
     override public function onEntry(gameTime:GameTime):Void {
         backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/testBack.png")));
         screenController.addChild(backGround);
-        
+        screenController.playerData = new PlayerData("Player"); // TODO: Allow others to play?
+
         
         initMainMenu();
         FFLog.recordMenuStart();
-        
+
         // TODO: This is so badly hardcoded
         screenController.levelModifiers = new MenuLevelModifiers();
         var initialWeapons:Array<WeaponData> = WeaponGenerator.generateInitialWeapons();
@@ -111,41 +112,44 @@ class MenuScreen extends IGameScreen {
         weaponParams.evolutionPoints = 100;
         weaponParams.shadynessPoints = 0;
         weaponParams.historicalPoints = 0;
-        screenController.levelModifiers.enemyWeapons = [
-            WeaponGenerator.generate(weaponParams),
-            WeaponGenerator.generate(weaponParams),
-            WeaponGenerator.generate(weaponParams),
-            WeaponGenerator.generate(weaponParams),
-            WeaponGenerator.generate(weaponParams),
-        ];
+        //bullet
+        screenController.levelModifiers.enemyWeapons = [WeaponGenerator.generate(weaponParams)];
+        //explosion
+        weaponParams.shadynessPoints = 1;
+        screenController.levelModifiers.enemyWeapons.push(WeaponGenerator.generate(weaponParams));
+        //melee
+        weaponParams.shadynessPoints = 3;
+        screenController.levelModifiers.enemyWeapons.push(WeaponGenerator.generate(weaponParams));
+        screenController.levelModifiers.enemyWeapons.push(WeaponGenerator.generate(weaponParams));
+        screenController.levelModifiers.enemyWeapons.push(WeaponGenerator.generate(weaponParams));
     }
-    
+
     override public function onExit(gameTime:GameTime):Void {
         screenController.removeChild(backGround);
         FFLog.recordMenuEnd();
     }
-    
+
     override public function update(gameTime:GameTime):Void {
         // Empty
     }
-        
+
     override public function draw(gameTime:GameTime):Void {
         // Empty
     }
-    
+
     private function initMainMenu():Void {
         //Create button from UISpriteFactory
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
-        
+
         //Set up formatting stuff
         var btf:ButtonTextFormat = {
             tx:150,
             ty:50,
-            font:"Verdana", 
-            size:20, 
-            color:0x0, 
-            bold:false, 
-            hAlign:HAlign.CENTER, 
+            font:"Verdana",
+            size:20,
+            color:0x0,
+            bold:false,
+            hAlign:HAlign.CENTER,
             vAlign:VAlign.CENTER
         };
 
@@ -154,26 +158,26 @@ class MenuScreen extends IGameScreen {
         tutorialButton = uif.createButton(150, 50, "TUTORIAL", btf, false);
         shopButton = uif.createButton(150, 50, "SHOP", btf, false);
         levelEditorButton = uif.createButton(150, 50, "LEVEL EDITOR", btf, false);
-        
+
         //Vertical Layout
         //playButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 60);
         //tutorialButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 70 + tutorialButton.height);
         //loadoutButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 80 + 2 * shopButton.height);
         //shopButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 90 + 3 * shopButton.height);
         //levelEditorButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 100 + 4 * shopButton.height);
-        
+
         //Horizontal Layout
         playButton.transformationMatrix.translate(28, 410 - playButton.height);
         tutorialButton.transformationMatrix.translate(56 + tutorialButton.width, 410 - playButton.height);
         shopButton.transformationMatrix.translate(84 + 2* shopButton.width, 410 - playButton.height);
         levelEditorButton.transformationMatrix.translate(112 + 3 * levelEditorButton.width, 410 - playButton.height);
-        
+
         //Add buttons to screen
         screenController.addChild(playButton);
         screenController.addChild(tutorialButton);
         screenController.addChild(shopButton);
         screenController.addChild(levelEditorButton);
-        
+
         //Add button functions
         playButton.bEvent.add(initLevelSelect);
         levelEditorButton.bEvent.add(function():Void {
@@ -183,58 +187,58 @@ class MenuScreen extends IGameScreen {
             screenController.switchToScreen(3);
         });
     }
-    
+
     private function exitMainMenu():Void {
         screenController.removeChild(playButton);
         screenController.removeChild(tutorialButton);
         screenController.removeChild(shopButton);
         screenController.removeChild(levelEditorButton);
     }
-    
-    private function initLevelSelect():Void 
+
+    private function initLevelSelect():Void
     {
-        
+
         //Remove existing buttons
         exitMainMenu();
         selectedLevel = 0;
-        
+
         //Create button from UISpriteFactory
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
-        
+
         //Set up formatting stuff
         var btf:ButtonTextFormat = {
             tx:100,
             ty:35,
-            font:"Verdana", 
-            size:20, 
-            color:0x0, 
-            bold:false, 
-            hAlign:HAlign.CENTER, 
+            font:"Verdana",
+            size:20,
+            color:0x0,
+            bold:false,
+            hAlign:HAlign.CENTER,
             vAlign:VAlign.CENTER
         };
-        
+
         initLevelButtonArray(uif, btf);
-        
+
         //TODO make custon btf for each button if necessary
         prevButton = uif.createButton(100, 35, "BACK", btf, false);
         nextButton = uif.createButton(100, 35, "NEXT", btf, false);
         menuButton = uif.createButton(100, 35, "MAIN MENU", btf, false);
-        confirmButton = uif.createButton(100, 35, "CONFIRM", btf, false);        
+        confirmButton = uif.createButton(100, 35, "CONFIRM", btf, false);
         levelButton = levelButtonArray[selectedLevel];
-    
+
         //Translations
         prevButton.transformationMatrix.translate(400 - levelButton.width / 2, 375);
         nextButton.transformationMatrix.translate(400 - levelButton.width / 2 + levelButton.width - nextButton.width, 375);
         confirmButton.transformationMatrix.translate(400 - confirmButton.width / 2, 375);
         menuButton.transformationMatrix.translate(25, 25);
-        
+
         //Add buttons to screen
         screenController.addChild(prevButton);
         screenController.addChild(nextButton);
         screenController.addChild(levelButton);
         screenController.addChild(menuButton);
         screenController.addChild(confirmButton);
-        
+
         //Add functions to event subscribers lists
         prevButton.bEvent.add(decrementLevel);
         prevButton.bEvent.add(updateLevelButton);
@@ -244,7 +248,7 @@ class MenuScreen extends IGameScreen {
         menuButton.bEvent.add(initMainMenu);
         confirmButton.bEvent.add(initSquadSelect);
     }
-    
+
     private function exitLevelSelect():Void {
         screenController.removeChild(prevButton);
         screenController.removeChild(nextButton);
@@ -253,52 +257,52 @@ class MenuScreen extends IGameScreen {
         screenController.removeChild(confirmButton);
         //TODO MAYBE clear the levelButton array, idk
     }
-    
+
     private function initSquadSelect():Void {
         exitLevelSelect();
-        
+
         //Create buttons from UISpriteFactory
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
-        
+
         //Set up formatting stuff
         var btf:ButtonTextFormat = {
             tx:60,
             ty:120,
-            font:"Verdana", 
-            size:20, 
-            color:0x0, 
-            bold:false, 
-            hAlign:HAlign.CENTER, 
+            font:"Verdana",
+            size:20,
+            color:0x0,
+            bold:false,
+            hAlign:HAlign.CENTER,
             vAlign:VAlign.CENTER
         };
-        
+
         //Set up formatting stuff
         var btf1:ButtonTextFormat = {
             tx:100,
             ty:35,
-            font:"Verdana", 
-            size:20, 
-            color:0x0, 
-            bold:false, 
-            hAlign:HAlign.CENTER, 
+            font:"Verdana",
+            size:20,
+            color:0x0,
+            bold:false,
+            hAlign:HAlign.CENTER,
             vAlign:VAlign.CENTER
         };
-        
+
         //Set up formatting stuff
         var btf2:ButtonTextFormat = {
             tx:0,
             ty:0,
-            font:"Verdana", 
-            size:20, 
-            color:0x0, 
-            bold:false, 
-            hAlign:HAlign.CENTER, 
+            font:"Verdana",
+            size:20,
+            color:0x0,
+            bold:false,
+            hAlign:HAlign.CENTER,
             vAlign:VAlign.CENTER
         };
-        
+
         //TODO make custon btf for each button if necessary
         //TODO turn into loop once there is an array of all characters
-        
+
         //Create buttons
         charButton1 = uif.createButton(60, 120, "1", btf, true);
         charButton2 = uif.createButton(60, 120, "2", btf, true);
@@ -315,8 +319,8 @@ class MenuScreen extends IGameScreen {
         nextWeaponButton3 = uif.createButton(8, 4, "", btf2, false);
         nextWeaponButton4 = uif.createButton(8, 4, "", btf2, false);
         nextWeaponButton5 = uif.createButton(8, 4, "", btf2, false);
-        confirmButton = uif.createButton(100, 35, "CONFIRM", btf1, false);   
-       
+        confirmButton = uif.createButton(100, 35, "CONFIRM", btf1, false);
+        
         //Button translations
         charButton1.transformationMatrix.translate(62.5 + 0, 50);
         charButton2.transformationMatrix.translate(62.5 + 75 + charButton2.width, 50);
@@ -334,7 +338,7 @@ class MenuScreen extends IGameScreen {
         nextWeaponButton4.transformationMatrix.translate(charButton4.bounds.x + charButton4.width + 8, charButton4.bounds.y + charButton4.height + 8);
         nextWeaponButton5.transformationMatrix.translate(charButton5.bounds.x + charButton5.width + 8, charButton5.bounds.y + charButton5.height + 8);
         confirmButton.transformationMatrix.translate(400 - confirmButton.width / 2, 375);
-        
+
         //Add buttons to screen
         screenController.addChild(charButton1);
         screenController.addChild(charButton2);
@@ -352,14 +356,11 @@ class MenuScreen extends IGameScreen {
         screenController.addChild(nextWeaponButton4);
         screenController.addChild(nextWeaponButton5);
         screenController.addChild(confirmButton);
-        
-        //Add button functions
-        
+
+        //Add button functions        
         confirmButton.bEvent.add(startLevel);
-        
     }
-    
-    
+
     //Initialize the array of level buttons (one for each level)
     private function initLevelButtonArray(uif:UISpriteFactory, btf:ButtonTextFormat):Void {
         var i:Int = 0;
@@ -370,31 +371,31 @@ class MenuScreen extends IGameScreen {
             i++;
         }
     }
-    
+
     private function updateLevelButton():Void {
         screenController.removeChild(levelButton);
         levelButton = levelButtonArray[selectedLevel];
-        screenController.addChild(levelButton);        
+        screenController.addChild(levelButton);
     }
-    
+
     private function changeLevel(delta:Int):Void {
         selectedLevel += delta;
         if (selectedLevel < 0) { selectedLevel = 0; }
         if (selectedLevel > MAX_LEVEL) { selectedLevel = MAX_LEVEL; }
     }
-    
+
     private function decrementLevel():Void {
         changeLevel(-1);
     }
-    
+
     private function incrementLevel():Void {
         changeLevel(1);
-    }    
-    
+    }
+
     //TODO change to BroadcastEvent1 with a string argument for level
     private function startLevel():Void {
         switch selectedLevel {
-            case 0: 
+            case 0:
                 screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/test.lvl");
                 //Move these outside switch when all levels are made
                 exitLevelSelect();
@@ -402,15 +403,15 @@ class MenuScreen extends IGameScreen {
             default:
         }
     }
-    
-    //Dead function 
+
+    //Dead function
     private function checkButtonStates():Void {
-        
+
         if (playButton.clicked) { play = true; }
         else { play = false; }
         if (tutorialButton.clicked) { tutorial = true; }
         else { tutorial = false; }
         if (shopButton.clicked = true) { options = true; }
-        else { options = false; }        
+        else { options = false; }
     }
 }

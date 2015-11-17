@@ -118,7 +118,7 @@ class GameplayController {
         state.score += v * state.comboMultiplier;
         // TODO: Signal Game UI
     }
-    
+
     public function handleCollisions():Void {
         for (contact in state.contactList) {
             if (contact == null) continue;
@@ -186,6 +186,7 @@ class GameplayController {
                 str += ent.position.x + ", "+ ent.position.y+", ";
             }
             FFLog.recordEvent(8, str + state.time.total);
+			FFLog.recordEvent(17, s.player.position.x +", " + s.player.position.y);
         }
         // TODO: Spawner shouldn't need reference to this
         Spawner.spawn(state, state.time);
@@ -379,7 +380,16 @@ class GameplayController {
         Spawner.createEnemy(enemy, e.entity, e.x, e.y);
         physicsController.initEntity(enemy);
         if (state.enemyWeapons[0] != null) {
-            enemy.weapon = new Weapon(enemy, state.enemyWeapons[0]);
+            switch (e.entity) {
+                case "Grunt":
+                    enemy.weapon = new Weapon(enemy, state.enemyWeapons[3]);
+                case "Shooter":
+                    enemy.weapon = new Weapon(enemy, state.enemyWeapons[0]);
+                case "Tank":
+                    enemy.weapon = new Weapon(enemy, state.enemyWeapons[3]);
+                default:
+                    enemy.weapon = new Weapon(enemy, state.enemyWeapons[0]);
+            }
         }
         state.entities.push(enemy);
         vis.onEntityAdded(state, enemy);
@@ -413,7 +423,18 @@ class GameplayController {
             (bullet.teamDestinationFlags & DamageDealer.TEAM_ENEMY) != 0,
             bullet.piercingAmount
             );
-        vis.addBulletTrail(bullet.originX, bullet.originY, bullet.originX + bullet.velocityX * dt, bullet.originY + bullet.velocityY * dt, 0.2);
+            
+        if (info.second != null) {
+            // Render up until the collision point
+            var collisionPoint:B2Vec2 = info.second.third;
+            var collisionNormal:B2Vec2 = info.second.fourth;
+            vis.addBulletTrail(bullet.originX, bullet.originY, collisionPoint.x, collisionPoint.y, 0.2);
+            // TODO: Add sparks
+        }
+        else {
+            // Render the full bullet trail
+            vis.addBulletTrail(bullet.originX, bullet.originY, bullet.originX + bullet.velocityX * dt, bullet.originY + bullet.velocityY * dt, 0.2);
+        }
 
         if (info.first.length > 0) {
             // TODO: All entities are damaged
