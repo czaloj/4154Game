@@ -68,7 +68,7 @@ class UISpriteFactory {
             // Game pieces
             new TileRegion("Health.Background", 794, 0, 230, 30),
             new StripRegion("Health.Overlay",823, 30, 201, 22, 8, 1, 8),
-            //new TileRegion("Flare", , , , ),
+            new TileRegion("Flare", 886, 370, 138, 26),
             new TileRegion("Points", 812, 206, 212, 58),
             new TileRegion("Combo", 840, 264, 184, 26),
             //new StripRegion("Combo.Animated", , , , , , 1, 20),

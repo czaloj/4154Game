@@ -12,6 +12,8 @@ import starling.utils.HAlign;
 import starling.utils.VAlign;
 
 class GameUI extends Sprite {
+    public static inline var REGULAR_TEXT_COLOR:UInt = 0x00e0e0;
+    
     private var sheet:UISpriteFactory;
     
     // Internal tracking variables
@@ -35,6 +37,7 @@ class GameUI extends Sprite {
     private var comboBarMask:Quad;
     private var comboCountText:TextField;
     private var points:StaticSprite;
+    private var flareBack:StaticSprite;
     
     public function new(s:UISpriteFactory) {
         super();
@@ -43,6 +46,9 @@ class GameUI extends Sprite {
         sheet = s;
         healthBack = sheet.getTile("Health.Background");
         addChild(healthBack);
+        flareBack = sheet.getTile("Flare");
+        flareBack.y = healthBack.y + healthBack.height;
+        addChild(flareBack);
         healthBar = sheet.getAnimation("Health.Overlay", 8);
         healthBar.x = 20;
         healthBar.y = 4;
@@ -82,14 +88,17 @@ class GameUI extends Sprite {
         scoreText = new TextField(204, 72, "----", "BitFont", 72, 0xffffff);
         scoreText.x = -scoreText.width * 0.5;
         scoreText.y = -48;
+        scoreText.color = REGULAR_TEXT_COLOR;
         scoreTextTransform.addChild(scoreText);
-        flareCountText = new TextField(40, 36, "----", "BitFont", 36, 0xffffff);
-        flareCountText.x = 0;
-        flareCountText.y = healthBack.height;
+        flareCountText = new TextField(23, 36, "----", "BitFont", 36, 0xffffff);
+        flareCountText.x = 16;
+        flareCountText.y = flareBack.y - 10;
+        flareCountText.color = REGULAR_TEXT_COLOR;
         addChild(flareCountText);
-        flareTimerText = new TextField(60, 36, "----", "BitFont", 36, 0xffffff);
-        flareTimerText.x = 60;
-        flareTimerText.y = healthBack.height;
+        flareTimerText = new TextField(66, 36, "----", "BitFont", 36, 0xffffff);
+        flareTimerText.x = 50;
+        flareTimerText.y = flareBack.y - 10;
+        flareTimerText.color = REGULAR_TEXT_COLOR;
         addChild(flareTimerText);
         comboCountText = new TextField(41, 36, "", "BitFont", 36, 0xffffff);
         comboCountText.hAlign = HAlign.CENTER;
