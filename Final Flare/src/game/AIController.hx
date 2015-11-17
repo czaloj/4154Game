@@ -32,7 +32,14 @@ class AIController {
 		if(entity.controlDefault){ //simply looks for player. hopefully this is only true if player is on same level or a level that can be fallen to from current one
 			entity.direction = x > target.x ? -1 : 1;
 		}
-
+		entity.count++;
+					if (entity.count % 17 == 0) {
+						if (x == entity.prevX) {
+							entity.controlDefault = false;
+							entity.direction *= -1;
+						}
+						entity.prevX = x;
+					}
 
 		var prevX:Float = x;
         var count:Int = 1;
@@ -57,17 +64,18 @@ class AIController {
 					entity.controlDefault = false;
 				}
 
-				if(!(y < entity.yProblem -.05)) {
+				/*if(!(y < entity.yProblem -.05)) {
 					entity.count++;
 					if (entity.count % 17 == 0) {
-						if (x==entity.prevX) {
+						if (x == entity.prevX) {
+							controlDefault = false;
 							entity.direction *= -1;
 						}
 						entity.prevX = x;
 					}
 
 
-				}
+				}*/
 
             }
             if (y < target.y-.05) {
