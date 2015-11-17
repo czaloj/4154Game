@@ -44,7 +44,8 @@ class Entity extends EntityBase {
     public var enabled:Bool = true;
     public var health:Int;
     public var isDead(get, never):Bool; // True if player is dead
-    public var damageTimer:Float;
+    public var invincibilityAfterHit:Float = 0.0;
+    public var damageTimer:Float = 0.0;
     public var canBeDamaged(get, never):Bool;
     public var weapon:Weapon; // Weapon that the entity is holding
     public var flareGun:Weapon; // Flare gun that the entity is holding (if at all)
