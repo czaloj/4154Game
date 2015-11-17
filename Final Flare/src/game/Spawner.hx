@@ -26,7 +26,7 @@ class Spawner {
         for (spawner in state.spawners) {
             if ((state.entities.length + spawnCount - 5) < 100) {
                 var type = EnemyType.make(spawner.id);
-                if (gameTime.frame % (type.spawnCooldown - 50 * Std.int(Math.log(state.score))) == 201) {
+                if (gameTime.frame % (Math.max(5,type.spawnCooldown - 50 * Std.int(Math.log(state.score)))) == 0) {
                     state.gameEvents.push(new GameEventSpawn(spawner.position.x, spawner.position.y, spawner.id));
                     spawnCount++;
                 }

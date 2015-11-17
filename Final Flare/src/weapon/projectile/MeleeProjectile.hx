@@ -22,11 +22,12 @@ class MeleeProjectile extends Projectile {
         var d = new DamagePolygon();
         setupDamage(d);
         d.x = position.x;
-        d.y = position.y + 0.95/2;
+        d.y = position.y;
         d.width = 2;
-        d.height = 0.95;
+        d.height = 0.6;
 
         s.damage.push(d);
+        killFlag = true;
     }
 
 }
