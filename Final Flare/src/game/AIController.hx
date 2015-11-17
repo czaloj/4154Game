@@ -3,6 +3,9 @@ package game;
 import game.GameState;
 
 class AIController {
+    public static inline var VIEW_LOOKAHEAD:Float = 1000.0;
+    public static inline var VIEW_LOOK_TIME:Float = 2.0;
+
     public function new() {
         // Empty
     }
@@ -20,6 +23,8 @@ class AIController {
         var target = state.player.position;
         var x:Float = entity.position.x;
         var y:Float = entity.position.y;
+        entity.targetX = state.player.position.x;
+        entity.targetY = state.player.position.y;
 		if (y ==target.y)//< target.y+.05 && y > target.y-.05)
 		{
 			entity.controlDefault = true;
@@ -27,11 +32,11 @@ class AIController {
 		if(entity.controlDefault){ //simply looks for player. hopefully this is only true if player is on same level or a level that can be fallen to from current one
 			entity.direction = x > target.x ? -1 : 1;
 		}
-		
-		
+
+
 		var prevX:Float = x;
         var count:Int = 1;
-		
+
         if (Math.abs(state.player.position.x - x) <= 2) {
             entity.useWeapon = true;
         }
@@ -51,46 +56,46 @@ class AIController {
 					entity.direction = x<20? 1:-1;
 					entity.controlDefault = false;
 				}
-				
+
 				if(!(y < entity.yProblem -.05)) {
 					entity.count++;
 					if (entity.count % 17 == 0) {
 						if (x==entity.prevX) {
-							entity.direction *= -1;	
+							entity.direction *= -1;
 						}
 						entity.prevX = x;
 					}
-					
-					
+
+
 				}
-				
-            } 
+
+            }
             if (y < target.y-.05) {
-				
+
                 var displacement = x - findPlatformAbove(state, Std.int(x), Std.int(y));
 				if(x < target.x+.05 && x > target.x -.05 ){
 					entity.direction = displacement < 0 ? -1:1;
 					entity.controlDefault = false;
-				
+
 				}
 				entity.count++;
 				if (entity.count % 17 == 0) {
 					if (x==entity.prevX) {
-							entity.direction *= -1;	
+							entity.direction *= -1;
 						}
 						entity.prevX = x;
 					}
                 if (displacement == 0) {
 					entity.controlDefault = false;
-                } 
+                }
                 else if (displacement > 5) {
-					
+
 					return;
                 }
                 else if (displacement < -5) {
 					//entity.direction = -1;
 					return;
-                } 
+                }
                 else {
                     entity.up = true;
                 }
@@ -101,11 +106,11 @@ class AIController {
                    // entity.up = true;
                 }
             }
-        
+
         //else {
             //entity.up = true;
         }
-    
+
 
     public function findPlatformLateral(state:GameState, curX:Int, curY:Int, dir:Int):Int {
         return 0; // ?
