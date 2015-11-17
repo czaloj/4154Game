@@ -52,6 +52,9 @@ class Spawner {
         e.airAcceleration = 0.3;
         e.headAngle = 0.0;
         e.weaponAngle = 0.0;
+        e.targetX = e.position.x;
+        e.targetY = e.position.y;
+
 
         // Clear flags
         e.direction = 0;
