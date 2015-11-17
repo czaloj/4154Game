@@ -6,6 +6,7 @@ import haxe.Unserializer;
 import openfl.events.Event;
 import flash.net.FileReference;
 import flash.utils.ByteArray;
+import starling.display.Image;
 import ui.Checkbox;
 import weapon.WeaponData;
 import weapon.WeaponGenerator;
@@ -27,6 +28,8 @@ class MenuScreen extends IGameScreen {
     private var selectedLevel:Int = 0;
     
     //Booleans for screen transitions
+    private var backGround:Image;  //Background
+    
     private var play:Bool = false;
     private var tutorial:Bool = false;
     private var options:Bool = false;
@@ -67,6 +70,12 @@ class MenuScreen extends IGameScreen {
     private var charWeaponSprite4:Sprite;
     private var charWeaponSprite5:Sprite;
     
+    private var firstSelectedSprite:Sprite;
+    private var secondSelectedSprite:Sprite;
+    private var thirdSelectedSprite:Sprite;
+    
+    //Weapon select stuff
+    private var numSelected:Int = 0;
     
     public function new(sc:ScreenController) {
         super(sc);
@@ -80,6 +89,10 @@ class MenuScreen extends IGameScreen {
     }
     
     override public function onEntry(gameTime:GameTime):Void {
+        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/testBack.png")));
+        screenController.addChild(backGround);
+        
+        
         initMainMenu();
         FFLog.recordMenuStart();
         
@@ -108,6 +121,7 @@ class MenuScreen extends IGameScreen {
     }
     
     override public function onExit(gameTime:GameTime):Void {
+        screenController.removeChild(backGround);
         FFLog.recordMenuEnd();
     }
     
@@ -301,7 +315,6 @@ class MenuScreen extends IGameScreen {
         nextWeaponButton3 = uif.createButton(8, 4, "", btf2, false);
         nextWeaponButton4 = uif.createButton(8, 4, "", btf2, false);
         nextWeaponButton5 = uif.createButton(8, 4, "", btf2, false);
-        
         confirmButton = uif.createButton(100, 35, "CONFIRM", btf1, false);   
        
         //Button translations
@@ -320,7 +333,6 @@ class MenuScreen extends IGameScreen {
         nextWeaponButton3.transformationMatrix.translate(charButton3.bounds.x + charButton3.width + 8, charButton3.bounds.y + charButton3.height + 8);
         nextWeaponButton4.transformationMatrix.translate(charButton4.bounds.x + charButton4.width + 8, charButton4.bounds.y + charButton4.height + 8);
         nextWeaponButton5.transformationMatrix.translate(charButton5.bounds.x + charButton5.width + 8, charButton5.bounds.y + charButton5.height + 8);
-        
         confirmButton.transformationMatrix.translate(400 - confirmButton.width / 2, 375);
         
         //Add buttons to screen
@@ -339,10 +351,10 @@ class MenuScreen extends IGameScreen {
         screenController.addChild(nextWeaponButton3);
         screenController.addChild(nextWeaponButton4);
         screenController.addChild(nextWeaponButton5);
-        
         screenController.addChild(confirmButton);
         
         //Add button functions
+        
         confirmButton.bEvent.add(startLevel);
         
     }

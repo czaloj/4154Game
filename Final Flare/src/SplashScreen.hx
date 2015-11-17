@@ -32,7 +32,7 @@ class SplashScreen extends IGameScreen {
     }
     
     override public function onEntry(gameTime:GameTime):Void {
-        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/TitleScreen.png")));
+        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/accurateBack.png")));
         screenController.addChild(backGround);
         addStartButton();
         
