@@ -105,10 +105,13 @@ class GameplayController {
     }
     private function addCombo(v:Float):Void {
         state.comboPercentComplete += v;
-        while (state.comboPercentComplete > 1.0) {
-            state.comboMultiplier += 1;
-            state.comboPercentComplete -= 1;
-            // TODO: Signal Game UI
+        if (state.comboPercentComplete > 1.0) {
+            while (state.comboPercentComplete > 1.0) {
+                state.comboMultiplier += 1;
+                state.comboPercentComplete -= 1;
+                // TODO: Signal Game UI
+            }
+            state.comboPercentComplete = 1.0;
         }
     }
     private function addScore(v:Int, x:Float, y:Float):Void {
