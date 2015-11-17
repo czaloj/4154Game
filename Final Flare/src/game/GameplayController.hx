@@ -222,7 +222,7 @@ class GameplayController {
         for (entity in state.entitiesNonNull) {
             if (entity.isDead) {
                 deletingEntities.push(entity);
-                if (entity.id != "player") {
+                if (entity.team == Entity.TEAM_ENEMY) {
                     state.score++;
                 }
             }
