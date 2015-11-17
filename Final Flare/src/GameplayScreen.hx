@@ -86,6 +86,8 @@ class GameplayScreen extends IGameScreen {
         openfl.Lib.current.stage.removeEventListener(MouseEvent.MOUSE_DOWN, inputController.mouseDown);
         openfl.Lib.current.stage.removeEventListener(MouseEvent.MOUSE_UP, inputController.mouseUp);
         Lib.current.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
+        screenController.removeChild(gameUI);
+        Lib.current.stage.removeChild(debugPhysicsView);
     }
 
     override function update(gameTime:GameTime):Void {
