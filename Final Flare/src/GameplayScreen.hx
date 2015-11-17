@@ -72,6 +72,7 @@ class GameplayScreen extends IGameScreen {
         debugPhysicsView = new Sprite();
         gameplayController.initDebug(debugPhysicsView);
         Lib.current.stage.addChild(debugPhysicsView);
+        debugPhysicsView.visible = false;
 
         // Add the game UI
         gameUI = new GameUI(new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png"))));

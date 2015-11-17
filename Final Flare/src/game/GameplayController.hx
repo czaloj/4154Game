@@ -212,6 +212,7 @@ class GameplayController {
         for (projectile in state.projectiles) {
             projectile.update(state.time.elapsed, state);
         }
+        var originalPSize:Int = state.projectiles.length;
         for (entity in state.entitiesEnabled) {
             if (entity.damageTimer > 0) {
                 entity.damageTimer -= state.time.elapsed;
@@ -222,6 +223,9 @@ class GameplayController {
             if (entity.flareGun != null) {
                 entity.flareGun.update(entity.useFlare, state.time.elapsed, s);
             }
+        }
+        for (i in originalPSize...state.projectiles.length) {
+            vis.onProjectileAdded(state, state.projectiles[i]);
         }
 
         // Physics
@@ -275,6 +279,7 @@ class GameplayController {
             for (p in deletingProjectiles) {
                 p.fOnDeath(state);
                 state.projectiles.remove(p);
+                vis.onProjectileRemoved(state, p);
             }
             deletingProjectiles = [];
         }

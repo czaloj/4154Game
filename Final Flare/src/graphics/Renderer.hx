@@ -168,8 +168,9 @@ class Renderer implements IGameVisualizer {
         q.y = -o.data.radius;
         s.addChild(q);
         projTbl.set(o, s);
+        hierarchy.projectiles.addChild(s);
     }
-    public function onProjectilRemoved(s:GameState, o:Projectile):Void {
+    public function onProjectileRemoved(s:GameState, o:Projectile):Void {
         var e:DisplayObject = projTbl.get(o);
         e.parent.removeChild(e);
         projTbl.remove(o);
@@ -447,6 +448,12 @@ class Renderer implements IGameVisualizer {
 
             sprite.recalculate(o);
         }
+        for (o in projTbl.keys()) {
+            var sprite:DisplayObject = projTbl.get(o);
+            sprite.x = o.position.x;
+            sprite.y = o.position.y;
+        }
+        
         var levelWidth:Float = s.width * World.TILE_HALF_WIDTH;
         var levelHeight:Float = s.height * World.TILE_HALF_WIDTH;
         var cameraHalfWidth = stage3D.stageWidth / (2 * cameraScale);
