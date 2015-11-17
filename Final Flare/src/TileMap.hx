@@ -12,8 +12,8 @@ class TileMap {
         height = h;
         width = w;
         tmap = [];
-        for (i in 0...height) {
-            for (j in 0...width) {
+        for (i in 0...height-1) {
+            for (j in 0...width-1) {
                 tmap.push(Tile.WHITE);
             }
         }
