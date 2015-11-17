@@ -36,7 +36,7 @@ class SplashScreen extends IGameScreen {
         screenController.addChild(backGround);
         addStartButton();
         
-        Composer.playMusicTrack("Menu1"); // TODO: Just tell composer to play menu music
+        Composer.playMusicTrack("Menu" + Std.string(Std.int(Math.random() * 3 + 1))); // TODO: Just tell composer to play menu music
     }
     
     override public function onExit(gameTime:GameTime):Void {
