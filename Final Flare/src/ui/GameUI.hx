@@ -24,8 +24,13 @@ class GameUI extends Sprite {
     private var healthBar:AnimatedSprite;
     private var healthBarMask:Quad;
     private var scoreText:TextField;
+    private var scoreTextTransform:Sprite;
     private var flareCountText:TextField;
     private var flareTimerText:TextField;
+    private var combo:StaticSprite;
+    private var comboBar:AnimatedSprite;
+    private var comboBarMask:Quad;
+    private var points:StaticSprite;
     
     public function new(s:UISpriteFactory) {
         super();
@@ -44,12 +49,38 @@ class GameUI extends Sprite {
         addChild(healthBar);
         healthBar.mask = healthBarMask;
 
+        // Points
+        points = sheet.getTile("Points");
+        points.x = ScreenController.SCREEN_WIDTH - points.width;
+        points.y = 0;
+        addChild(points);
+        
+        // Combo
+        combo = sheet.getTile("Combo");
+        combo.x = ScreenController.SCREEN_WIDTH - combo.width;
+        combo.y = points.y + points.height;
+        addChild(combo);
+        comboBar = sheet.getAnimation("Combo.Overlay", 16);
+        comboBar.x = combo.x + 54;
+        comboBar.y = combo.y + 5;
+        comboBarMask = new Quad(comboBar.width, comboBar.height);
+        comboBarMask.x = comboBar.x;
+        comboBarMask.y = comboBar.y;
+        addChild(comboBarMask);
+        addChild(comboBar);
+        comboBar.mask = comboBarMask;
+        
         // Text fields
+        scoreTextTransform = new Sprite();
+        scoreTextTransform.x = points.x + points.width * 0.5;
+        scoreTextTransform.y = points.y + points.height * 0.5;
+        addChild(scoreTextTransform);
         scoreText = new TextField(60, 36, "----", "BitFont", 36, 0xffffff);
-        scoreText.y = -30;
-        scoreText.scaleX *= 3;
-        scoreText.scaleY *= 3;
-        addChild(scoreText);
+        scoreText.x = -scoreText.width * 0.5;
+        scoreText.y = -48;
+        scoreText.scaleX *= 2;
+        scoreText.scaleY *= 2;
+        scoreTextTransform.addChild(scoreText);
         flareCountText = new TextField(40, 36, "----", "BitFont", 36, 0xffffff);
         flareCountText.x = 0;
         flareCountText.y = healthBack.height;
@@ -82,7 +113,7 @@ class GameUI extends Sprite {
         if (score != v) {
             score = v;
             scoreText.text = Std.string(score);
-            scoreText.x = (ScreenController.SCREEN_WIDTH - scoreText.width) * 0.5;
+            scoreText.x = -scoreText.width * 0.5;
         }
     }
     public function setFlareCount(v:Int):Void {
