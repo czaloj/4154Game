@@ -18,6 +18,7 @@ import game.PhysicsController.RayCastInfo;
 import graphics.IGameVisualizer;
 import openfl.display.Sprite;
 import openfl.geom.Point;
+import sound.Composer;
 import weapon.projectile.Projectile;
 import weapon.Weapon;
 
@@ -226,6 +227,7 @@ class GameplayController {
         }
         for (i in originalPSize...state.projectiles.length) {
             vis.onProjectileAdded(state, state.projectiles[i]);
+            Composer.playEffect("Shot");
         }
 
         // Physics
@@ -486,6 +488,7 @@ class GameplayController {
         }
         vis.onExplosion(explosion.x, explosion.y, explosion.radius);
         vis.addScreenShake((Math.random() - 0.5), -1.0);
+        Composer.playEffect("Bomb");
     }
 
     private function attemptDamage(e:Entity, d:DamageDealer):Bool {
