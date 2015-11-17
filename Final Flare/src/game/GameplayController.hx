@@ -422,7 +422,18 @@ class GameplayController {
             (bullet.teamDestinationFlags & DamageDealer.TEAM_ENEMY) != 0,
             bullet.piercingAmount
             );
-        vis.addBulletTrail(bullet.originX, bullet.originY, bullet.originX + bullet.velocityX * dt, bullet.originY + bullet.velocityY * dt, 0.2);
+            
+        if (info.second != null) {
+            // Render up until the collision point
+            var collisionPoint:B2Vec2 = info.second.third;
+            var collisionNormal:B2Vec2 = info.second.fourth;
+            vis.addBulletTrail(bullet.originX, bullet.originY, collisionPoint.x, collisionPoint.y, 0.2);
+            // TODO: Add sparks
+        }
+        else {
+            // Render the full bullet trail
+            vis.addBulletTrail(bullet.originX, bullet.originY, bullet.originX + bullet.velocityX * dt, bullet.originY + bullet.velocityY * dt, 0.2);
+        }
 
         if (info.first.length > 0) {
             // TODO: All entities are damaged
