@@ -23,7 +23,7 @@ import starling.text.TextField;
 
 class MenuScreen extends IGameScreen {
     //Level select 
-    private static var MAX_LEVEL:Int = 9;
+    private static var MAX_LEVEL:Int = 0;
     private var selectedLevel:Int = 0;
     
     //Booleans for screen transitions
@@ -283,11 +283,11 @@ class MenuScreen extends IGameScreen {
         confirmButton = uif.createButton(100, 35, "CONFIRM", btf2, false);   
        
         //Button translations
-        charButton1.transformationMatrix.translate(62.5 + 0, 100);
-        charButton2.transformationMatrix.translate(62.5 + 75 + charButton2.width, 100);
-        charButton3.transformationMatrix.translate(62.5 + 150 + 2 * charButton3.width, 100);
-        charButton4.transformationMatrix.translate(62.5 + 225 + 3* charButton4.width, 100);
-        charButton5.transformationMatrix.translate(62.5 + 300 + 4 * charButton5.width, 100);
+        charButton1.transformationMatrix.translate(62.5 + 0, 50);
+        charButton2.transformationMatrix.translate(62.5 + 75 + charButton2.width, 50);
+        charButton3.transformationMatrix.translate(62.5 + 150 + 2 * charButton3.width, 50);
+        charButton4.transformationMatrix.translate(62.5 + 225 + 3* charButton4.width, 50);
+        charButton5.transformationMatrix.translate(62.5 + 300 + 4 * charButton5.width, 50);
         
         confirmButton.transformationMatrix.translate(400 - confirmButton.width / 2, 375);
         
