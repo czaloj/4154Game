@@ -441,15 +441,10 @@ class MenuScreen extends IGameScreen {
     private function selectChar(b:Button) {
         switch numSelected {
             case 0:
-                if (b.customData == 0) {
-                    firstSelectedSprite.transformationMatrix.translate(b.bounds.x + b.width/2 - 15, b.bounds.y - 35);
-                    screenController.addChild(firstSelectedSprite);
-                    b.customData = 1;
-                    numSelected++;
-                }
-                else {
-                    adjustCharSelect(b, b.customData);
-                }
+                firstSelectedSprite.transformationMatrix.translate(b.bounds.x + b.width/2 - 15, b.bounds.y - 35);
+                screenController.addChild(firstSelectedSprite);
+                b.customData = 1;
+                numSelected++;
             case 1:
                 if (b.customData == 0) {
                     secondSelectedSprite.transformationMatrix.translate(b.bounds.x + b.width/2 - 15, b.bounds.y - 35);
@@ -476,8 +471,6 @@ class MenuScreen extends IGameScreen {
                 }
         }
         
-        if (numSelected > 4) { numSelected = 4; }
-        
         if (numSelected == 3) {
             var b = 0;
             while (b < charButtonArray.length) {
@@ -489,44 +482,98 @@ class MenuScreen extends IGameScreen {
     
     //Super hacky way to do char select 
     private function adjustCharSelect(b:Button, i:Int):Void {
-        trace("Before: " + numSelected);
-        switch i {
+        switch numSelected {
             case 1:
-               var x1 = firstSelectedSprite.bounds.x;
-               var y1 = firstSelectedSprite.bounds.y;
+                var x1 = firstSelectedSprite.bounds.x;
+                var y1 = firstSelectedSprite.bounds.y;
                
                 firstSelectedSprite.transformationMatrix.translate( -x1, -y1);
                 screenController.removeChild(firstSelectedSprite);
                 b.customData = 0;
                 
                 numSelected--;
-                trace("After: " + numSelected);
                 
             case 2:
-               var x1 = firstSelectedSprite.bounds.x;
-               var y1 = firstSelectedSprite.bounds.y;
-               var x2 = secondSelectedSprite.bounds.x;
-               var y2 = secondSelectedSprite.bounds.y;
+                trace(numSelected);
+                trace(i);
+                var x2 = secondSelectedSprite.bounds.x;
+                var y2 = secondSelectedSprite.bounds.y;
+                secondSelectedSprite.transformationMatrix.translate( -x2, -y2);
+                screenController.removeChild(secondSelectedSprite);
+                b.customData = 0;
+                numSelected--;
+
+                if (i == 1) {
+                    var x1 = firstSelectedSprite.bounds.x;
+                    var y1 = firstSelectedSprite.bounds.y;
+                    
+                    firstSelectedSprite.transformationMatrix.translate( -x1, -y1);                    
+                    firstSelectedSprite.transformationMatrix.translate(x2, y2);
+                    
+                    var b = 0;
+                    while (b < charButtonArray.length) {
+                        if (charButtonArray[b].customData == 2) { charButtonArray[b].customData = 1; }
+                        else {charButtonArray[b].customData = 0; }
+                        b++;
+                    }
+                }
+                
             case 3:
-               var x1 = firstSelectedSprite.bounds.x;
-               var y1 = firstSelectedSprite.bounds.y;
-               var x2 = secondSelectedSprite.bounds.x;
-               var y2 = secondSelectedSprite.bounds.y;
-               var x3 = thirdSelectedSprite.bounds.x;
-               var y3 = thirdSelectedSprite.bounds.y;
+                var x3 = thirdSelectedSprite.bounds.x;
+                var y3 = thirdSelectedSprite.bounds.y;
+                thirdSelectedSprite.transformationMatrix.translate(-x3,-y3);
+                screenController.removeChild(thirdSelectedSprite);
+                numSelected--; 
+                
+                b.customData = 0;
+
+                
+                if (i == 2) {
+                    var x2 = secondSelectedSprite.bounds.x;
+                    var y2 = secondSelectedSprite.bounds.y;
+                    
+                    secondSelectedSprite.transformationMatrix.translate( -x2, -y2);
+                    secondSelectedSprite.transformationMatrix.translate(x3, y3);
+
+                    var b = 0;
+                    while (b < charButtonArray.length) {
+                        if (charButtonArray[b].customData == 3) { 
+                            charButtonArray[b].customData = 2; 
+                            break;
+                        }
+                        b++;
+                    }
+                }
+                
+                if (i == 1) {
+                    var x1 = firstSelectedSprite.bounds.x;
+                    var y1 = firstSelectedSprite.bounds.y;                    
+                    var x2 = secondSelectedSprite.bounds.x;
+                    var y2 = secondSelectedSprite.bounds.y;
+                
+                    firstSelectedSprite.transformationMatrix.translate( -x1, -y1);
+                    firstSelectedSprite.transformationMatrix.translate(x2, y2);  
+                    secondSelectedSprite.transformationMatrix.translate( -x2, -y2);                                      
+                    secondSelectedSprite.transformationMatrix.translate(x3, y3);
+                    
+                    var b = 0;
+                    while (b < charButtonArray.length) {
+                        if (charButtonArray[b].customData == 3) { 
+                            charButtonArray[b].customData = 2; 
+                        }
+                        else if (charButtonArray[b].customData == 2) {
+                            charButtonArray[b].customData = 1;
+                        }
+                        b++;
+                    }
+                }
+                
+                var b = 0;
+                while (b < charButtonArray.length) {
+                    if (!charButtonArray[b].enabled) { charButtonArray[b].enabled = true; }
+                    b++;
+                }
         }
-        
-        //
-        //x2 = secondSelectedSprite.bounds.x;
-        //y2 = secondSelectedSprite.bounds.y;
-        //x3 = thirdSelectedSprite.bounds.x;
-        //y3 = thirdSelectedSprite.bounds.y;
-        
-        //var b = 0;
-        //while (b < charButtonArray.length) {
-        //    if (charButtonArray[b].customData == 0) { charButtonArray[b].enabled = false; }
-        //    b++;
-        //}
     }
 
     //Dead function
