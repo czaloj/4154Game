@@ -267,18 +267,6 @@ class LevelEditorScreen extends IGameScreen {
     private function onKeyDown(e:KeyboardEvent):Void {
         cameraMove[e.keyCode] = true;
 
-        // if (e.keyCode == Keyboard.F8) {
-        //     level.foreground = foregroundMap.tmap;
-        //     level.background = backgroundMap.tmap;
-        //     level.parallax = [];
-        //     for (i in 0...layer_item[0].length) {
-        //         var item = layer_item[0][i];
-        //         if (item != "Add Layer") {
-        //             level.parallax.push("assets/img/" + item);
-        //         }
-        //     }
-        //     LevelCreator.saveToFile(level);
-        // } else 
         if (e.keyCode == Keyboard.F7) {
             level.foreground = foregroundMap.tmap;
             level.background = backgroundMap.tmap;
@@ -307,12 +295,9 @@ class LevelEditorScreen extends IGameScreen {
     }
 
     override public function onEntry(gameTime:GameTime):Void {
-        screenController.removeChildren();
         // set up level
         level.height = Std.int(MIN_LEVEL_HEIGHT/TILE_HALF_WIDTH);
         level.width = Std.int(MIN_LEVEL_WIDTH/TILE_HALF_WIDTH);
-        // level.environmentType = "Simple";
-        // level.environmentSprites = "assets/img/Factory.png";
 
         // set up camera
         cameraScale = 1;
