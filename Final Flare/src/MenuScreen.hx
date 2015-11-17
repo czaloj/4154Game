@@ -443,24 +443,42 @@ class MenuScreen extends IGameScreen {
         if (numSelected > 4) { numSelected = 4; }
         switch numSelected {
             case 1:
-                firstSelectedSprite.transformationMatrix.translate(b.bounds.x + b.width/2 - 15, b.bounds.y - 35);
-                screenController.addChild(firstSelectedSprite);
-                b.customData = 1;
+                if (b.customData == 0) {
+                    firstSelectedSprite.transformationMatrix.translate(b.bounds.x + b.width/2 - 15, b.bounds.y - 35);
+                    screenController.addChild(firstSelectedSprite);
+                    b.customData = 1;
+                }
+                else {
+                    adjustCharSelect();
+                }
             case 2:
-                secondSelectedSprite.transformationMatrix.translate(b.bounds.x + b.width/2 - 15, b.bounds.y - 35);
-                screenController.addChild(secondSelectedSprite);
-                b.customData = 2;
+                if (b.customData == 0) {
+                    secondSelectedSprite.transformationMatrix.translate(b.bounds.x + b.width/2 - 15, b.bounds.y - 35);
+                    screenController.addChild(secondSelectedSprite);
+                    b.customData = 2;
+                }
+                else {
+                    adjustCharSelect();
+                }
             case 3:
-                thirdSelectedSprite.transformationMatrix.translate(b.bounds.x + b.width/2 - 15, b.bounds.y - 30);
-                screenController.addChild(thirdSelectedSprite);
-                b.customData = 3;
-            default:
+                if (b.customData == 0) {
+                    thirdSelectedSprite.transformationMatrix.translate(b.bounds.x + b.width/2 - 15, b.bounds.y - 30);
+                    screenController.addChild(thirdSelectedSprite);
+                    b.customData = 3;
+                }
+                else {
+                    adjustCharSelect();
+                }
+            case 4:
+                if (b.customData != 0) {
+                    adjustCharSelect();
+                }
         }
         
         if (numSelected == 3) {
             var b = 0;
             while (b < charButtonArray.length) {
-                if (charButtonArray[b].clicked = false) { charButtonArray[b].enabled = false; }
+                if (charButtonArray[b].customData == 0) { charButtonArray[b].enabled = false; }
                 b++;
             }
         }
@@ -468,16 +486,21 @@ class MenuScreen extends IGameScreen {
         
     }
     
-    /*
-     * private function adjustSelected() {
-        case 4:
-        trace("3");
-        //loop over buttons, if button clicked is third button
-            //remove third number
-            //shift other 2
-            //enable other buttons
-        }
-    */
+    //Super hacky way to do char select 
+    private function adjustCharSelect():Void {
+        //x1 = firstSelectedSprite.bounds.x;
+        //y1 = firstSelectedSprite.bounds.y;
+        //x2 = secondSelectedSprite.bounds.x;
+        //y2 = secondSelectedSprite.bounds.y;
+        //x3 = thirdSelectedSprite.bounds.x;
+        //y3 = thirdSelectedSprite.bounds.y;
+        
+        //var b = 0;
+        //while (b < charButtonArray.length) {
+        //    if (charButtonArray[b].customData == 0) { charButtonArray[b].enabled = false; }
+        //    b++;
+        //}
+    }
 
     //Dead function
     private function checkButtonStates():Void {
