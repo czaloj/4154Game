@@ -30,7 +30,7 @@ class InputController {
     public var keyShootLeft = Keyboard.LEFT;
     public var keyShootRight = Keyboard.RIGHT;
     public var keyShootFlare = Keyboard.SPACE;
-    
+
     public function new() {
         // Empty
     }

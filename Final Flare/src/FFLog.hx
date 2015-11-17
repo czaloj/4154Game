@@ -22,7 +22,8 @@ class FFLog {
 
         // Get correct test group
         testID = Std.int(Math.random() * TEST_GROUP_COUNT);
-        testID = logger.recordABTestValue(testID);
+        logger.assignABTestValue(testID);
+        logger.recordABTestValue();
 
         // Pass page load successful
         var userInfo:String = "USER:" + testID;
