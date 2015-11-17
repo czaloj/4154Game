@@ -1,6 +1,5 @@
 package ui;
 
-import openfl.events.MouseEvent;
 import starling.display.DisplayObjectContainer;
 import starling.display.Sprite;
 import starling.events.TouchEvent;
@@ -24,13 +23,13 @@ typedef ButtonTextFormat = {
 class Button extends DisplayObjectContainer {
     public var clicked:Bool;
     public var enabled:Bool;
+    public var toggle:Bool; //If true, button stays depressed when clicked
     public var upState (default, set):Sprite;
     public var overState (default, set):Sprite;
     public var downState (default, set):Sprite;
     public var hitTestState (default, set):Sprite;
     public var currentState (default, set):Sprite;
     public var bEvent:BroadcastEvent;
-    public var bEvent1:BroadcastEvent1<Int>;
     
     /**
      * Creates a new Button instance.
@@ -39,13 +38,14 @@ class Button extends DisplayObjectContainer {
      * @param overState    The initial value for the SimpleButton over state.
      * @param downState    The initial value for the SimpleButton down state.
      * @param hitTestState The initial value for the SimpleButton hitTest state.
+     * @param tog          True if button stays in downState after being pressed. False if the button goes back to upState
      */
-    public function new (upState:Sprite = null, overState:Sprite = null, downState:Sprite = null, hitTestState:Sprite = null, text:String = null, btf:ButtonTextFormat = null) {
+    public function new (upState:Sprite = null, overState:Sprite = null, downState:Sprite = null, hitTestState:Sprite = null, text:String = null, btf:ButtonTextFormat = null, tog:Bool) {
         super();
         clicked = false;
         enabled = true;
+        toggle = tog;
         bEvent = new BroadcastEvent();
-        bEvent1 = new BroadcastEvent1<Int>();
         this.upState = (upState != null) ? upState : generateDefaultState ();
         this.overState = (overState != null) ? overState : generateDefaultState ();
         this.downState = (downState != null) ? downState : generateDefaultState ();
@@ -80,11 +80,21 @@ class Button extends DisplayObjectContainer {
             if (this.hitTestState != null && this.hitTestState.parent == this) {
                 removeChild (this.hitTestState);
             }
-            this.removeEventListener (TouchEvent.TOUCH, onTouch);
+            
+            if (!toggle) {
+                this.removeEventListener (TouchEvent.TOUCH, onTouch);
+            }
+            else {
+                this.removeEventListener (TouchEvent.TOUCH, onTouchToggle);
+            }
             
             if (hitTestState != null) {
-                
-                this.addEventListener (TouchEvent.TOUCH, onTouch);                
+                if (!toggle) {
+                    this.addEventListener (TouchEvent.TOUCH, onTouch);
+                }
+                else {
+                    this.addEventListener (TouchEvent.TOUCH, onTouchToggle);
+                }
                 hitTestState.alpha = 1;
                 addChild (hitTestState);
             }
@@ -121,9 +131,11 @@ class Button extends DisplayObjectContainer {
         if(event.getTouch(this) != null) {
             switch event.getTouch(this).phase {
                 case TouchPhase.BEGAN: 
+                    switchState(downState);
                     currentState = downState;
                 case TouchPhase.HOVER: 
                     if (overState != currentState) {
+                        switchState(overState);
                         currentState = overState;
                     }
                 case TouchPhase.ENDED:
@@ -135,15 +147,49 @@ class Button extends DisplayObjectContainer {
                         clicked = true;
                         bEvent.invoke();
                     }
+                    switchState(upState);
                     currentState = upState;
             default:
             }
         }
         else 
         {
+            switchState(upState);
             currentState = upState;
         }
     }
+    
+    //Event handler
+    private function onTouchToggle (event:TouchEvent):Void {
+        if(event.getTouch(this) != null) {
+            switch event.getTouch(this).phase {
+                case TouchPhase.BEGAN: 
+                    if (currentState == overState) {
+                        switchState(downState);
+                        currentState = downState; 
+                        clicked = true;
+                    }
+                    else if (currentState == downState) { 
+                        switchState(overState);
+                        currentState = upState;
+                        clicked = false;
+                    }
+                case TouchPhase.HOVER:
+                    if (currentState != downState) {
+                        if (overState != currentState) {
+                        switchState(overState);
+                        currentState = overState;
+                        }
+                    }
+
+            default:
+            }
+        }
+        else if (!clicked) {
+            switchState(upState);
+            currentState = upState;
+        }
+    }    
 }
     
     

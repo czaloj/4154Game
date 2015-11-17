@@ -66,7 +66,7 @@ class WeaponGenerator {
         }
         else {
             // Example flare gun
-            var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_LARGE);
+            var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_FLARE);
             pd.damage = 0;
             pd.damageFriendly = 0;
             pd.timer = 3.0;
@@ -82,6 +82,103 @@ class WeaponGenerator {
         return data;
     }
 
+    public static function generateInitialWeapons():Array<WeaponData> {
+        var weapons:Array<WeaponData> = [];
+        
+        // Temp variables
+        var po:ProjectileOrigin = null;
+        var w:WeaponData = null;
+        var pd:ProjectileData = null;
+        
+        // Rifle
+        w = new WeaponData();
+        w.name = "M34 Sport Rifle";
+        w.colorScheme = new ColorScheme(0xff0000, 0x00ff00, 0x0000ff, 0, 0, 1, 1);
+        w.evolutionCost = 0;
+        w.historicalCost = 0;
+        w.shadynessCost = 0;
+        w.firingMode = FiringMode.AUTOMATIC;
+        w.useCapacity = 34;
+        w.usesPerActivation = 1;
+        w.reloadTime = 2.4;
+        w.activationCooldown = 0.15;
+        w.burstPause = 0;
+        w.burstCount = 0;
+        w.projectileOrigins = [];
+        po = new ProjectileOrigin();
+        po.exitAngle = 0.3;
+        pd = new ProjectileData(ProjectileData.TYPE_BULLET);
+        pd.damage = 10;
+        pd.damageFriendly = 0;
+        pd.penetrationCount = 0;
+        pd.gravityAcceleration = 0.0;
+        po.projectileData = pd;
+        po.velocity = 1500;
+        po.transform.translate(0.8, 0.1);
+        w.projectileOrigins.push(po);
+        weapons.push(w);
+        
+        // Grenade launcher
+        w = new WeaponData();
+        w.name = "Junk'n'Chuck";
+        w.colorScheme = new ColorScheme(0xff0000, 0x00ff00, 0x0000ff, 0, 0, 1, 1);
+        w.evolutionCost = 0;
+        w.historicalCost = 0;
+        w.shadynessCost = 0;
+        w.firingMode = FiringMode.SINGLE;
+        w.useCapacity = 6;
+        w.usesPerActivation = 1;
+        w.reloadTime = 4.0;
+        w.activationCooldown = 1.0;
+        w.burstPause = 0;
+        w.burstCount = 0;
+        w.projectileOrigins = [];
+        po = new ProjectileOrigin();
+        po.exitAngle = 0.3;
+        pd = new ProjectileData(ProjectileData.TYPE_LARGE);
+        pd.damage = 40;
+        pd.damageFriendly = 20;
+        pd.timer = 0.5;
+        pd.explosiveRadius = 2.0;
+        pd.radius = 0.2;
+        po.projectileData = pd;
+        po.velocity = 30;
+        po.transform.translate(0.8, 0.1);
+        w.projectileOrigins.push(po);
+        weapons.push(w);
+        
+        // Flare gun
+        w = new WeaponData();
+        w.name = "Rescue Flare Gun";
+        w.colorScheme = new ColorScheme(0xff0000, 0x00ff00, 0x0000ff, 0, 0, 1, 1);
+        w.evolutionCost = 0;
+        w.historicalCost = 0;
+        w.shadynessCost = 0;
+        w.firingMode = FiringMode.SINGLE;
+        w.useCapacity = 1;
+        w.usesPerActivation = 1;
+        w.reloadTime = 10.0;
+        w.activationCooldown = 0.15;
+        w.burstPause = 0;
+        w.burstCount = 0;
+        w.projectileOrigins = [];
+        po = new ProjectileOrigin();
+        po.exitAngle = 0.3;
+        pd = new ProjectileData(ProjectileData.TYPE_FLARE);
+        pd.damage = 0;
+        pd.damageFriendly = 0;
+        pd.timer = 3.0;
+        pd.explosiveRadius = 1.0;
+        pd.radius = 0.05;
+        po.projectileData = pd;
+        po.velocity = 15;
+        po.transform.translate(0.8, 0.1);
+        w.projectileOrigins.push(po);
+        weapons.push(w);
+        
+        return weapons;
+    }
+    
     public function new() {
         // Empty
     }

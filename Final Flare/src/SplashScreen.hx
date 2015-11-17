@@ -68,7 +68,7 @@ class SplashScreen extends IGameScreen {
         };
 
         //Create Button and position it
-        startButton = uif.createButton(200, 66, "START GAME", btf);  
+        startButton = uif.createButton(200, 66, "START GAME", btf, false);  
         startButton.transformationMatrix.translate(400 - startButton.width / 2, 250);
         
         screenController.addChild(startButton);

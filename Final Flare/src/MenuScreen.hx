@@ -6,6 +6,8 @@ import haxe.Unserializer;
 import openfl.events.Event;
 import flash.net.FileReference;
 import flash.utils.ByteArray;
+import ui.Checkbox;
+import weapon.WeaponData;
 import weapon.WeaponGenerator;
 import weapon.WeaponGenParams;
 import ui.Button;
@@ -20,7 +22,6 @@ import starling.text.TextField;
 
 
 class MenuScreen extends IGameScreen {
-    
     //Level select 
     private static var MAX_LEVEL:Int = 9;
     private var selectedLevel:Int = 0;
@@ -30,12 +31,13 @@ class MenuScreen extends IGameScreen {
     private var tutorial:Bool = false;
     private var options:Bool = false;
     
-    
     //Buttons
     private var levelButtonArray:Array<Button> = new Array<Button>();
     private var playButton:Button;
     private var tutorialButton:Button;
-    private var optionsButton:Button;
+    private var loadoutButton:Button;
+    private var shopButton:Button;
+    private var levelEditorButton:Button;
     private var nextButton:Button;
     private var prevButton:Button;
     private var levelButton:Button;
@@ -55,38 +57,30 @@ class MenuScreen extends IGameScreen {
     
     override public function onEntry(gameTime:GameTime):Void {
         initMainMenu();
-
         FFLog.recordMenuStart();
-
-        // Begin loading a file
-        // TODO: Fully remove soon?
-        var fileRef:FileReference = new FileReference();
-        fileRef.addEventListener(Event.SELECT, onFileBrowse);
-        //fileRef.browse();
         
         // TODO: This is so badly hardcoded
-        var mod:MenuLevelModifiers = new MenuLevelModifiers();
+        screenController.levelModifiers = new MenuLevelModifiers();
+        var initialWeapons:Array<WeaponData> = WeaponGenerator.generateInitialWeapons();
+        screenController.levelModifiers.characterWeapons = [
+            initialWeapons[0],
+            initialWeapons[1],
+            initialWeapons[0],
+            initialWeapons[1],
+            null, // For testing only
+            initialWeapons[2]
+        ];
         var weaponParams:WeaponGenParams = new WeaponGenParams();
         weaponParams.evolutionPoints = 100;
         weaponParams.shadynessPoints = 1;
         weaponParams.historicalPoints = 0;
-        mod.characterWeapons = [
-            WeaponGenerator.generate(weaponParams),
-            WeaponGenerator.generate(weaponParams),
-            WeaponGenerator.generate(weaponParams),
-            WeaponGenerator.generate(weaponParams),
-            null // For testing only
-        ];
-        mod.enemyWeapons = [
+        screenController.levelModifiers.enemyWeapons = [
             WeaponGenerator.generate(weaponParams),
             WeaponGenerator.generate(weaponParams),
             WeaponGenerator.generate(weaponParams),
             WeaponGenerator.generate(weaponParams),
             WeaponGenerator.generate(weaponParams),
         ];
-        weaponParams.shadynessPoints = 100;
-        mod.characterWeapons.push(WeaponGenerator.generate(weaponParams));
-        screenController.levelModifiers = mod;
     }
     
     override public function onExit(gameTime:GameTime):Void {
@@ -94,29 +88,11 @@ class MenuScreen extends IGameScreen {
     }
     
     override public function update(gameTime:GameTime):Void {
-        
+        // Empty
     }
         
     override public function draw(gameTime:GameTime):Void {
         // Empty
-    }
-    
-    // TODO: Remove startup load once menu is implemented
-    public function onFileBrowse(e:openfl.events.Event):Void {
-        var fileReference:FileReference = cast(e.target, FileReference);
-        fileReference.removeEventListener(Event.SELECT, onFileBrowse);
-        fileReference.addEventListener(Event.COMPLETE, onFileLoaded);
-
-        fileReference.load();
-    }
-    public function onFileLoaded(e:openfl.events.Event):Void {
-        var fileReference:FileReference = cast(e.target, FileReference);
-        fileReference.removeEventListener(Event.COMPLETE, onFileLoaded);
-
-        var data:ByteArray = fileReference.data;
-        screenController.loadedLevel = cast(Unserializer.run(data.toString()), GameLevel);
-
-        screenController.switchToScreen(2);
     }
     
     private function initMainMenu():Void {
@@ -125,8 +101,8 @@ class MenuScreen extends IGameScreen {
         
         //Set up formatting stuff
         var btf:ButtonTextFormat = {
-            tx:120,
-            ty:60,
+            tx:150,
+            ty:50,
             font:"Verdana", 
             size:20, 
             color:0x0, 
@@ -136,28 +112,43 @@ class MenuScreen extends IGameScreen {
         };
 
         //Create Button and position it
-        playButton = uif.createButton(175, 50, "PLAY", btf);
-        tutorialButton = uif.createButton(175, 50, "TUTORIAL", btf);
-        optionsButton = uif.createButton(175, 50, "SHOP", btf);
+        playButton = uif.createButton(150, 50, "PLAY", btf, false);
+        tutorialButton = uif.createButton(150, 50, "TUTORIAL", btf, false);
+        shopButton = uif.createButton(150, 50, "SHOP", btf, false);
+        levelEditorButton = uif.createButton(150, 50, "LEVEL EDITOR", btf, false);
         
-        //Translations
-        playButton.transformationMatrix.translate(400 + playButton.width / 2, 170);
-        tutorialButton.transformationMatrix.translate(400 + playButton.width / 2, 180 + tutorialButton.height);
-        optionsButton.transformationMatrix.translate(400 + playButton.width / 2, 190 + 2*optionsButton.height);
+        //Vertical Layout
+        //playButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 60);
+        //tutorialButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 70 + tutorialButton.height);
+        //loadoutButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 80 + 2 * shopButton.height);
+        //shopButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 90 + 3 * shopButton.height);
+        //levelEditorButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 100 + 4 * shopButton.height);
         
+        //Horizontal Layout
+        playButton.transformationMatrix.translate(28, 410 - playButton.height);
+        tutorialButton.transformationMatrix.translate(56 + tutorialButton.width, 410 - playButton.height);
+        shopButton.transformationMatrix.translate(84 + 2* shopButton.width, 410 - playButton.height);
+        levelEditorButton.transformationMatrix.translate(112 + 3 * levelEditorButton.width, 410 - playButton.height);
+        
+        //Add buttons to screen
         screenController.addChild(playButton);
         screenController.addChild(tutorialButton);
-        screenController.addChild(optionsButton);
+        screenController.addChild(shopButton);
+        screenController.addChild(levelEditorButton);
         
+        //Add button functions
         playButton.bEvent.add(initLevelSelect);
+        levelEditorButton.bEvent.add(function():Void {
+            exitMainMenu();
+            screenController.switchToScreen(3);
+        });
     }
     
     private function exitMainMenu():Void {
         screenController.removeChild(playButton);
         screenController.removeChild(tutorialButton);
-        screenController.removeChild(optionsButton);
-        screenController.removeChild(levelButton);
-        screenController.removeChild(confirmButton);
+        screenController.removeChild(shopButton);
+        screenController.removeChild(levelEditorButton);
     }
     
     private function initLevelSelect():Void 
@@ -185,10 +176,10 @@ class MenuScreen extends IGameScreen {
         initLevelButtonArray(uif, btf);
         
         //TODO make custon btf for each button if necessary
-        prevButton = uif.createButton(100, 35, "BACK", btf);
-        nextButton = uif.createButton(100, 35, "NEXT", btf);
-        menuButton = uif.createButton(100, 35, "MAIN MENU", btf);
-        confirmButton = uif.createButton(100, 35, "CONFIRM", btf);        
+        prevButton = uif.createButton(100, 35, "BACK", btf, false);
+        nextButton = uif.createButton(100, 35, "NEXT", btf, false);
+        menuButton = uif.createButton(100, 35, "MAIN MENU", btf, false);
+        confirmButton = uif.createButton(100, 35, "CONFIRM", btf, false);        
         levelButton = levelButtonArray[selectedLevel];
     
         //Translations
@@ -220,13 +211,14 @@ class MenuScreen extends IGameScreen {
         screenController.removeChild(levelButton);
         screenController.removeChild(menuButton);
         screenController.removeChild(confirmButton);
+        //TODO MAYBE clear the levelButton array, idk
     }
     
     //Initialize the array of level buttons (one for each level)
     private function initLevelButtonArray(uif:UISpriteFactory, btf:ButtonTextFormat):Void {
         var i:Int = 0;
         while (i <= MAX_LEVEL) {
-            var button = uif.createButton(450, 225, "LEVEL " + (i + 1) , btf);
+            var button = uif.createButton(450, 225, "LEVEL " + (i + 1) , btf, false);
             button.transformationMatrix.translate(400 - button.width / 2, 200 - button.height / 2);
             levelButtonArray.push(button);
             i++;
@@ -251,7 +243,15 @@ class MenuScreen extends IGameScreen {
     
     private function incrementLevel():Void {
         changeLevel(1);
-    }    
+    }
+    
+    private function initSquadSelect():Void {
+        exitLevelSelect();
+        //do something with ShareObject
+        //TODO Create 5 ToggleButtons/Checkboxes
+        //
+    }
+    
     
     //TODO change to BroadcastEvent1 with a string argument for level
     private function startLevel():Void {
@@ -272,7 +272,7 @@ class MenuScreen extends IGameScreen {
         else { play = false; }
         if (tutorialButton.clicked) { tutorial = true; }
         else { tutorial = false; }
-        if (optionsButton.clicked = true) { options = true; }
+        if (shopButton.clicked = true) { options = true; }
         else { options = false; }        
     }
 }

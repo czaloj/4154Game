@@ -1,6 +1,7 @@
 package weapon.projectile;
 
 import game.Entity;
+import game.events.GameEventFlare;
 import game.GameState;
 
 class FlareProjectile extends LargeProjectile {
@@ -11,9 +12,11 @@ class FlareProjectile extends LargeProjectile {
     override public function buildBehavior():Void {
         super.buildBehavior();
         fOnDeath = onDeathEmitFlare;
+        fOnHit = nullOnHit;
+        fUpdate = updateTimedDeath;
     }
     
     public function onDeathEmitFlare(state:GameState):Void {
-        // TODO: Add flare event
+        state.gameEvents.push(new GameEventFlare(position.x, position.y));
     }
 }

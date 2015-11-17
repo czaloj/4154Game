@@ -326,26 +326,26 @@ class LevelEditorScreen extends IGameScreen {
         Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+        Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
     }
     override public function onExit(gameTime:GameTime):Void {
-        // Empty
         Lib.current.stage.removeEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
         Lib.current.stage.removeEventListener(MouseEvent.MOUSE_DOWN, onMouseUp);
         Lib.current.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-
+        Lib.current.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp);
     }
 
     override public function update(gameTime:GameTime):Void {
         updateOptions();
         // update camera
         if (cameraMove[CAMUP]) {
-            cameraY = Math.max(0 + cameraHalfHeight, cameraY -= TILE_HALF_WIDTH);
+            cameraY = Math.max(0 + cameraHalfHeight, cameraY -= 2*TILE_HALF_WIDTH);
         } if (cameraMove[CAMLEFT]) {
-            cameraX = Math.max(0 + cameraHalfWidth, cameraX -= TILE_HALF_WIDTH);
+            cameraX = Math.max(0 + cameraHalfWidth, cameraX -= 2*TILE_HALF_WIDTH);
         } if (cameraMove[CAMDOWN]) {
-            cameraY = Math.min(MIN_LEVEL_HEIGHT - cameraHalfHeight, cameraY += TILE_HALF_WIDTH);
+            cameraY = Math.min(MIN_LEVEL_HEIGHT - cameraHalfHeight, cameraY += 2*TILE_HALF_WIDTH);
         } if (cameraMove[CAMRIGHT]) {
-            cameraX = Math.min(MIN_LEVEL_WIDTH - cameraHalfWidth, cameraX += TILE_HALF_WIDTH);
+            cameraX = Math.min(MIN_LEVEL_WIDTH - cameraHalfWidth, cameraX += 2*TILE_HALF_WIDTH);
         }
     }
 
@@ -366,7 +366,7 @@ class LevelEditorScreen extends IGameScreen {
                     if (jw >= cameraX - cameraHalfWidth && jw <= cameraX + cameraHalfWidth && id > 0) {
                         var js = jw - cameraX + cameraHalfWidth + BOX_WIDTH;
                         var is = iw - cameraY + cameraHalfHeight;
-                        screenController.addChild(map.drawTile(Std.int(js),Std.int(is),Tile.tiles[id]));
+                        screenController.addChild(map.drawTile(Std.int(js),Std.int(is),id));
                     }
                 }
             }
