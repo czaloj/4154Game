@@ -22,6 +22,9 @@ import starling.text.TextField;
 
 
 class MenuScreen extends IGameScreen {
+    //Background
+    private var backGround:Sprite;
+    
     //Level select 
     private static var MAX_LEVEL:Int = 9;
     private var selectedLevel:Int = 0;
@@ -44,6 +47,12 @@ class MenuScreen extends IGameScreen {
     private var menuButton:Button;
     private var confirmButton:Button;
     
+    private var charButton1:Button;
+    private var charButton2:Button;
+    private var charButton3:Button;
+    private var charButton4:Button;
+    private var charButton5:Button;
+    
     public function new(sc:ScreenController) {
         super(sc);
     }
@@ -56,6 +65,7 @@ class MenuScreen extends IGameScreen {
     }
     
     override public function onEntry(gameTime:GameTime):Void {
+        addBackground();
         initMainMenu();
         FFLog.recordMenuStart();
         
@@ -84,6 +94,7 @@ class MenuScreen extends IGameScreen {
     }
     
     override public function onExit(gameTime:GameTime):Void {
+        screenController.removeChild(backGround);
         FFLog.recordMenuEnd();
     }
     
@@ -93,6 +104,12 @@ class MenuScreen extends IGameScreen {
         
     override public function draw(gameTime:GameTime):Void {
         // Empty
+    }
+    
+    private function addBackground() {
+        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/TitleScreen.png")));
+        backGround = uif.createBackgroundSprite();
+        screenController.addChild(backGround);
     }
     
     private function initMainMenu():Void {
@@ -140,6 +157,8 @@ class MenuScreen extends IGameScreen {
         playButton.bEvent.add(initLevelSelect);
         levelEditorButton.bEvent.add(function():Void {
             exitMainMenu();
+            var bg = screenController.getChildByName("backGround");
+            screenController.removeChild(bg);
             screenController.switchToScreen(3);
         });
     }
@@ -205,7 +224,7 @@ class MenuScreen extends IGameScreen {
         confirmButton.bEvent.add(startLevel);
     }
     
-    private function exitLevelSelect() {
+    private function exitLevelSelect():Void {
         screenController.removeChild(prevButton);
         screenController.removeChild(nextButton);
         screenController.removeChild(levelButton);
@@ -213,6 +232,34 @@ class MenuScreen extends IGameScreen {
         screenController.removeChild(confirmButton);
         //TODO MAYBE clear the levelButton array, idk
     }
+    
+    private function initSquadSelect():Void {
+        exitLevelSelect();
+        
+        //Create buttons from UISpriteFactory
+        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
+        
+        //Set up formatting stuff
+        var btf:ButtonTextFormat = {
+            tx:100,
+            ty:35,
+            font:"Verdana", 
+            size:20, 
+            color:0x0, 
+            bold:false, 
+            hAlign:HAlign.CENTER, 
+            vAlign:VAlign.CENTER
+        };
+        
+        //TODO make custon btf for each button if necessary
+        //TODO turn into loop once there is an array of all characters
+        charButton1 = uif.createButton(100, 35, "BACK", btf, false);
+        nextButton = uif.createButton(100, 35, "NEXT", btf, false);
+        menuButton = uif.createButton(100, 35, "MAIN MENU", btf, false);
+        confirmButton = uif.createButton(100, 35, "CONFIRM", btf, false);        
+        levelButton = levelButtonArray[selectedLevel];
+    }
+    
     
     //Initialize the array of level buttons (one for each level)
     private function initLevelButtonArray(uif:UISpriteFactory, btf:ButtonTextFormat):Void {
@@ -243,15 +290,7 @@ class MenuScreen extends IGameScreen {
     
     private function incrementLevel():Void {
         changeLevel(1);
-    }
-    
-    private function initSquadSelect():Void {
-        exitLevelSelect();
-        //do something with ShareObject
-        //TODO Create 5 ToggleButtons/Checkboxes
-        //
-    }
-    
+    }    
     
     //TODO change to BroadcastEvent1 with a string argument for level
     private function startLevel():Void {
