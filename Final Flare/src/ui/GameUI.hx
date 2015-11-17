@@ -3,7 +3,10 @@ package ui;
 import game.GameState;
 import graphics.SpriteSheet;
 import graphics.StaticSprite;
+import graphics.AnimatedSprite;
+import starling.display.Quad;
 import starling.display.Sprite;
+import starling.filters.ColorMatrixFilter;
 import starling.text.TextField;
 
 class GameUI extends Sprite {
@@ -11,13 +14,15 @@ class GameUI extends Sprite {
     
     // Internal tracking variables
     private var health:Int;
+    private var maxHealth:Int = 100;
     private var score:Int;
     private var flareCount:Int;
     private var flareTimer:Float;
     
     // Rendering elements
     private var healthBack:StaticSprite;
-    private var healthBar:StaticSprite;
+    private var healthBar:AnimatedSprite;
+    private var healthBarMask:Quad;
     private var scoreText:TextField;
     private var flareCountText:TextField;
     private var flareTimerText:TextField;
@@ -29,10 +34,15 @@ class GameUI extends Sprite {
         sheet = s;
         healthBack = sheet.getTile("Health.Background");
         addChild(healthBack);
-        healthBar = sheet.getTile("Health.Overlay");
+        healthBar = sheet.getAnimation("Health.Overlay", 8);
         healthBar.x = 20;
         healthBar.y = 4;
+        healthBarMask = new Quad(201, 22);
+        healthBarMask.x = healthBar.x;
+        healthBarMask.y = healthBar.y;
+        addChild(healthBarMask);
         addChild(healthBar);
+        healthBar.mask = healthBarMask;
 
         // Text fields
         scoreText = new TextField(60, 36, "----", "BitFont", 36, 0xffffff);
@@ -63,7 +73,9 @@ class GameUI extends Sprite {
     public function setHealth(v:Int):Void {
         if (health != v) {
             health = v;
-            healthBar.width = 201 * health / 100;
+            var damage:Float = (maxHealth - health) / maxHealth;
+            healthBar.color = Std.int(255 * (damage)) << 16 | Std.int(255 * (1 - damage)) << 8 | 102;
+            healthBar.x = 20 - (201 * damage);
         }
     }
     public function setScore(v:Int):Void {
