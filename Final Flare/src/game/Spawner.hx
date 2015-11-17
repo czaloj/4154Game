@@ -50,6 +50,8 @@ class Spawner {
         e.maxMoveSpeed = 7;
         e.groundAcceleration = 0.9;
         e.airAcceleration = 0.3;
+        e.headAngle = 0.0;
+        e.weaponAngle = 0.0;
 
         // Clear flags
         e.direction = 0;
