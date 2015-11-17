@@ -30,6 +30,8 @@ class Button extends DisplayObjectContainer {
     public var hitTestState (default, set):Sprite;
     public var currentState (default, set):Sprite;
     public var bEvent:BroadcastEvent;
+    public var bEvent1:BroadcastEvent1<Button>;
+    public var customData:Int;
     
     /**
      * Creates a new Button instance.
@@ -42,10 +44,12 @@ class Button extends DisplayObjectContainer {
      */
     public function new (upState:Sprite = null, overState:Sprite = null, downState:Sprite = null, hitTestState:Sprite = null, text:String = null, btf:ButtonTextFormat = null, tog:Bool) {
         super();
+        customData = 0;
         clicked = false;
         enabled = true;
         toggle = tog;
         bEvent = new BroadcastEvent();
+        bEvent1 = new BroadcastEvent1<Button>();
         this.upState = (upState != null) ? upState : generateDefaultState ();
         this.overState = (overState != null) ? overState : generateDefaultState ();
         this.downState = (downState != null) ? downState : generateDefaultState ();
@@ -128,68 +132,77 @@ class Button extends DisplayObjectContainer {
     
     //Event Handlers
     override private function onTouch (event:TouchEvent):Void {
-        if(event.getTouch(this) != null) {
-            switch event.getTouch(this).phase {
-                case TouchPhase.BEGAN: 
-                    switchState(downState);
-                    currentState = downState;
-                case TouchPhase.HOVER: 
-                    if (overState != currentState) {
-                        switchState(overState);
-                        currentState = overState;
-                    }
-                case TouchPhase.ENDED:
-                    //Change this to fancy shmancy way Cristian uses b?t:f
-                    if (!(this.bounds.containsPoint(event.getTouch(this.get_parent()).getLocation(this.get_parent())))) {
-                        clicked = false;
-                    }
-                    else {
-                        clicked = true;
-                        bEvent.invoke();
-                    }
-                    switchState(upState);
-                    currentState = upState;
-            default:
+        if (enabled) {
+            if(event.getTouch(this) != null) {
+                switch event.getTouch(this).phase {
+                    case TouchPhase.BEGAN: 
+                        switchState(downState);
+                        currentState = downState;
+                    case TouchPhase.HOVER: 
+                        if (overState != currentState) {
+                            switchState(overState);
+                            currentState = overState;
+                        }
+                    case TouchPhase.ENDED:
+                        //Change this to fancy shmancy way Cristian uses b?t:f
+                        if (!(this.bounds.containsPoint(event.getTouch(this.get_parent()).getLocation(this.get_parent())))) {
+                            clicked = false;
+                        }
+                        else {
+                            clicked = true;
+                            bEvent.invoke();
+                            bEvent1.invoke(this);
+                        }
+                        switchState(upState);
+                        currentState = upState;
+                default:
+                }
             }
-        }
-        else 
-        {
-            switchState(upState);
-            currentState = upState;
+            else 
+            {
+                switchState(upState);
+                currentState = upState;
+            }
         }
     }
     
     //Event handler
     private function onTouchToggle (event:TouchEvent):Void {
-        if(event.getTouch(this) != null) {
-            switch event.getTouch(this).phase {
-                case TouchPhase.BEGAN: 
-                    if (currentState == overState) {
-                        switchState(downState);
-                        currentState = downState; 
-                        clicked = true;
-                    }
-                    else if (currentState == downState) { 
-                        switchState(overState);
-                        currentState = upState;
-                        clicked = false;
-                    }
-                case TouchPhase.HOVER:
-                    if (currentState != downState) {
-                        if (overState != currentState) {
-                        switchState(overState);
-                        currentState = overState;
+        if (enabled) {
+            if(event.getTouch(this) != null) {
+                switch event.getTouch(this).phase {
+                    case TouchPhase.BEGAN: 
+                        if (currentState == overState) {
+                            switchState(downState);
+                            currentState = downState; 
+                            clicked = true;
+                            bEvent.invoke();
+                            bEvent1.invoke(this);
                         }
-                    }
-
-            default:
+                        else if (currentState == downState) { 
+                            switchState(overState);
+                            currentState = upState;
+                            clicked = false;
+                        }
+                    case TouchPhase.HOVER:
+                        if (currentState != downState) {
+                            if (overState != currentState) {
+                            switchState(overState);
+                            currentState = overState;
+                            }
+                        }
+                default:
+                }
+            }
+            
+            else if (!clicked) {
+                switchState(upState);
+                currentState = upState;
             }
         }
-        else if (!clicked) {
+        else {
             switchState(upState);
             currentState = upState;
         }
-    }    
+    }
 }
-    
-    
