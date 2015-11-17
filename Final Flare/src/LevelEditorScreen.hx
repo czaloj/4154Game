@@ -461,19 +461,19 @@ class LevelEditorScreen extends IGameScreen {
                 box.visible = true;
             }
         // Background Editor
-        case 1: 
+        case 1,2: 
             for (i in 0...options.length-START_INDEX) {
                 box = options[i+START_INDEX];
                 box.text = objects[sub_editor_num][i];
                 box.visible = true;
             }
         // Foreground Editor
-        case 2: 
-            for (i in 0...objects[sub_editor_num].length) {
-                box = options[i+START_INDEX];
-                box.text = objects[sub_editor_num][i];
-                box.visible = true;
-            }
+        // case 2: 
+        //     for (i in 0...objects[sub_editor_num].length) {
+        //         box = options[i+START_INDEX];
+        //         box.text = objects[sub_editor_num][i];
+        //         box.visible = true;
+        //     }
         // Environment Editor
         case 3:
             for (i in 0...options.length-START_INDEX) {
