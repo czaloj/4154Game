@@ -89,8 +89,6 @@ class MenuScreen extends IGameScreen {
     }
 
     override public function onEntry(gameTime:GameTime):Void {
-        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/TitleScreen.png")));
-        screenController.addChild(backGround);
         screenController.playerData = new PlayerData("Player"); // TODO: Allow others to play?
 
         
@@ -138,6 +136,9 @@ class MenuScreen extends IGameScreen {
     }
 
     private function initMainMenu():Void {
+        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/TitleScreen.png")));
+        screenController.addChild(backGround);
+        
         //Create button from UISpriteFactory
         var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
 
@@ -197,6 +198,9 @@ class MenuScreen extends IGameScreen {
 
     private function initLevelSelect():Void
     {
+        screenController.removeChild(backGround);
+        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/testBack.png")));
+        screenController.addChild(backGround);
 
         //Remove existing buttons
         exitMainMenu();
