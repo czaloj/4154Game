@@ -66,15 +66,13 @@ class UISpriteFactory {
 
 
             // Game pieces
-            //new StripRegion("Health.BarMain", , , , , , 1, 6),
-            //new StripRegion("Health.BarTip", , , , , , 1, 6),
             new TileRegion("Health.Background", 794, 0, 230, 30),
             new StripRegion("Health.Overlay",823, 30, 201, 22, 8, 1, 8),
             //new TileRegion("Flare", , , , ),
-            //new TileRegion("Points", , , , ),
-            //new TileRegion("Combo", , , , ),
+            new TileRegion("Points", 812, 206, 212, 58),
+            new TileRegion("Combo", 840, 264, 184, 20),
             //new StripRegion("Combo.Animated", , , , , , 1, 20),
-            //new StripRegion("Combo.Bar", , , , , , 1, 20),
+            new StripRegion("Combo.Overlay", 898, 284, 126, 10, 8, 1, 8),
             //new TileRegion("Menu", , , , ),
             //new TileRegion("Time", , , , ),
             //new TileRegion("Character", , , , ) // Healthbars over the character tiles will be Quads
