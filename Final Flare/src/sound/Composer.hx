@@ -31,10 +31,18 @@ class Composer {
         var fLoadCallbackEffects:Dynamic->Void = function(e:Event):Void { soundsToLoad -= 1; effectsToLoad -= 1; };
         
         // Music tracks
-        var s:Sound = new Sound(new URLRequest("http://gdiac.cis.cornell.edu/gallery/flash/2015fa/finalflare/files/music/Menu.mp3"));
+        var s:Sound = new Sound(new URLRequest("http://gdiac.cis.cornell.edu/gallery/flash/2015fa/finalflare/files/music/Hero - Wisp X.mp3"));
         s.addEventListener(Event.COMPLETE, fLoadCallbackMusic);
-        sounds.set("Menu", s);
-        
+        sounds.set("Menu1", s);
+        s = new Sound(new URLRequest("http://gdiac.cis.cornell.edu/gallery/flash/2015fa/finalflare/files/music/Villain - Wisp X.mp3"));
+        s.addEventListener(Event.COMPLETE, fLoadCallbackMusic);
+        sounds.set("Menu2", s);
+        s = new Sound(new URLRequest("http://gdiac.cis.cornell.edu/gallery/flash/2015fa/finalflare/files/music/Cruncher - Wisp X.mp3"));
+        s.addEventListener(Event.COMPLETE, fLoadCallbackMusic);
+        sounds.set("Menu3", s);
+        s = new Sound(new URLRequest("http://gdiac.cis.cornell.edu/gallery/flash/2015fa/finalflare/files/music/Vibrance - Wisp X.mp3"));
+        s.addEventListener(Event.COMPLETE, fLoadCallbackMusic);
+        sounds.set("Menu4", s);
         
     }
     

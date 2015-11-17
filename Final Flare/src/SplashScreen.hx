@@ -32,7 +32,7 @@ class SplashScreen extends IGameScreen {
     override public function onEntry(gameTime:GameTime):Void {
         addStartButton();
         
-        Composer.playMusicTrack("Menu");
+        Composer.playMusicTrack("Menu1"); // TODO: Just tell composer to play menu music
     }
     
     override public function onExit(gameTime:GameTime):Void {
