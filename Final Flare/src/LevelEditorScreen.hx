@@ -126,8 +126,17 @@ class LevelEditorScreen extends IGameScreen {
                     case 1: level.spawners.push(new Spawner("Grunt",x,ly));
                     case 2: level.spawners.push(new Spawner("Shooter",x,ly));
                     case 3: level.spawners.push(new Spawner("Tank",x,ly));
+                    case 4:
+                        for (i in 0...level.spawners.length) {
+                            var s = level.spawners[i];
+                            if (x >= s.position.x && x <= s.position.x+1 &&
+                                ly >= s.position.y - 2 && ly <= s.position.y) {
+                                level.spawners.remove(s);
+                            }
+                        }
                     }
                 case 1: // draw regions
+                    
                 case 2: // link regions
                 }
             }
@@ -323,12 +332,12 @@ class LevelEditorScreen extends IGameScreen {
         env_item[0].push("Grunt Spawn");
         env_item[0].push("Shooter Spawn");
         env_item[0].push("Tank Spawn");
-        env_item[0].push("Remove Enemy Spawn");
+        env_item[0].push("Remove Enemy");
         env_item[1].push("Remove Region");
         env_item[1].push("Draw Region");
-        env_item[2].push("Remove Connection");
-        env_item[2].push("Walk Connection");
-        env_item[2].push("Jump Connection");
+        env_item[2].push("Remove");
+        env_item[2].push("Walk");
+        env_item[2].push("Jump");
 
         Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
         Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
@@ -390,7 +399,7 @@ class LevelEditorScreen extends IGameScreen {
         if (x >= cameraX - cameraHalfWidth && x <= cameraX + cameraHalfWidth &&
             y >= cameraY - cameraHalfHeight && y <= cameraY + cameraHalfHeight) {
             var s = new Quad(TILE_HALF_WIDTH,2*TILE_HALF_WIDTH,c);
-            s.alpha = 0.5;
+            s.alpha = 0.4;
             s.x = x - cameraX + cameraHalfWidth + BOX_WIDTH;
             s.y = y - cameraY + cameraHalfHeight;
             screenController.addChild(s);
