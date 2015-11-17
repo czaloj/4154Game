@@ -66,15 +66,16 @@ class Composer {
     public static function playEffect(name:String):SoundChannel {
         var s:Sound = effects.get(name);
         var channel:SoundChannel = s.play(0, 1, transformEffects);
-		trace ("her1");
-		if(channel!=null){
+        
+        if (channel == null) {
+            // TODO: We've run out of channels, stop some of the existing ones and replay this one (more intelligent decision necessary)
+            effectInstances.splice(0, 1)[0].stop();
+            channel = s.play(0, 1, transformEffects);
+        }
+        
         channel.addEventListener(Event.SOUND_COMPLETE, function(e:Event):Void {
-			if(effectInstances!=null){
-           effectInstances.remove(channel);
-			}
+            effectInstances.remove(channel);
         });
-		}
-		trace("alive to here");
         effectInstances.push(channel);
         return channel;
     }
