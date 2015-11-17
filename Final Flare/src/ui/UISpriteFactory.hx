@@ -63,7 +63,7 @@ class UISpriteFactory {
             new TileRegion("Checkbox.Checked", 90, 0, 8, 8),
 
             // Unique UI pieces
-
+            new TileRegion("Background", 0, 0, 800, 450),
 
             // Game pieces
             new TileRegion("Health.Background", 794, 0, 230, 30),
@@ -158,6 +158,12 @@ class UISpriteFactory {
         return checkbox;
     }
 
+    public function createBackgroundSprite():Sprite {
+        var bg = new Sprite();
+        addChildSprite("Background", bg, 0, 0);
+        return bg;
+    }
+    
     public function addChildSprite(region:String, parent:Sprite, x:Float, y:Float) {
         addScaledChildSprite(region, parent, x, y, 1, 1);
     }
