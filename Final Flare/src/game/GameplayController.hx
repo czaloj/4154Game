@@ -186,6 +186,7 @@ class GameplayController {
                 str += ent.position.x + ", "+ ent.position.y+", ";
             }
             FFLog.recordEvent(8, str + state.time.total);
+			FFLog.recordEvent(17, s.player.position.x +", " + s.player.position.y);
         }
         // TODO: Spawner shouldn't need reference to this
         Spawner.spawn(state, state.time);

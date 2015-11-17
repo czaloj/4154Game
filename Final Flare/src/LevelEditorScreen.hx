@@ -42,7 +42,7 @@ class LevelEditorScreen extends IGameScreen {
 
     private static var REGION_COLOR:UInt = 0xbdbdbd;
 
-    private var level:game.GameLevel;
+    private var level:GameLevel = new GameLevel();
 
     private var cameraX:Float;
     private var cameraY:Float;
@@ -74,10 +74,13 @@ class LevelEditorScreen extends IGameScreen {
     private var TILE_SHEET_SET:Bool = false;
     private var TILE_CHILDREN_START:Int;
 
-    public var foregroundMap:TileMap;
-    public var backgroundMap:TileMap;
+    public var foregroundMap:TileMap = new TileMap(Std.int(MIN_LEVEL_HEIGHT/TILE_HALF_WIDTH),
+        Std.int(MIN_LEVEL_WIDTH/TILE_HALF_WIDTH));
+    public var backgroundMap:TileMap = new TileMap(Std.int(MIN_LEVEL_HEIGHT/TILE_HALF_WIDTH),
+        Std.int(MIN_LEVEL_WIDTH/TILE_HALF_WIDTH));
     
-    public var regionMap:TileMap;
+    public var regionMap:TileMap = new TileMap(Std.int(MIN_LEVEL_HEIGHT/TILE_HALF_WIDTH),
+        Std.int(MIN_LEVEL_WIDTH/TILE_HALF_WIDTH));
     public var numRegions:Int = 0;
 
     public function new(sc:ScreenController) {
@@ -264,18 +267,6 @@ class LevelEditorScreen extends IGameScreen {
     private function onKeyDown(e:KeyboardEvent):Void {
         cameraMove[e.keyCode] = true;
 
-        // if (e.keyCode == Keyboard.F8) {
-        //     level.foreground = foregroundMap.tmap;
-        //     level.background = backgroundMap.tmap;
-        //     level.parallax = [];
-        //     for (i in 0...layer_item[0].length) {
-        //         var item = layer_item[0][i];
-        //         if (item != "Add Layer") {
-        //             level.parallax.push("assets/img/" + item);
-        //         }
-        //     }
-        //     LevelCreator.saveToFile(level);
-        // } else 
         if (e.keyCode == Keyboard.F7) {
             level.foreground = foregroundMap.tmap;
             level.background = backgroundMap.tmap;
@@ -305,17 +296,8 @@ class LevelEditorScreen extends IGameScreen {
 
     override public function onEntry(gameTime:GameTime):Void {
         // set up level
-        level = new game.GameLevel();
         level.height = Std.int(MIN_LEVEL_HEIGHT/TILE_HALF_WIDTH);
         level.width = Std.int(MIN_LEVEL_WIDTH/TILE_HALF_WIDTH);
-        level.environmentType = "Simple";
-        level.environmentSprites = "assets/img/Factory.png";
-        level.playerPt = new Point(2,4);
-        level.spawners = [];
-
-        foregroundMap = new TileMap(level.height,level.width);
-        backgroundMap = new TileMap(level.height,level.width);
-        regionMap = new TileMap(level.height,level.width);
 
         // set up camera
         cameraScale = 1;
