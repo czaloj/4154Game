@@ -250,7 +250,7 @@ class MenuScreen extends IGameScreen {
         nextButton.bEvent.add(updateLevelButton);
         menuButton.bEvent.add(exitLevelSelect);
         menuButton.bEvent.add(initMainMenu);
-        confirmButton.bEvent.add(startLevel);
+        confirmButton.bEvent.add(initSquadSelect);
     }
 
     private function exitLevelSelect():Void {
@@ -439,41 +439,44 @@ class MenuScreen extends IGameScreen {
     }
     
     private function selectChar(b:Button) {
-        numSelected++;
-        if (numSelected > 4) { numSelected = 4; }
         switch numSelected {
-            case 1:
+            case 0:
                 if (b.customData == 0) {
                     firstSelectedSprite.transformationMatrix.translate(b.bounds.x + b.width/2 - 15, b.bounds.y - 35);
                     screenController.addChild(firstSelectedSprite);
                     b.customData = 1;
+                    numSelected++;
                 }
                 else {
-                    adjustCharSelect();
+                    adjustCharSelect(b, b.customData);
                 }
-            case 2:
+            case 1:
                 if (b.customData == 0) {
                     secondSelectedSprite.transformationMatrix.translate(b.bounds.x + b.width/2 - 15, b.bounds.y - 35);
                     screenController.addChild(secondSelectedSprite);
                     b.customData = 2;
+                    numSelected++;
                 }
                 else {
-                    adjustCharSelect();
+                    adjustCharSelect(b, b.customData);
                 }
-            case 3:
+            case 2:
                 if (b.customData == 0) {
                     thirdSelectedSprite.transformationMatrix.translate(b.bounds.x + b.width/2 - 15, b.bounds.y - 30);
                     screenController.addChild(thirdSelectedSprite);
                     b.customData = 3;
+                    numSelected++;
                 }
                 else {
-                    adjustCharSelect();
+                    adjustCharSelect(b, b.customData);
                 }
-            case 4:
+            case 3:
                 if (b.customData != 0) {
-                    adjustCharSelect();
+                    adjustCharSelect(b, b.customData);
                 }
         }
+        
+        if (numSelected > 4) { numSelected = 4; }
         
         if (numSelected == 3) {
             var b = 0;
@@ -482,14 +485,38 @@ class MenuScreen extends IGameScreen {
                 b++;
             }
         }
-        
-        
     }
     
     //Super hacky way to do char select 
-    private function adjustCharSelect():Void {
-        //x1 = firstSelectedSprite.bounds.x;
-        //y1 = firstSelectedSprite.bounds.y;
+    private function adjustCharSelect(b:Button, i:Int):Void {
+        trace("Before: " + numSelected);
+        switch i {
+            case 1:
+               var x1 = firstSelectedSprite.bounds.x;
+               var y1 = firstSelectedSprite.bounds.y;
+               
+                firstSelectedSprite.transformationMatrix.translate( -x1, -y1);
+                screenController.removeChild(firstSelectedSprite);
+                b.customData = 0;
+                
+                numSelected--;
+                trace("After: " + numSelected);
+                
+            case 2:
+               var x1 = firstSelectedSprite.bounds.x;
+               var y1 = firstSelectedSprite.bounds.y;
+               var x2 = secondSelectedSprite.bounds.x;
+               var y2 = secondSelectedSprite.bounds.y;
+            case 3:
+               var x1 = firstSelectedSprite.bounds.x;
+               var y1 = firstSelectedSprite.bounds.y;
+               var x2 = secondSelectedSprite.bounds.x;
+               var y2 = secondSelectedSprite.bounds.y;
+               var x3 = thirdSelectedSprite.bounds.x;
+               var y3 = thirdSelectedSprite.bounds.y;
+        }
+        
+        //
         //x2 = secondSelectedSprite.bounds.x;
         //y2 = secondSelectedSprite.bounds.y;
         //x3 = thirdSelectedSprite.bounds.x;
