@@ -202,6 +202,7 @@ class GameplayController {
                         applyEventSpawn(state, cast(event, GameEventSpawn));
                     case GameEvent.TYPE_FLARE:
                         applyEventFlare(state, cast(event, GameEventFlare));
+						FFLog.recordEvent(4, state.player.position.x + ", " + state.player.position.y + ", " +  state.time.total);
                 }
             }
             state.gameEvents = [];
@@ -494,7 +495,8 @@ class GameplayController {
                 FFLog.recordEvent(1,  e.position.x + ", " + e.position.y + ", " + state.time.total);
             }
             if (e.isDead && e.team == Entity.TEAM_PLAYER) {
-                FFLog.recordEvent(3,  e.position.x + ", " + e.position.y + ", " + state.time.total);
+                FFLog.recordEvent(3,  e.position.x + ", " + e.position.y + ", " + state.time.total +", " + d.type + ", " + (state.entities.length-5));
+				
             }
 
             return damage > 0;
