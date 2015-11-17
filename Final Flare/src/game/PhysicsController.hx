@@ -22,6 +22,7 @@ import game.PhysicsController.PhysicsContactBody;
 import game.PhysicsController.PhysicsUserData;
 import game.RayCastContext.RayCastInstance;
 import weapon.projectile.LargeProjectile;
+import weapon.projectile.MeleeProjectile;
 
 // Collided fixture, ray origin, collision point, normal
 typedef RayCastInfo = Tuple4<B2Fixture, B2Vec2, B2Vec2, B2Vec2>;
@@ -474,7 +475,7 @@ class PhysicsController extends B2ContactListener {
         hitShapes = [];
         var polygon = new B2PolygonShape ();
         polygon.setAsOrientedBox(width, height, new B2Vec2(x, y), 0);
-        world.queryShape(onHitTest, polygon, new B2Transform());
+        world.queryShape(onHitTest, polygon);
         return hitShapes;
     }
 

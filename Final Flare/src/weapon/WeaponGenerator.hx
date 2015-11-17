@@ -20,7 +20,7 @@ class WeaponGenerator {
     public static var ALPHA_LEVEL_SECONDARY:UInt = 41;
     public static var ALPHA_LEVEL_TERTIARY:UInt = 21;
     public static var ALPHA_LEVEL_INVISIBLE:UInt = 0;
-    
+
     public static function generate(params:WeaponGenParams):WeaponData {
         var data:WeaponData = new WeaponData();
 
@@ -30,7 +30,7 @@ class WeaponGenerator {
         data.evolutionCost = params.evolutionPoints;
         data.historicalCost = params.historicalPoints;
         data.shadynessCost = params.shadynessPoints;
-        
+
         data.firingMode = FiringMode.AUTOMATIC;
         data.useCapacity = 36;
         data.usesPerActivation = 1;
@@ -38,7 +38,7 @@ class WeaponGenerator {
         data.activationCooldown = 0.15;
         data.burstPause = 0;
         data.burstCount = 0;
-        
+
         data.projectileOrigins = [
             new ProjectileOrigin()
         ];
@@ -51,7 +51,7 @@ class WeaponGenerator {
             pd.penetrationCount = 0;
             pd.gravityAcceleration = 0.0;
             data.projectileOrigins[0].projectileData = pd;
-            data.projectileOrigins[0].velocity = 1500;            
+            data.projectileOrigins[0].velocity = 1500;
         }
         else if (data.shadynessCost == 1) {
             // Example grenade launcher
@@ -64,7 +64,7 @@ class WeaponGenerator {
             data.projectileOrigins[0].projectileData = pd;
             data.projectileOrigins[0].velocity = 30;
         }
-        else {
+        else if (data.shadynessCost == 2){
             // Example flare gun
             var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_FLARE);
             pd.damage = 0;
@@ -77,19 +77,27 @@ class WeaponGenerator {
             data.reloadTime = 10.0;
             data.useCapacity = 1;
             data.firingMode = FiringMode.SINGLE;
+        } else {
+            // Example melee
+            var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_MELEE);
+            pd.damage = 25;
+            pd.damageFriendly = 0;
+            data.projectileOrigins[0].projectileData = pd;
+            data.projectileOrigins[0].velocity = 0;
         }
+
         data.projectileOrigins[0].transform.translate(0.8, 0.1);
         return data;
     }
 
     public static function generateInitialWeapons():Array<WeaponData> {
         var weapons:Array<WeaponData> = [];
-        
+
         // Temp variables
         var po:ProjectileOrigin = null;
         var w:WeaponData = null;
         var pd:ProjectileData = null;
-        
+
         // Rifle
         w = new WeaponData();
         w.name = "M34 Sport Rifle";
@@ -117,7 +125,7 @@ class WeaponGenerator {
         po.transform.translate(0.8, 0.1);
         w.projectileOrigins.push(po);
         weapons.push(w);
-        
+
         // Grenade launcher
         w = new WeaponData();
         w.name = "Junk'n'Chuck";
@@ -146,7 +154,7 @@ class WeaponGenerator {
         po.transform.translate(0.8, 0.1);
         w.projectileOrigins.push(po);
         weapons.push(w);
-        
+
         // Flare gun
         w = new WeaponData();
         w.name = "Rescue Flare Gun";
@@ -175,10 +183,10 @@ class WeaponGenerator {
         po.transform.translate(0.8, 0.1);
         w.projectileOrigins.push(po);
         weapons.push(w);
-        
+
         return weapons;
     }
-    
+
     public function new() {
         // Empty
     }
@@ -187,7 +195,7 @@ class WeaponGenerator {
         // Get original pixels
         bmp.lock();
         var pixels:ByteArray = bmp.getPixels(rect);
-        
+
         // Create output stream
         var nba:ByteArray = new ByteArray();
         nba.length = pixels.length;
@@ -202,7 +210,7 @@ class WeaponGenerator {
             nba.writeUnsignedInt(argb);
             i++;
         }
-        
+
         // Unlock for others
         bmp.unlock();
         nba.position = 0;
@@ -224,7 +232,7 @@ class WeaponGenerator {
             } else {
                 schemeColor = scheme.tertiary;
             }
-            
+
             var fa:Float = (schemeColor >> 24) & 0xff;
             var fr:Float = (schemeColor >> 16) & 0xff;
             var fg:Float = (schemeColor >> 8) & 0xff;
@@ -242,7 +250,7 @@ class WeaponGenerator {
             return (ca << 24) | (cr << 16) | (cg << 8) | cb;
         }
     }
-    
+
     public static function composeLayers():Void {
         var bmpTint:BitmapData = null;
         var bmpOpacity:BitmapData = null;
@@ -252,9 +260,9 @@ class WeaponGenerator {
         QuickIO.loadBitmap(function (o:BitmapData):Void { bmpOpacity = o;
         QuickIO.loadBitmap(function (o:BitmapData):Void { bmpColor = o;
         QuickIO.loadBitmap(function (o:BitmapData):Void { bmpAlpha = o;
-        
+
         var rect:Rectangle = new Rectangle(0, 0, bmpTint.width, bmpTint.height);
-        
+
         // Get original pixels
         bmpTint.lock();
         var pixelsTint:ByteArray = bmpTint.getPixels(rect);
@@ -264,7 +272,7 @@ class WeaponGenerator {
         var pixelsColor:ByteArray = bmpColor.getPixels(rect);
         bmpAlpha.lock();
         var pixelsAlpha:ByteArray = bmpAlpha.getPixels(rect);
-        
+
         // Create output stream
         var nba:ByteArray = new ByteArray();
         nba.length = pixelsTint.length;
@@ -286,14 +294,14 @@ class WeaponGenerator {
             nba.writeUnsignedInt(argb);
             i++;
         }
-        
+
         // Unlock for others
         bmpTint.unlock();
         bmpOpacity.unlock();
         bmpColor.unlock();
         bmpAlpha.unlock();
         nba.position = 0;
-        
+
         // Save pixels in new bitmap
         var bmp:BitmapData = new BitmapData(bmpTint.width, bmpTint.height, true, 0x00000000);
         bmp.setPixels(new Rectangle(0, 0, bmp.width, bmp.height), nba);
