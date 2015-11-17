@@ -192,6 +192,7 @@ class Renderer implements IGameVisualizer {
         quad.color = 0x333333;
         quad.alpha = 0.1;
         renderPermanence([quad], []);
+        tracers.add(sx - r, sy, r, 0, r, 0.5, 0xffffc0, 0);
     }
     public function addBulletTrail(sx:Float, sy:Float, ex:Float, ey:Float, duration:Float):Void {
         tracers.add(sx, sy, ex - sx, ey - sy, 0.04, duration, 0xffff00, (1 / 60) / duration);
