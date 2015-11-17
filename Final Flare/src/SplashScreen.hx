@@ -30,6 +30,7 @@ class SplashScreen extends IGameScreen {
     }
     
     override public function onEntry(gameTime:GameTime):Void {
+        addBackground();
         addStartButton();
         
         Composer.playMusicTrack("Menu1"); // TODO: Just tell composer to play menu music
@@ -48,6 +49,12 @@ class SplashScreen extends IGameScreen {
     
     override public function draw(gameTime:GameTime):Void {
         // Empty
+    }
+    
+    private function addBackground() {
+        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/TitleScreen.png")));
+        var bg = uif.createBackgroundSprite();
+        screenController.addChild(bg);
     }
     
     private function addStartButton() 
@@ -69,7 +76,7 @@ class SplashScreen extends IGameScreen {
 
         //Create Button and position it
         startButton = uif.createButton(200, 66, "START GAME", btf, false);  
-        startButton.transformationMatrix.translate(400 - startButton.width / 2, 250);
+        startButton.transformationMatrix.translate(400 - startButton.width / 2, 300);
         
         screenController.addChild(startButton);
     }
