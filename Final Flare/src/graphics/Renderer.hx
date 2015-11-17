@@ -37,7 +37,7 @@ class Renderer implements IGameVisualizer {
     private var hierarchy:RenderHierarchy = new RenderHierarchy();
     private var pack:RenderPack;
     private var stage3D:Stage;
-    
+
     public var sprites:Array<Sprite> = [];
     public var entityTbl:ObjectMap<game.Entity, EntitySprite> = new ObjectMap<Entity, EntitySprite>();
     public var projTbl:ObjectMap<BulletProjectile, AnimatedSprite> = new ObjectMap<BulletProjectile, AnimatedSprite>();
@@ -46,11 +46,11 @@ class Renderer implements IGameVisualizer {
     public var cameraX(get, set):Float;
     public var cameraY(get, set):Float;
     public var cameraScale(get, set):Float;
-    
+
     // Ratios in x and y for parallax
     private var crX:Float;
     private var crY:Float;
-    
+
     // Tilemap display objects
     private var tilesForeground:QuadBatch;
     private var tilesBackground:QuadBatch;
@@ -61,13 +61,13 @@ class Renderer implements IGameVisualizer {
     private var maskSprite:Sprite;
     private var rtBackground:RenderTexture;
     private var rtForeground:RenderTexture;
-    
+
     // Particles
     private var tracers:TracerList;
-    
+
     // Screen-shake tracking information
     private var screenShakeOffset:Point = new Point();
-    
+
     // This is for debug camera movement
     private var debugViewing:Bool = false;
     private var debugViewMoves:Array<Int> = [ 0, 0, 0, 0, 0, 0 ];
@@ -90,7 +90,7 @@ class Renderer implements IGameVisualizer {
         Lib.current.stage.addEventListener(Event.RESIZE, onWindowResize);
         Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, debugMouseClick);
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, debugMoveListening);
-        
+
         load(state);
     }
 
@@ -138,17 +138,21 @@ class Renderer implements IGameVisualizer {
         sprite.x = o.position.x;
         sprite.y = o.position.y;
         if (o.team == Entity.TEAM_PLAYER) {
-            hierarchy.player.addChild(sprite);            
+            hierarchy.player.addChild(sprite);
         }
         else {
-            hierarchy.enemy.addChild(sprite);            
+            hierarchy.enemy.addChild(sprite);
         }
         entityTbl.set(o, sprite);
     }
     public function onEntityRemoved(s:game.GameState, o:game.Entity):Void {
         var e:EntitySprite = entityTbl.get(o);
-        e.parent.removeChild(e);
-        entityTbl.remove(o);
+        if (o.team == Entity.TEAM_PLAYER) {
+            e.visible = false;
+        } else {
+            e.parent.removeChild(e);
+            entityTbl.remove(o);
+        }
     }
     public function onBloodSpurt(sx:Float, sy:Float, dx:Float, dy:Float):Void {
         var quad:Quad = new Quad(0.5, 0.5);
@@ -157,7 +161,7 @@ class Renderer implements IGameVisualizer {
         quad.color = 0xff0000;
         quad.alpha = 0.2;
         renderPermanence([quad], []);
-        
+
         tracers.add(sx, sy, dx * 0.3, dy * 0.3, 0.4, 0.5, 0xff0000, 0.1);
     }
     public function onExplosion(sx:Float, sy:Float, r:Float):Void {
@@ -175,7 +179,7 @@ class Renderer implements IGameVisualizer {
         screenShakeOffset.x += x;
         screenShakeOffset.y += y;
     }
-    
+
     private function load(state:game.GameState):Void {
         // Generate environment geometry
         tilesForeground = new QuadBatch();
@@ -189,7 +193,7 @@ class Renderer implements IGameVisualizer {
         hierarchy.background.addChild(tilesBackground);
         for (anim in animatedBackground) hierarchy.background.addChild(anim);
         generateBackgroundClipping();
-                
+
         // Add the parallax layers in a sorted order by their width
         pack.parallax.sort(function (t1:Texture, t2:Texture):Int {
             if (t1.width == t2.width) return 0;
@@ -199,7 +203,7 @@ class Renderer implements IGameVisualizer {
         for (texture in pack.parallax) {
             hierarchy.parallax.addChild(new ParallaxSprite(texture, state.width * World.TILE_HALF_WIDTH, state.height * World.TILE_HALF_WIDTH, ScreenController.SCREEN_WIDTH, ScreenController.SCREEN_HEIGHT));
         }
-        
+
         // Create the permanence layers
         var permananceWidth:Int = Std.int(state.width * World.TILE_HALF_WIDTH) * 16;
         if (permananceWidth > 2048) permananceWidth = 2048;
@@ -218,7 +222,7 @@ class Renderer implements IGameVisualizer {
         permBackground.width = state.width * World.TILE_HALF_WIDTH;
         permBackground.height = state.height * World.TILE_HALF_WIDTH;
         hierarchy.background.addChild(permBackground);
-        
+
         tracers = new TracerList();
         hierarchy.projectiles.addChild(tracers);
     }
@@ -230,7 +234,7 @@ class Renderer implements IGameVisualizer {
         var t:Int = y - ts;
         var b:Int = y + ts;
         var n:Int = 0;
-        
+
         for (pos in [
             { x:l, y:t, mask: 0x80 },
             { x:x, y:t, mask: 0xE0 },
@@ -246,7 +250,7 @@ class Renderer implements IGameVisualizer {
                 n |= pos.mask;
             }
         }
-        
+
         return n;
     }
     private function generateTiles(s:GameState, sheet:SpriteSheet, tiles:Array<Int>, tileBatch:QuadBatch, animated:Array<AnimatedSprite>):Void {
@@ -264,7 +268,7 @@ class Renderer implements IGameVisualizer {
                     // Position the image
                     tileImage.x = x;
                     tileImage.y = y;
-                    
+
                     // Obtain the correct sprite type
                     var tileName:String = SpriteSheetRegistry.getSheetName(tileID);
                     switch(tileID) {
@@ -309,7 +313,7 @@ class Renderer implements IGameVisualizer {
             }
         }
     }
-    
+
     /** Permanence rendering code **/
     private function generateBackgroundClipping():Void {
         var qb:QuadBatch = new QuadBatch();
@@ -317,7 +321,7 @@ class Renderer implements IGameVisualizer {
         qb.addQuadBatch(tilesBackground);
         for (obj in animatedBackground) qb.addImage(obj);
         hierarchy.backgroundMask.addChild(qb);
-        
+
     }
     private function renderPermanence(backgroundObjects:Array<DisplayObject>, foregroundObjects:Array<DisplayObject>):Void {
         rtBackground.drawBundled(function():Void {
@@ -326,9 +330,9 @@ class Renderer implements IGameVisualizer {
                 obj.y *= 16;
                 obj.scaleX *= 16;
                 obj.scaleY *= 16;
-                
+
                 rtBackground.draw(obj);
-                
+
                 obj.x /= 16;
                 obj.y /= 16;
                 obj.scaleX /= 16;
@@ -341,9 +345,9 @@ class Renderer implements IGameVisualizer {
                 obj.y *= 16;
                 obj.scaleX *= 16;
                 obj.scaleY *= 16;
-                
+
                 rtForeground.draw(obj);
-                
+
                 obj.x /= 16;
                 obj.y /= 16;
                 obj.scaleX /= 16;
@@ -401,12 +405,12 @@ class Renderer implements IGameVisualizer {
     private function debugMouseClick(e:MouseEvent = null):Void {
         // Empty
     }
-    
+
     public function screenToWorldSpace(pt:Point):Void {
         pt.x = (pt.x - ScreenController.SCREEN_WIDTH / 2) / cameraScale + cameraX;
         pt.y = ((ScreenController.SCREEN_HEIGHT - pt.y) - ScreenController.SCREEN_HEIGHT / 2) / cameraScale + cameraY;
     }
-    
+
     public function update(s:game.GameState):Void {
         // TODO: Update sprite positions from entities
         for (o in entityTbl.keys()) {
@@ -420,7 +424,7 @@ class Renderer implements IGameVisualizer {
             else {
                 sprite.switchTo(EntitySprite.POSE_REST);
             }
-            
+
             sprite.recalculate(o);
         }
         var levelWidth:Float = s.width * World.TILE_HALF_WIDTH;
@@ -440,7 +444,7 @@ class Renderer implements IGameVisualizer {
             cameraY += CAMERA_DEBUG_MOVE_SPEED * ((debugViewMoves[3] - debugViewMoves[2]) / 60);
             cameraScale *= [ 0.95, 1, 1.15 ] [1 + (debugViewMoves[5] - debugViewMoves[4])];
         }
-        
+
         // Apply screen-shake
         if (screenShakeOffset.length > 0.01) {
             var m:Matrix = new Matrix(0.9, 0, 0, 0.9, 0, 0);
@@ -457,7 +461,7 @@ class Renderer implements IGameVisualizer {
             var pLayer:ParallaxSprite = cast (layer, ParallaxSprite);
             pLayer.update(crX, crY);
         }
-        
+
         // Update particles
         tracers.update(1.0 / 60.0);
     }
