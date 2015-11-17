@@ -94,7 +94,7 @@ class GameplayController {
         vis.onEntityRemoved(state, e);
         e.position.set(-10, -10);
     }
-    
+
     public function handleCollisions():Void {
         for (contact in state.contactList) {
             if (contact == null) continue;
@@ -359,6 +359,9 @@ class GameplayController {
         var enemy:Entity = new Entity();
         Spawner.createEnemy(enemy, e.entity, e.x, e.y);
         physicsController.initEntity(enemy);
+        if (state.enemyWeapons[0] != null) {
+            enemy.weapon = new Weapon(enemy, state.enemyWeapons[0]);
+        }
         state.entities.push(enemy);
         vis.onEntityAdded(state, enemy);
         FFLog.recordEvent(2, enemy.position.x + ", " + enemy.position.y + ", " + state.time.total);
@@ -373,14 +376,14 @@ class GameplayController {
             state.flaredEntity++;
             state.flaredEntity %= 5;
         } while (state.entities[state.flaredEntity] == null);
-        
+
         // Switch out characters
         disableEntity(state.player);
         state.player = state.entities[state.flaredEntity];
         enableEntity(state.player);
         state.player.position.set(e.x, e.y + state.player.height * 0.5);
     }
-    
+
     // Damage events
     public function applyDamageBullet(state:GameState, bullet:DamageBullet, dt:Float):Bool {
         // Apply the raycast
