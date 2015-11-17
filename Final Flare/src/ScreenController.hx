@@ -50,9 +50,10 @@ class ScreenController extends Sprite {
             switch (e.keyCode) {
                 case Keyboard.F6:
                     // TODO: Remove debug level creation with real level editor
-                    CodeLevelEditor.run();
-                case Keyboard.F7:
-                    switchToScreen(1);
+                    // CodeLevelEditor.run();
+                    switchToScreen(3);
+                // case Keyboard.F7:
+                //     switchToScreen(1);
                 case Keyboard.F8:
                     LevelCreator.saveToFile(loadedLevel);
                 case Keyboard.F9:
