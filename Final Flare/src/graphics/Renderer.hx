@@ -24,7 +24,7 @@ import starling.display.Sprite;
 import starling.display.Stage;
 import starling.textures.RenderTexture;
 import starling.textures.Texture;
-import weapon.projectile.BulletProjectile;
+import weapon.projectile.Projectile;
 
 class Renderer implements IGameVisualizer {
     public static inline var PLAYER_WIDTH:Float = 0.9;
@@ -40,7 +40,7 @@ class Renderer implements IGameVisualizer {
 
     public var sprites:Array<Sprite> = [];
     public var entityTbl:ObjectMap<game.Entity, EntitySprite> = new ObjectMap<Entity, EntitySprite>();
-    public var projTbl:ObjectMap<BulletProjectile, AnimatedSprite> = new ObjectMap<BulletProjectile, AnimatedSprite>();
+    public var projTbl:ObjectMap<Projectile, DisplayObject> = new ObjectMap<Projectile, DisplayObject>();
 
     // Camera parameters
     public var cameraX(get, set):Float;
@@ -144,6 +144,13 @@ class Renderer implements IGameVisualizer {
             hierarchy.enemy.addChild(sprite);
         }
         entityTbl.set(o, sprite);
+        
+        var wi:Image = new Image(pack.gun);
+        wi.scaleX /= 64;
+        wi.scaleY /= -64;
+        wi.y = 0.2;
+        wi.x = -0.2;
+        sprite.setWeapon(wi);
     }
     public function onEntityRemoved(s:game.GameState, o:game.Entity):Void {
         var e:EntitySprite = entityTbl.get(o);
@@ -153,6 +160,19 @@ class Renderer implements IGameVisualizer {
             e.parent.removeChild(e);
             entityTbl.remove(o);
         }
+    }
+    public function onProjectileAdded(s:GameState, o:Projectile):Void {
+        var s:Sprite = new Sprite();
+        var q:Quad = new Quad(o.data.radius * 2, o.data.radius * 2);
+        q.x = -o.data.radius;
+        q.y = -o.data.radius;
+        s.addChild(q);
+        projTbl.set(o, s);
+    }
+    public function onProjectilRemoved(s:GameState, o:Projectile):Void {
+        var e:DisplayObject = projTbl.get(o);
+        e.parent.removeChild(e);
+        projTbl.remove(o);
     }
     public function onBloodSpurt(sx:Float, sy:Float, dx:Float, dy:Float):Void {
         var quad:Quad = new Quad(0.5, 0.5);

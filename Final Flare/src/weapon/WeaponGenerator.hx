@@ -3,6 +3,8 @@ package weapon;
 import game.ColorScheme;
 import game.damage.DamageBullet;
 import game.damage.DamageExplosion;
+import graphics.SpriteSheetRegistry;
+import haxe.ds.StringMap;
 import weapon.projectile.LargeProjectile;
 import weapon.projectile.BulletProjectile;
 import openfl.display.BitmapData;
@@ -91,12 +93,14 @@ class WeaponGenerator {
     }
 
     public static function generateInitialWeapons():Array<WeaponData> {
+        var map:StringMap<WeaponLayerData> = SpriteSheetRegistry.getGunSheet();
         var weapons:Array<WeaponData> = [];
 
         // Temp variables
         var po:ProjectileOrigin = null;
         var w:WeaponData = null;
         var pd:ProjectileData = null;
+        var l:WeaponLayer = null;
 
         // Rifle
         w = new WeaponData();

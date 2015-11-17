@@ -2,6 +2,7 @@ package;
 
 import flash.net.FileReference;
 import flash.events.Event;
+import game.ColorScheme;
 import game.GameLevel;
 import game.GameState;
 import game.Entity;
@@ -23,9 +24,11 @@ import openfl.events.GameInputEvent;
 import openfl.filters.ColorMatrixFilter;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
+import openfl.utils.ByteArray;
 import starling.textures.Texture;
 import openfl.Assets;
 import haxe.Unserializer;
+import weapon.WeaponGenerator;
 
 class LevelCreator {
     public static function saveToFile(lvl:game.GameLevel):Void {
@@ -96,6 +99,17 @@ class LevelCreator {
         renderPack.projectiles = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Bullet.png")), [
             new StripRegion("Bullet.Fly", 0, 0, 5, 10, 1, 1, 1)
         ]);
+        
+        var bmpGuns:BitmapData = Assets.getBitmapData("assets/img/Gun.png");
+        var bmpConvertedGuns:BitmapData = new BitmapData(bmpGuns.width, bmpGuns.height * 1);
+        var cs:Array<ColorScheme> = [
+            new ColorScheme(0xffff0000, 0xff00ff00, 0xff0000ff, 0, 0, 1, 1)
+        ];
+        for (i in 0...cs.length) {
+            var nba:ByteArray = WeaponGenerator.convertColors(bmpGuns, new Rectangle(0, 0, bmpGuns.width, bmpGuns.height), cs[i]);
+            bmpConvertedGuns.setPixels(new Rectangle(0, i * bmpGuns.height, bmpGuns.width, bmpGuns.height), nba);
+        }
+        renderPack.gun = Texture.fromBitmapData(bmpConvertedGuns);
     }
     
     public static function createStateFromFile(file:String, state:game.GameState):Void {

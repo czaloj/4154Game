@@ -9,6 +9,8 @@ class RenderPack {
     public var enemies:SpriteSheet;
     public var projectiles:SpriteSheet;
     
+    public var gun:Texture; // TODO: This needs to be a spritesheet and generated.
+    
     public var entityRenderData:ObjectMap<String, EntityRenderData>;
     
     // Level environment information

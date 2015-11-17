@@ -53,6 +53,9 @@ class WeaponData {
     public var burstPause:Float;
     public var burstCount:Int;
     
+    // The root weapon layer
+    public var layer:WeaponLayer;
+    
     public function new() {
         // Empty
     }

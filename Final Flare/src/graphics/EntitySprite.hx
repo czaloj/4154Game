@@ -55,9 +55,6 @@ class EntitySprite extends Sprite {
         addChild(bodyPoses[pose]);
         addChild(headCenter);
         addChild(weaponCenter);
-
-        // Debugging
-        setWeapon(new Quad(1.0, 0.4));
     }
     
     public function switchTo(p:Int) {
