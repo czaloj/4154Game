@@ -27,6 +27,7 @@ class ScreenController extends Sprite {
     private var activeScreen:IGameScreen;
     private var screenToSwitch:Int = -1;
     
+    public var playerData:PlayerData = null;
     public var loadedLevel:GameLevel = null; // The level that has been loaded in by the menu
     public var levelModifiers:MenuLevelModifiers = null; // Additional modification to a level
     
@@ -58,6 +59,8 @@ class ScreenController extends Sprite {
                     LevelCreator.saveToFile(loadedLevel);
                 case Keyboard.F9:
                     WeaponGenerator.composeLayers();
+                case Keyboard.F10:
+                    if (playerData != null) playerData.reset();
             }
         });
     }
