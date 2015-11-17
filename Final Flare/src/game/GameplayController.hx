@@ -118,7 +118,7 @@ class GameplayController {
         state.score += v * state.comboMultiplier;
         // TODO: Signal Game UI
     }
-    
+
     public function handleCollisions():Void {
         for (contact in state.contactList) {
             if (contact == null) continue;
@@ -379,7 +379,16 @@ class GameplayController {
         Spawner.createEnemy(enemy, e.entity, e.x, e.y);
         physicsController.initEntity(enemy);
         if (state.enemyWeapons[0] != null) {
-            enemy.weapon = new Weapon(enemy, state.enemyWeapons[0]);
+            switch (e.entity) {
+                case "Grunt":
+                    enemy.weapon = new Weapon(enemy, state.enemyWeapons[3]);
+                case "Shooter":
+                    enemy.weapon = new Weapon(enemy, state.enemyWeapons[0]);
+                case "Tank":
+                    enemy.weapon = new Weapon(enemy, state.enemyWeapons[3]);
+                default:
+                    enemy.weapon = new Weapon(enemy, state.enemyWeapons[0]);
+            }
         }
         state.entities.push(enemy);
         vis.onEntityAdded(state, enemy);
