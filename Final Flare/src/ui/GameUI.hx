@@ -35,7 +35,7 @@ class GameUI extends Sprite {
         addChild(healthBar);
 
         // Text fields
-        scoreText = new TextField(20, 36, "----", "BitFont", 36, 0xffffff);
+        scoreText = new TextField(60, 36, "----", "BitFont", 36, 0xffffff);
         scoreText.y = -30;
         scoreText.scaleX *= 3;
         scoreText.scaleY *= 3;
