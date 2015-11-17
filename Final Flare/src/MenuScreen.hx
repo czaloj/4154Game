@@ -44,11 +44,29 @@ class MenuScreen extends IGameScreen {
     private var menuButton:Button;
     private var confirmButton:Button;
     
+    //Squad select pane
+    //There will be many buttons and sprites
     private var charButton1:Button;
     private var charButton2:Button;
     private var charButton3:Button;
     private var charButton4:Button;
     private var charButton5:Button;
+    private var prevWeaponButton1:Button;
+    private var prevWeaponButton2:Button;
+    private var prevWeaponButton3:Button;
+    private var prevWeaponButton4:Button;
+    private var prevWeaponButton5:Button;
+    private var nextWeaponButton1:Button;
+    private var nextWeaponButton2:Button;
+    private var nextWeaponButton3:Button;
+    private var nextWeaponButton4:Button;
+    private var nextWeaponButton5:Button;
+    private var charWeaponSprite1:Sprite;
+    private var charWeaponSprite2:Sprite;
+    private var charWeaponSprite3:Sprite;
+    private var charWeaponSprite4:Sprite;
+    private var charWeaponSprite5:Sprite;
+    
     
     public function new(sc:ScreenController) {
         super(sc);
@@ -210,7 +228,7 @@ class MenuScreen extends IGameScreen {
         nextButton.bEvent.add(updateLevelButton);
         menuButton.bEvent.add(exitLevelSelect);
         menuButton.bEvent.add(initMainMenu);
-        confirmButton.bEvent.add(startLevel);
+        confirmButton.bEvent.add(initSquadSelect);
     }
     
     private function exitLevelSelect():Void {
@@ -230,6 +248,18 @@ class MenuScreen extends IGameScreen {
         
         //Set up formatting stuff
         var btf:ButtonTextFormat = {
+            tx:60,
+            ty:120,
+            font:"Verdana", 
+            size:20, 
+            color:0x0, 
+            bold:false, 
+            hAlign:HAlign.CENTER, 
+            vAlign:VAlign.CENTER
+        };
+        
+        //Set up formatting stuff
+        var btf2:ButtonTextFormat = {
             tx:100,
             ty:35,
             font:"Verdana", 
@@ -242,11 +272,37 @@ class MenuScreen extends IGameScreen {
         
         //TODO make custon btf for each button if necessary
         //TODO turn into loop once there is an array of all characters
-        charButton1 = uif.createButton(100, 35, "BACK", btf, false);
-        nextButton = uif.createButton(100, 35, "NEXT", btf, false);
-        menuButton = uif.createButton(100, 35, "MAIN MENU", btf, false);
-        confirmButton = uif.createButton(100, 35, "CONFIRM", btf, false);        
-        levelButton = levelButtonArray[selectedLevel];
+        
+        //Create buttons
+        charButton1 = uif.createButton(60, 120, "1", btf, true);
+        charButton2 = uif.createButton(60, 120, "2", btf, true);
+        charButton3 = uif.createButton(60, 120, "3", btf, true);
+        charButton4 = uif.createButton(60, 120, "4", btf, true);
+        charButton5 = uif.createButton(60, 120, "5", btf, true);
+        
+        confirmButton = uif.createButton(100, 35, "CONFIRM", btf2, false);   
+       
+        //Button translations
+        charButton1.transformationMatrix.translate(62.5 + 0, 100);
+        charButton2.transformationMatrix.translate(62.5 + 75 + charButton2.width, 100);
+        charButton3.transformationMatrix.translate(62.5 + 150 + 2 * charButton3.width, 100);
+        charButton4.transformationMatrix.translate(62.5 + 225 + 3* charButton4.width, 100);
+        charButton5.transformationMatrix.translate(62.5 + 300 + 4 * charButton5.width, 100);
+        
+        confirmButton.transformationMatrix.translate(400 - confirmButton.width / 2, 375);
+        
+        //Add buttons to screen
+        screenController.addChild(charButton1);
+        screenController.addChild(charButton2);
+        screenController.addChild(charButton3);
+        screenController.addChild(charButton4);
+        screenController.addChild(charButton5);
+        
+        screenController.addChild(confirmButton);
+        
+        //Add button functions
+        confirmButton.bEvent.add(startLevel);
+        
     }
     
     
