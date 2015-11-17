@@ -259,9 +259,21 @@ class MenuScreen extends IGameScreen {
         };
         
         //Set up formatting stuff
-        var btf2:ButtonTextFormat = {
+        var btf1:ButtonTextFormat = {
             tx:100,
             ty:35,
+            font:"Verdana", 
+            size:20, 
+            color:0x0, 
+            bold:false, 
+            hAlign:HAlign.CENTER, 
+            vAlign:VAlign.CENTER
+        };
+        
+        //Set up formatting stuff
+        var btf2:ButtonTextFormat = {
+            tx:0,
+            ty:0,
             font:"Verdana", 
             size:20, 
             color:0x0, 
@@ -279,8 +291,18 @@ class MenuScreen extends IGameScreen {
         charButton3 = uif.createButton(60, 120, "3", btf, true);
         charButton4 = uif.createButton(60, 120, "4", btf, true);
         charButton5 = uif.createButton(60, 120, "5", btf, true);
+        prevWeaponButton1 = uif.createButton(8, 4, "", btf2, false);
+        prevWeaponButton2 = uif.createButton(8, 4, "", btf2, false);
+        prevWeaponButton3 = uif.createButton(8, 4, "", btf2, false);
+        prevWeaponButton4 = uif.createButton(8, 4, "", btf2, false);
+        prevWeaponButton5 = uif.createButton(8, 4, "", btf2, false);
+        nextWeaponButton1 = uif.createButton(8, 4, "", btf2, false);
+        nextWeaponButton2 = uif.createButton(8, 4, "", btf2, false);
+        nextWeaponButton3 = uif.createButton(8, 4, "", btf2, false);
+        nextWeaponButton4 = uif.createButton(8, 4, "", btf2, false);
+        nextWeaponButton5 = uif.createButton(8, 4, "", btf2, false);
         
-        confirmButton = uif.createButton(100, 35, "CONFIRM", btf2, false);   
+        confirmButton = uif.createButton(100, 35, "CONFIRM", btf1, false);   
        
         //Button translations
         charButton1.transformationMatrix.translate(62.5 + 0, 50);
@@ -288,6 +310,16 @@ class MenuScreen extends IGameScreen {
         charButton3.transformationMatrix.translate(62.5 + 150 + 2 * charButton3.width, 50);
         charButton4.transformationMatrix.translate(62.5 + 225 + 3* charButton4.width, 50);
         charButton5.transformationMatrix.translate(62.5 + 300 + 4 * charButton5.width, 50);
+        prevWeaponButton1.transformationMatrix.translate(charButton1.bounds.x - prevWeaponButton1.width - 8, charButton1.bounds.y + charButton1.height + 8);
+        prevWeaponButton2.transformationMatrix.translate(charButton2.bounds.x - prevWeaponButton2.width - 8, charButton2.bounds.y + charButton1.height + 8);
+        prevWeaponButton3.transformationMatrix.translate(charButton3.bounds.x - prevWeaponButton3.width - 8, charButton3.bounds.y + charButton1.height + 8);
+        prevWeaponButton4.transformationMatrix.translate(charButton4.bounds.x - prevWeaponButton4.width - 8, charButton4.bounds.y + charButton1.height + 8);
+        prevWeaponButton5.transformationMatrix.translate(charButton5.bounds.x - prevWeaponButton5.width - 8, charButton5.bounds.y + charButton1.height + 8);
+        nextWeaponButton1.transformationMatrix.translate(charButton1.bounds.x + charButton1.width + 8, charButton1.bounds.y + charButton1.height + 8);
+        nextWeaponButton2.transformationMatrix.translate(charButton2.bounds.x + charButton2.width + 8, charButton2.bounds.y + charButton2.height + 8);
+        nextWeaponButton3.transformationMatrix.translate(charButton3.bounds.x + charButton3.width + 8, charButton3.bounds.y + charButton3.height + 8);
+        nextWeaponButton4.transformationMatrix.translate(charButton4.bounds.x + charButton4.width + 8, charButton4.bounds.y + charButton4.height + 8);
+        nextWeaponButton5.transformationMatrix.translate(charButton5.bounds.x + charButton5.width + 8, charButton5.bounds.y + charButton5.height + 8);
         
         confirmButton.transformationMatrix.translate(400 - confirmButton.width / 2, 375);
         
@@ -297,6 +329,16 @@ class MenuScreen extends IGameScreen {
         screenController.addChild(charButton3);
         screenController.addChild(charButton4);
         screenController.addChild(charButton5);
+        screenController.addChild(prevWeaponButton1);
+        screenController.addChild(prevWeaponButton2);
+        screenController.addChild(prevWeaponButton3);
+        screenController.addChild(prevWeaponButton4);
+        screenController.addChild(prevWeaponButton5);
+        screenController.addChild(nextWeaponButton1);
+        screenController.addChild(nextWeaponButton2);
+        screenController.addChild(nextWeaponButton3);
+        screenController.addChild(nextWeaponButton4);
+        screenController.addChild(nextWeaponButton5);
         
         screenController.addChild(confirmButton);
         
