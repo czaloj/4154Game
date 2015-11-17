@@ -66,9 +66,15 @@ class Composer {
     public static function playEffect(name:String):SoundChannel {
         var s:Sound = effects.get(name);
         var channel:SoundChannel = s.play(0, 1, transformEffects);
+		trace ("her1");
+		if(channel!=null){
         channel.addEventListener(Event.SOUND_COMPLETE, function(e:Event):Void {
-            effectInstances.remove(channel);
+			if(effectInstances!=null){
+           effectInstances.remove(channel);
+			}
         });
+		}
+		trace("alive to here");
         effectInstances.push(channel);
         return channel;
     }
