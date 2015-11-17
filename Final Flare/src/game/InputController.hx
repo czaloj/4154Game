@@ -38,7 +38,7 @@ class InputController {
     // Raw input event handlers
     public function keyDown(e:KeyboardEvent):Void {
         keysDown[e.keyCode] = true;
-        if (FFLog.testID == 0) { 
+        if (FFLog.testID == 1) { 
             usingMouseInput = true;
             keysDown[keyShootLeft] = false;
             keysDown[keyShootRight] = false;
