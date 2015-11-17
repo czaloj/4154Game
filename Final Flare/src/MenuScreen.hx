@@ -72,7 +72,7 @@ class MenuScreen extends IGameScreen {
         ];
         var weaponParams:WeaponGenParams = new WeaponGenParams();
         weaponParams.evolutionPoints = 100;
-        weaponParams.shadynessPoints = 1;
+        weaponParams.shadynessPoints = 0;
         weaponParams.historicalPoints = 0;
         screenController.levelModifiers.enemyWeapons = [
             WeaponGenerator.generate(weaponParams),
