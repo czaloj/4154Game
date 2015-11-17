@@ -115,6 +115,8 @@ class GameplayScreen extends IGameScreen {
         switch (e.keyCode) {
             case Keyboard.F5:
                 debugPhysicsView.visible = !debugPhysicsView.visible;
+            case Keyboard.M:
+                screenController.switchToScreen(1);
         }
     }
 }
