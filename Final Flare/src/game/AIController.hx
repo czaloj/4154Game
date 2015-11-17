@@ -49,7 +49,7 @@ class AIController {
 					entity.controlDefault = true;
 				}
             if (y>target.y+.05) {
-				if (x < target.x+.05 && x > target.x -.05 && entity.get_isGrounded()) {
+				if (x < target.x+.1 && x > target.x -.1 && entity.get_isGrounded()) {
 					entity.yProblem = y;
 					entity.prevX = x;
 					entity.count = 1;
