@@ -250,7 +250,7 @@ class MenuScreen extends IGameScreen {
         nextButton.bEvent.add(updateLevelButton);
         menuButton.bEvent.add(exitLevelSelect);
         menuButton.bEvent.add(initMainMenu);
-        confirmButton.bEvent.add(initSquadSelect);
+        confirmButton.bEvent.add(startLevel);
     }
 
     private function exitLevelSelect():Void {
