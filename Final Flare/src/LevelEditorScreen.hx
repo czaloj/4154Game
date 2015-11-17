@@ -16,6 +16,9 @@ import flash.net.FileReference;
 
 class LevelEditorScreen extends IGameScreen {
 
+    public static var MIN_LEVEL_WIDTH:Int = 1600;
+    public static var MIN_LEVEL_HEIGHT:Int = 900;
+
     private static inline var TILE_HALF_WIDTH = 16;
 
     private static inline var BOX_WIDTH:Int = 100;
@@ -37,8 +40,7 @@ class LevelEditorScreen extends IGameScreen {
     private static var CAMDOWN = Keyboard.S;
     private static var CAMRIGHT = Keyboard.D;
 
-    public static var MIN_LEVEL_WIDTH:Int = 1600;
-    public static var MIN_LEVEL_HEIGHT:Int = 900;
+    private static var REGION_COLOR:UInt = 0xbdbdbd;
 
     private var level:game.GameLevel;
 
@@ -50,22 +52,33 @@ class LevelEditorScreen extends IGameScreen {
     private var cameraMove:Array<Bool> = [];
 
     private var options:Array<OptionBox> = [];
+
     private var editor_num = 0;
     private var editors:Array<String> = ["Layer Editor","Background Editor","Foreground Editor","Environment Editor"];
+    
     private var sub_editor_num = 0;
     private var sub_editors:Array<Array<String>> = [[],[],[],[]];
+    
     private var layer_item:Array<Array<String>> = [[],[]];
+    
     private var object_num = 0;
     private var objects:Array<Array<String>> = [["Clear Tile"],["Clear Tile"],["Clear Item"]];
+    
     private var tiles:Array<Array<Int>> = [[],[]];
+    
     private var env_item:Array<Array<String>> = [[],[],[]];
+    
+    private var cur_region:Point;
+    private var regions:Array<Quad> = [];
 
     private var TILE_SHEET_SET:Bool = false;
     private var TILE_CHILDREN_START:Int;
 
     public var foregroundMap:TileMap;
     public var backgroundMap:TileMap;
+    
     public var regionMap:TileMap;
+    public var numRegions:Int = 0;
 
     public function new(sc:ScreenController) {
         super(sc);
@@ -136,7 +149,20 @@ class LevelEditorScreen extends IGameScreen {
                         }
                     }
                 case 1: // draw regions
-                    
+                    var tx = Std.int(x);
+                    var ty = Std.int(y);
+                    switch (object_num) {
+                    case 0: // delete
+                        
+                    case 1: // draw
+                        regionMap.setID(tx,ty,++numRegions);
+                        regions[numRegions] = new Quad(TILE_HALF_WIDTH,TILE_HALF_WIDTH,REGION_COLOR);
+                        regions[numRegions].alpha = .25;
+                        regions[numRegions].x = tx * TILE_HALF_WIDTH;
+                        regions[numRegions].y = ty * TILE_HALF_WIDTH;
+                        cur_region = new Point(tx,ty);
+                        Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, defRegion);
+                    }
                 case 2: // link regions
                 }
             }
@@ -167,7 +193,6 @@ class LevelEditorScreen extends IGameScreen {
                 box.color = FONT_COLOR;
                 object_num = 0;
             } else {
-                // [i-START_INDEX]
                 if (editor_num == 0 && sub_editor_num == 0){
                     object_num = i-START_INDEX;
                     var fileRef:FileReference = new FileReference();
@@ -178,9 +203,27 @@ class LevelEditorScreen extends IGameScreen {
                 }
             }
         } else {
-
-            
+            switch (editor_num) {
+            case 3:
+                switch (sub_editor_num) {
+                case 1: 
+                    Lib.current.stage.removeEventListener(MouseEvent.MOUSE_MOVE, defRegion);
+                    var r = regions[numRegions];
+                    for (i in 0...Std.int(r.width/TILE_HALF_WIDTH)) {
+                        for (j in 0 ...Std.int(r.height/TILE_HALF_WIDTH)) {
+                            regionMap.setID(i,j,numRegions);
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    private function defRegion(e:MouseEvent):Void {
+        var x = Std.int((e.stageX - cameraHalfWidth - BOX_WIDTH + cameraX)/TILE_HALF_WIDTH);
+        var y = Std.int((e.stageY - cameraHalfHeight + cameraY)/TILE_HALF_WIDTH);
+        regions[numRegions].width = Math.max(x - cur_region.x,1)*TILE_HALF_WIDTH;
+        regions[numRegions].height = Math.max(y - cur_region.y,1)*TILE_HALF_WIDTH;
     }
 
     private function findSheet(e:Event):Void {
@@ -368,11 +411,24 @@ class LevelEditorScreen extends IGameScreen {
 
     override public function draw(gameTime:GameTime):Void {
         screenController.removeChildren(TILE_CHILDREN_START);
+        
         drawTiles(backgroundMap);
         drawTiles(foregroundMap);
+        
         drawSpawner(level.playerPt,Color.BLUE);
-        for (i in 0...level.spawners.length) {
-            drawSpawner(level.spawners[i].position,Color.RED);
+        for (i in level.spawners) {
+            drawSpawner(i.position,Color.RED);
+        }
+
+        for (r in regions) {
+            if (r != null && r.x >= cameraX - cameraHalfWidth && r.x + r.width <= cameraX + cameraHalfWidth &&
+                r.y + r.height >= cameraY - cameraHalfHeight && r.y <= cameraY + cameraHalfHeight) {
+                var rr = new Quad(r.width,r.height,REGION_COLOR);
+                rr.alpha = 0.25;
+                rr.x = r.x - cameraX + cameraHalfWidth + BOX_WIDTH;
+                rr.y = r.y - cameraY + cameraHalfHeight;
+                screenController.addChild(rr);
+            }
         }
     }
 
