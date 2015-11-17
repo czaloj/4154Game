@@ -19,14 +19,14 @@ class Spawner {
         position.x = x;
         position.y = y;
     }
-    public static function spawn(gameplayController:GameplayController, state: GameState, gameTime:GameTime) {
+    public static function spawn(state: GameState, gameTime:GameTime) {
         // TODO: Use advanced spawning logic
         // TODO: factor in difficulty
         var spawnCount:Int = 0;
         for (spawner in state.spawners) {
             if ((state.entities.length + spawnCount - 5) < 100) {
                 var type = EnemyType.make(spawner.id);
-                if (gameTime.frame % (10000 - 50 * Std.int(Math.log(state.score))) == 201) {
+                if (gameTime.frame % (type.spawnCooldown - 50 * Std.int(Math.log(state.score))) == 201) {
                     state.gameEvents.push(new GameEventSpawn(spawner.position.x, spawner.position.y, spawner.id));
                     spawnCount++;
                 }
@@ -61,11 +61,12 @@ class Spawner {
         e.feetTouches = 0;
     }
     public static function createEnemy(e:Entity, type:String, x:Float, y:Float):Void {
+        var enemyInfo = EnemyType.make(type);
         e.id = type;
         e.team = Entity.TEAM_ENEMY;
-        e.health = 50;
+        e.health =enemyInfo.health;
         e.damageTimer = GameplayController.INVINCIBILITY_TIME;
-        
+
         // Physical parameters
         e.position.set(x, y);
         e.velocity.set(0, 0);

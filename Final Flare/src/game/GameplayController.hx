@@ -34,7 +34,7 @@ class GameplayController {
     private var deletingEntities:Array<Entity> = [];
     private var deletingProjectiles:Array<Projectile> = [];
     var count20:Int;
-    
+
     private var comboCooldownDelay:Float = COMBO_COOLDOWN_DELAY;
     private var flaresReceived:Int = 0;
 
@@ -139,7 +139,7 @@ class GameplayController {
     public function update(s:GameState, gameTime:GameTime):Void {
         state = s;
         updateTime(gameTime);
-        
+
         // TODO: Super old logging code, excise
         count20 -= 1;
         if (count20 <= 0)
@@ -153,7 +153,7 @@ class GameplayController {
             FFLog.recordEvent(8, str + state.time.total);
         }
         // TODO: Spawner shouldn't need reference to this
-        Spawner.spawn(this, state, state.time);
+        Spawner.spawn(state, state.time);
 
         // Update looking directions
         updateTargeting();
@@ -184,10 +184,10 @@ class GameplayController {
                 entity.flareGun.update(entity.useFlare, state.time.elapsed, s);
             }
         }
-        
+
         // Physics
         updatePhysics(state.time);
-        
+
         // Interactions
         handleCollisions();
         for (damage in state.damage) {
@@ -222,7 +222,7 @@ class GameplayController {
                 deletingProjectiles.push(p);
             }
         }
-        
+
         // Destroy all dead things
         if (deletingEntities.length > 0) {
             for (entity in deletingEntities) {
@@ -233,7 +233,7 @@ class GameplayController {
                 if (entity.team != Entity.TEAM_PLAYER) {
                     state.entities.remove(entity);
                 }
-                
+
             }
             deletingEntities = [];
         }
@@ -245,17 +245,17 @@ class GameplayController {
             deletingProjectiles = [];
         }
         physicsController.clearDeadBodies();
-        
+
         // Update current score for other modules to interface with it
         updateScoring();
     }
     public function updateTime(gameTime:GameTime):Void {
         state.time.elapsed = gameTime.elapsed * state.timeMultiplier;
         state.time.total += state.time.elapsed;
-        
+
         // Frame must always increase by 1, no matter the multiplier
         state.time.frame += 1;
-        
+
         // Update flare information
         state.flareCountdown -= state.time.elapsed;
         if (state.flareCountdown < 0.0) {
@@ -283,7 +283,7 @@ class GameplayController {
             // Wait until it's time to decrease the combo
             comboCooldownDelay -= state.time.elapsed;
         }
-        
+
         if (state.score == 80085) {
             // TODO: Achievement get...
         }
@@ -373,7 +373,7 @@ class GameplayController {
                     }
                 }
             }
-            
+
             // Apply piercing count
             if (bullet.piercingAmount > 0) {
                 bullet.piercingAmount -= info.first.length;
@@ -393,6 +393,12 @@ class GameplayController {
     }
     public function applyDamagePolygon(state:GameState, polygon:DamagePolygon, time:GameTime):Void {
         // TODO: Use Query instead of multiple entity tests
+        var hits:Array<PhysicsUserData> = physicsController.meleeHitTest(polygon.x, polygon.y, polygon.width, polygon.height,
+            polygon.teamDestinationFlags == DamageDealer.TEAM_PLAYER,
+            polygon.teamDestinationFlags == DamageDealer.TEAM_ENEMY);
+        for (hit in hits) {
+            attemptDamage(cast(hit.second, Entity), polygon);
+        }
     }
     public function applyDamageExplosion(state:GameState, explosion:DamageExplosion):Void {
         var hits:Array<PhysicsUserData> = physicsController.hitTest(explosion.x, explosion.y, explosion.radius, true, true);
@@ -402,22 +408,22 @@ class GameplayController {
         vis.onExplosion(explosion.x, explosion.y, explosion.radius);
         vis.addScreenShake((Math.random() - 0.5), -1.0);
     }
-    
+
     private function attemptDamage(e:Entity, d:DamageDealer):Bool {
         if (e.enabled && e.canBeDamaged) {
             var damage:Int = d.damageFor((e.team == Entity.TEAM_PLAYER) ? DamageDealer.TEAM_PLAYER : DamageDealer.TEAM_ENEMY);
             e.health -= damage;
             e.damageTimer = INVINCIBILITY_TIME;
             // TODO: Record damage?
-            
+
             // TODO: Causes of death
             if (e.isDead && e.team == Entity.TEAM_ENEMY) {
                 FFLog.recordEvent(1,  e.position.x + ", " + e.position.y + ", " + state.time.total);
             }
             if (e.isDead && e.team == Entity.TEAM_PLAYER) {
-                FFLog.recordEvent(3,  e.position.x + ", " + e.position.y + ", " + state.time.total); 
+                FFLog.recordEvent(3,  e.position.x + ", " + e.position.y + ", " + state.time.total);
             }
-            
+
             return damage > 0;
         }
         return false;

@@ -219,7 +219,7 @@ class PhysicsController extends B2ContactListener {
         fixtureDef.filter = (switch([p.source.team, p.data.hitFriendly]) {
             case [Entity.TEAM_PLAYER, false]: FILTER_PLAYER_PROJECTILE;
             case [Entity.TEAM_ENEMY, false]: FILTER_ENEMY_PROJECTILE;
-            default: FILTER_NEUTRAL_PROJECTILE; 
+            default: FILTER_NEUTRAL_PROJECTILE;
         }).copy();
         var fixtureMain:B2Fixture = p.body.createFixture(fixtureDef);
 
@@ -468,6 +468,14 @@ class PhysicsController extends B2ContactListener {
 
     public function bumpPlayerTest(px:Float, py:Float, pw:Float, ph: Float, x:Float, y:Float, w:Float, h: Float):Bool {
         return !((x - w/2 > px + pw/2) || (x + w/2 < px - pw/2) || (y - h/2 > py + ph/2) ||(y + h/2 < py - ph/2));
+    }
+
+    public function meleeHitTest(x:Float, y:Float, width:Float, height:Float, hitPlayer:Bool, hitEnemies:Bool):Array<PhysicsUserData> {
+        hitShapes = [];
+        var polygon = new B2PolygonShape ();
+        polygon.setAsOrientedBox(width, height, new B2Vec2(x, y), 0);
+        world.queryShape(onHitTest, polygon, new B2Transform());
+        return hitShapes;
     }
 
     /**
