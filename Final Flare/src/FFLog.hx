@@ -22,7 +22,7 @@ class FFLog {
 
         // Get correct test group
         testID = Std.int(Math.random() * TEST_GROUP_COUNT);
-        logger.assignABTestValue(testID);
+        testID = logger.assignABTestValue(testID);
         logger.recordABTestValue();
 
         // Pass page load successful

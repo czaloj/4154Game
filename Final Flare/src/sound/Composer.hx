@@ -20,8 +20,9 @@ class Composer {
     private static var transformEffects:SoundTransform = new SoundTransform(1, 0);
 
     private static var sounds:StringMap<Sound> = new StringMap<Sound>();
-    private static var effectsToLoad:Int = 0;
-    private static var soundsToLoad:Int = 1;
+    private static var effects:StringMap<Sound> = new StringMap<Sound>();
+    private static var effectsToLoad:Int = 2;
+    private static var soundsToLoad:Int = 6;
     
     private static var musicInstances:Array<SoundChannel> = [];
     private static var effectInstances:Array<SoundChannel> = [];
@@ -44,18 +45,34 @@ class Composer {
         s.addEventListener(Event.COMPLETE, fLoadCallbackMusic);
         sounds.set("Menu4", s);
         
+        // Effects
+        s = new Sound(new URLRequest("http://gdiac.cis.cornell.edu/gallery/flash/2015fa/finalflare/files/effects/Shot.mp3"));
+        s.addEventListener(Event.COMPLETE, fLoadCallbackEffects);
+        effects.set("Shot", s);
+        s = new Sound(new URLRequest("http://gdiac.cis.cornell.edu/gallery/flash/2015fa/finalflare/files/effects/Bomb.mp3"));
+        s.addEventListener(Event.COMPLETE, fLoadCallbackEffects);
+        effects.set("Bomb", s);
     }
     
     public static function playMusicTrack(name:String):SoundChannel {
         var s:Sound = sounds.get(name);
-        var channel:SoundChannel = s.play(0, 1, transformMusic);
+        var channel:SoundChannel = s.play(0, 0, transformMusic);
         channel.addEventListener(Event.SOUND_COMPLETE, function(e:Event):Void {
             musicInstances.remove(channel);
         });
         musicInstances.push(channel);
         return channel;
     }
-
+    public static function playEffect(name:String):SoundChannel {
+        var s:Sound = effects.get(name);
+        var channel:SoundChannel = s.play(0, 1, transformEffects);
+        channel.addEventListener(Event.SOUND_COMPLETE, function(e:Event):Void {
+            effectInstances.remove(channel);
+        });
+        effectInstances.push(channel);
+        return channel;
+    }
+    
     private static function updateInstances(a:Array<SoundChannel>, t:SoundTransform):Void {
         for (c in a) c.soundTransform = t;
     }
