@@ -306,23 +306,23 @@ class MenuScreen extends IGameScreen {
 
         //TODO make custon btf for each button if necessary
         //TODO turn into loop once there is an array of all characters
-
+        
         //Create buttons
-        charButton1 = uif.createButton(60, 120, "1", btf, true);
-        charButton2 = uif.createButton(60, 120, "2", btf, true);
-        charButton3 = uif.createButton(60, 120, "3", btf, true);
-        charButton4 = uif.createButton(60, 120, "4", btf, true);
-        charButton5 = uif.createButton(60, 120, "5", btf, true);
-        prevWeaponButton1 = uif.createButton(8, 4, "", btf2, false);
-        prevWeaponButton2 = uif.createButton(8, 4, "", btf2, false);
-        prevWeaponButton3 = uif.createButton(8, 4, "", btf2, false);
-        prevWeaponButton4 = uif.createButton(8, 4, "", btf2, false);
-        prevWeaponButton5 = uif.createButton(8, 4, "", btf2, false);
-        nextWeaponButton1 = uif.createButton(8, 4, "", btf2, false);
-        nextWeaponButton2 = uif.createButton(8, 4, "", btf2, false);
-        nextWeaponButton3 = uif.createButton(8, 4, "", btf2, false);
-        nextWeaponButton4 = uif.createButton(8, 4, "", btf2, false);
-        nextWeaponButton5 = uif.createButton(8, 4, "", btf2, false);
+        charButton1 = uif.createButton(59, 119, "1", btf, true);
+        charButton2 = uif.createButton(59, 119, "2", btf, true);
+        charButton3 = uif.createButton(59, 119, "3", btf, true);
+        charButton4 = uif.createButton(59, 119, "4", btf, true);
+        charButton5 = uif.createButton(59, 119, "5", btf, true);
+        prevWeaponButton1 = uif.createButton(4, 0, "", btf2, false);
+        prevWeaponButton2 = uif.createButton(4, 0, "", btf2, false);
+        prevWeaponButton3 = uif.createButton(4, 0, "", btf2, false);
+        prevWeaponButton4 = uif.createButton(4, 0, "", btf2, false);
+        prevWeaponButton5 = uif.createButton(4, 0, "", btf2, false);
+        nextWeaponButton1 = uif.createButton(4, 0, "", btf2, false);
+        nextWeaponButton2 = uif.createButton(4, 0, "", btf2, false);
+        nextWeaponButton3 = uif.createButton(4, 0, "", btf2, false);
+        nextWeaponButton4 = uif.createButton(4, 0, "", btf2, false);
+        nextWeaponButton5 = uif.createButton(4, 0, "", btf2, false);
         confirmButton = uif.createButton(100, 35, "CONFIRM", btf1, false);
         
         //Button translations
@@ -393,6 +393,10 @@ class MenuScreen extends IGameScreen {
         charButton3.bEvent1.add(selectChar);
         charButton4.bEvent1.add(selectChar);
         charButton5.bEvent1.add(selectChar);
+        
+        trace(charButton1.width);
+        trace(charButton1.height);
+        trace(charButton2.bounds.y);
     }
 
     //Initialize the array of level buttons (one for each level)
