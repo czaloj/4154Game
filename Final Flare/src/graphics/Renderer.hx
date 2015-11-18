@@ -145,9 +145,9 @@ class Renderer implements IGameVisualizer {
         }
         entityTbl.set(o, sprite);
         
-        var wi:Image = new Image(pack.gun);
+        var wi:AnimatedSprite = new AnimatedSprite(pack.gun, pack.weaponMapping.get(o.weapon.data), 1);
         wi.scaleX /= 64;
-        wi.scaleY /= -64;
+        wi.scaleY /= 64;
         wi.y = 0.2;
         wi.x = -0.2;
         sprite.setWeapon(wi);

@@ -28,6 +28,7 @@ import openfl.utils.ByteArray;
 import starling.textures.Texture;
 import openfl.Assets;
 import haxe.Unserializer;
+import weapon.WeaponData;
 import weapon.WeaponGenerator;
 
 class LevelCreator {
@@ -74,7 +75,7 @@ class LevelCreator {
         renderPack.enemies = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Pixel.png", false)), [
             // TODO: Add hardcoded enemies
         ]);
-        renderPack.entityRenderData = new ObjectMap<String, EntityRenderData>();
+        renderPack.entityRenderData = new StringMap<EntityRenderData>();
         renderPack.entityRenderData.set("Grunt", new EntityRenderData("Grunt"));
         renderPack.entityRenderData.set("Man", new EntityRenderData("Man"));
         renderPack.entityRenderData.set("Robot", new EntityRenderData("Robot"));
@@ -100,16 +101,6 @@ class LevelCreator {
             new StripRegion("Bullet.Fly", 0, 0, 5, 10, 1, 1, 1)
         ]);
         
-        var bmpGuns:BitmapData = Assets.getBitmapData("assets/img/Gun.png");
-        var bmpConvertedGuns:BitmapData = new BitmapData(bmpGuns.width, bmpGuns.height * 1);
-        var cs:Array<ColorScheme> = [
-            new ColorScheme(0xffff0000, 0xff00ff00, 0xff0000ff, 0, 0, 1, 1)
-        ];
-        for (i in 0...cs.length) {
-            var nba:ByteArray = WeaponGenerator.convertColors(bmpGuns, new Rectangle(0, 0, bmpGuns.width, bmpGuns.height), cs[i]);
-            bmpConvertedGuns.setPixels(new Rectangle(0, i * bmpGuns.height, bmpGuns.width, bmpGuns.height), nba);
-        }
-        renderPack.gun = Texture.fromBitmapData(bmpConvertedGuns);
     }
     
     public static function createStateFromFile(file:String, state:game.GameState):Void {
@@ -119,7 +110,7 @@ class LevelCreator {
         createPackFromLevel(loadLevelFromFile(file), renderPack);
     }
 
-    public static function modifyFromMenu(mod:MenuLevelModifiers, state:game.GameState):Void {
+    public static function modifyFromMenu(mod:MenuLevelModifiers, state:game.GameState, renderPack:RenderPack):Void {
         // TODO: Create the entity array
         state.entities = [
             new Entity(),
@@ -142,6 +133,22 @@ class LevelCreator {
         
         state.characterWeapons = mod.characterWeapons.copy();
         state.enemyWeapons = mod.enemyWeapons.copy();
+        
+        var bmpGuns:BitmapData = Assets.getBitmapData("assets/img/Gun.png");
+        var bmpConvertedGuns:BitmapData = new BitmapData(bmpGuns.width, bmpGuns.height * 1);
+        var cs:Array<ColorScheme> = [
+            new ColorScheme(0xffff0000, 0xff00ff00, 0xff0000ff, 0, 0, 1, 1)
+        ];
+        var regions:Array<StripRegion> = [];
+        for (i in 0...cs.length) {
+            var nba:ByteArray = WeaponGenerator.convertColors(bmpGuns, new Rectangle(0, 0, bmpGuns.width, bmpGuns.height), cs[i]);
+            bmpConvertedGuns.setPixels(new Rectangle(0, i * bmpGuns.height, bmpGuns.width, bmpGuns.height), nba);
+            regions.push(new StripRegion("Gun" + Std.string(i), 0, i * bmpGuns.height, bmpGuns.width, bmpGuns.height, 1, 1, 1));
+        }
+        renderPack.gun = new SpriteSheet(Texture.fromBitmapData(bmpConvertedGuns), regions);
+        renderPack.weaponMapping = new ObjectMap<WeaponData, String>();
+        for (w in state.characterWeapons) renderPack.weaponMapping.set(w, "Gun0");
+        for (w in state.enemyWeapons) renderPack.weaponMapping.set(w, "Gun0");
     }
     
     public function new() {

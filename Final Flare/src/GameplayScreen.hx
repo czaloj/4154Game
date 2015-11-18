@@ -56,9 +56,9 @@ class GameplayScreen extends IGameScreen {
 
         var gl:game.GameLevel = screenController.loadedLevel;
         LevelCreator.createStateFromLevel(gl, state);
-        LevelCreator.modifyFromMenu(screenController.levelModifiers, state);
-        gameplayController.init(state);
         LevelCreator.createPackFromLevel(gl, pack);
+        LevelCreator.modifyFromMenu(screenController.levelModifiers, state, pack);
+        gameplayController.init(state);
         renderer = new Renderer(screenController, pack, state);
         gameplayController.setVisualizer(renderer);
 

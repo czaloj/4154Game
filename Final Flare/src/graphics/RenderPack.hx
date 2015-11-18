@@ -1,7 +1,9 @@
 package graphics;
 
+import haxe.ds.StringMap;
 import haxe.ds.ObjectMap;
 import starling.textures.Texture;
+import weapon.WeaponData;
 
 // The rendering data used by a renderer for a level
 class RenderPack {
@@ -9,9 +11,10 @@ class RenderPack {
     public var enemies:SpriteSheet;
     public var projectiles:SpriteSheet;
     
-    public var gun:Texture; // TODO: This needs to be a spritesheet and generated.
+    public var gun:SpriteSheet; // TODO: This needs to be a spritesheet and generated.
+    public var weaponMapping:ObjectMap<WeaponData, String>; // Mapping of WeaponData to the generated sprites in the gun texture
     
-    public var entityRenderData:ObjectMap<String, EntityRenderData>;
+    public var entityRenderData:StringMap<EntityRenderData>;
     
     // Level environment information
     public var environment:SpriteSheet;
