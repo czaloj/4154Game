@@ -136,6 +136,7 @@ class LevelEditorScreen extends IGameScreen {
                 // environment editing
                 switch (sub_editor_num) {
                 case 0: // entity placement
+                    // var lx = 
                     var ly = level.height - y;
                     switch (object_num) {
                     case 0: level.playerPt = new Point(x,ly);
@@ -306,10 +307,15 @@ class LevelEditorScreen extends IGameScreen {
         foregroundMap.tmap = level.foreground;
         backgroundMap.tmap = level.background;
         for (i in 0...level.parallax.length) {
-            layer_item[0][i] = level.parallax[i];
+            var l = level.parallax[i].split("/");
+            layer_item[0][i] = l[l.length-1];
         }
         numRegions = level.nregions;
         regionMap.tmap = level.regions;
+
+        cameraY = LEVEL_HEIGHT - cameraHalfHeight;
+
+        TILE_SHEET_SET = true;
     }
 
     private function onKeyUp(e:KeyboardEvent):Void {
