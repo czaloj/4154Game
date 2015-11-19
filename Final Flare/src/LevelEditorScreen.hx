@@ -16,8 +16,8 @@ import flash.net.FileReference;
 
 class LevelEditorScreen extends IGameScreen {
 
-    public static var MIN_LEVEL_WIDTH:Int = 1600;
-    public static var MIN_LEVEL_HEIGHT:Int = 900;
+    public static var LEVEL_WIDTH:Int = 1600;
+    public static var LEVEL_HEIGHT:Int = 900;
 
     private static inline var TILE_HALF_WIDTH = 16;
 
@@ -74,13 +74,13 @@ class LevelEditorScreen extends IGameScreen {
     private var TILE_SHEET_SET:Bool = false;
     private var TILE_CHILDREN_START:Int;
 
-    public var foregroundMap:TileMap = new TileMap(Std.int(MIN_LEVEL_HEIGHT/TILE_HALF_WIDTH),
-        Std.int(MIN_LEVEL_WIDTH/TILE_HALF_WIDTH));
-    public var backgroundMap:TileMap = new TileMap(Std.int(MIN_LEVEL_HEIGHT/TILE_HALF_WIDTH),
-        Std.int(MIN_LEVEL_WIDTH/TILE_HALF_WIDTH));
+    public var foregroundMap:TileMap = new TileMap(Std.int(LEVEL_HEIGHT/TILE_HALF_WIDTH),
+        Std.int(LEVEL_WIDTH/TILE_HALF_WIDTH));
+    public var backgroundMap:TileMap = new TileMap(Std.int(LEVEL_HEIGHT/TILE_HALF_WIDTH),
+        Std.int(LEVEL_WIDTH/TILE_HALF_WIDTH));
     
-    public var regionMap:TileMap = new TileMap(Std.int(MIN_LEVEL_HEIGHT/TILE_HALF_WIDTH),
-        Std.int(MIN_LEVEL_WIDTH/TILE_HALF_WIDTH));
+    public var regionMap:TileMap = new TileMap(Std.int(LEVEL_HEIGHT/TILE_HALF_WIDTH),
+        Std.int(LEVEL_WIDTH/TILE_HALF_WIDTH));
     public var numRegions:Int = 0;
 
     public function new(sc:ScreenController) {
@@ -281,6 +281,35 @@ class LevelEditorScreen extends IGameScreen {
             screenController.loadedLevel = level;
             screenController.switchToScreen(2);
         }
+        if (e.keyCode == Keyboard.F5) {
+            var fileRef:FileReference = new FileReference();
+            fileRef.addEventListener(Event.SELECT, findLevel);
+            fileRef.browse();
+        }
+    }
+
+    private function findLevel(e:Event):Void {
+        var fileReference:FileReference = cast(e.target, FileReference);
+        fileReference.removeEventListener(Event.SELECT, findLevel);
+        fileReference.addEventListener(Event.COMPLETE, loadLevel);
+
+        fileReference.load();
+    }
+
+    private function loadLevel(e:Event):Void {
+        var fileReference:FileReference = cast(e.target, FileReference);
+        fileReference.removeEventListener(Event.COMPLETE, loadLevel);
+
+        level = LevelCreator.loadLevelFromFile("assets/level/" + fileReference.name);
+        LEVEL_HEIGHT = level.height*TILE_HALF_WIDTH;
+        LEVEL_WIDTH = level.width*TILE_HALF_WIDTH;
+        foregroundMap.tmap = level.foreground;
+        backgroundMap.tmap = level.background;
+        for (i in 0...level.parallax.length) {
+            layer_item[0][i] = level.parallax[i];
+        }
+        numRegions = level.nregions;
+        regionMap.tmap = level.regions;
     }
 
     private function onKeyUp(e:KeyboardEvent):Void {
@@ -296,15 +325,15 @@ class LevelEditorScreen extends IGameScreen {
 
     override public function onEntry(gameTime:GameTime):Void {
         // set up level
-        level.height = Std.int(MIN_LEVEL_HEIGHT/TILE_HALF_WIDTH);
-        level.width = Std.int(MIN_LEVEL_WIDTH/TILE_HALF_WIDTH);
+        level.height = Std.int(LEVEL_HEIGHT/TILE_HALF_WIDTH);
+        level.width = Std.int(LEVEL_WIDTH/TILE_HALF_WIDTH);
 
         // set up camera
         cameraScale = 1;
         cameraHalfWidth = CAMERA_WIDTH / (2*cameraScale);
         cameraHalfHeight = ScreenController.SCREEN_HEIGHT / (2*cameraScale);
         cameraX = cameraHalfWidth;
-        cameraY = MIN_LEVEL_HEIGHT - cameraHalfHeight;
+        cameraY = LEVEL_HEIGHT - cameraHalfHeight;
 
         // set up UI
         for (i in 0...Std.int(ScreenController.SCREEN_HEIGHT/BOX_HEIGHT)) {
@@ -385,9 +414,9 @@ class LevelEditorScreen extends IGameScreen {
         } if (cameraMove[CAMLEFT]) {
             cameraX = Math.max(0 + cameraHalfWidth, cameraX -= 2*TILE_HALF_WIDTH);
         } if (cameraMove[CAMDOWN]) {
-            cameraY = Math.min(MIN_LEVEL_HEIGHT - cameraHalfHeight, cameraY += 2*TILE_HALF_WIDTH);
+            cameraY = Math.min(LEVEL_HEIGHT - cameraHalfHeight, cameraY += 2*TILE_HALF_WIDTH);
         } if (cameraMove[CAMRIGHT]) {
-            cameraX = Math.min(MIN_LEVEL_WIDTH - cameraHalfWidth, cameraX += 2*TILE_HALF_WIDTH);
+            cameraX = Math.min(LEVEL_WIDTH - cameraHalfWidth, cameraX += 2*TILE_HALF_WIDTH);
         }
     }
 
