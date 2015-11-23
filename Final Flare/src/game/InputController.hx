@@ -38,30 +38,21 @@ class InputController {
     // Raw input event handlers
     public function keyDown(e:KeyboardEvent):Void {
         keysDown[e.keyCode] = true;
-        if (FFLog.testID == 1) { 
-            usingMouseInput = true;
-            keysDown[keyShootLeft] = false;
-            keysDown[keyShootRight] = false;
-        }
     }
     public function keyUp(e:KeyboardEvent):Void {
         keysDown[e.keyCode] = false;
     }
     public function mouseDown(e:MouseEvent):Void {
-        if (FFLog.testID == 1) {
-            click = true;
-            x = e.stageX;
-            y = e.stageY;
-            usingMouseInput = true;
-        }
+        click = true;
+        x = e.stageX;
+        y = e.stageY;
+        usingMouseInput = true;
     }
     public function mouseMove(e:MouseEvent):Void {
-        if (FFLog.testID == 1) {
-            x = e.stageX;
-            y = e.stageY;
-            usingMouseInput = true;
-            viewShootCooldown = VIEW_LOOK_TIME;
-        }
+        x = e.stageX;
+        y = e.stageY;
+        usingMouseInput = true;
+        viewShootCooldown = VIEW_LOOK_TIME;
     }
     public function mouseUp(e:MouseEvent):Void {
         click = false;
