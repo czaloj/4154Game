@@ -13,7 +13,7 @@ class InputController {
     // Array of booleans, indexed by key code.
     // Element is true when corresponding key is pressed. False otherwise.
     private var keysDown:Array<Bool> = [];
-    private var usingMouseInput:Bool = true;
+    private var usingMouseInput:Bool = false;
     private var click:Bool;
     private var x:Float; // Location of the mouse
     private var y:Float;
@@ -21,7 +21,7 @@ class InputController {
     private var stageHalfHeight:Int;
     private var lastKeyboardViewDirection:Float = 1.0;
     private var lastMovementDirection:Float = 1.0;
-    private var viewShootCooldown:Float = VIEW_LOOK_TIME;
+    private var viewShootCooldown:Float = 0.0;
 
     // Keyboard input variables (configurable)
     public var keyLeft = Keyboard.A;
@@ -38,30 +38,21 @@ class InputController {
     // Raw input event handlers
     public function keyDown(e:KeyboardEvent):Void {
         keysDown[e.keyCode] = true;
-        if (FFLog.testID == 1) { 
-            usingMouseInput = true;
-            keysDown[keyShootLeft] = false;
-            keysDown[keyShootRight] = false;
-        }
     }
     public function keyUp(e:KeyboardEvent):Void {
         keysDown[e.keyCode] = false;
     }
     public function mouseDown(e:MouseEvent):Void {
-        if (FFLog.testID == 1) {
-            click = true;
-            x = e.stageX;
-            y = e.stageY;
-            usingMouseInput = true;
-        }
+        click = true;
+        x = e.stageX;
+        y = e.stageY;
+        usingMouseInput = true;
     }
     public function mouseMove(e:MouseEvent):Void {
-        if (FFLog.testID == 1) {
-            x = e.stageX;
-            y = e.stageY;
-            usingMouseInput = true;
-            viewShootCooldown = VIEW_LOOK_TIME;
-        }
+        x = e.stageX;
+        y = e.stageY;
+        usingMouseInput = true;
+        viewShootCooldown = VIEW_LOOK_TIME;
     }
     public function mouseUp(e:MouseEvent):Void {
         click = false;
