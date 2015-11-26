@@ -104,7 +104,7 @@ class GameState {
     public var difficulty:Float = 0.0;
     
     // Flare information
-    public var flares:Int = 0;
+    public var flares:Int = 5;
     public var flareCountdown:Float = 0.0;
     public var flaredEntity:Int = 0; // When a flare event comes in, this indexed entity will replace the player
     
