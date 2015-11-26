@@ -103,7 +103,7 @@ class MenuScreen extends IGameScreen {
             initialWeapons[1],
             initialWeapons[0],
             initialWeapons[1],
-            null, // For testing only
+            initialWeapons[0], // For testing only
             initialWeapons[2]
         ];
         var weaponParams:WeaponGenParams = new WeaponGenParams();

@@ -177,14 +177,6 @@ class SpriteSheetRegistry {
                 e.headSpriteOffset.setTo( -0.45, -0.2);
                 e.widthHead = 0.9;
                 e.heightHead = 0.9;
-            case "Robot":
-                e.animationDelays = [5, 3, 3, 3];
-                e.bodySpriteOffset.setTo(-0.6, -1.1);
-                e.widthBody = 1.0;
-                e.heightBody = 1.7;
-                e.headSpriteOffset.setTo( -0.45, -0.2);
-                e.widthHead = 0.9;
-                e.heightHead = 0.9;
             case "Wolf":
                 e.animationDelays = [5, 3, 3, 3];
                 e.bodySpriteOffset.setTo(-0.6, -1.1);
@@ -193,7 +185,7 @@ class SpriteSheetRegistry {
                 e.headSpriteOffset.setTo( -0.45, -0.2);
                 e.widthHead = 0.9;
                 e.heightHead = 0.9;
-            case "Zombie":
+            case "Robot":
                 e.animationDelays = [5, 3, 3, 3];
                 e.bodySpriteOffset.setTo(-0.6, -1.1);
                 e.widthBody = 1.0;
@@ -201,7 +193,15 @@ class SpriteSheetRegistry {
                 e.headSpriteOffset.setTo( -0.45, -0.2);
                 e.widthHead = 0.9;
                 e.heightHead = 0.9;
-            case "Alien":
+            case "SteamGirl":
+                e.animationDelays = [5, 3, 3, 3];
+                e.bodySpriteOffset.setTo(-0.6, -1.1);
+                e.widthBody = 1.0;
+                e.heightBody = 1.7;
+                e.headSpriteOffset.setTo( -0.45, -0.2);
+                e.widthHead = 0.9;
+                e.heightHead = 0.9;
+            case "SandMan":
                 e.animationDelays = [5, 3, 3, 3];
                 e.bodySpriteOffset.setTo(-0.6, -1.1);
                 e.widthBody = 1.0;
@@ -219,25 +219,25 @@ class SpriteSheetRegistry {
             new StripRegion("Man.Run",  150, 0, 30, 40, 1, 12, 12),
             new StripRegion("Man.Jump", 510, 0, 30, 40, 1, 8,  8),
             
-            new TileRegion( "Robot.Head", 750, 40, 18, 18),
-            new StripRegion("Robot.Rest", 0,   40, 30, 40, 1, 5,  5),
-            new StripRegion("Robot.Run",  150, 40, 30, 40, 1, 12, 12),
-            new StripRegion("Robot.Jump", 510, 40, 30, 40, 1, 8,  8),
+            new TileRegion( "Wolf.Head", 750, 40, 18, 18),
+            new StripRegion("Wolf.Rest", 0,   40, 30, 40, 1, 5,  5),
+            new StripRegion("Wolf.Run",  150, 40, 30, 40, 1, 12, 12),
+            new StripRegion("Wolf.Jump", 510, 40, 30, 40, 1, 8,  8),
 
-            new TileRegion( "Wolf.Head", 750, 80, 18, 18),
-            new StripRegion("Wolf.Rest", 0,   80, 30, 40, 1, 5,  5),
-            new StripRegion("Wolf.Run",  150, 80, 30, 40, 1, 12, 12),
-            new StripRegion("Wolf.Jump", 510, 80, 30, 40, 1, 8,  8),
+            new TileRegion( "Robot.Head", 750, 80, 18, 18),
+            new StripRegion("Robot.Rest", 0,   80, 30, 40, 1, 5,  5),
+            new StripRegion("Robot.Run",  150, 80, 30, 40, 1, 12, 12),
+            new StripRegion("Robot.Jump", 510, 80, 30, 40, 1, 8,  8),
 
-            new TileRegion( "Zombie.Head", 750, 120, 18, 18),
-            new StripRegion("Zombie.Rest", 0,   120, 30, 40, 1, 5,  5),
-            new StripRegion("Zombie.Run",  150, 120, 30, 40, 1, 12, 12),
-            new StripRegion("Zombie.Jump", 510, 120, 30, 40, 1, 8,  8),
+            new TileRegion( "SteamGirl.Head", 750, 120, 18, 18),
+            new StripRegion("SteamGirl.Rest", 0,   120, 30, 40, 1, 5,  5),
+            new StripRegion("SteamGirl.Run",  150, 120, 30, 40, 1, 12, 12),
+            new StripRegion("SteamGirl.Jump", 510, 120, 30, 40, 1, 8,  8),
 
-            new TileRegion( "Alien.Head", 750, 160, 18, 18),
-            new StripRegion("Alien.Rest", 0,   160, 30, 40, 1, 5,  5),
-            new StripRegion("Alien.Run",  150, 160, 30, 40, 1, 12, 12),
-            new StripRegion("Alien.Jump", 510, 160, 30, 40, 1, 8,  8)
+            new TileRegion( "SandMan.Head", 750, 160, 18, 18),
+            new StripRegion("SandMan.Rest", 0,   160, 30, 40, 1, 5,  5),
+            new StripRegion("SandMan.Run",  150, 160, 30, 40, 1, 12, 12),
+            new StripRegion("SandMan.Jump", 510, 160, 30, 40, 1, 8,  8)
         ]);
     }
     public static function getGunSheet():StringMap<WeaponLayerData> {

@@ -78,10 +78,10 @@ class LevelCreator {
         renderPack.entityRenderData = new StringMap<EntityRenderData>();
         renderPack.entityRenderData.set("Grunt", new EntityRenderData("Grunt"));
         renderPack.entityRenderData.set("Man", new EntityRenderData("Man"));
-        renderPack.entityRenderData.set("Robot", new EntityRenderData("Robot"));
         renderPack.entityRenderData.set("Wolf", new EntityRenderData("Wolf"));
-        renderPack.entityRenderData.set("Zombie", new EntityRenderData("Alien"));
-        renderPack.entityRenderData.set("Alien", new EntityRenderData("Alien"));
+        renderPack.entityRenderData.set("Robot", new EntityRenderData("Robot"));
+        renderPack.entityRenderData.set("SteamGirl", new EntityRenderData("SteamGirl"));
+        renderPack.entityRenderData.set("SandMan", new EntityRenderData("SandMan"));
 
         renderPack.enemies = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Robot.png")), [
             new TileRegion("Grunt.Head", 8, 2, 20, 20),
@@ -117,12 +117,13 @@ class LevelCreator {
             new Entity(),
             new Entity(),
             new Entity(),
-            null
+            new Entity()
         ];
         Spawner.createPlayer(state.entities[0], "Man", state.player.position.x, state.player.position.y);
-        Spawner.createPlayer(state.entities[1], "Robot", 0, 0);
-        Spawner.createPlayer(state.entities[2], "Wolf", 0, 0);
-        Spawner.createPlayer(state.entities[3], "Zombie", 0, 0);
+        Spawner.createPlayer(state.entities[1], "Wolf", 0, 0);
+        Spawner.createPlayer(state.entities[2], "Robot", 0, 0);
+        Spawner.createPlayer(state.entities[3], "SteamGirl", 0, 0);
+        Spawner.createPlayer(state.entities[4], "SandMan", 0, 0);
         
         // Disable all but the first character
         for (i in 1...5) {
