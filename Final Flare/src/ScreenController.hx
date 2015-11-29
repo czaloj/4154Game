@@ -43,7 +43,8 @@ class ScreenController extends Sprite {
             new SplashScreen(this),
             new MenuScreen(this),
             new GameplayScreen(this),
-            new LevelEditorScreen(this)
+            new LevelEditorScreen(this),
+            new WeaponTestScreen(this)
         ];
         activeScreen = screens[0];
         
@@ -61,6 +62,8 @@ class ScreenController extends Sprite {
                     WeaponGenerator.composeLayers();
                 case Keyboard.F10:
                     if (playerData != null) playerData.reset();
+                case Keyboard.NUMPAD_4:
+                    switchToScreen(4);
             }
         });
     }

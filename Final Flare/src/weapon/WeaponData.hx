@@ -35,9 +35,9 @@ class WeaponData {
     public var name:String;
     public var colorScheme:ColorScheme;
     
-    public var evolutionCost:Int;
-    public var historicalCost:Int;
-    public var shadynessCost:Int;
+    public var evolutionCost:Int = 0;
+    public var historicalCost:Int = 0;
+    public var shadynessCost:Int = 0;
     
     public var projectileOrigins:Array<ProjectileOrigin> = [];
     
@@ -45,16 +45,16 @@ class WeaponData {
     
     
     // Information for firing logic
-    public var firingMode:FiringMode;
-    public var useCapacity:Int;
-    public var usesPerActivation:Int;
-    public var reloadTime:Float;
-    public var activationCooldown:Float;
-    public var burstPause:Float;
-    public var burstCount:Int;
+    public var firingMode:FiringMode = FiringMode.SINGLE;
+    public var useCapacity:Int = 0;
+    public var usesPerActivation:Int = 0;
+    public var reloadTime:Float = 0;
+    public var activationCooldown:Float = 0;
+    public var burstPause:Float = 0;
+    public var burstCount:Int = 0;
     
     // The root weapon layer
-    public var layer:WeaponLayer;
+    public var layer:WeaponLayer = null;
     
     public function new() {
         // Empty
