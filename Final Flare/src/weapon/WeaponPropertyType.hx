@@ -16,7 +16,7 @@ enum WeaponPropertyType {
     ACTIVATION_COOLDOWN; // Float
     BURST_PAUSE; // Float
     BURST_COUNT; // Int
-    PROJECTILE_ORIGIN; // ProjectileOrigin Data
+    PROJECTILE_DATA; // ProjectileOrigin Data
     EXIT_INFORMATION; // Contains angle, velocity, and origin and direction
     PROJECTILE_VELOCITY_MULTIPLIER; // Float
     ACCURACY_MODIFIER; // Float

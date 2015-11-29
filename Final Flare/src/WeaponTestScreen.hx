@@ -30,7 +30,8 @@ class WeaponTestScreen extends IGameScreen {
         var test = new WeaponLayer("Receiver.Conventional", [
             new Pair(0, new WeaponLayer("Barrel.Conventional", [
                 new Pair(0, new WeaponLayer("Magazine.Conventional")),
-                new Pair(1, new WeaponLayer("Stock.Conventional"))
+                new Pair(1, new WeaponLayer("Stock.Conventional")),
+                new Pair(2, new WeaponLayer("Projectile.Bullet"))
             ])),
             new Pair(1, new WeaponLayer("Grip.Conventional"))
         ]);

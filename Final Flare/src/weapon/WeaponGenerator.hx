@@ -97,22 +97,27 @@ class WeaponGenerator {
                     d.burstPause = Math.max(d.burstPause, p.value);
                 case WeaponPropertyType.FIRING_MODE:
                     d.firingMode = p.value;
-                case WeaponPropertyType.PROJECTILE_ORIGIN:
-                    var po:ProjectileOrigin = new ProjectileOrigin();
+                case WeaponPropertyType.EXIT_INFORMATION:
+                    var exitData:ProjectileExitData = p.value;
                     
-                    // This is only added by a barrel, so the exit angle and velocity must be somewhere here
-                    var exitData:ProjectileExitData = Lambda.find(l.part.properties, function(p:WeaponProperty):Bool { return p.type == WeaponPropertyType.EXIT_INFORMATION; } ).value;
-                    po.exitAngle = exitData.angle;
-                    po.velocity = exitData.velocity;
-                    po.projectileData = p.value;
+                    // Calculate exit location of the projectile
+                    var bulletExitTransform:Matrix = new Matrix(exitData.dirX, exitData.dirY, -exitData.dirY, exitData.dirX);
+                    bulletExitTransform.concat(l.wsTransform);
+                    bulletExitTransform.translate(exitData.offX, exitData.offY);
                     
-                    var tranform:Matrix = l.wsTransform.clone();
-                    tranform.translate(exitData.offX, exitData.offY);
-                    var rotation:Matrix = new Matrix(exitData.dirX, exitData.dirY, -exitData.dirY, exitData.dirX);
-                    po.transform.concat(rotation);
-                    po.transform.concat(tranform);
+                    for (cl in l.children) {
+                        if (cl.second.part.type == WeaponPartType.PROJECTILE) {
+                            var po:ProjectileOrigin = new ProjectileOrigin();
+                            
+                            po.exitAngle = exitData.angle;
+                            po.velocity = exitData.velocity;
+                            po.transform = bulletExitTransform.clone();
+                            po.projectileData = findProjectileData(cl.second);
+                            
+                            d.projectileOrigins.push(po);
+                        }
+                    }
                     
-                    d.projectileOrigins.push(po);
                 case WeaponPropertyType.RELOAD_TIME:
                     d.reloadTime += p.value;
                 case WeaponPropertyType.USES_PER_ACTIVATION:
@@ -126,6 +131,36 @@ class WeaponGenerator {
         
         // Traverse properties of children
         for (c in l.children) traverseProperties(c.second, d, w);
+    }
+    private static function findProjectileData(l:WeaponLayer):ProjectileData {
+        var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_BULLET);
+        
+        for (p in l.part.properties) {
+            if (p.type == WeaponPropertyType.PROJECTILE_DATA) {
+                var data = p.value;
+                pd.collisionCount = data.collisionCount;
+                pd.constructionType = data.constructionType;
+                pd.damage = data.damage;
+                pd.damageFriendly = data.damageFriendly;
+                pd.damageShape = data.damageShape;
+                pd.explosiveRadius = data.explosiveRadius;
+                pd.gravityAcceleration = data.gravityAcceleration;
+                pd.hitFriendly = data.hitFriendly;
+                pd.penetrationCount = data.penetrationCount;
+                pd.radius = data.radius;
+                pd.timer = data.timer;
+            }
+        }
+        for (cl in l.children) { 
+            if (cl.second.part.type == WeaponPartType.PROJECTILE) {
+                var cpd:ProjectileChildData = new ProjectileChildData();
+                cpd.data = findProjectileData(cl.second);
+                cpd.offset = new Matrix(1, 0, 0, 1, 0, 0);
+                pd.children.push(cpd);
+            }
+        }
+        
+        return pd;
     }
     
     public static function buildSprite(data:WeaponData, bmpGuns:BitmapData):DisplayObject {
@@ -146,11 +181,16 @@ class WeaponGenerator {
         
         var bmp:BitmapData = new BitmapData(Std.int(max.x - min.x), Std.int(max.y - min.y), true, 0x00000000);
         for (l in layers) {
-            var convertedData:ByteArray = convertColors(bmpGuns, new Rectangle(l.part.sx, l.part.sy, l.part.w, l.part.h), data.colorScheme);
-            var bmpTMP = new BitmapData(l.part.w, l.part.h, true, 0x00000000);
-            bmpTMP.setPixels(bmpTMP.rect, convertedData);
-            bmp.draw(bmpTMP, new Matrix(1, 0, 0, 1, l.wsTransform.tx - min.x, l.wsTransform.ty - min.y), null, null, null, false);
-            //bmp.copyPixels(bmpTMP, bmpTMP.rect, new Point(l.wsTransform.tx - min.x, l.wsTransform.ty - min.y), null, null, true);
+            if (l.part.type == WeaponPartType.PROJECTILE) {
+                // TODO: Add somewhere else
+            }
+            else {
+                var convertedData:ByteArray = convertColors(bmpGuns, new Rectangle(l.part.sx, l.part.sy, l.part.w, l.part.h), data.colorScheme);
+                var bmpTMP = new BitmapData(l.part.w, l.part.h, true, 0x00000000);
+                bmpTMP.setPixels(bmpTMP.rect, convertedData);
+                bmp.draw(bmpTMP, new Matrix(1, 0, 0, 1, l.wsTransform.tx - min.x, l.wsTransform.ty - min.y), null, null, null, false);                
+                //bmp.copyPixels(bmpTMP, bmpTMP.rect, new Point(l.wsTransform.tx - min.x, l.wsTransform.ty - min.y), null, null, true);
+            }
         }
         
         sprite.scaleX = 1 / GUN_SCALE;

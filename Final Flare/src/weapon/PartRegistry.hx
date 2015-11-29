@@ -55,7 +55,7 @@ class PartRegistry {
                 [
                     new WeaponPartChild(16, 17, true, [requirementPart(WeaponPartType.MAGAZINE)]),
                     new WeaponPartChild(0, 4, false, [requirementPart(WeaponPartType.STOCK)]),
-                    new WeaponProperty(WeaponPropertyType.PROJECTILE_ORIGIN, new ProjectileData(ProjectileData.TYPE_BULLET)),
+                    new WeaponPartChild(0, 0, false, [requirementPart(WeaponPartType.PROJECTILE)]),
                     new WeaponProperty(WeaponPropertyType.EXIT_INFORMATION, new ProjectileExitData(58, 5.5, 1, 0, 0.3, 1500)),
                     new WeaponProperty(WeaponPropertyType.USES_PER_ACTIVATION, 1),
                     new WeaponProperty(WeaponPropertyType.ACTIVATION_COOLDOWN, 0.15),
@@ -91,6 +91,59 @@ class PartRegistry {
                 [
                     new WeaponProperty(WeaponPropertyType.RELOAD_TIME, 2.4),
                     new WeaponProperty(WeaponPropertyType.USE_CAPACITY, 36),
+                ]),
+                
+            new WeaponPart(
+                "Projectile.Bullet",
+                WeaponPartType.PROJECTILE,
+                0, 0,
+                0, 0,
+                0, 0,
+                [
+                    new WeaponProperty(WeaponPropertyType.PROJECTILE_DATA, { 
+                        var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_BULLET);
+                        pd.damage = 10;
+                        pd.damageFriendly = 0;
+                        pd.penetrationCount = 0;
+                        pd.gravityAcceleration = 0.0;
+                        pd;
+                    }) 
+                ]),
+            
+            new WeaponPart(
+                "Projectile.Grenade",
+                WeaponPartType.PROJECTILE,
+                0, 0,
+                0, 0,
+                0, 0,
+                [
+                    new WeaponProperty(WeaponPropertyType.PROJECTILE_DATA, { 
+                        var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_LARGE);
+                        pd.damage = 40;
+                        pd.damageFriendly = 20;
+                        pd.timer = 0.5;
+                        pd.explosiveRadius = 2.0;
+                        pd.radius = 0.2;
+                        pd;
+                    }) 
+                ]),
+                
+            new WeaponPart(
+                "Projectile.Flare",
+                WeaponPartType.PROJECTILE,
+                0, 0,
+                0, 0,
+                0, 0,
+                [
+                    new WeaponProperty(WeaponPropertyType.PROJECTILE_DATA, { 
+                        var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_FLARE);
+                        pd.damage = 0;
+                        pd.damageFriendly = 0;
+                        pd.timer = 3.0;
+                        pd.explosiveRadius = 1.0;
+                        pd.radius = 0.05;
+                        pd;
+                    })
                 ])
         ];
         
