@@ -18,6 +18,8 @@ import game.PhysicsController.RayCastInfo;
 import graphics.IGameVisualizer;
 import openfl.display.Sprite;
 import openfl.geom.Point;
+import openfl.media.SoundChannel;
+import openfl.media.SoundTransform;
 import sound.Composer;
 import weapon.projectile.Projectile;
 import weapon.Weapon;
@@ -227,7 +229,8 @@ class GameplayController {
         }
         for (i in originalPSize...state.projectiles.length) {
             vis.onProjectileAdded(state, state.projectiles[i]);
-            Composer.playEffect("Shot");
+            var channel:SoundChannel = Composer.playEffect("Shot");
+            channel.soundTransform = new SoundTransform(channel.soundTransform.volume * 0.2);
         }
 
         // Physics
