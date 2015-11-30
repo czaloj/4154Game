@@ -73,10 +73,16 @@ class Composer {
         var s:Sound = effects.get(name);
         var channel:SoundChannel = s.play(0, 1, transformEffects);
         
-        if (channel == null) {
+        var attempts:Int = 5;
+        while (channel == null && attempts > 0) {
             // TODO: We've run out of channels, stop some of the existing ones and replay this one (more intelligent decision necessary)
             effectInstances.splice(0, 1)[0].stop();
             channel = s.play(0, 1, transformEffects);
+            attempts--;
+        }
+        if (channel == null) {
+            trace("Wtf");
+            return null;
         }
         
         channel.addEventListener(Event.SOUND_COMPLETE, function(e:Event):Void {
