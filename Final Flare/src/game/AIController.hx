@@ -1,6 +1,7 @@
 package game;
 
 import game.GameState;
+import game.Region;
 
 class AIController {
     public static inline var VIEW_LOOKAHEAD:Float = 1000.0;
@@ -147,4 +148,19 @@ class AIController {
         }
         return Std.int(state.player.position.x);
     }
+
+     public function findPlayer(entity:Entity, state:GameState){
+        var target = state.player.position;
+        var x:Float = entity.position.x;
+        var y:Float = entity.position.y;
+        var region:Region = state.regionLists.get(toRegion(x, y, state));
+        var playerRegion: Region = state.regionLists.get(toRegion(target.x, target.y, state));
+        return region.getDirection(playerRegion);
+     }
+
+     public function toRegion(x:Float, y:Float, state:GameState) {
+         var tx = Math.floor(x / GameplayController.TILE_HALF_WIDTH);
+         var ty = Math.floor(y / GameplayController.TILE_HALF_WIDTH);
+         return state.regions[tx + ty * state.width];
+     }
 }

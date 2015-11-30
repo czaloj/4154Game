@@ -20,8 +20,7 @@ class Region
 
     public var id:Int;
     //center
-    public var position:Point;
-    public var dimension:Point;
+    public var position:Point = new Point(); //center?
     public var neighbors: Array<Connection> =[];
 
     public function new(name:Int)
@@ -30,7 +29,8 @@ class Region
     }
 
     public function addNeighbor(reg:Region, flag:Int) {
-        neighbors.push( {reg,flag,(reg.position - position).lengths} );
+        var neighbor:Connection = { region: reg, direction: flag, distance: reg.position.subtract(position).length};
+        neighbors.push(neighbor);
     }
 
     public function getDirection(dst:Region) {
@@ -38,10 +38,11 @@ class Region
         findPath(this, dst, pathTbl);
         var nextReg = pathTbl.get(dst).path[0].id;
         for (neighbor in neighbors) {
-            if (neighbor.id == nextReg) {
+            if (neighbor.region.id == nextReg) {
                 return neighbor.direction;
             }
         }
+        return 0;
     }
 
     private static function findPath(src:Region, dst:Region, pathTbl:ObjectMap<Region, Path>) {
@@ -49,17 +50,20 @@ class Region
             return;
         }
         for (neighbor in src.neighbors) {
-            Path newPath = new Path().path.copy(pathTbl.get(src.region));
-            newPath.path.add(neighbor.region);
-            newPath.distance = pathTbl.get(src.region).distance + neighbor.distance;
-            if (pathTbl.exists(neighbor.region) {
-                Path curPath = pathTbl.get(neighbor.region);
+            var newPath:Path = { path: [], distance:0 };
+            if (pathTbl.get(src) !=null){
+                newPath.path = pathTbl.get(src).path.copy();
+                newPath.distance = pathTbl.get(src).distance + neighbor.distance;
+            }
+            newPath.path.push(neighbor.region);
+            if (pathTbl.exists(neighbor.region)) {
+                var curPath = pathTbl.get(neighbor.region);
                 if (newPath.distance < curPath.distance) {
                     pathTbl.set(neighbor.region, newPath);
                 }
             } else {
                 pathTbl.set(neighbor.region, newPath);
-                findPath(neighbor, dst, pathTbl);
+                findPath(neighbor.region, dst, pathTbl);
             }
         }
     }
