@@ -3,6 +3,7 @@ package weapon;
 import game.EntityBase;
 import game.GameState;
 import game.Entity;
+import graphics.IGameVisualizer;
 import weapon.projectile.LargeProjectile;
 import game.PhysicsController;
 import weapon.projectile.BulletProjectile;
@@ -16,6 +17,9 @@ import weapon.WeaponData.ProjectileOrigin;
 
 class Weapon {
     public static var phys:PhysicsController; // TODO: Remove ASAP
+    public static var vis:IGameVisualizer; // TODO: Remove ASAP
+    public static inline var RELOAD_OFF_X:Float = 0.6;
+    public static inline var RELOAD_OFF_Y:Float = 1.5;
     
     public var entity:Entity;
     public var data:WeaponData;
@@ -81,6 +85,7 @@ class Weapon {
                     // Check for reload
                     if ((usesPerformed + data.usesPerActivation) > data.useCapacity) {
                         reloadTimeLeft = Math.max(0, data.reloadTime - dt);
+                        vis.onReload(entity, RELOAD_OFF_X, RELOAD_OFF_Y, reloadTimeLeft);
                         return;
                     }
                 }
@@ -109,6 +114,7 @@ class Weapon {
                 // Check for reload
                 if ((usesPerformed + data.usesPerActivation) > data.useCapacity) {
                     reloadTimeLeft = Math.max(0, data.reloadTime - dt);
+                    vis.onReload(entity, RELOAD_OFF_X, RELOAD_OFF_Y, reloadTimeLeft);
                     return;
                 }
             }
@@ -137,6 +143,7 @@ class Weapon {
                     
                     // Check for reload
                     if ((usesPerformed + data.usesPerActivation) > data.useCapacity) {
+                        vis.onReload(entity, RELOAD_OFF_X, RELOAD_OFF_Y, reloadTimeLeft);
                         reloadTimeLeft = Math.max(0, data.reloadTime - dt);
                         return;
                     }

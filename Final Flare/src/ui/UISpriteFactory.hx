@@ -71,8 +71,9 @@ class UISpriteFactory {
             new TileRegion("Flare", 886, 370, 138, 26),
             new TileRegion("Points", 812, 206, 212, 58),
             new TileRegion("Combo", 840, 264, 184, 26),
-            //new StripRegion("Combo.Animated", , , , , , 1, 20),
             new StripRegion("Combo.Overlay", 898, 290, 126, 10, 8, 1, 8),
+            new TileRegion("Reload.Border", 710, 0, 72, 72),
+            new TileRegion("Reload.Bullet", 782, 0, 12, 30),
             //new TileRegion("Menu", , , , ),
             //new TileRegion("Time", , , , ),
             //new TileRegion("Character", , , , ) // Healthbars over the character tiles will be Quads

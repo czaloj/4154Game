@@ -38,9 +38,9 @@ class Renderer implements IGameVisualizer {
     private var pack:RenderPack;
     private var stage3D:Stage;
 
-    public var sprites:Array<Sprite> = [];
     public var entityTbl:ObjectMap<game.Entity, EntitySprite> = new ObjectMap<Entity, EntitySprite>();
     public var projTbl:ObjectMap<Projectile, DisplayObject> = new ObjectMap<Projectile, DisplayObject>();
+    public var reloadIcons:Array<ReloadIcon> = [];
 
     // Camera parameters
     public var cameraX(get, set):Float;
@@ -193,6 +193,17 @@ class Renderer implements IGameVisualizer {
         quad.alpha = 0.1;
         renderPermanence([quad], []);
         tracers.add(sx - r, sy, r, 0, r, 0.5, 0xffffc0, 0);
+    }
+    public function onReload(e:Entity, ox:Float, oy:Float, time:Float):Void {
+        var icon:ReloadIcon = new ReloadIcon(time, pack.uiSheet);
+        icon.width = 1.0;
+        icon.height = 1.0;
+        icon.scaleY = -icon.scaleY;
+        var eSprite:EntitySprite = entityTbl.get(e);
+        eSprite.addChild(icon);
+        icon.x = ox;
+        icon.y = oy;
+        reloadIcons.push(icon);
     }
     public function addBulletTrail(sx:Float, sy:Float, ex:Float, ey:Float, duration:Float):Void {
         tracers.add(sx, sy, ex - sx, ey - sy, 0.04, duration, 0xffff00, (1 / 60) / duration);
@@ -472,6 +483,13 @@ class Renderer implements IGameVisualizer {
             cameraY += CAMERA_DEBUG_MOVE_SPEED * ((debugViewMoves[3] - debugViewMoves[2]) / 60);
             cameraScale *= [ 0.95, 1, 1.15 ] [1 + (debugViewMoves[5] - debugViewMoves[4])];
         }
+        
+        // Update the reload icons
+        reloadIcons = reloadIcons.filter(function(icon:ReloadIcon):Bool {
+            icon.update(s.time.elapsed);
+            if (!icon.isAlive) icon.parent.removeChild(icon);
+            return icon.isAlive;
+        });
 
         // Apply screen-shake
         if (screenShakeOffset.length > 0.01) {

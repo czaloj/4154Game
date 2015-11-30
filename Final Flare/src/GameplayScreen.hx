@@ -33,13 +33,14 @@ class GameplayScreen extends IGameScreen {
     public var inputController:game.InputController;
     private var debugPhysicsView:Sprite;
     private var gameUI:GameUI;
+    private var uiSheet:UISpriteFactory;
 
     public function new(sc: ScreenController) {
         super(sc);
     }
 
     override function build():Void {
-        // Empty
+        uiSheet = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
     }
     override function destroy():Void {
         // Empty
@@ -53,6 +54,7 @@ class GameplayScreen extends IGameScreen {
         gameplayController = new GameplayController();
         aiController = new game.AIController();
         var pack:RenderPack = new RenderPack();
+        pack.uiSheet = uiSheet;
 
         var gl:game.GameLevel = screenController.loadedLevel;
         LevelCreator.createStateFromLevel(gl, state);
@@ -75,7 +77,7 @@ class GameplayScreen extends IGameScreen {
         debugPhysicsView.visible = false;
 
         // Add the game UI
-        gameUI = new GameUI(new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png"))));
+        gameUI = new GameUI(uiSheet);
         screenController.addChild(gameUI);
 
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);

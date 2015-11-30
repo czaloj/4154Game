@@ -71,7 +71,7 @@ class GameplayController {
     }
     public function setVisualizer(v:IGameVisualizer):Void {
         vis = v;
-
+        Weapon.vis = vis;
         vis.onEntityAdded(state, state.player);
     }
 

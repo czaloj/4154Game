@@ -12,6 +12,7 @@ interface IGameVisualizer {
     
     public function onBloodSpurt(sx:Float, sy:Float, dx:Float, dy:Float):Void;
     public function onExplosion(sx:Float, sy:Float, r:Float):Void;
+    public function onReload(e:Entity, ox:Float, oy:Float, time:Float):Void;
     
     public function addBulletTrail(sx:Float, sy:Float, ex:Float, ey:Float, duration:Float):Void;
     public function addScreenShake(x:Float, y:Float):Void;

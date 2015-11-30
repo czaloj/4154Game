@@ -3,6 +3,7 @@ package graphics;
 import haxe.ds.StringMap;
 import haxe.ds.ObjectMap;
 import starling.textures.Texture;
+import ui.UISpriteFactory;
 import weapon.WeaponData;
 
 // The rendering data used by a renderer for a level
@@ -25,6 +26,8 @@ class RenderPack {
     
     // The background color when the screen is cleared to draw the level
     public var backgroundColor:UInt = 0x000000;
+    
+    public var uiSheet:UISpriteFactory;
     
     public function new() {
         // Empty
