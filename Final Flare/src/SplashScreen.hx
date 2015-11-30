@@ -6,6 +6,7 @@ import starling.display.DisplayObject;
 import starling.display.Image;
 import ui.Button;
 import ui.Button.ButtonTextFormat;
+import ui.UIPane;
 import ui.UISpriteFactory;
 import openfl.Assets;
 import starling.display.Sprite;
@@ -16,7 +17,9 @@ import starling.text.TextField;
 
 class SplashScreen extends IGameScreen {
     private var backGround:Image;  //Background
-    private var startButton:Button;
+    private var splashPane:UIPane;
+    
+    //private var startButton:Button;
     private var mousePosX:Float;
     private var mousePosY:Float;
     
@@ -33,6 +36,7 @@ class SplashScreen extends IGameScreen {
     
     override public function onEntry(gameTime:GameTime):Void {
         backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/TitleScreen.png")));
+        splashPane = new UIPane();
         screenController.addChild(backGround);
         addStartButton();
         
@@ -40,13 +44,14 @@ class SplashScreen extends IGameScreen {
     }
     
     override public function onExit(gameTime:GameTime):Void {
-        screenController.removeChild(startButton);
+        screenController.removeChild(splashPane);
+        //screenController.removeChild(startButton);
         screenController.removeChild(backGround);
     }
     
     override public function update(gameTime:GameTime):Void {
         // Switch to the main menu
-        if (startButton.clicked && Composer.isLoadingComplete) {
+        if (/*startButton.clicked &&*/ Composer.isLoadingComplete) {
             screenController.switchToScreen(1);
         }
     }
@@ -73,9 +78,11 @@ class SplashScreen extends IGameScreen {
         };
 
         //Create Button and position it
-        startButton = uif.createButton(200, 66, "START GAME", btf, false);  
-        startButton.transformationMatrix.translate(400 - startButton.width / 2, 300);
+        var startButton = uif.createButton(200, 66, "START GAME", btf, false);  
+        splashPane.add(startButton, 400 - startButton.width / 2, 300);
+        //startButton.transformationMatrix.translate(400 - startButton.width / 2, 300);
         
-        screenController.addChild(startButton);
+        //screenController.addChild(startButton);
+        screenController.addChild(splashPane);
     }
 }

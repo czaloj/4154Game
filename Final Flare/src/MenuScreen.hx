@@ -7,7 +7,8 @@ import openfl.events.Event;
 import flash.net.FileReference;
 import flash.utils.ByteArray;
 import starling.display.Image;
-import ui.Checkbox;
+import ui.UIPane;
+import ui.LevelSelectPane;
 import weapon.WeaponData;
 import weapon.WeaponGenerator;
 import weapon.WeaponGenParams;
@@ -23,32 +24,25 @@ import starling.text.TextField;
 
 
 class MenuScreen extends IGameScreen {
+    
+    //Buttons are created from UISpriteFactory
+    private var uif:UISpriteFactory;
+    
+    //UIPanes    
+    private var mainMenuPane:UIPane;
+    private var levelSelectPane:LevelSelectPane;
+    private var charSelectPane:UIPane;
+    
     //Level select
-    private static var MAX_LEVEL:Int = 0;
+
     private var selectedLevel:Int = 0;
 
-    //Booleans for screen transitions
-    private var backGround:Image;  //Background
-    
-    private var play:Bool = false;
-    private var tutorial:Bool = false;
-    private var options:Bool = false;
-
-    //Buttons
-    private var levelButtonArray:Array<Button> = new Array<Button>();
-    private var playButton:Button;
-    private var tutorialButton:Button;
-    private var loadoutButton:Button;
-    private var shopButton:Button;
-    private var levelEditorButton:Button;
-    private var nextButton:Button;
-    private var prevButton:Button;
-    private var levelButton:Button;
-    private var menuButton:Button;
-    private var confirmButton:Button;
+    //Background
+    private var backGround:Image;  
 
     //Squad select pane
     //There will be many buttons and sprites
+    private var confirmButton:Button;
     private var charButton1:Button;
     private var charButton2:Button;
     private var charButton3:Button;
@@ -90,7 +84,8 @@ class MenuScreen extends IGameScreen {
 
     override public function onEntry(gameTime:GameTime):Void {
         screenController.playerData = new PlayerData("Player"); // TODO: Allow others to play?
-
+                
+        uif = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         
         initMainMenu();
         FFLog.recordMenuStart();
@@ -138,9 +133,6 @@ class MenuScreen extends IGameScreen {
     private function initMainMenu():Void {
         backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/TitleScreen.png")));
         screenController.addChild(backGround);
-        
-        //Create button from UISpriteFactory
-        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
 
         //Set up formatting stuff
         var btf:ButtonTextFormat = {
@@ -155,29 +147,10 @@ class MenuScreen extends IGameScreen {
         };
 
         //Create Button and position it
-        playButton = uif.createButton(150, 50, "PLAY", btf, false);
-        tutorialButton = uif.createButton(150, 50, "TUTORIAL", btf, false);
-        shopButton = uif.createButton(150, 50, "SHOP", btf, false);
-        levelEditorButton = uif.createButton(150, 50, "LEVEL EDITOR", btf, false);
-
-        //Vertical Layout
-        //playButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 60);
-        //tutorialButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 70 + tutorialButton.height);
-        //loadoutButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 80 + 2 * shopButton.height);
-        //shopButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 90 + 3 * shopButton.height);
-        //levelEditorButton.transformationMatrix.translate(400 + 2*playButton.width / 3, 100 + 4 * shopButton.height);
-
-        //Horizontal Layout
-        playButton.transformationMatrix.translate(28, 410 - playButton.height);
-        tutorialButton.transformationMatrix.translate(56 + tutorialButton.width, 410 - playButton.height);
-        shopButton.transformationMatrix.translate(84 + 2* shopButton.width, 410 - playButton.height);
-        levelEditorButton.transformationMatrix.translate(112 + 3 * levelEditorButton.width, 410 - playButton.height);
-
-        //Add buttons to screen
-        screenController.addChild(playButton);
-        screenController.addChild(tutorialButton);
-        screenController.addChild(shopButton);
-        screenController.addChild(levelEditorButton);
+        var playButton = uif.createButton(150, 50, "PLAY", btf, false);
+        var tutorialButton = uif.createButton(150, 50, "TUTORIAL", btf, false);
+        var shopButton = uif.createButton(150, 50, "SHOP", btf, false);
+        var levelEditorButton = uif.createButton(150, 50, "LEVEL EDITOR", btf, false);
 
         //Add button functions
         playButton.bEvent.add(initLevelSelect);
@@ -187,87 +160,58 @@ class MenuScreen extends IGameScreen {
             screenController.removeChild(bg);
             screenController.switchToScreen(3);
         });
+        
+        //Initialize UIPane and add buttons
+        mainMenuPane = new UIPane();
+
+        //Horizontal Button Layout
+        mainMenuPane.add(playButton, 28, 410 - playButton.height);
+        mainMenuPane.add(tutorialButton, 56 + tutorialButton.width, 410 - playButton.height);
+        mainMenuPane.add(shopButton, 84 + 2 * shopButton.width, 410 - playButton.height);
+        mainMenuPane.add(levelEditorButton, 112 + 3 * levelEditorButton.width, 410 - playButton.height);
+        
+        //Vertical Button Layout 
+        /*
+        mainPane.add(playButton, 400 + 2*playButton.width / 3, 60);
+        mainPane.add(tutorialButton, 400 + 2*playButton.width / 3, 70 + tutorialButton.height);
+        mainPane.add(shopButton, 400 + 2*playButton.width / 3, 90 + 2 * shopButton.height);
+        mainPane.add(levelEditorButton, 400 + 2 * playButton.width / 3, 100 + 3 * shopButton.height);
+        */
+        
+        screenController.addChild(mainMenuPane);
     }
 
     private function exitMainMenu():Void {
-        screenController.removeChild(playButton);
-        screenController.removeChild(tutorialButton);
-        screenController.removeChild(shopButton);
-        screenController.removeChild(levelEditorButton);
+        screenController.removeChild(mainMenuPane);
+        screenController.removeChild(backGround);
     }
 
     private function initLevelSelect():Void
     {
-        screenController.removeChild(backGround);
+        exitMainMenu();
+        
         backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/testBack.png")));
         screenController.addChild(backGround);
-
-        //Remove existing buttons
-        exitMainMenu();
-        selectedLevel = 0;
-
-        //Create button from UISpriteFactory
-        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
-
-        //Set up formatting stuff
-        var btf:ButtonTextFormat = {
-            tx:100,
-            ty:35,
-            font:"Verdana",
-            size:20,
-            color:0x0,
-            bold:false,
-            hAlign:HAlign.CENTER,
-            vAlign:VAlign.CENTER
-        };
-
-        initLevelButtonArray(uif, btf);
-
-        //TODO make custon btf for each button if necessary
-        prevButton = uif.createButton(100, 35, "BACK", btf, false);
-        nextButton = uif.createButton(100, 35, "NEXT", btf, false);
-        menuButton = uif.createButton(100, 35, "MAIN MENU", btf, false);
-        confirmButton = uif.createButton(100, 35, "CONFIRM", btf, false);
-        levelButton = levelButtonArray[selectedLevel];
-
-        //Translations
-        prevButton.transformationMatrix.translate(400 - levelButton.width / 2, 375);
-        nextButton.transformationMatrix.translate(400 - levelButton.width / 2 + levelButton.width - nextButton.width, 375);
-        confirmButton.transformationMatrix.translate(400 - confirmButton.width / 2, 375);
-        menuButton.transformationMatrix.translate(25, 25);
-
-        //Add buttons to screen
-        screenController.addChild(prevButton);
-        screenController.addChild(nextButton);
-        screenController.addChild(levelButton);
-        screenController.addChild(menuButton);
-        screenController.addChild(confirmButton);
-
-        //Add functions to event subscribers lists
-        prevButton.bEvent.add(decrementLevel);
-        prevButton.bEvent.add(updateLevelButton);
-        nextButton.bEvent.add(incrementLevel);
-        nextButton.bEvent.add(updateLevelButton);
-        menuButton.bEvent.add(exitLevelSelect);
-        menuButton.bEvent.add(initMainMenu);
-        confirmButton.bEvent.add(initSquadSelect);
+        
+        //Initialize UIPane
+        levelSelectPane = new LevelSelectPane();
+        levelSelectPane.menuButton.bEvent.add(exitLevelSelect);
+        levelSelectPane.menuButton.bEvent.add(initMainMenu);
+        levelSelectPane.confirmButton.bEvent.add(initSquadSelect);
+        screenController.addChild(levelSelectPane);
     }
 
     private function exitLevelSelect():Void {
-        screenController.removeChild(prevButton);
-        screenController.removeChild(nextButton);
-        screenController.removeChild(levelButton);
-        screenController.removeChild(menuButton);
-        screenController.removeChild(confirmButton);
+        screenController.removeChild(levelSelectPane);
         //TODO MAYBE clear the levelButton array, idk
     }
 
     private function initSquadSelect():Void {
         exitLevelSelect();
 
-        //Create buttons from UISpriteFactory
-        var uif:UISpriteFactory = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
-
+        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/testBack.png")));
+        screenController.addChild(backGround);
+        
         //Set up formatting stuff
         var btf:ButtonTextFormat = {
             tx:60,
@@ -399,37 +343,7 @@ class MenuScreen extends IGameScreen {
         trace(charButton2.bounds.y);
     }
 
-    //Initialize the array of level buttons (one for each level)
-    private function initLevelButtonArray(uif:UISpriteFactory, btf:ButtonTextFormat):Void {
-        var i:Int = 0;
-        while (i <= MAX_LEVEL) {
-            var button = uif.createButton(450, 225, "LEVEL " + (i + 1) , btf, false);
-            button.transformationMatrix.translate(400 - button.width / 2, 200 - button.height / 2);
-            levelButtonArray.push(button);
-            i++;
-        }
-    }
-
-    private function updateLevelButton():Void {
-        screenController.removeChild(levelButton);
-        levelButton = levelButtonArray[selectedLevel];
-        screenController.addChild(levelButton);
-    }
-
-    private function changeLevel(delta:Int):Void {
-        selectedLevel += delta;
-        if (selectedLevel < 0) { selectedLevel = 0; }
-        if (selectedLevel > MAX_LEVEL) { selectedLevel = MAX_LEVEL; }
-    }
-
-    private function decrementLevel():Void {
-        changeLevel(-1);
-    }
-
-    private function incrementLevel():Void {
-        changeLevel(1);
-    }
-
+    
     //TODO change to BroadcastEvent1 with a string argument for level
     private function startLevel():Void {
         switch selectedLevel {
@@ -576,16 +490,5 @@ class MenuScreen extends IGameScreen {
                     b++;
                 }
         }
-    }
-
-    //Dead function
-    private function checkButtonStates():Void {
-
-        if (playButton.clicked) { play = true; }
-        else { play = false; }
-        if (tutorialButton.clicked) { tutorial = true; }
-        else { tutorial = false; }
-        if (shopButton.clicked = true) { options = true; }
-        else { options = false; }
     }
 }
