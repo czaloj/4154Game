@@ -21,8 +21,8 @@ class Composer {
 
     private static var sounds:StringMap<Sound> = new StringMap<Sound>();
     private static var effects:StringMap<Sound> = new StringMap<Sound>();
-    private static var effectsToLoad:Int = 2;
-    private static var soundsToLoad:Int = 6;
+    private static var effectsToLoad:Int = 4;
+    private static var soundsToLoad:Int = 8;
     
     private static var musicInstances:Array<SoundChannel> = [];
     private static var effectInstances:Array<SoundChannel> = [];
@@ -52,6 +52,12 @@ class Composer {
         s = new Sound(new URLRequest("http://gdiac.cis.cornell.edu/gallery/flash/2015fa/finalflare/files/effects/Bomb.mp3"));
         s.addEventListener(Event.COMPLETE, fLoadCallbackEffects);
         effects.set("Bomb", s);
+        s = new Sound(new URLRequest("http://gdiac.cis.cornell.edu/gallery/flash/2015fa/finalflare/files/effects/Reload1.mp3"));
+        s.addEventListener(Event.COMPLETE, fLoadCallbackEffects);
+        effects.set("Reload1", s);
+        s = new Sound(new URLRequest("http://gdiac.cis.cornell.edu/gallery/flash/2015fa/finalflare/files/effects/Reload1.mp3"));
+        s.addEventListener(Event.COMPLETE, fLoadCallbackEffects);
+        effects.set("Reload2", s);
     }
     
     public static function playMusicTrack(name:String):SoundChannel {

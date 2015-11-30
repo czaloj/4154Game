@@ -4,6 +4,7 @@ import game.EntityBase;
 import game.GameState;
 import game.Entity;
 import graphics.IGameVisualizer;
+import sound.Composer;
 import weapon.projectile.LargeProjectile;
 import game.PhysicsController;
 import weapon.projectile.BulletProjectile;
@@ -86,6 +87,7 @@ class Weapon {
                     if ((usesPerformed + data.usesPerActivation) > data.useCapacity) {
                         reloadTimeLeft = Math.max(0, data.reloadTime - dt);
                         vis.onReload(entity, RELOAD_OFF_X, RELOAD_OFF_Y, reloadTimeLeft);
+                        Composer.playEffect("Reload2");
                         return;
                     }
                 }
@@ -115,6 +117,7 @@ class Weapon {
                 if ((usesPerformed + data.usesPerActivation) > data.useCapacity) {
                     reloadTimeLeft = Math.max(0, data.reloadTime - dt);
                     vis.onReload(entity, RELOAD_OFF_X, RELOAD_OFF_Y, reloadTimeLeft);
+                    Composer.playEffect("Reload2");
                     return;
                 }
             }
@@ -143,8 +146,9 @@ class Weapon {
                     
                     // Check for reload
                     if ((usesPerformed + data.usesPerActivation) > data.useCapacity) {
-                        vis.onReload(entity, RELOAD_OFF_X, RELOAD_OFF_Y, reloadTimeLeft);
                         reloadTimeLeft = Math.max(0, data.reloadTime - dt);
+                        vis.onReload(entity, RELOAD_OFF_X, RELOAD_OFF_Y, reloadTimeLeft);
+                        Composer.playEffect("Reload2");
                         return;
                     }
                 }
