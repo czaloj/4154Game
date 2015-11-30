@@ -53,7 +53,7 @@ class PartRegistry {
                 58, 17,
                 0, 8,
                 [
-                    new WeaponPartChild(16, 17, true, [requirementPart(WeaponPartType.MAGAZINE)]),
+                    new WeaponPartChild(17, 15, true, [requirementPart(WeaponPartType.MAGAZINE)]),
                     new WeaponPartChild(0, 4, false, [requirementPart(WeaponPartType.STOCK)]),
                     new WeaponPartChild(0, 0, false, [requirementPart(WeaponPartType.PROJECTILE)]),
                     new WeaponProperty(WeaponPropertyType.EXIT_INFORMATION, new ProjectileExitData(58, 5.5, 1, 0, 0.3, 1500)),
@@ -96,9 +96,9 @@ class PartRegistry {
             new WeaponPart(
                 "Projectile.Bullet",
                 WeaponPartType.PROJECTILE,
-                0, 0,
-                0, 0,
-                0, 0,
+                1017, 0,
+                7, 4,
+                3, 2,
                 [
                     new WeaponProperty(WeaponPropertyType.PROJECTILE_DATA, { 
                         var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_BULLET);
@@ -113,9 +113,9 @@ class PartRegistry {
             new WeaponPart(
                 "Projectile.Grenade",
                 WeaponPartType.PROJECTILE,
-                0, 0,
-                0, 0,
-                0, 0,
+                1017, 5,
+                7, 7,
+                4, 4,
                 [
                     new WeaponProperty(WeaponPropertyType.PROJECTILE_DATA, { 
                         var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_LARGE);
@@ -131,9 +131,9 @@ class PartRegistry {
             new WeaponPart(
                 "Projectile.Flare",
                 WeaponPartType.PROJECTILE,
-                0, 0,
-                0, 0,
-                0, 0,
+                1017, 13,
+                7, 13,
+                4, 7,
                 [
                     new WeaponProperty(WeaponPropertyType.PROJECTILE_DATA, { 
                         var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_FLARE);

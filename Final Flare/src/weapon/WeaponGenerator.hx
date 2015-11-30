@@ -181,15 +181,14 @@ class WeaponGenerator {
         
         var bmp:BitmapData = new BitmapData(Std.int(max.x - min.x), Std.int(max.y - min.y), true, 0x00000000);
         for (l in layers) {
+            var convertedData:ByteArray = convertColors(bmpGuns, new Rectangle(l.part.sx, l.part.sy, l.part.w, l.part.h), data.colorScheme);
+            var bmpTMP = new BitmapData(l.part.w, l.part.h, true, 0x00000000);
+            bmpTMP.setPixels(bmpTMP.rect, convertedData);
             if (l.part.type == WeaponPartType.PROJECTILE) {
                 // TODO: Add somewhere else
             }
             else {
-                var convertedData:ByteArray = convertColors(bmpGuns, new Rectangle(l.part.sx, l.part.sy, l.part.w, l.part.h), data.colorScheme);
-                var bmpTMP = new BitmapData(l.part.w, l.part.h, true, 0x00000000);
-                bmpTMP.setPixels(bmpTMP.rect, convertedData);
-                bmp.draw(bmpTMP, new Matrix(1, 0, 0, 1, l.wsTransform.tx - min.x, l.wsTransform.ty - min.y), null, null, null, false);                
-                //bmp.copyPixels(bmpTMP, bmpTMP.rect, new Point(l.wsTransform.tx - min.x, l.wsTransform.ty - min.y), null, null, true);
+                bmp.draw(bmpTMP, new Matrix(1, 0, 0, 1, l.wsTransform.tx - min.x, l.wsTransform.ty - min.y), null, null, null, false);
             }
         }
         
