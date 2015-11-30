@@ -1,6 +1,7 @@
 package game;
 
 import openfl.geom.Point;
+import haxe.ds.IntMap;
 
 class GameLevel {
     public var width:Int; // Width of level
@@ -11,7 +12,7 @@ class GameLevel {
     public var background:Array<Int>; // Array of identifiers for background tiles
     public var regions:Array<Int>;    // Array of tile based identifiers for movement regions
     public var nregions:Int;
-    public var regionLists:Array<Region>; // Array of movement regions
+    public var regionLists:IntMap<Region>; // Array of movement regions
 
     public var spawners:Array<Spawner>; // List of spawn points for enemies
     public var playerPt:Point; // Initial spawn point for the player
