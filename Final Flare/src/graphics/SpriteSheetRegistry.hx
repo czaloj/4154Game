@@ -4,7 +4,6 @@ import haxe.ds.StringMap;
 import openfl.Assets;
 import starling.textures.Texture;
 import weapon.WeaponGenerator;
-import weapon.WeaponLayerData;
 
 class SpriteSheetRegistry {
     public static inline var TYPE_CITY:String = "City";
@@ -239,16 +238,6 @@ class SpriteSheetRegistry {
             new StripRegion("SandMan.Run",  150, 160, 30, 40, 1, 12, 12),
             new StripRegion("SandMan.Jump", 510, 160, 30, 40, 1, 8,  8)
         ]);
-    }
-    public static function getGunSheet():StringMap<WeaponLayerData> {
-        // TODO: Determine the correct data
-        var m:StringMap<WeaponLayerData> = new StringMap<WeaponLayerData>();
-        m.set("Receiver.Conventional", new WeaponLayerData(5, 5, 19, 7, 6, 4));
-        m.set("Barrel.Conventional", new WeaponLayerData(1, 19, 58, 17, 0, 8));
-        m.set("Grip.Conventional", new WeaponLayerData(12, 82, 7, 10, 7, 0));
-        m.set("Stock.Conventional", new WeaponLayerData(6, 66, 22, 11, 22, 0));
-        m.set("Magazine.Conventional", new WeaponLayerData(18, 46, 10, 13, 0, 0));
-        return m;
     }
     
     public function new() {

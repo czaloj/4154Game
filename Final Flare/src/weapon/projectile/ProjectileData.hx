@@ -33,15 +33,15 @@ class ProjectileData {
     public var gravityAcceleration:Float = 0.0;
 
     // Large projectile information
-    public var timer:Float; // Amount of time alive either after spawn or after it's collided a certain amount of times
-    public var radius:Float; // Radius of the projectile
-    public var collisionCount:Int; // Number of times projectile is allowed to collide
+    public var timer:Float = 0.0; // Amount of time alive either after spawn or after it's collided a certain amount of times
+    public var radius:Float = 1.0; // Radius of the projectile
+    public var collisionCount:Int = 0; // Number of times projectile is allowed to collide
 
     // Explosive information
-    public var explosiveRadius:Float;
+    public var explosiveRadius:Float = 1.0;
 
     // Melee information
-    public var damageShape:B2Shape;
+    public var damageShape:B2Shape = null;
 
     public function new(t:Int) {
         constructionType = t;
