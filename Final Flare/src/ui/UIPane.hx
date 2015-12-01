@@ -1,5 +1,6 @@
 package ui;
 
+import starling.display.DisplayObject;
 import starling.display.DisplayObjectContainer;
 
 class UIPane extends DisplayObjectContainer {
@@ -8,10 +9,8 @@ class UIPane extends DisplayObjectContainer {
         super();
     }
     
-    
-    public function add(object:DisplayObjectContainer, tx:Float = 0, ty:Float = 0) {
+    public function add(object:DisplayObject, tx:Float = 0, ty:Float = 0) {
         object.transformationMatrix.translate(tx, ty);
         this.addChild(object);
-        
     }
 }
