@@ -16,9 +16,8 @@ class UICharacter extends DisplayObjectContainer
     private var charImage:Image;
     public var charButton:Button;
     private var prevButton:Button;
-    private var nextButton:Button;
-    
-    private var queuePos:Int;
+    private var nextButton:Button;    
+    public var queuePos:Int;
     
     public function new(i:Image = null) 
     {
@@ -54,7 +53,7 @@ class UICharacter extends DisplayObjectContainer
             vAlign:VAlign.CENTER
         };
         
-        charButton = uif.createButton(59, 119, "1", btf, true);
+        charButton = uif.createButton(59, 119, "", btf, true);
         prevButton = uif.createButton(4, 0, "", btf2, false);
         nextButton = uif.createButton(4, 0, "", btf2, false);
         

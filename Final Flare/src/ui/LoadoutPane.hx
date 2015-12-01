@@ -1,5 +1,7 @@
 package ui;
 
+import openfl.display.DisplayObjectContainer;
+import openfl.geom.Point;
 import ui.Button;
 import ui.UICharacter;
 import ui.Button.ButtonTextFormat;
@@ -13,7 +15,7 @@ import starling.text.TextField;
 
 class LoadoutPane extends UIPane
 {
-    private var charButtonArray:Array<Button>; 
+    private var charArray:Array<UICharacter>; 
     
     private var char1:UICharacter;
     private var char2:UICharacter;
@@ -49,8 +51,6 @@ class LoadoutPane extends UIPane
             vAlign:VAlign.CENTER
         };
         
-        //init char button array
-
         char1 = new UICharacter();
         char2 = new UICharacter();
         char3 = new UICharacter();
@@ -63,16 +63,16 @@ class LoadoutPane extends UIPane
         this.add(char4, char3.bounds.x + char3.width + 24, 0);
         this.add(char5, char4.bounds.x + char4.width + 24, 0);
         
-        charButtonArray = new Array<Button>();
-        charButtonArray.push(char1.charButton);
-        charButtonArray.push(char2.charButton);
-        charButtonArray.push(char3.charButton);
-        charButtonArray.push(char4.charButton);
-        charButtonArray.push(char5.charButton);
+        charArray = new Array<UICharacter>();
+        charArray.push(char1);
+        charArray.push(char2);
+        charArray.push(char3);
+        charArray.push(char4);
+        charArray.push(char5);
         
         var i = 0;
-        while (i < charButtonArray.length) {
-            charButtonArray[i].bEvent1.add(selectChar);
+        while (i < charArray.length) {
+            charArray[i].charButton.bEvent1.add(selectChar);
             i++;
         }
         
@@ -95,50 +95,49 @@ class LoadoutPane extends UIPane
         thirdSelectedSprite.addChild(tf3);
     }
     
-    private function selectChar(b:Button) {
+    private function selectChar(i:UICharacter):Void {
         switch numSelected {
             case 0:
-                firstSelectedSprite.transformationMatrix.translate(b.bounds.x + b.width/2 - 15, b.bounds.y - 35);
+                firstSelectedSprite.transformationMatrix.translate(i.bounds.x + i.width / 2 - firstSelectedSprite.width / 2, i.bounds.y - firstSelectedSprite.height);
                 this.addChild(firstSelectedSprite);
-                b.customData = 1;
+                i.queuePos = 1;
                 numSelected++;
             case 1:
-                if (b.customData == 0) {
-                    secondSelectedSprite.transformationMatrix.translate(b.bounds.x + b.width/2 - 15, b.bounds.y - 35);
+                if (i.queuePos == 0) {
+                    secondSelectedSprite.transformationMatrix.translate(i.bounds.x + i.width/2 - secondSelectedSprite.width/2, i.bounds.y - secondSelectedSprite.height);
                     this.addChild(secondSelectedSprite);
-                    b.customData = 2;
+                    i.queuePos = 2;
                     numSelected++;
                 }
                 else {
-                    adjustCharSelect(b, b.customData);
+                    adjustCharSelect(i, i.queuePos);
                 }
             case 2:
-                if (b.customData == 0) {
-                    thirdSelectedSprite.transformationMatrix.translate(b.bounds.x + b.width/2 - 15, b.bounds.y - 30);
+                if (i.queuePos == 0) {
+                    thirdSelectedSprite.transformationMatrix.translate(i.bounds.x + i.width/2 - thirdSelectedSprite.width/2, i.bounds.y - thirdSelectedSprite.height);
                     this.addChild(thirdSelectedSprite);
-                    b.customData = 3;
+                    i.queuePos = 3;
                     numSelected++;
                 }
                 else {
-                    adjustCharSelect(b, b.customData);
+                    adjustCharSelect(i, i.queuePos);
                 }
             case 3:
-                if (b.customData != 0) {
-                    adjustCharSelect(b, b.customData);
+                if (i.queuePos != 0) {
+                    adjustCharSelect(i, i.queuePos);
                 }
         }
-        
         if (numSelected == 3) {
-            var b = 0;
-            while (b < charButtonArray.length) {
-                if (charButtonArray[b].customData == 0) { charButtonArray[b].enabled = false; }
-                b++;
+            var i = 0;
+            while (i < charArray.length) {
+                if (charArray[i].queuePos == 0) { charArray[i].charButton.enabled = false; }
+                i++;
             }
         }
     }
     
     //Super hacky way to do char select 
-    private function adjustCharSelect(b:Button, i:Int):Void {
+    private function adjustCharSelect(b:UICharacter, i:Int):Void {
         switch numSelected {
             case 1:
                 var x1 = firstSelectedSprite.bounds.x;
@@ -146,7 +145,7 @@ class LoadoutPane extends UIPane
                
                 firstSelectedSprite.transformationMatrix.translate( -x1, -y1);
                 this.removeChild(firstSelectedSprite);
-                b.customData = 0;
+                b.queuePos = 0;
                 
                 numSelected--;
                 
@@ -155,7 +154,7 @@ class LoadoutPane extends UIPane
                 var y2 = secondSelectedSprite.bounds.y;
                 secondSelectedSprite.transformationMatrix.translate( -x2, -y2);
                 this.removeChild(secondSelectedSprite);
-                b.customData = 0;
+                b.queuePos = 0;
                 numSelected--;
 
                 if (i == 1) {
@@ -166,9 +165,9 @@ class LoadoutPane extends UIPane
                     firstSelectedSprite.transformationMatrix.translate(x2, y2);
                     
                     var b = 0;
-                    while (b < charButtonArray.length) {
-                        if (charButtonArray[b].customData == 2) { charButtonArray[b].customData = 1; }
-                        else {charButtonArray[b].customData = 0; }
+                    while (b < charArray.length) {
+                        if (charArray[b].queuePos == 2) { charArray[b].queuePos = 1; }
+                        else {charArray[b].queuePos = 0; }
                         b++;
                     }
                 }
@@ -180,7 +179,7 @@ class LoadoutPane extends UIPane
                 this.removeChild(thirdSelectedSprite);
                 numSelected--; 
                 
-                b.customData = 0;
+                b.queuePos = 0;
 
                 
                 if (i == 2) {
@@ -191,9 +190,9 @@ class LoadoutPane extends UIPane
                     secondSelectedSprite.transformationMatrix.translate(x3, y3);
 
                     var b = 0;
-                    while (b < charButtonArray.length) {
-                        if (charButtonArray[b].customData == 3) { 
-                            charButtonArray[b].customData = 2; 
+                    while (b < charArray.length) {
+                        if (charArray[b].queuePos == 3) { 
+                            charArray[b].queuePos = 2; 
                             break;
                         }
                         b++;
@@ -212,20 +211,20 @@ class LoadoutPane extends UIPane
                     secondSelectedSprite.transformationMatrix.translate(x3, y3);
                     
                     var b = 0;
-                    while (b < charButtonArray.length) {
-                        if (charButtonArray[b].customData == 3) { 
-                            charButtonArray[b].customData = 2; 
+                    while (b < charArray.length) {
+                        if (charArray[b].queuePos == 3) { 
+                            charArray[b].queuePos = 2; 
                         }
-                        else if (charButtonArray[b].customData == 2) {
-                            charButtonArray[b].customData = 1;
+                        else if (charArray[b].queuePos == 2) {
+                            charArray[b].queuePos = 1;
                         }
                         b++;
                     }
                 }
                 
                 var b = 0;
-                while (b < charButtonArray.length) {
-                    if (!charButtonArray[b].enabled) { charButtonArray[b].enabled = true; }
+                while (b < charArray.length) {
+                    if (!charArray[b].charButton.enabled) { charArray[b].charButton.enabled = true; }
                     b++;
                 }
         }

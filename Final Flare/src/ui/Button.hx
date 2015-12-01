@@ -30,7 +30,7 @@ class Button extends DisplayObjectContainer {
     public var hitTestState (default, set):Sprite;
     public var currentState (default, set):Sprite;
     public var bEvent:BroadcastEvent;
-    public var bEvent1:BroadcastEvent1<Button>;
+    public var bEvent1:BroadcastEvent1<UICharacter>;
     public var customData:Int;
     
     /**
@@ -49,7 +49,7 @@ class Button extends DisplayObjectContainer {
         enabled = true;
         toggle = tog;
         bEvent = new BroadcastEvent();
-        bEvent1 = new BroadcastEvent1<Button>();
+        bEvent1 = new BroadcastEvent1<UICharacter>();
         this.upState = (upState != null) ? upState : generateDefaultState ();
         this.overState = (overState != null) ? overState : generateDefaultState ();
         this.downState = (downState != null) ? downState : generateDefaultState ();
@@ -151,7 +151,6 @@ class Button extends DisplayObjectContainer {
                         else {
                             clicked = true;
                             bEvent.invoke();
-                            bEvent1.invoke(this);
                         }
                         switchState(upState);
                         currentState = upState;
@@ -166,7 +165,7 @@ class Button extends DisplayObjectContainer {
         }
     }
     
-    //Event handler
+    //Event handler specifically for character select
     private function onTouchToggle (event:TouchEvent):Void {
         if (enabled) {
             if(event.getTouch(this) != null) {
@@ -177,12 +176,12 @@ class Button extends DisplayObjectContainer {
                             currentState = downState; 
                             clicked = true;
                             bEvent.invoke();
-                            bEvent1.invoke(this);
+                            bEvent1.invoke(cast(this.parent, UICharacter));
                         }
                         else if (currentState == downState) { 
                             switchState(overState);
                             currentState = upState;
-                            bEvent1.invoke(this);
+                            bEvent1.invoke(cast(this.parent, UICharacter));
                             clicked = false;
                         }
                     case TouchPhase.HOVER:
