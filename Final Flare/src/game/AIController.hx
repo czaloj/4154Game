@@ -19,8 +19,39 @@ class AIController {
         }
     }
 
-    // TODO: weee magic numberss
     public function followPlayer(entity:Entity, state:GameState):Void {
+        //reset
+        entity.direction = 0;
+        entity.up = false;
+        entity.useWeapon =  false;
+
+        //movement
+        var direction = findPlayer(entity, state);
+        switch (direction) {
+            //same region
+            case 0:
+                if (Math.pow(state.player.position.x - entity.position.x, 2) > 0.1) {
+                    entity.direction = entity.position.x > state.player.position.x ? -1 : 1;
+                }
+            case Region.LEFT:
+                entity.direction = -1;
+            case Region.RIGHT:
+                entity.direction = 1;
+            case Region.JUMP_LEFT:
+                entity.direction = -1;
+                entity.up = true;
+            case Region.JUMP_RIGHT:
+                entity.direction = 1;
+                entity.up = true;
+        }
+        //attack
+        if (Math.pow(state.player.position.x - entity.position.x,2) + Math.pow(state.player.position.y - entity.position.y, 2) <= 4) {
+            entity.useWeapon = true;
+        }
+    }
+
+    // TODO: weee magic numberss
+    public function oldFollowPlayer(entity:Entity, state:GameState):Void {
         var target = state.player.position;
         var x:Float = entity.position.x;
         var y:Float = entity.position.y;
@@ -155,12 +186,12 @@ class AIController {
         var y:Float = entity.position.y;
         var region:Region = state.regionLists.get(toRegion(x, y, state));
         var playerRegion: Region = state.regionLists.get(toRegion(target.x, target.y, state));
-        return region.getDirection(playerRegion);
+        return region.getDirection(playerRegion, state);
      }
 
-     public function toRegion(x:Float, y:Float, state:GameState) {
+     public static function toRegion(x:Float, y:Float, state:GameState) {
          var tx = Math.floor(x / GameplayController.TILE_HALF_WIDTH);
          var ty = Math.floor(y / GameplayController.TILE_HALF_WIDTH);
-         return state.regions[tx + ty * state.width];
+         return state.regions[tx + (state.height - ty)* state.width];
      }
 }

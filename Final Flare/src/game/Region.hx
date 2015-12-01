@@ -1,15 +1,11 @@
 package game;
-import game.Region.Path;
 import openfl.geom.Point;
-import haxe.ds.ObjectMap;
+import haxe.ds.IntMap;
 
 /**
  * ...
  * @author Sophie Huang
  */
-
-typedef Connection = { region : Region, direction : Int, distance: Float }
-typedef Path = { path: Array<Region>, distance: Float }
 
 class Region
 {
@@ -28,42 +24,67 @@ class Region
         id = name;
     }
 
+    public static function initPathTable(s:GameState) {
+        for (reg in s.regionLists) {
+            var pathTbl:IntMap<Int> = new IntMap<Int>();
+            for (dst in s.regionLists) {
+                pathTbl.set(dst.id, reg.computeDirection(dst, s));
+            }
+            s.pathTbl.set(reg.id, pathTbl);
+        }
+    }
+
     public function addNeighbor(reg:Region, flag:Int) {
-        var neighbor:Connection = { region: reg, direction: flag, distance: reg.position.subtract(position).length};
+        var neighbor:Connection = new Connection(reg.id, flag, reg.position.subtract(position).length);
         neighbors.push(neighbor);
     }
 
-    public function getDirection(dst:Region) {
-        var pathTbl:ObjectMap<Region, Path> = new ObjectMap<Region, Path>();
-        findPath(this, dst, pathTbl);
-        var nextReg = pathTbl.get(dst).path[0].id;
-        for (neighbor in neighbors) {
-            if (neighbor.region.id == nextReg) {
-                return neighbor.direction;
+
+    public function getDirection(dst:Region, s:GameState) {
+        if (dst != null) {
+            return s.pathTbl.get(this.id).get(dst.id);
+        } else {
+            return 0;
+        }
+    }
+
+    private function computeDirection(dst:Region, s:GameState) {
+        if ((dst != null)&&(this.id != dst.id)) {
+            var pathTbl:IntMap<Path> = new IntMap<Path>();
+            var selfPath:Path = new Path([], 0);
+            pathTbl.set(this.id, selfPath);
+            findPath(this, dst, pathTbl, s);
+            var nextReg = pathTbl.get(dst.id).path[0].id;
+            for (neighbor in neighbors) {
+                if (neighbor.region == nextReg) {
+                    return neighbor.direction;
+                }
             }
         }
         return 0;
     }
 
-    private static function findPath(src:Region, dst:Region, pathTbl:ObjectMap<Region, Path>) {
+    private static function findPath(src:Region, dst:Region, pathTbl:IntMap<Path>,s:GameState) {
         if (src.id == dst.id) {
             return;
         }
         for (neighbor in src.neighbors) {
-            var newPath:Path = { path: [], distance:0 };
-            if (pathTbl.get(src) !=null){
-                newPath.path = pathTbl.get(src).path.copy();
-                newPath.distance = pathTbl.get(src).distance + neighbor.distance;
+            var newPath:Path = new Path([], 0);
+            if (pathTbl.get(src.id) !=null){
+                newPath.path = pathTbl.get(src.id).path.copy();
+                newPath.distance = pathTbl.get(src.id).distance;
             }
-            newPath.path.push(neighbor.region);
+            newPath.path.push(s.regionLists.get(neighbor.region));
+            newPath.distance += neighbor.distance;
             if (pathTbl.exists(neighbor.region)) {
                 var curPath = pathTbl.get(neighbor.region);
                 if (newPath.distance < curPath.distance) {
                     pathTbl.set(neighbor.region, newPath);
+                    findPath(s.regionLists.get(neighbor.region), dst, pathTbl, s);
                 }
             } else {
                 pathTbl.set(neighbor.region, newPath);
-                findPath(neighbor.region, dst, pathTbl);
+                findPath(s.regionLists.get(neighbor.region), dst, pathTbl, s);
             }
         }
     }

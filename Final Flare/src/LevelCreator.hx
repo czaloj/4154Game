@@ -1,5 +1,6 @@
 package;
 
+
 import flash.net.FileReference;
 import flash.events.Event;
 import game.ColorScheme;
@@ -7,8 +8,10 @@ import game.GameLevel;
 import game.GameState;
 import game.Entity;
 import game.MenuLevelModifiers;
+import game.Region;
 import game.Spawner;
 import game.Platform;
+import game.GameplayController;
 import graphics.EntityRenderData;
 import graphics.Renderer;
 import graphics.RenderPack;
@@ -16,6 +19,7 @@ import graphics.SpriteSheet;
 import graphics.SpriteSheetRegistry;
 import graphics.StripRegion;
 import graphics.TileRegion;
+import haxe.ds.IntMap;
 import haxe.ds.ObjectMap;
 import haxe.ds.StringMap;
 import haxe.Serializer;
@@ -54,6 +58,9 @@ class LevelCreator {
         state.platforms = Platform.createFromTileMap(state.width, state.height, state.foreground);
         state.player = new Entity();
         state.player.position.set(level.playerPt.x, level.playerPt.y);
+        state.regionLists = level.regionLists;
+        state.regions = level.regions;
+        state.nregions = level.nregions;
     }
     public static function createPackFromLevel(level:game.GameLevel, renderPack:RenderPack):Void {
         // Load the environment texture
@@ -95,14 +102,14 @@ class LevelCreator {
         for (f in level.parallax) {
             renderPack.parallax.push(Texture.fromBitmapData(Assets.getBitmapData(f, false)));
         }
-        
+
         //TODO: unhardcode
         renderPack.projectiles = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Bullet.png")), [
             new StripRegion("Bullet.Fly", 0, 0, 5, 10, 1, 1, 1)
         ]);
-        
+
     }
-    
+
     public static function createStateFromFile(file:String, state:game.GameState):Void {
         createStateFromLevel(loadLevelFromFile(file), state);
     }
@@ -124,17 +131,17 @@ class LevelCreator {
         Spawner.createPlayer(state.entities[2], "Robot", 0, 0);
         Spawner.createPlayer(state.entities[3], "SteamGirl", 0, 0);
         Spawner.createPlayer(state.entities[4], "SandMan", 0, 0);
-        
+
         // Disable all but the first character
         for (i in 1...5) {
             if (state.entities[i] != null) {
                 state.entities[i].enabled = false;
             }
         }
-        
+
         state.characterWeapons = mod.characterWeapons.copy();
         state.enemyWeapons = mod.enemyWeapons.copy();
-        
+
         var bmpGuns:BitmapData = Assets.getBitmapData("assets/img/Gun.png");
         var bmpConvertedGuns:BitmapData = new BitmapData(bmpGuns.width, bmpGuns.height * 1);
         var cs:Array<ColorScheme> = [
@@ -151,7 +158,7 @@ class LevelCreator {
         for (w in state.characterWeapons) renderPack.weaponMapping.set(w, "Gun0");
         for (w in state.enemyWeapons) renderPack.weaponMapping.set(w, "Gun0");
     }
-    
+
     public function new() {
         // Empty
     }

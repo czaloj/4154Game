@@ -27,5 +27,7 @@ class GameLevel {
         parallax = [];
         spawners = [];
         playerPt = new Point();
+        regions = [];
+        regionLists = new IntMap<Region>();
     }
 }

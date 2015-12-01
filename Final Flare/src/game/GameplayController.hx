@@ -51,7 +51,7 @@ class GameplayController {
     public function init(s:GameState):Void {
         state = s;
         count20 = 1200;
-
+        Region.initPathTable(s);
         // Initialize physics from loaded GameState
         Weapon.phys = physicsController;
         physicsController.init(state);
@@ -177,7 +177,6 @@ class GameplayController {
     public function update(s:GameState, gameTime:GameTime):Void {
         state = s;
         updateTime(gameTime);
-
         // TODO: Super old logging code, excise
         count20 -= 1;
         if (count20 <= 0)
@@ -434,7 +433,7 @@ class GameplayController {
             (bullet.teamDestinationFlags & DamageDealer.TEAM_ENEMY) != 0,
             bullet.piercingAmount
             );
-            
+
         if (info.second != null) {
             // Render up until the collision point
             var collisionPoint:B2Vec2 = info.second.third;
@@ -507,7 +506,7 @@ class GameplayController {
             }
             if (e.isDead && e.team == Entity.TEAM_PLAYER) {
                 FFLog.recordEvent(3,  e.position.x + ", " + e.position.y + ", " + state.time.total +", " + d.type + ", " + (state.entities.length-5));
-				
+
             }
 
             return damage > 0;

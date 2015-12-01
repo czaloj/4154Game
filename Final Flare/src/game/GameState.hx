@@ -85,7 +85,7 @@ class GameState {
     public var regions:Array<Int> = [];
     public var nregions:Int = 0;
     public var regionLists:IntMap<Region> = new IntMap<Region>();
-    public var pathTbl:ObjectMap<Point, Int>;
+    public var pathTbl:IntMap<IntMap<Int>> = new IntMap<IntMap<Int>>();
 
     // Weapons used in the level
     public var characterWeapons:Array<WeaponData>;
