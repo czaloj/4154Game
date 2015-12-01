@@ -24,6 +24,8 @@ class AIController {
         entity.direction = 0;
         entity.up = false;
         entity.useWeapon =  false;
+        entity.targetX = state.player.position.x;
+        entity.targetY = state.player.position.y;
 
         //movement
         var direction = findPlayer(entity, state);
