@@ -28,7 +28,7 @@ import starling.text.TextField;
 class MenuScreen extends IGameScreen {
     
     //UIPanes    
-    private var mainMenuPane:UIPane;
+    private var mainMenuPane:UIPane; //This didn't need any special functionality so it's a generic pane
     private var levelSelectPane:LevelSelectPane;
     private var loadoutPane:LoadoutPane;
 
@@ -53,7 +53,7 @@ class MenuScreen extends IGameScreen {
         screenController.playerData = new PlayerData("Player"); // TODO: Allow others to play?
         selectedLevel = 0;
         uif = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
-        
+        initPanes();
         initMainMenu();
         FFLog.recordMenuStart();
 
@@ -97,12 +97,9 @@ class MenuScreen extends IGameScreen {
         // Empty
     }
 
-    private function initMainMenu():Void {
-        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/TitleScreen.png")));
-        screenController.addChild(backGround);
-
+    private function initPanes():Void {
         //Set up formatting stuff
-        var btf:ButtonTextFormat = {
+        var mainBTF:ButtonTextFormat = {
             tx:150,
             ty:50,
             font:"Verdana",
@@ -114,10 +111,10 @@ class MenuScreen extends IGameScreen {
         };
 
         //Create Button and position it
-        var playButton = uif.createButton(150, 50, "PLAY", btf, false);
-        var tutorialButton = uif.createButton(150, 50, "TUTORIAL", btf, false);
-        var shopButton = uif.createButton(150, 50, "SHOP", btf, false);
-        var levelEditorButton = uif.createButton(150, 50, "LEVEL EDITOR", btf, false);
+        var playButton = uif.createButton(150, 50, "PLAY", mainBTF, false);
+        var tutorialButton = uif.createButton(150, 50, "TUTORIAL", mainBTF, false);
+        var shopButton = uif.createButton(150, 50, "SHOP", mainBTF, false);
+        var levelEditorButton = uif.createButton(150, 50, "LEVEL EDITOR", mainBTF, false);
 
         //Add button functions
         playButton.bEvent.add(initLevelSelect);
@@ -144,7 +141,21 @@ class MenuScreen extends IGameScreen {
         mainPane.add(shopButton, 400 + 2*playButton.width / 3, 90 + 2 * shopButton.height);
         mainPane.add(levelEditorButton, 400 + 2 * playButton.width / 3, 100 + 3 * shopButton.height);
         */
+                
+        //Initialize UIPane
+        levelSelectPane = new LevelSelectPane();
+        levelSelectPane.menuButton.bEvent.add(exitLevelSelect);
+        levelSelectPane.menuButton.bEvent.add(initMainMenu);
+        levelSelectPane.confirmButton.bEvent.add(initLoadoutScreen);
+        screenController.addChild(levelSelectPane);
         
+        //Create Pane
+        loadoutPane = new LoadoutPane();
+    }
+    
+    private function initMainMenu():Void {
+        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/TitleScreen.png")));
+        screenController.addChild(backGround);
         screenController.addChild(mainMenuPane);
     }
 
@@ -156,15 +167,8 @@ class MenuScreen extends IGameScreen {
     private function initLevelSelect():Void
     {
         exitMainMenu();
-        
         backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/testBack.png")));
         screenController.addChild(backGround);
-        
-        //Initialize UIPane
-        levelSelectPane = new LevelSelectPane();
-        levelSelectPane.menuButton.bEvent.add(exitLevelSelect);
-        levelSelectPane.menuButton.bEvent.add(initMainMenu);
-        levelSelectPane.confirmButton.bEvent.add(initSquadSelect);
         screenController.addChild(levelSelectPane);
     }
 
@@ -173,7 +177,7 @@ class MenuScreen extends IGameScreen {
         //TODO MAYBE clear the levelButton array, idk
     }
 
-    private function initSquadSelect():Void {
+    private function initLoadoutScreen():Void {
         exitLevelSelect();
 
         backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/testBack.png")));
@@ -194,9 +198,6 @@ class MenuScreen extends IGameScreen {
         //Create UI elements
         confirmButton = uif.createButton(100, 35, "CONFIRM", btf, false);
         confirmButton.transformationMatrix.translate(400 - confirmButton.width / 2, 375);
-        
-        //Create Pane
-        loadoutPane = new LoadoutPane();
 
         //Add pane to stage
         screenController.addChild(loadoutPane);
@@ -204,6 +205,11 @@ class MenuScreen extends IGameScreen {
         
         //Add button functions        
         confirmButton.bEvent.add(startLevel);
+    }
+    
+    private function exitLoadoutScreen():Void {
+        screenController.removeChild(loadoutPane);
+        screenController.removeChild(confirmButton);
     }
 
     
@@ -213,7 +219,7 @@ class MenuScreen extends IGameScreen {
             case 0:
                 screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/test.lvl");
                 //Move these outside switch when all levels are made
-                exitLevelSelect();
+                exitLoadoutScreen();
                 screenController.switchToScreen(2);
             default:
         }
