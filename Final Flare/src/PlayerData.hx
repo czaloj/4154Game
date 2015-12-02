@@ -24,6 +24,7 @@ class PlayerData {
     public function reset():Void {
         so.clear();
         generateDefault(so.data);
+        so.flush();
     }
 
     public function get_points():Int {

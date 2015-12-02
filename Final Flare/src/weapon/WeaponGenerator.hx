@@ -36,7 +36,7 @@ class WeaponBuildWorkspace {
 }
 
 class WeaponGenerator {
-    public static inline var GUN_SCALE:Float = 32.0;
+    public static inline var GUN_SCALE:Float = 64.0;
     
     // Alpha mask levels for color generation
     public static var ALPHA_LEVEL_TRUE_COLOR:UInt = 101;
@@ -206,71 +206,29 @@ class WeaponGenerator {
     }
     
     public static function generate(params:WeaponGenParams):WeaponData {
-        var data:WeaponData = new WeaponData();
-
         // TODO: Generate a real gun
-        data.name = "Gun";
-        data.colorScheme = new ColorScheme(0xff0000, 0x00ff00, 0x0000ff, 0, 0, 1, 1);
+        var test:WeaponLayer = new WeaponLayer("Receiver.Conventional", [
+            new Pair(0, new WeaponLayer("Barrel.Conventional", [
+                new Pair(0, new WeaponLayer("Magazine.Conventional")),
+                new Pair(1, new WeaponLayer("Stock.Conventional")),
+                (switch (params.shadynessPoints) {
+                    case 0:
+                        new Pair(2, new WeaponLayer("Projectile.Bullet"));
+                    case 1:
+                        new Pair(2, new WeaponLayer("Projectile.Grenade"));
+                    case 2:
+                        new Pair(2, new WeaponLayer("Projectile.Flare"));
+                    default:
+                        new Pair(2, new WeaponLayer("Projectile.Melee"));
+                })
+            ])),
+            new Pair(1, new WeaponLayer("Grip.Conventional"))
+        ]);
+        
+        var data:WeaponData = WeaponGenerator.buildFromParts(test);
         data.evolutionCost = params.evolutionPoints;
         data.historicalCost = params.historicalPoints;
         data.shadynessCost = params.shadynessPoints;
-
-        data.firingMode = FiringMode.AUTOMATIC;
-        data.useCapacity = 36;
-        data.usesPerActivation = 1;
-        data.reloadTime = 2.4;
-        data.activationCooldown = 0.15;
-        data.burstPause = 0;
-        data.burstCount = 0;
-
-        data.projectileOrigins = [
-            new ProjectileOrigin()
-        ];
-        data.projectileOrigins[0].exitAngle = 0.3;
-        if (data.shadynessCost == 0) {
-            // Example conventional gun
-            var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_BULLET);
-            pd.damage = 10;
-            pd.damageFriendly = 0;
-            pd.penetrationCount = 0;
-            pd.gravityAcceleration = 0.0;
-            data.projectileOrigins[0].projectileData = pd;
-            data.projectileOrigins[0].velocity = 1500;
-        }
-        else if (data.shadynessCost == 1) {
-            // Example grenade launcher
-            var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_LARGE);
-            pd.damage = 40;
-            pd.damageFriendly = 20;
-            pd.timer = 0.5;
-            pd.explosiveRadius = 2.0;
-            pd.radius = 0.2;
-            data.projectileOrigins[0].projectileData = pd;
-            data.projectileOrigins[0].velocity = 30;
-        }
-        else if (data.shadynessCost == 2){
-            // Example flare gun
-            var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_FLARE);
-            pd.damage = 0;
-            pd.damageFriendly = 0;
-            pd.timer = 3.0;
-            pd.explosiveRadius = 1.0;
-            pd.radius = 0.05;
-            data.projectileOrigins[0].projectileData = pd;
-            data.projectileOrigins[0].velocity = 15;
-            data.reloadTime = 10.0;
-            data.useCapacity = 1;
-            data.firingMode = FiringMode.SINGLE;
-        } else {
-            // Example melee
-            var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_MELEE);
-            pd.damage = 10;
-            pd.damageFriendly = 0;
-            data.projectileOrigins[0].projectileData = pd;
-            data.projectileOrigins[0].velocity = 0;
-        }
-
-        data.projectileOrigins[0].transform.translate(0.8, 0.1);
         return data;
     }
 
@@ -278,15 +236,21 @@ class WeaponGenerator {
         var weapons:Array<WeaponData> = [];
 
         // Temp variables
-        var po:ProjectileOrigin = null;
         var w:WeaponData = null;
-        var pd:ProjectileData = null;
         var l:WeaponLayer = null;
 
         // Rifle
-        w = new WeaponData();
+        l = new WeaponLayer("Receiver.Conventional", [
+            new Pair(0, new WeaponLayer("Barrel.Conventional", [
+                new Pair(0, new WeaponLayer("Magazine.Conventional")),
+                new Pair(1, new WeaponLayer("Stock.Conventional")),
+                new Pair(2, new WeaponLayer("Projectile.Bullet"))
+            ])),
+            new Pair(1, new WeaponLayer("Grip.Conventional"))
+        ]);
+        w = buildFromParts(l);
         w.name = "M34 Sport Rifle";
-        w.colorScheme = new ColorScheme(0xff0000, 0x00ff00, 0x0000ff, 0, 0, 1, 1);
+        w.colorScheme = new ColorScheme(0xffff0000, 0xff00ff00, 0xff0000ff, 0, 0, 1, 1);
         w.evolutionCost = 0;
         w.historicalCost = 0;
         w.shadynessCost = 0;
@@ -297,24 +261,20 @@ class WeaponGenerator {
         w.activationCooldown = 0.15;
         w.burstPause = 0;
         w.burstCount = 0;
-        w.projectileOrigins = [];
-        po = new ProjectileOrigin();
-        po.exitAngle = 0.3;
-        pd = new ProjectileData(ProjectileData.TYPE_BULLET);
-        pd.damage = 10;
-        pd.damageFriendly = 0;
-        pd.penetrationCount = 0;
-        pd.gravityAcceleration = 0.0;
-        po.projectileData = pd;
-        po.velocity = 1500;
-        po.transform.translate(0.8, 0.1);
-        w.projectileOrigins.push(po);
         weapons.push(w);
 
         // Grenade launcher
-        w = new WeaponData();
+        l = new WeaponLayer("Receiver.Conventional", [
+            new Pair(0, new WeaponLayer("Barrel.Conventional", [
+                new Pair(0, new WeaponLayer("Magazine.Conventional")),
+                new Pair(1, new WeaponLayer("Stock.Conventional")),
+                new Pair(2, new WeaponLayer("Projectile.Grenade"))
+            ])),
+            new Pair(1, new WeaponLayer("Grip.Conventional"))
+        ]);
+        w = buildFromParts(l);
         w.name = "Junk'n'Chuck";
-        w.colorScheme = new ColorScheme(0xff0000, 0x00ff00, 0x0000ff, 0, 0, 1, 1);
+        w.colorScheme = new ColorScheme(0xffff0000, 0xff00ff00, 0xff0000ff, 0, 0, 1, 1);
         w.evolutionCost = 0;
         w.historicalCost = 0;
         w.shadynessCost = 0;
@@ -325,25 +285,20 @@ class WeaponGenerator {
         w.activationCooldown = 1.0;
         w.burstPause = 0;
         w.burstCount = 0;
-        w.projectileOrigins = [];
-        po = new ProjectileOrigin();
-        po.exitAngle = 0.3;
-        pd = new ProjectileData(ProjectileData.TYPE_LARGE);
-        pd.damage = 40;
-        pd.damageFriendly = 20;
-        pd.timer = 0.5;
-        pd.explosiveRadius = 2.0;
-        pd.radius = 0.2;
-        po.projectileData = pd;
-        po.velocity = 30;
-        po.transform.translate(0.8, 0.1);
-        w.projectileOrigins.push(po);
         weapons.push(w);
 
         // Flare gun
-        w = new WeaponData();
+        l = new WeaponLayer("Receiver.Conventional", [
+            new Pair(0, new WeaponLayer("Barrel.Conventional", [
+                new Pair(0, new WeaponLayer("Magazine.Conventional")),
+                new Pair(1, new WeaponLayer("Stock.Conventional")),
+                new Pair(2, new WeaponLayer("Projectile.Flare"))
+            ])),
+            new Pair(1, new WeaponLayer("Grip.Conventional"))
+        ]);
+        w = buildFromParts(l);
         w.name = "Rescue Flare Gun";
-        w.colorScheme = new ColorScheme(0xff0000, 0x00ff00, 0x0000ff, 0, 0, 1, 1);
+        w.colorScheme = new ColorScheme(0xffff0000, 0xff00ff00, 0xff0000ff, 0, 0, 1, 1);
         w.evolutionCost = 0;
         w.historicalCost = 0;
         w.shadynessCost = 0;
@@ -354,19 +309,6 @@ class WeaponGenerator {
         w.activationCooldown = 0.15;
         w.burstPause = 0;
         w.burstCount = 0;
-        w.projectileOrigins = [];
-        po = new ProjectileOrigin();
-        po.exitAngle = 0.3;
-        pd = new ProjectileData(ProjectileData.TYPE_FLARE);
-        pd.damage = 0;
-        pd.damageFriendly = 0;
-        pd.timer = 3.0;
-        pd.explosiveRadius = 1.0;
-        pd.radius = 0.05;
-        po.projectileData = pd;
-        po.velocity = 15;
-        po.transform.translate(0.8, 0.1);
-        w.projectileOrigins.push(po);
         weapons.push(w);
 
         return weapons;

@@ -2,6 +2,7 @@ package graphics;
 
 import game.GameState;
 import game.Entity;
+import openfl.Assets;
 import openfl.geom.Matrix;
 import weapon.projectile.BulletProjectile;
 import game.World;
@@ -25,6 +26,7 @@ import starling.display.Stage;
 import starling.textures.RenderTexture;
 import starling.textures.Texture;
 import weapon.projectile.Projectile;
+import weapon.WeaponGenerator;
 
 class Renderer implements IGameVisualizer {
     public static inline var PLAYER_WIDTH:Float = 0.9;
@@ -145,11 +147,13 @@ class Renderer implements IGameVisualizer {
         }
         entityTbl.set(o, sprite);
         
-        var wi:AnimatedSprite = new AnimatedSprite(pack.gun, pack.weaponMapping.get(o.weapon.data), 1);
-        wi.scaleX /= 64;
-        wi.scaleY /= 64;
-        wi.y = 0.2;
-        wi.x = -0.2;
+        var wi:DisplayObject = WeaponGenerator.buildSprite(o.weapon.data, Assets.getBitmapData("assets/img/Guns.png"));
+        
+        //var wi:AnimatedSprite = new AnimatedSprite(pack.gun, pack.weaponMapping.get(o.weapon.data), 1);
+        //wi.scaleX /= 64;
+        //wi.scaleY /= 64;
+        //wi.y = 0.2;
+        //wi.x = -0.2;
         sprite.setWeapon(wi);
     }
     public function onEntityRemoved(s:game.GameState, o:game.Entity):Void {

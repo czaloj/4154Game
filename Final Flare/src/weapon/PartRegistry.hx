@@ -145,7 +145,22 @@ class PartRegistry {
                         pd.radius = 0.05;
                         pd;
                     })
-                ])
+                ]),
+                
+            new WeaponPart(
+                "Projectile.Melee",
+                WeaponPartType.PROJECTILE,
+                1017, 5,
+                7, 7,
+                4, 4,
+                [
+                    new WeaponProperty(WeaponPropertyType.PROJECTILE_DATA, { 
+                        var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_MELEE);
+                        pd.damage = 10;
+                        pd.damageFriendly = 0;
+                        pd;
+                    }) 
+                ]),
         ];
         
         var m:StringMap<WeaponPart> = new StringMap<WeaponPart>();

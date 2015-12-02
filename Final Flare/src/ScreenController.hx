@@ -60,7 +60,7 @@ class ScreenController extends Sprite {
                     LevelCreator.saveToFile(loadedLevel);
                 case Keyboard.F9:
                     WeaponGenerator.composeLayers();
-                case Keyboard.F10:
+                case Keyboard.NUMPAD_0:
                     if (playerData != null) playerData.reset();
                 case Keyboard.NUMPAD_4:
                     switchToScreen(4);
