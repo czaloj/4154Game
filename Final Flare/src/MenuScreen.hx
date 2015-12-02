@@ -6,6 +6,7 @@ import haxe.Unserializer;
 import openfl.events.Event;
 import flash.net.FileReference;
 import flash.utils.ByteArray;
+import openfl.geom.Point;
 import starling.display.Image;
 import ui.LoadoutPane;
 import ui.UICharacter;
@@ -27,8 +28,9 @@ import starling.text.TextField;
 
 class MenuScreen extends IGameScreen {
     
-    //UIPanes    
-    private var mainMenuPane:UIPane; //This didn't need any special functionality so it's a generic pane
+    //UIPanes
+    private var mainMenu:UIPane;
+    private var homePane:UIPane; //This didn't need any special functionality so it's a generic pane
     private var levelSelectPane:LevelSelectPane;
     private var loadoutPane:LoadoutPane;
 
@@ -36,8 +38,6 @@ class MenuScreen extends IGameScreen {
     private var backGround:Image;     //Background
     private var confirmButton:Button; //For squad select pane
     
-    private var selectedLevel:Int;
-
     public function new(sc:ScreenController) {
         super(sc);
     }
@@ -51,10 +51,11 @@ class MenuScreen extends IGameScreen {
 
     override public function onEntry(gameTime:GameTime):Void {
         screenController.playerData = new PlayerData("Player"); // TODO: Allow others to play?
-        selectedLevel = 0;
+        
         uif = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
-        initPanes();
-        initMainMenu();
+        
+        init();
+        
         FFLog.recordMenuStart();
 
         // TODO: This is so badly hardcoded
@@ -86,6 +87,7 @@ class MenuScreen extends IGameScreen {
 
     override public function onExit(gameTime:GameTime):Void {
         screenController.removeChild(backGround);
+        screenController.removeChild(mainMenu);
         FFLog.recordMenuEnd();
     }
 
@@ -97,7 +99,15 @@ class MenuScreen extends IGameScreen {
         // Empty
     }
 
-    private function initPanes():Void {
+    /* The main menu is separate from the background. The init function adds the background
+     * to the stae and creates the mainMenuPane, which has homePane, levelSelectPane, and
+     * loadoutPane as children */
+    private function init():Void {
+        //Add the background
+        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Menu Background.png")));
+        screenController.addChild(backGround);
+        
+        //INIT HOME PANE
         //Set up formatting stuff
         var mainBTF:ButtonTextFormat = {
             tx:150,
@@ -117,74 +127,40 @@ class MenuScreen extends IGameScreen {
         var levelEditorButton = uif.createButton(150, 50, "LEVEL EDITOR", mainBTF, false);
 
         //Add button functions
-        playButton.bEvent.add(initLevelSelect);
+        playButton.bEvent.add(transitionToLevelSelect);
         levelEditorButton.bEvent.add(function():Void {
-            exitMainMenu();
             var bg = screenController.getChildByName("backGround");
             screenController.removeChild(bg);
             screenController.switchToScreen(3);
         });
         
         //Initialize UIPane and add buttons
-        mainMenuPane = new UIPane();
+        homePane = new UIPane();
 
         //Horizontal Button Layout
-        mainMenuPane.add(playButton, 28, 410 - playButton.height);
-        mainMenuPane.add(tutorialButton, 56 + tutorialButton.width, 410 - playButton.height);
-        mainMenuPane.add(shopButton, 84 + 2 * shopButton.width, 410 - playButton.height);
-        mainMenuPane.add(levelEditorButton, 112 + 3 * levelEditorButton.width, 410 - playButton.height);
+        homePane.add(playButton, 28, 410 - playButton.height);
+        homePane.add(tutorialButton, 56 + tutorialButton.width, 410 - playButton.height);
+        homePane.add(shopButton, 84 + 2 * shopButton.width, 410 - playButton.height);
+        homePane.add(levelEditorButton, 112 + 3 * levelEditorButton.width, 410 - playButton.height);
         
         //Vertical Button Layout 
         /*
-        mainPane.add(playButton, 400 + 2*playButton.width / 3, 60);
-        mainPane.add(tutorialButton, 400 + 2*playButton.width / 3, 70 + tutorialButton.height);
-        mainPane.add(shopButton, 400 + 2*playButton.width / 3, 90 + 2 * shopButton.height);
-        mainPane.add(levelEditorButton, 400 + 2 * playButton.width / 3, 100 + 3 * shopButton.height);
+        homePane.add(playButton, 400 + 2*playButton.width / 3, 60);
+        homePane.add(tutorialButton, 400 + 2*playButton.width / 3, 70 + tutorialButton.height);
+        homePane.add(shopButton, 400 + 2*playButton.width / 3, 90 + 2 * shopButton.height);
+        homePane.add(levelEditorButton, 400 + 2 * playButton.width / 3, 100 + 3 * shopButton.height);
         */
                 
-        //Initialize UIPane
+        //INIT LEVEL SELECT PANE
         levelSelectPane = new LevelSelectPane();
-        levelSelectPane.menuButton.bEvent.add(exitLevelSelect);
-        levelSelectPane.menuButton.bEvent.add(initMainMenu);
-        levelSelectPane.confirmButton.bEvent.add(initLoadoutScreen);
-        screenController.addChild(levelSelectPane);
+        levelSelectPane.menuButton.bEvent.add(transitionToHome);
+        levelSelectPane.confirmButton.bEvent.add(transitionToLoadout);
         
-        //Create Pane
+        //INIT LOADOUT PANE
         loadoutPane = new LoadoutPane();
-    }
-    
-    private function initMainMenu():Void {
-        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/TitleScreen.png")));
-        screenController.addChild(backGround);
-        screenController.addChild(mainMenuPane);
-    }
-
-    private function exitMainMenu():Void {
-        screenController.removeChild(mainMenuPane);
-        screenController.removeChild(backGround);
-    }
-
-    private function initLevelSelect():Void
-    {
-        exitMainMenu();
-        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/testBack.png")));
-        screenController.addChild(backGround);
-        screenController.addChild(levelSelectPane);
-    }
-
-    private function exitLevelSelect():Void {
-        screenController.removeChild(levelSelectPane);
-        //TODO MAYBE clear the levelButton array, idk
-    }
-
-    private function initLoadoutScreen():Void {
-        exitLevelSelect();
-
-        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/testBack.png")));
-        screenController.addChild(backGround);
-
+        
         //Set up formatting stuff
-        var btf:ButtonTextFormat = {
+        var loadoutBTF:ButtonTextFormat = {
             tx:100,
             ty:35,
             font:"Verdana",
@@ -195,31 +171,47 @@ class MenuScreen extends IGameScreen {
             vAlign:VAlign.CENTER
         };
 
-        //Create UI elements
-        confirmButton = uif.createButton(100, 35, "CONFIRM", btf, false);
-        confirmButton.transformationMatrix.translate(400 - confirmButton.width / 2, 375);
-
-        //Add pane to stage
-        screenController.addChild(loadoutPane);
-        screenController.addChild(confirmButton);
-        
-        //Add button functions        
+        //Create confirm button and add functionality
+        confirmButton = uif.createButton(100, 35, "CONFIRM", loadoutBTF, false);
         confirmButton.bEvent.add(startLevel);
+        
+        loadoutPane.add(confirmButton, 400 - confirmButton.width / 2, 375);
+        
+
+        
+        mainMenu = new UIPane();
+        mainMenu.add(homePane, 0, 0);
+        mainMenu.add(levelSelectPane, 1000, 125);
+        mainMenu.add(loadoutPane, 1000, 600);
+        
+        screenController.addChild(mainMenu);
     }
     
-    private function exitLoadoutScreen():Void {
-        screenController.removeChild(loadoutPane);
-        screenController.removeChild(confirmButton);
+    //TODO
+    //Transitions the screen to a rectangle and zooms appropriately
+    public function transitionTo(min:Point, max:Point) {
+        
+    }
+    
+    private function transitionToHome():Void {
+        
     }
 
+    private function transitionToLevelSelect():Void {
+        backGround.transformationMatrix.translate( -1000, -125);
+        mainMenu.transformationMatrix.translate(-1000, -125);
+    }
+
+    private function transitionToLoadout():Void {
+        backGround.transformationMatrix.translate(0, -475);
+        mainMenu.transformationMatrix.translate(0, -475);
+    }
     
     //TODO change to BroadcastEvent1 with a string argument for level
     private function startLevel():Void {
-        switch selectedLevel {
+        switch levelSelectPane.selectedLevel {
             case 0:
                 screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/test.lvl");
-                //Move these outside switch when all levels are made
-                exitLoadoutScreen();
                 screenController.switchToScreen(2);
             default:
         }
