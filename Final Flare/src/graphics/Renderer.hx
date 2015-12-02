@@ -79,7 +79,7 @@ class Renderer implements IGameVisualizer {
         stage3D = stage.stage;
 
         // Everything will be rendered inside the hierarchy
-        stage.stage.color = pack.backgroundColor;
+        stage3D.color = pack.backgroundColor;
         stage.addChild(hierarchy);
         onWindowResize(null);
 

@@ -27,6 +27,16 @@ import starling.text.TextField;
 
 
 class MenuScreen extends IGameScreen {
+    public static inline var CAMERA_LERP_SPEED:Float = 0.1;
+    
+    // Camera parameters
+    public var camera:Sprite = new Sprite();
+    public var origin:Sprite = new Sprite();
+    
+    public var cameraX:Float;
+    public var cameraY:Float;
+    public var cameraScale:Float;
+    
     
     //UIPanes
     private var mainMenu:UIPane;
@@ -41,7 +51,7 @@ class MenuScreen extends IGameScreen {
     public function new(sc:ScreenController) {
         super(sc);
     }
-
+    
     override public function build():Void {
         // Empty
     }
@@ -50,9 +60,9 @@ class MenuScreen extends IGameScreen {
     }
 
     override public function onEntry(gameTime:GameTime):Void {
-        screenController.playerData = new PlayerData("Player"); // TODO: Allow others to play?
-        
+        screenController.playerData = new PlayerData("Player"); // TODO: Allow others to play?        
         uif = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
+        
         
         init();
         
@@ -92,17 +102,39 @@ class MenuScreen extends IGameScreen {
     }
 
     override public function update(gameTime:GameTime):Void {
-        // Empty
+        // Cristian Camera Code ~please work
+        var levelWidth:Float = 1920;
+        var levelHeight:Float = 1080;
+        var cameraHalfWidth = screenController.stage.stageWidth / (2 * cameraScale);
+        var cameraHalfHeight = screenController.stage.stageHeight / (2 * cameraScale);
+        
+        // Center camera on player and constrict to level bounds
+        var targetX:Float = (1.0 - CAMERA_LERP_SPEED) * cameraX + CAMERA_LERP_SPEED * origin.x;
+        var targetY:Float = (1.0 - CAMERA_LERP_SPEED) * cameraY + CAMERA_LERP_SPEED * origin.y;
+        cameraX = targetX;
+        cameraY = targetY;
     }
 
     override public function draw(gameTime:GameTime):Void {
         // Empty
     }
 
+    public function init():Void {
+        
+        camera.addChild(origin);
+        
+        // Default camera
+        cameraX = 0;
+        cameraY = 0;
+        cameraScale = 32;
+        
+        initPanes();
+    }
+    
     /* The main menu is separate from the background. The init function adds the background
      * to the stae and creates the mainMenuPane, which has homePane, levelSelectPane, and
      * loadoutPane as children */
-    private function init():Void {
+    private function initPanes():Void {
         //Add the background
         backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Menu Background.png")));
         screenController.addChild(backGround);
@@ -194,12 +226,23 @@ class MenuScreen extends IGameScreen {
     }
     
     private function transitionToHome():Void {
-        
+        backGround.transformationMatrix.translate(1000, 125);
+        mainMenu.transformationMatrix.translate(1000, 125);
     }
 
     private function transitionToLevelSelect():Void {
-        backGround.transformationMatrix.translate( -1000, -125);
+        backGround.transformationMatrix.translate(-1000, -125);
         mainMenu.transformationMatrix.translate(-1000, -125);
+        /*
+        var timer = 100;
+        while (timer > 0) {
+            origin.x += 10;
+            origin.y += 1.25;
+            trace(cameraX);
+            trace(cameraY);
+            timer--;
+        }
+        */
     }
 
     private function transitionToLoadout():Void {
