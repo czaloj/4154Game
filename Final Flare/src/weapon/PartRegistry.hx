@@ -64,6 +64,22 @@ class PartRegistry {
                 ]),
                 
             new WeaponPart(
+                "Barrel.Launcher",
+                WeaponPartType.BARREL,
+                1, 19,
+                58, 17,
+                0, 8,
+                [
+                    new WeaponPartChild(new Matrix(1, 0, 0, 1, 17, 15), true, [requirementPart(WeaponPartType.MAGAZINE)]),
+                    new WeaponPartChild(new Matrix(1, 0, 0, 1, 0, 4), false, [requirementPart(WeaponPartType.STOCK)]),
+                    new WeaponPartChild(new Matrix(1, 0, 0, 1, 0, 0), false, [requirementPart(WeaponPartType.PROJECTILE)]),
+                    new WeaponProperty(WeaponPropertyType.EXIT_INFORMATION, new ProjectileExitData(58, 5.5, 1, 0, 0.6, 30)),
+                    new WeaponProperty(WeaponPropertyType.USES_PER_ACTIVATION, 1),
+                    new WeaponProperty(WeaponPropertyType.ACTIVATION_COOLDOWN, 0.5),
+                    new WeaponProperty(WeaponPropertyType.FIRING_MODE, FiringMode.SINGLE)
+                ]),
+                
+            new WeaponPart(
                 "Grip.Conventional",
                 WeaponPartType.GRIP,
                 12, 82,

@@ -265,7 +265,7 @@ class WeaponGenerator {
 
         // Grenade launcher
         l = new WeaponLayer("Receiver.Conventional", [
-            new Pair(0, new WeaponLayer("Barrel.Conventional", [
+            new Pair(0, new WeaponLayer("Barrel.Launcher", [
                 new Pair(0, new WeaponLayer("Magazine.Conventional")),
                 new Pair(1, new WeaponLayer("Stock.Conventional")),
                 new Pair(2, new WeaponLayer("Projectile.Grenade"))
@@ -289,7 +289,7 @@ class WeaponGenerator {
 
         // Flare gun
         l = new WeaponLayer("Receiver.Conventional", [
-            new Pair(0, new WeaponLayer("Barrel.Conventional", [
+            new Pair(0, new WeaponLayer("Barrel.Launcher", [
                 new Pair(0, new WeaponLayer("Magazine.Conventional")),
                 new Pair(1, new WeaponLayer("Stock.Conventional")),
                 new Pair(2, new WeaponLayer("Projectile.Flare"))
@@ -309,6 +309,7 @@ class WeaponGenerator {
         w.activationCooldown = 0.15;
         w.burstPause = 0;
         w.burstCount = 0;
+        w.projectileOrigins[0].velocity = 10;
         weapons.push(w);
 
         return weapons;
