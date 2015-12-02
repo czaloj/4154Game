@@ -9,6 +9,7 @@ class EntitySprite extends Sprite {
     public static inline var POSE_REST:Int = 0;
     public static inline var POSE_RUN:Int = 1;
     public static inline var POSE_JUMP:Int = 2;
+    public static inline var INVINCIBILITY_BLINK_RATE:Float = 30;
     
     public var data:EntityRenderData;
     public var headCenter:Sprite;
@@ -84,5 +85,14 @@ class EntitySprite extends Sprite {
         weaponCenter.y = e.weaponOffset.y;
         weaponCenter.rotation = e.weaponAngle;
         weaponCenter.scaleY = e.lookingDirection;
+        
+        if (!e.canBeDamaged && e.invincibilityAfterHit > 0) {
+            // Blinking if invincible
+            var opacity:Float = Math.sin(e.damageTimer * INVINCIBILITY_BLINK_RATE);
+            alpha = (opacity < 0) ? 0 : 1;
+        }
+        else {
+            alpha = 1.0;
+        }
     }
 }
