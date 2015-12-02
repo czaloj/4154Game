@@ -81,7 +81,7 @@ class WeaponGenerator {
         for (c in l.children) {
             var ct:Matrix = l.wsTransform.clone();
             var wpc:WeaponPartChild = l.part.children[c.first];
-            ct.translate(wpc.x, wpc.y);
+            ct.concat(wpc.offset);
             buildTransforms(c.second, w, ct);
         }
     }

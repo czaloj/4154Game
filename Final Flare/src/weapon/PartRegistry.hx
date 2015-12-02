@@ -2,6 +2,7 @@ package weapon;
 
 import game.ColorScheme;
 import haxe.ds.StringMap;
+import openfl.geom.Matrix;
 import weapon.projectile.Projectile;
 import weapon.projectile.ProjectileData;
 import weapon.WeaponPart.ProjectileExitData;
@@ -41,8 +42,8 @@ class PartRegistry {
                 19, 7,
                 6, 4,
                 [
-                    new WeaponPartChild(0, 0, true, [requirementPart(WeaponPartType.BARREL)]),
-                    new WeaponPartChild(3, 4, true, [requirementPart(WeaponPartType.GRIP)]),
+                    new WeaponPartChild(new Matrix(1, 0, 0, 1, 0, 0), true, [requirementPart(WeaponPartType.BARREL)]),
+                    new WeaponPartChild(new Matrix(1, 0, 0, 1, 3, 4), true, [requirementPart(WeaponPartType.GRIP)]),
                     new ColorScheme(0xffff0000, 0xff00ff00, 0xff0000ff, 0, 0, 1, 1)
                 ]),
                 
@@ -53,9 +54,9 @@ class PartRegistry {
                 58, 17,
                 0, 8,
                 [
-                    new WeaponPartChild(17, 15, true, [requirementPart(WeaponPartType.MAGAZINE)]),
-                    new WeaponPartChild(0, 4, false, [requirementPart(WeaponPartType.STOCK)]),
-                    new WeaponPartChild(0, 0, false, [requirementPart(WeaponPartType.PROJECTILE)]),
+                    new WeaponPartChild(new Matrix(1, 0, 0, 1, 17, 15), true, [requirementPart(WeaponPartType.MAGAZINE)]),
+                    new WeaponPartChild(new Matrix(1, 0, 0, 1, 0, 4), false, [requirementPart(WeaponPartType.STOCK)]),
+                    new WeaponPartChild(new Matrix(1, 0, 0, 1, 0, 0), false, [requirementPart(WeaponPartType.PROJECTILE)]),
                     new WeaponProperty(WeaponPropertyType.EXIT_INFORMATION, new ProjectileExitData(58, 5.5, 1, 0, 0.3, 1500)),
                     new WeaponProperty(WeaponPropertyType.USES_PER_ACTIVATION, 1),
                     new WeaponProperty(WeaponPropertyType.ACTIVATION_COOLDOWN, 0.15),
