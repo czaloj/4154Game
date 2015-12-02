@@ -33,9 +33,9 @@ class MenuScreen extends IGameScreen {
     public var camera:Sprite = new Sprite();
     public var origin:Sprite = new Sprite();
     
-    public var cameraX:Float;
-    public var cameraY:Float;
-    public var cameraScale:Float;
+    public var cameraX(get, set):Float;
+    public var cameraY(get, set):Float;
+    public var cameraScale(get, set):Float;
     
     
     //UIPanes
@@ -52,6 +52,29 @@ class MenuScreen extends IGameScreen {
         super(sc);
     }
     
+    public function get_cameraX():Float {
+        return -origin.x;
+    }
+    public function set_cameraX(v:Float):Float {
+        origin.x = -v;
+        return v;
+    }
+    public function get_cameraY():Float {
+        return -origin.y;
+    }
+    public function set_cameraY(v:Float):Float {
+        origin.y = -v;
+        return v;
+    }
+    public function get_cameraScale():Float {
+        return camera.scaleX;
+    }
+    public function set_cameraScale(v:Float):Float {
+        camera.scaleX = v;
+        camera.scaleY = -v;
+        return v;
+    }
+    
     override public function build():Void {
         // Empty
     }
@@ -63,8 +86,8 @@ class MenuScreen extends IGameScreen {
         screenController.playerData = new PlayerData("Player"); // TODO: Allow others to play?        
         uif = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         
-        
         init();
+
         
         FFLog.recordMenuStart();
 
@@ -127,6 +150,9 @@ class MenuScreen extends IGameScreen {
         cameraX = 0;
         cameraY = 0;
         cameraScale = 32;
+        
+        screenController.addChild(camera);
+        screenController.addChild(origin);
         
         initPanes();
     }
@@ -231,18 +257,14 @@ class MenuScreen extends IGameScreen {
     }
 
     private function transitionToLevelSelect():Void {
-        backGround.transformationMatrix.translate(-1000, -125);
-        mainMenu.transformationMatrix.translate(-1000, -125);
-        /*
+        //backGround.transformationMatrix.translate(-1000, -125);
+        //mainMenu.transformationMatrix.translate(-1000, -125);
         var timer = 100;
         while (timer > 0) {
             origin.x += 10;
             origin.y += 1.25;
-            trace(cameraX);
-            trace(cameraY);
             timer--;
         }
-        */
     }
 
     private function transitionToLoadout():Void {
