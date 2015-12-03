@@ -97,17 +97,17 @@ class MenuScreen extends IGameScreen {
             initialWeapons[2]
         ];
         var weaponParams:WeaponGenParams = new WeaponGenParams();
-        weaponParams.evolutionPoints = 100;
+        weaponParams.evolutionPoints = 500;
         weaponParams.shadynessPoints = 0;
         weaponParams.historicalPoints = 0;
-        //bullet
         screenController.levelModifiers.enemyWeapons = [WeaponGenerator.generate(weaponParams)];
-        //explosion
-        weaponParams.shadynessPoints = 1;
+        weaponParams.evolutionPoints = 1000;
+        weaponParams.shadynessPoints = 40;
         screenController.levelModifiers.enemyWeapons.push(WeaponGenerator.generate(weaponParams));
-        //melee
-        weaponParams.shadynessPoints = 3;
         screenController.levelModifiers.enemyWeapons.push(WeaponGenerator.generate(weaponParams));
+        weaponParams.evolutionPoints = 2000;
+        weaponParams.shadynessPoints = 100;
+        weaponParams.historicalPoints = 80;
         screenController.levelModifiers.enemyWeapons.push(WeaponGenerator.generate(weaponParams));
         screenController.levelModifiers.enemyWeapons.push(WeaponGenerator.generate(weaponParams));
     }
