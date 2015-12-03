@@ -175,7 +175,7 @@ class MenuScreen extends IGameScreen {
         //Add button functions
         playButton.bEvent.add(transitionToLevelSelect);
         tutorialButton.bEvent.add(function():Void {
-            screenController.playerData.selectedChars = ["Man", "Wolf", "Robot"];
+            screenController.playerData.selectedChars = ["Man", "Wolf", "Robot", "SteamGirl", "Sandman"];
             screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/tutorial.lvl");
             screenController.switchToScreen(2);
         });
