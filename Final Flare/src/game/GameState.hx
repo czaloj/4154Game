@@ -117,7 +117,7 @@ class GameState {
 
     // Scoring information
     public var score:Int = 0;
-    public var scoreThreshold:Int = 5;
+    public var scoreThreshold:Int = 20;
     
     public var victory:Bool;
     public var gameOver:Bool;
