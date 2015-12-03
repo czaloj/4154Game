@@ -68,6 +68,18 @@ class CodeLevelEditor {
                     "assets/img/City/P3.png",
                     "assets/img/City/P4.png"
                 ];
+            case 1:
+                // Environment
+                lvl.width = 100;
+                lvl.height = 60;
+                lvl.environmentSprites = "assets/img/City.png";
+                lvl.environmentType = "City";
+                lvl.parallax = [
+                    "assets/img/Bridges/P1.png",
+                    "assets/img/Bridges/P2.png",
+                    "assets/img/Bridges/P3.png",
+                    "assets/img/Bridges/P4.png"
+                ];
         }
 
         // Create the level with only air
@@ -107,9 +119,7 @@ class CodeLevelEditor {
                 drawBox(lvl, 0, 40, 46, 20, 4);
 
                 // Pathfinding net
-                addRegion(lvl, 1, 0, 0, 100, 50);
-                //addRegion(lvl, 1, 4, 12, 14, 4);
-                //addRegion(lvl, 2, 82, 12, 14, 4);
+                addRegion(lvl, 1, 0, 0, 100, 60);
 
                 // Add background
                 drawBox(lvl, 27, 20, 18, 60, 30, false);
@@ -125,6 +135,59 @@ class CodeLevelEditor {
                     new Spawner("Shooter", 25, 26),
                     new Spawner("Shooter", 1.5, 10),
                     new Spawner("Shooter", 48.5, 10)
+                ];
+            case 1:
+                // Add platforms
+                drawBox(lvl, 1, 0, 0, 100, 2);
+                drawBox(lvl, 1, 0, 54, 100, 6);
+                drawBox(lvl, 1, 0, 2, 2, 52);
+                drawBox(lvl, 1, 98, 2, 2, 52);
+                drawBox(lvl, 1, 2, 2, 66, 2);
+                drawBox(lvl, 1, 2, 4, 2, 38);
+                drawBox(lvl, 1, 4, 10, 12, 4);
+                drawBox(lvl, 1, 4, 14, 8, 2);
+                drawBox(lvl, 1, 4, 18, 4, 2);
+                drawBox(lvl, 1, 18, 24, 16, 2);
+                drawBox(lvl, 1, 40, 24, 6, 2);
+                drawBox(lvl, 1, 4, 30, 42, 10);
+                drawBox(lvl, 0, 34, 30, 6, 8);
+                drawBox(lvl, 1, 4, 40, 14, 2);
+                drawBox(lvl, 1, 2, 46, 16, 4);
+                drawBox(lvl, 1, 46, 50, 10, 4);
+                drawBox(lvl, 1, 60, 46, 10, 4);
+                drawBox(lvl, 1, 92, 50, 6, 4);
+                drawBox(lvl, 1, 92, 44, 6, 2);
+                drawBox(lvl, 1, 84, 2, 14, 2);
+                drawBox(lvl, 1, 96, 4, 2, 40);
+                drawBox(lvl, 1, 58, 4, 4, 18);
+                drawBox(lvl, 1, 58, 26, 38, 2);
+                drawBox(lvl, 1, 70, 6, 12, 2);
+                drawBox(lvl, 1, 74, 8, 4, 14);
+                drawBox(lvl, 1, 50, 30, 4, 4);
+                drawBox(lvl, 1, 58, 34, 4, 4);
+                drawBox(lvl, 1, 66, 38, 4, 4);
+                drawBox(lvl, 1, 74, 42, 4, 4);
+                drawBox(lvl, 1, 82, 46, 4, 4);
+
+                // Pathfinding net
+                addRegion(lvl, 1, 0, 0, 100, 60);
+
+                // Add background
+                drawBox(lvl, 27, 20, 18, 60, 30, false);
+                drawBox(lvl, 6, 20, 20, 60, 30, false);
+                drawBox(lvl, 0, 40, 26, 20, 10, false);
+
+                // Spawning locations
+                lvl.playerPt.x = 5.5;
+                lvl.playerPt.y = 26;
+                lvl.spawners = [
+                    new Spawner("Grunt", 38, 28),
+                    new Spawner("Tank", 38, 28),
+                    new Spawner("Shooter", 38, 28),
+                    new Spawner("Grunt", 1.5, 4),
+                    new Spawner("Shooter", 1.5, 4),
+                    new Spawner("Grunt", 1.5, 8),
+                    new Spawner("Tank", 1.5, 8)
                 ];
         }
 

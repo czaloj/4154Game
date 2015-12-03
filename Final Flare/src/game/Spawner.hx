@@ -36,7 +36,7 @@ class Spawner {
 			if (!state.bossFought &&state.score>state.scoreThreshold) {
 				state.spawners[0].id2 = "Boss";
 				state.spawners[0].turnedOn = true;
-			//state.spawners[0].id = "Boss";
+				state.spawners[0].id = "Boss";
 			}
             if ((state.entities.length + spawnCount - 5) < 100) {
                 var type = EnemyType.make(spawner.id);
