@@ -54,7 +54,7 @@ class ScreenController extends Sprite {
                 case Keyboard.F6:
                     switchToScreen(3);
                 case Keyboard.NUMPAD_5:
-                    CodeLevelEditor.run(1);
+                    CodeLevelEditor.run(-1);
                 // case Keyboard.F7:
                 //     switchToScreen(1);
                 case Keyboard.F8:

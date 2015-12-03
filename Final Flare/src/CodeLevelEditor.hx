@@ -80,6 +80,18 @@ class CodeLevelEditor {
                     "assets/img/Bridges/P3.png",
                     "assets/img/Bridges/P4.png"
                 ];
+            case -1:
+                // Environment
+                lvl.width = 100;
+                lvl.height = 60;
+                lvl.environmentSprites = "assets/img/Refinery.png";
+                lvl.environmentType = "City";
+                lvl.parallax = [
+                    "assets/img/Refinery/P1.png",
+                    "assets/img/Refinery/P2.png",
+                    "assets/img/Refinery/P3.png",
+                    "assets/img/Refinery/P4.png"
+                ];
         }
 
         // Create the level with only air
@@ -188,6 +200,24 @@ class CodeLevelEditor {
                     new Spawner("Shooter", 1.5, 4),
                     new Spawner("Grunt", 1.5, 8),
                     new Spawner("Tank", 1.5, 8)
+                ];
+            case -1:
+                drawBox(lvl, 1, 0, 0, lvl.width, lvl.height);
+                drawBox(lvl, 0, 2, 20, 26, 12);
+                drawBox(lvl, 0, 28, 22, 12, 6);
+                drawBox(lvl, 0, 34, 28, 6, 12);
+                drawBox(lvl, 0, 34, 40, 36, 18);
+                drawBox(lvl, 0, 70, 40, 10, 4);
+                drawBox(lvl, 0, 80, 40, 18, 10);
+                
+                // Pathfinding net
+                addRegion(lvl, 1, 0, 0, 100, 60);
+                
+                // Spawning locations
+                lvl.playerPt.x = 1.5;
+                lvl.playerPt.y = 15;
+                lvl.spawners = [
+                    new Spawner("Grunt", 26, 2.5)
                 ];
         }
 

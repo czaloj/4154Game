@@ -352,9 +352,13 @@ class MenuScreen extends IGameScreen {
     private function startLevel():Void {
         switch levelSelectPane.selectedLevel {
             case 0:
+                screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/tutorial.lvl");
+            case 1:
+                screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/easy.lvl");
+            case 2:
                 screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/medium.lvl");
-                screenController.switchToScreen(2);
             default:
         }
+        screenController.switchToScreen(2);
     }
 }
