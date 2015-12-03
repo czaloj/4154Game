@@ -117,6 +117,8 @@ class GameState {
 
     // Scoring information
     public var score:Int = 0;
+	public var scoreThreshold:Int = 5;
+	public var bossFought:Bool = false;
     public var comboMultiplier:Int = 1; // How much score is multiplied before being applied to the total score
     public var comboPercentComplete:Float = 0.0; // Ratio of how many points left until the next combo level (0-1)
 
