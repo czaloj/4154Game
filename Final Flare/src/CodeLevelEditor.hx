@@ -26,12 +26,12 @@ class CodeLevelEditor {
     }
 
     public static function addRegion(lvl:GameLevel, id:Int, x:Int, y:Int, w:Int, h:Int):Void {
-        var region:Region = new Region(i);
+        var region:Region = new Region(id);
         region.minPoint.setTo(x, y);
         region.maxPoint.setTo(x + w, x + h);
         region.position.setTo(0.5 * (region.minPoint.x + region.maxPoint.x), 0.5 * (region.minPoint.y + region.maxPoint.y));
-        lvl.regionLists.set(i, region);
-        
+        lvl.regionLists.set(id, region);
+
         for (iy in y...(y + h)) {
             var i:Int = iy * lvl.width + x;
             for (ix in x...(x + w)) {
@@ -51,10 +51,10 @@ class CodeLevelEditor {
             r1.addNeighbor(r2, jump ? 3 : 1);
         }
     }
-    
+
     public static function run(lvlID:Int = 0):Void {
         var lvl:game.GameLevel = new game.GameLevel();
-        
+
         switch(lvlID) {
             case 0:
                 // Environment
@@ -105,16 +105,16 @@ class CodeLevelEditor {
                 drawBox(lvl, 1, 14, 48, 72, 2);
                 drawBox(lvl, 1, 32, 46, 36, 2);
                 drawBox(lvl, 0, 40, 46, 20, 4);
-                
+
                 // Pathfinding net
                 addRegion(lvl, 1, 4, 12, 14, 4);
                 addRegion(lvl, 2, 82, 12, 14, 4);
-                
+
                 // Add background
                 drawBox(lvl, 27, 20, 18, 60, 30, false);
                 drawBox(lvl, 6, 20, 20, 60, 30, false);
                 drawBox(lvl, 0, 40, 26, 20, 10, false);
-                
+
                 // Spawning locations
                 lvl.playerPt.x = 25;
                 lvl.playerPt.y = 20;
@@ -126,7 +126,7 @@ class CodeLevelEditor {
                     new Spawner("Shooter", 48.5, 10)
                 ];
         }
-        
+
         // Post compute
         lvl.nregions = 0;
         for (region in lvl.regionLists.keys()) {
