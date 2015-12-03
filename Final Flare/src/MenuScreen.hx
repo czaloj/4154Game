@@ -43,8 +43,10 @@ class MenuScreen extends IGameScreen {
     public static var LEVEL_SELECT_POS_MAX:Point = new Point(956, 542);
     public static var LOADOUT_POS_MIN:Point = new Point(1045, 163);
     public static var LOADOUT_POS_MAX:Point = new Point(1844, 612);
-    public static var SHOP_POS_MIN:Point = new Point(1399, 791);
-    public static var SHOP_POS_MAX:Point = new Point(1874, 1058);
+    public static var TEMP_MIN:Point = new Point(880, 629);
+    public static var TEMP_MAX:Point = new Point(1680, 1079);
+    //public static var SHOP_POS_MIN:Point = new Point(1399, 791);
+    //public static var SHOP_POS_MAX:Point = new Point(1874, 1058);
  
     
     //Current position of camera
@@ -266,7 +268,7 @@ class MenuScreen extends IGameScreen {
         mainMenu.add(homePane, HOME_POS_MIN.x, HOME_POS_MIN.y);
         mainMenu.add(levelSelectPane, LEVEL_SELECT_POS_MIN.x, LEVEL_SELECT_POS_MIN.y);
         mainMenu.add(loadoutPane, LOADOUT_POS_MIN.x, LOADOUT_POS_MIN.y);
-        mainMenu.add(shopPane, SHOP_POS_MIN.x, SHOP_POS_MIN.y);
+        mainMenu.add(shopPane, TEMP_MIN.x, TEMP_MIN.y);
         
         screenController.addChild(mainMenu);
 
@@ -294,7 +296,7 @@ class MenuScreen extends IGameScreen {
             backGround.transformationMatrix.translate(delta.x, delta.y);
             distance = distance.add(delta);
             if (Math.abs(distance.x) < .2 || Math.abs(distance.y) < .2) {
-                backGround.transformationMatrix.scale(deltaScale.x, deltaScale.y);
+                //backGround.transformationMatrix.scale(deltaScale.x, deltaScale.y);
                 mainMenu.transformationMatrix.translate( -distance.x, -distance.y);
                 backGround.transformationMatrix.translate( -distance.x, -distance.y);
                 transitionDone = true;
@@ -337,7 +339,7 @@ class MenuScreen extends IGameScreen {
     }
     
     private function transitionToShop():Void {
-        transitionToRect(SHOP_POS_MIN.clone(), SHOP_POS_MAX.clone());
+        transitionToRect(TEMP_MIN.clone(), TEMP_MAX.clone());
     }
     
     //TODO change to BroadcastEvent1 with a string argument for level
