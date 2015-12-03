@@ -173,6 +173,10 @@ class MenuScreen extends IGameScreen {
 
         //Add button functions
         playButton.bEvent.add(transitionToLevelSelect);
+        tutorialButton.bEvent.add(function():Void {
+            screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/tutorial.lvl");
+            screenController.switchToScreen(2);
+        });
         levelEditorButton.bEvent.add(function():Void {
             var bg = screenController.getChildByName("backGround");
             screenController.removeChild(bg);
@@ -346,10 +350,8 @@ class MenuScreen extends IGameScreen {
     private function startLevel():Void {
         switch levelSelectPane.selectedLevel {
             case 0:
-                screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/tutorial.lvl");
-            case 1:
                 screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/easy.lvl");
-            case 2:
+            case 1:
                 screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/medium.lvl");
             default:
         }
