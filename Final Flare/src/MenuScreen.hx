@@ -54,8 +54,8 @@ class MenuScreen extends IGameScreen {
     public var window:Point = new Point();
     
     //Distance to translate each frame
-    public var delta:Point = new Point();
     public var oldScale:Point = new Point();
+    public var delta:Point = new Point();
     public var deltaScale:Point = new Point();
     
     //Total distance to translate before transistionDone is marked as true
@@ -98,6 +98,7 @@ class MenuScreen extends IGameScreen {
         backGround.transformationMatrix.translate( -HOME_POS_MIN.x, -HOME_POS_MIN.y);
         currentMin = HOME_POS_MIN;
         currentMax = HOME_POS_MAX;
+        oldWindow.setTo(currentMax.x - currentMin.x, currentMax.y - currentMin.y);
 
         FFLog.recordMenuStart();
 
@@ -276,18 +277,15 @@ class MenuScreen extends IGameScreen {
     //TODO
     //Transitions the screen to a rectangle and zooms appropriately
     public function transitionToRect(min:Point, max:Point) {
+        //backGround.transformationMatrix.scale(oldScale.x, oldScale.y);
         distance = min.subtract(currentMin);
-        delta.setTo(( -distance.x * LERP_SPEED), -distance.y * LERP_SPEED);
-        
-        oldWindow.setTo(currentMax.x - currentMin.x, currentMax.y - currentMin.y);
+        delta.setTo(( -distance.x * LERP_SPEED), (-distance.y * LERP_SPEED));
         window.setTo(max.x - min.x, max.y - min.y);
-        
         deltaScale.setTo(oldWindow.x / window.x, oldWindow.y / window.y);
-        oldScale.setTo(1 / deltaScale.x, 1 / deltaScale.y);
         
         currentMin = min;
         currentMax = max;
-        
+
         transitionDone = false;
     }
     
@@ -295,17 +293,12 @@ class MenuScreen extends IGameScreen {
         if (!transitionDone) {
             mainMenu.transformationMatrix.translate(delta.x, delta.y);
             backGround.transformationMatrix.translate(delta.x, delta.y);
-            
-           
             distance = distance.add(delta);
-            trace(distance.toString());
             if (Math.abs(distance.x) < .2 || Math.abs(distance.y) < .2) { 
-                mainMenu.transformationMatrix.translate(-distance.x, -distance.y);
+                mainMenu.transformationMatrix.translate( -distance.x, -distance.y);
                 backGround.transformationMatrix.translate( -distance.x, -distance.y);
-                backGround.transformationMatrix.scale(oldScale.x, oldScale.y);
                 backGround.transformationMatrix.scale(deltaScale.x, deltaScale.y);
-                oldScale.setTo(1 , 1);
-                
+                oldWindow.setTo(window.x, window.y);
                 transitionDone = true;
             }            
         }
