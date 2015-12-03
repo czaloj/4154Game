@@ -166,6 +166,22 @@ class SpriteSheetRegistry {
                 e.headSpriteOffset.setTo( -0.45, -0.2);
                 e.widthHead = 0.9;
                 e.heightHead = 0.9;
+            case "Tank":
+                e.animationDelays = [5, 3, 3, 3];
+                e.bodySpriteOffset.setTo(-0.6, -1.1);
+                e.widthBody = 1.0;
+                e.heightBody = 1.7;
+                e.headSpriteOffset.setTo( -0.45, -0.2);
+                e.widthHead = 0.9;
+                e.heightHead = 0.9;
+            case "Shooter":
+                e.animationDelays = [5, 3, 3, 3];
+                e.bodySpriteOffset.setTo(-0.6, -1.1);
+                e.widthBody = 1.0;
+                e.heightBody = 1.7;
+                e.headSpriteOffset.setTo( -0.45, -0.2);
+                e.widthHead = 0.9;
+                e.heightHead = 0.9;
             
             // Characters
             case "Man":

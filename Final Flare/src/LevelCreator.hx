@@ -84,17 +84,27 @@ class LevelCreator {
         ]);
         renderPack.entityRenderData = new StringMap<EntityRenderData>();
         renderPack.entityRenderData.set("Grunt", new EntityRenderData("Grunt"));
+        renderPack.entityRenderData.set("Tank", new EntityRenderData("Tank"));
+        renderPack.entityRenderData.set("Shooter", new EntityRenderData("Shooter"));
         renderPack.entityRenderData.set("Man", new EntityRenderData("Man"));
         renderPack.entityRenderData.set("Wolf", new EntityRenderData("Wolf"));
         renderPack.entityRenderData.set("Robot", new EntityRenderData("Robot"));
         renderPack.entityRenderData.set("SteamGirl", new EntityRenderData("SteamGirl"));
         renderPack.entityRenderData.set("SandMan", new EntityRenderData("SandMan"));
 
-        renderPack.enemies = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Robot.png")), [
-            new TileRegion("Grunt.Head", 8, 2, 20, 20),
-            new StripRegion("Grunt.Rest", 0, 0, 36, 64, 1, 10, 10),
-            new StripRegion("Grunt.Run", 0, 0, 36, 64, 1, 10, 10),
-            new StripRegion("Grunt.Jump", 0, 0, 36, 64, 1, 10, 10)
+        renderPack.enemies = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Enemies.png")), [
+            new TileRegion("Grunt.Head", 69, 1, 12, 12),
+            new StripRegion("Grunt.Rest", 0, 0, 34, 34, 1, 1, 1),
+            new StripRegion("Grunt.Run", 0, 0, 34, 34, 1, 2, 2),
+            new StripRegion("Grunt.Jump", 0, 0, 34, 34, 1, 2, 2),
+            new TileRegion("Tank.Head", 35, 39, 22, 22),
+            new StripRegion("Tank.Rest", 0, 36, 35, 35, 1, 1, 1),
+            new StripRegion("Tank.Run", 0, 36, 35, 35, 1, 1, 1),
+            new StripRegion("Tank.Jump", 0, 36, 35, 35, 1, 1, 1),
+            new TileRegion("Shooter.Head", 35, 39, 22, 22),
+            new StripRegion("Shooter.Rest", 0, 36, 35, 35, 1, 1, 1),
+            new StripRegion("Shooter.Run", 0, 36, 35, 35, 1, 1, 1),
+            new StripRegion("Shooter.Jump", 0, 36, 35, 35, 1, 1, 1)
         ]);
         renderPack.characters = SpriteSheetRegistry.getCharacterSheet();
 

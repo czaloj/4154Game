@@ -61,12 +61,12 @@ class CodeLevelEditor {
                 lvl.width = 100;
                 lvl.height = 60;
                 lvl.environmentSprites = "assets/img/City.png";
-                lvl.environmentType = "Factory";
+                lvl.environmentType = "City";
                 lvl.parallax = [
-                    "assets/City/P1.png",
-                    "assets/City/P2.png",
-                    "assets/City/P3.png",
-                    "assets/City/P4.png"
+                    "assets/img/City/P1.png",
+                    "assets/img/City/P2.png",
+                    "assets/img/City/P3.png",
+                    "assets/img/City/P4.png"
                 ];
         }
 
@@ -107,8 +107,9 @@ class CodeLevelEditor {
                 drawBox(lvl, 0, 40, 46, 20, 4);
 
                 // Pathfinding net
-                addRegion(lvl, 1, 4, 12, 14, 4);
-                addRegion(lvl, 2, 82, 12, 14, 4);
+                addRegion(lvl, 1, 0, 0, 100, 50);
+                //addRegion(lvl, 1, 4, 12, 14, 4);
+                //addRegion(lvl, 2, 82, 12, 14, 4);
 
                 // Add background
                 drawBox(lvl, 27, 20, 18, 60, 30, false);
