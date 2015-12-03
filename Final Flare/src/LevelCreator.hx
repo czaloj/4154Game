@@ -133,6 +133,8 @@ class LevelCreator {
             new Entity(),
             new Entity(),
             new Entity(),
+            new Entity(),
+            new Entity()
         ];
         
         //Fixed?
