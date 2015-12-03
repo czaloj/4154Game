@@ -51,9 +51,9 @@ class ScreenController extends Sprite {
         Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, function (e:KeyboardEvent):Void {
             switch (e.keyCode) {
                 case Keyboard.F6:
-                    // TODO: Remove debug level creation with real level editor
-                    // CodeLevelEditor.run();
                     switchToScreen(3);
+                case Keyboard.NUMPAD_5:
+                    CodeLevelEditor.run();
                 // case Keyboard.F7:
                 //     switchToScreen(1);
                 case Keyboard.F8:
