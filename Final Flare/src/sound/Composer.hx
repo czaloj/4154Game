@@ -27,6 +27,8 @@ class Composer {
     private static var musicInstances:Array<SoundChannel> = [];
     private static var effectInstances:Array<SoundChannel> = [];
     
+    public static var isMusicPlaying(get, never):Bool;
+    
     public static function loadTracks():Void {
         var fLoadCallbackMusic:Dynamic->Void = function(e:Event):Void { soundsToLoad -= 1; };
         var fLoadCallbackEffects:Dynamic->Void = function(e:Event):Void { soundsToLoad -= 1; effectsToLoad -= 1; };
@@ -121,6 +123,9 @@ class Composer {
     }
     private static function get_isStreamingComplete():Bool {
         return soundsToLoad == 0;
+    }
+    private static function get_isMusicPlaying():Bool {
+        return musicInstances.length > 0;
     }
     
     public function new() {

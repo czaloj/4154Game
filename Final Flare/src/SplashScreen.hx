@@ -41,8 +41,6 @@ class SplashScreen extends IGameScreen {
         backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/TitleScreen.png")));
         screenController.addChild(backGround);
         addStartButton();
-
-        Composer.playMusicTrack("Menu" + Std.string(Std.int(Math.random() * 3 + 1))); // TODO: Just tell composer to play menu music
     }
     
     override public function onExit(gameTime:GameTime):Void {

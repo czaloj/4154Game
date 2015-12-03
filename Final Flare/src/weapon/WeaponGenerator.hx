@@ -7,8 +7,6 @@ import graphics.SpriteSheetRegistry;
 import haxe.ds.ArraySort;
 import haxe.ds.ObjectMap;
 import haxe.ds.StringMap;
-import haxe.macro.Expr.Position;
-import haxe.macro.PositionTools;
 import openfl.display.Bitmap;
 import starling.display.DisplayObject;
 import openfl.geom.Matrix;
