@@ -31,7 +31,6 @@ class Spawner {
 					spawner.turnedOn = true;
 			}
 			if (state.score > state.scoreThreshold) {
-				
 				spawner.turnedOn = false;
 			}
 			if (!state.bossFought &&state.score>state.scoreThreshold) {
@@ -53,6 +52,7 @@ class Spawner {
             }
         }
     }
+	
 
     public static function createPlayer(e:Entity, type:String, x:Float, y:Float):Void {
         e.id = type;
