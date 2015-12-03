@@ -67,15 +67,15 @@ class ShopElement extends DisplayObjectContainer
         plus10 = uif.createButton(24, 24, "+10", btf, false);
         
         numberBox = new Sprite();
-        tf  = new TextField(250, 40, s + Std.string(allocated), "BitFont", 40, 0xFFFFFF, false);
+        tf  = new TextField(270, 40, s + Std.string(allocated), "BitFont", 40, 0xFFFFFF, false);
         tf.hAlign = HAlign.CENTER;
         tf.vAlign = VAlign.CENTER;
         numberBox.addChild(tf);
         
         minus1.transformationMatrix.translate(50, 0);
         minus10.transformationMatrix.translate(0, 0);
-        plus1.transformationMatrix.translate(380, 0);
-        plus10.transformationMatrix.translate(430, 0);
+        plus1.transformationMatrix.translate(400, 0);
+        plus10.transformationMatrix.translate(450, 0);
         numberBox.transformationMatrix.translate(110, 0); 
 
         this.addChild(minus1);

@@ -15,6 +15,7 @@ import openfl.text.TextFieldAutoSize;
 import openfl.text.TextFieldType;
 import openfl.text.TextFormat;
 import openfl.text.TextFormatAlign;
+import ui.ShopElement;
 import ui.ShopPane;
 import ui.UISpriteFactory;
 import ui.Button;
@@ -209,8 +210,43 @@ class MenuScreen extends IGameScreen {
         //INIT SHOP PANE
         shopPane = new UIPane();
         
+        //Set up formatting stuff
+        var shopBTF:ButtonTextFormat = {
+            tx:200,
+            ty:35,
+            font:"BitFont",
+            size:50,
+            color:0xFFFFFF,
+            bold:false,
+            hAlign:HAlign.CENTER,
+            vAlign:VAlign.CENTER
+        };
+        
+        var btf:ButtonTextFormat = {
+            tx:100,
+            ty:35,
+            font:"BitFont",
+            size:50,
+            color:0xFFFFFF,
+            bold:false,
+            hAlign:HAlign.CENTER,
+            vAlign:VAlign.CENTER
+        };
+        
+        //Add UI elements
         var evolution = new ui.ShopElement("Evolution Points: ", 2000);
-        shopPane.add(evolution);
+        var shadiness = new ui.ShopElement("Shadiness Points: ", 2000);
+        var historical = new ShopElement("Historical Points: ", 2000);
+        confirmButton = uif.createButton(200, 35, "GENERATE WEAPON", shopBTF, false);
+        var menuButton = uif.createButton(100, 35, "MAIN MENU", btf, false);
+        //confirmButton.bEvent.add(generateWeapon); 
+        menuButton.bEvent.add(transitionToHome);
+        
+        shopPane.add(evolution, 400 - evolution.width/2, 120);
+        shopPane.add(shadiness, 400 - shadiness.width/2, 205);
+        shopPane.add(historical, 400 - historical.width / 2, 280);
+        shopPane.add(confirmButton, 400 - confirmButton.width / 2, 375);
+        shopPane.add(menuButton, 25, 25);
 
         mainMenu = new UIPane();
         mainMenu.add(homePane, HOME_POS.x, HOME_POS.y);
