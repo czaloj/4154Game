@@ -1,6 +1,7 @@
 package ui;
 
 import game.Entity;
+import graphics.EntitySprite;
 import openfl.Assets;
 import ui.Button;
 import ui.Button.ButtonTextFormat;
@@ -20,6 +21,7 @@ class UICharacter extends DisplayObjectContainer
     private var nextButton:Button;    
     public var queuePos:Int;
     public var character:String = null;
+    private var eS:EntitySprite;
     
     public function new(i:Image = null) 
     {

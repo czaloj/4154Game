@@ -137,7 +137,7 @@ class MenuScreen extends IGameScreen {
 
     override public function update(gameTime:GameTime):Void {
         updateCamera();
-        trace(loadoutPane.selected.toString());
+
 
     }
 
@@ -175,6 +175,7 @@ class MenuScreen extends IGameScreen {
         //Add button functions
         playButton.bEvent.add(transitionToLevelSelect);
         tutorialButton.bEvent.add(function():Void {
+            screenController.playerData.selectedChars = ["Man", "Wolf", "Robot"];
             screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/tutorial.lvl");
             screenController.switchToScreen(2);
         });

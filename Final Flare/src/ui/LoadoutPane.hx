@@ -138,6 +138,7 @@ class LoadoutPane extends UIPane
                     adjustCharSelect(i, i.queuePos);
                 }
         }
+        
         if (numSelected == 3) {
             var i = 0;
             while (i < charArray.length) {
