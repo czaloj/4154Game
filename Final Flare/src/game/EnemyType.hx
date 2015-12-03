@@ -87,6 +87,26 @@ class EnemyType
                 2,
                 //standFrom
                 1);
+			case "Boss": new game.EnemyType(
+                //spawnCooldown
+                360,
+                //damageType
+                0,
+                //health
+                1500,
+                //headOffset
+                new B2Vec2(0, 0.6),
+                //maxMoveSpeed
+                3,
+                //groundAcceleration
+                0.5,
+                //airAcceleration
+                0.3,
+                //attackFrom
+                2,
+                //standFrom
+                1);
+				
             default: throw 'unknown enemy type!';
         }
     }
