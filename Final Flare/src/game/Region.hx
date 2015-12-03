@@ -16,7 +16,9 @@ class Region
 
     public var id:Int;
     //center
-    public var position:Point = new Point(); //center?
+    public var position:Point = new Point(); // center
+    public var minPoint:Point = new Point();
+    public var maxPoint:Point = new Point();
     public var neighbors: Array<Connection> =[];
 
     public function new(name:Int)
