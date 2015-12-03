@@ -142,6 +142,7 @@ class LevelEditorScreen extends IGameScreen {
                     case 1: map.setFullTile(tx,ty,color);
                     }
                 }
+                Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, paintTiles);
             } else { // environment editing
                 var tx = Std.int(x);
                 var ty = Std.int(y);
@@ -252,6 +253,8 @@ class LevelEditorScreen extends IGameScreen {
             }
         } else {
             switch (editor_num) {
+            case 1,2:
+                Lib.current.stage.removeEventListener(MouseEvent.MOUSE_MOVE, paintTiles);
             case 3:
                 switch (sub_editor_num) {
                 case 1: 
@@ -265,6 +268,30 @@ class LevelEditorScreen extends IGameScreen {
                 }
             }
         }
+    }
+
+    private function paintTiles(e:MouseEvent):Void {
+        var map:TileMap = null;
+        switch (editor_num) {
+        case 1: map = backgroundMap;
+        case 2: map = foregroundMap;
+        }
+        var x = Std.int((e.stageX - cameraHalfWidth - BOX_WIDTH + cameraX)/TILE_HALF_WIDTH);
+        var y = Std.int((e.stageY - cameraHalfHeight + cameraY)/TILE_HALF_WIDTH);
+        if (object_num == 0) {
+            switch (sub_editor_num) {
+            case 0: map.clearQuarterTile(x,y);
+            case 1: map.clearFullTile(x,y);
+            }
+        } else {
+            var color = tiles[sub_editor_num][object_num-1];
+            switch (sub_editor_num) {
+            case 0: map.setID(x,y,color);
+            case 1: map.setFullTile(x,y,color);
+            }
+        }
+        regions[numRegions].width = Math.max(x - cur_region.x,1)*TILE_HALF_WIDTH;
+        regions[numRegions].height = Math.max(y - cur_region.y,1)*TILE_HALF_WIDTH;
     }
 
     private function defRegion(e:MouseEvent):Void {
