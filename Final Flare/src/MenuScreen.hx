@@ -126,7 +126,7 @@ class MenuScreen extends IGameScreen {
      * loadoutPane as children */
     private function initPanes():Void {
         //Add the background
-        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Menu Background.png")));
+        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/MenuScreens.png")));
         screenController.addChild(backGround);
         
         //INIT HOME PANE
@@ -134,7 +134,7 @@ class MenuScreen extends IGameScreen {
         var mainBTF:ButtonTextFormat = {
             tx:150,
             ty:50,
-            font:"Verdana",
+            font:"BitFont",
             size:20,
             color:0x0,
             bold:false,
@@ -185,7 +185,7 @@ class MenuScreen extends IGameScreen {
         var loadoutBTF:ButtonTextFormat = {
             tx:100,
             ty:35,
-            font:"Verdana",
+            font:"BitFont",
             size:20,
             color:0x0,
             bold:false,
@@ -250,7 +250,7 @@ class MenuScreen extends IGameScreen {
     private function startLevel():Void {
         switch levelSelectPane.selectedLevel {
             case 0:
-                screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/easy.lvl");
+                screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/medium.lvl");
                 screenController.switchToScreen(2);
             default:
         }
