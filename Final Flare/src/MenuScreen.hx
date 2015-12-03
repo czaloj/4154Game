@@ -30,6 +30,11 @@ class MenuScreen extends IGameScreen {
     public static inline var LERP_SPEED:Float = .02;
     public static var ZERO:Point = new Point(0, 0);
     
+    public static var HOME_POS:Point = new Point(0, 0);
+    public static var LEVEL_SELECT_POS = new Point(1000, 125);
+    public static var LOADOUT_POS = new Point(1000, 600);
+    public static var SHOP_POS:Point = new Point(0, 600);
+    
     //Current position of camera
     public var currentMin:Point = new Point();
     public var currentMax:Point = new Point();
@@ -193,19 +198,17 @@ class MenuScreen extends IGameScreen {
         
         loadoutPane.add(confirmButton, 400 - confirmButton.width / 2, 375);
         
-
-        
         mainMenu = new UIPane();
-        mainMenu.add(homePane, 0, 0);
-        mainMenu.add(levelSelectPane, 1000, 125);
-        mainMenu.add(loadoutPane, 1000, 600);
+        mainMenu.add(homePane, HOME_POS.x, HOME_POS.y);
+        mainMenu.add(levelSelectPane, LEVEL_SELECT_POS.x, LEVEL_SELECT_POS.y);
+        mainMenu.add(loadoutPane, LOADOUT_POS.x, LOADOUT_POS.y);
         
         screenController.addChild(mainMenu);
     }
     
     //TODO
     //Transitions the screen to a rectangle and zooms appropriately
-    public function transitionToRect(min:Point, max:Point) {
+    public function transitionToRect(min:Point/*, max:Point*/) {
            distance = min.subtract(currentMin);
            delta.setTo(( -distance.x * LERP_SPEED), -distance.y * LERP_SPEED);
            currentMin = min;
@@ -217,7 +220,6 @@ class MenuScreen extends IGameScreen {
             mainMenu.transformationMatrix.translate(delta.x, delta.y);
             backGround.transformationMatrix.translate(delta.x, delta.y);
             distance = distance.add(delta);
-            trace("(" + distance.x + "," + distance.y + ")");
             if (distance.equals(ZERO)) { 
                 transitionDone = true;
             }            
@@ -225,21 +227,15 @@ class MenuScreen extends IGameScreen {
     }
     
     private function transitionToHome():Void {
-        var min = new Point(0, 0);
-        var max = new Point(800, 450);
-        transitionToRect(min, max);
+        transitionToRect(HOME_POS);
     }
 
     private function transitionToLevelSelect():Void {
-        var min = new Point(1000, 125);
-        var max = new Point(1800, 575);
-        transitionToRect(min, max);
+        transitionToRect(LEVEL_SELECT_POS);
     }
 
     private function transitionToLoadout():Void {
-        var min = new Point(1000, 600);
-        var max = new Point(1800, 1050);
-        transitionToRect(min, max);
+        transitionToRect(LOADOUT_POS);
     }
     
     //TODO change to BroadcastEvent1 with a string argument for level
