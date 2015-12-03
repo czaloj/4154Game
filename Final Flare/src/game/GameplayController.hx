@@ -191,6 +191,7 @@ class GameplayController {
 			FFLog.recordEvent(17, s.player.position.x +", " + s.player.position.y);
         }
         // TODO: Spawner shouldn't need reference to this
+		
         Spawner.spawn(state, state.time);
 
         // Update looking directions
@@ -255,6 +256,14 @@ class GameplayController {
         // Other game logic
         for (entity in state.entitiesNonNull) {
             if (entity.isDead) {
+				if (entity.team == Entity.TEAM_PLAYER) {
+						state.victory = false;
+						state.gameOver = true;
+				}
+				if (entity.id == "Boss" || entity.id2 == "Boss") {
+						state.victory = true;
+						state.
+				}
                 deletingEntities.push(entity);
             }
         }
