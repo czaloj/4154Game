@@ -62,6 +62,9 @@ class UISpriteFactory {
             new TileRegion("Checkbox", 82, 0, 8, 8),
             new TileRegion("Checkbox.Checked", 90, 0, 8, 8),
 
+            // Arrow
+            new TileRegion("Arrow", 98, 0, 8, 8),
+            
             // Unique UI pieces
             new TileRegion("Background", 0, 0, 800, 450),
 
