@@ -51,6 +51,7 @@ class MenuScreen extends IGameScreen {
     private var homePane:UIPane; //This didn't need any special functionality so it's a generic pane
     private var levelSelectPane:LevelSelectPane;
     private var loadoutPane:LoadoutPane;
+    private var shopPane:UIPane;
 
     private var uif:UISpriteFactory;  //Buttons are created from UISpriteFactory    
     private var backGround:Image;     //Background
@@ -204,6 +205,9 @@ class MenuScreen extends IGameScreen {
         mainMenu.add(loadoutPane, LOADOUT_POS.x, LOADOUT_POS.y);
         
         screenController.addChild(mainMenu);
+        
+        //INIT SHOP PANE
+        shopPane = new UIPane();
     }
     
     //TODO
@@ -236,6 +240,10 @@ class MenuScreen extends IGameScreen {
 
     private function transitionToLoadout():Void {
         transitionToRect(LOADOUT_POS);
+    }
+    
+    private function transitionToShop():Void {
+        transitionToRect(SHOP_POS);
     }
     
     //TODO change to BroadcastEvent1 with a string argument for level
