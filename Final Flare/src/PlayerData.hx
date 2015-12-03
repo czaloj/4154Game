@@ -7,6 +7,8 @@ class PlayerData {
     private var so:SharedObject;
     public var weapons(get, never):Array<WeaponData>;
     public var points(get, set):Int;
+	public var mostRecentScore:Int;
+	public var mostRecentVictory:Bool;
     
     public function new(playerName:String) {
         // Load from the flash cache or generate default if it doesn't exist
