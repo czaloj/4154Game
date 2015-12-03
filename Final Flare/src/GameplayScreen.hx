@@ -50,6 +50,10 @@ class GameplayScreen extends IGameScreen {
         FFLog.recordArenaStart(42, 0);
 
         state = new game.GameState();
+        
+        state.charList = screenController.playerData.selectedChars.copy();
+        
+        
         inputController = new game.InputController();
         gameplayController = new GameplayController();
         aiController = new game.AIController();
