@@ -51,18 +51,20 @@ class Region
     }
 
     private function computeDirection(dst:Region, s:GameState) {
-        if ((dst != null)&&(this.id != dst.id)) {
-            var pathTbl:IntMap<Path> = new IntMap<Path>();
-            var selfPath:Path = new Path([], 0);
-            pathTbl.set(this.id, selfPath);
-            findPath(this, dst, pathTbl, s);
-            var nextReg = pathTbl.get(dst.id).path[0].id;
-            for (neighbor in neighbors) {
-                if (neighbor.region == nextReg) {
-                    return neighbor.direction;
+        try {
+            if ((dst != null)&&(this.id != dst.id)) {
+                var pathTbl:IntMap<Path> = new IntMap<Path>();
+                var selfPath:Path = new Path([], 0);
+                pathTbl.set(this.id, selfPath);
+                findPath(this, dst, pathTbl, s);
+                var nextReg = pathTbl.get(dst.id).path[0].id;
+                for (neighbor in neighbors) {
+                    if (neighbor.region == nextReg) {
+                        return neighbor.direction;
+                    }
                 }
             }
-        }
+        } catch(e:Dynamic) trace("Error: region contains no neighbors.");
         return 0;
     }
 

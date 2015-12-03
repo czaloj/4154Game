@@ -2,7 +2,9 @@ package;
 
 import game.GameLevel;
 import game.Spawner;
+import game.Region;
 import graphics.SpriteSheetRegistry;
+import haxe.ds.IntMap;
 import openfl.Lib;
 import openfl.geom.Point;
 import openfl.ui.Keyboard;
@@ -70,6 +72,9 @@ class LevelEditorScreen extends IGameScreen {
     
     private var cur_region:Point;
     private var regions:Array<Quad> = [];
+    private var connections:Array<Array<Dynamic>> = [[]];
+    private var selected_region:Int = 0;
+    private var REGION_SELECTED:Bool = false;
 
     private var TILE_SHEET_SET:Bool = false;
     private var TILE_CHILDREN_START:Int;
@@ -132,11 +137,13 @@ class LevelEditorScreen extends IGameScreen {
                     case 1: map.setFullTile(tx,ty,color);
                     }
                 }
-            } else {
-                // environment editing
+            } else { // environment editing
+                var tx = Std.int(x);
+                var ty = Std.int(y);
+                var wx = tx * TILE_HALF_WIDTH;
+                var wy = ty * TILE_HALF_WIDTH;
                 switch (sub_editor_num) {
                 case 0: // entity placement
-                    // var lx = 
                     var ly = level.height - y;
                     switch (object_num) {
                     case 0: level.playerPt = new Point(x,ly);
@@ -152,22 +159,54 @@ class LevelEditorScreen extends IGameScreen {
                             }
                         }
                     }
-                case 1: // draw regions
-                    var tx = Std.int(x);
-                    var ty = Std.int(y);
+                case 1: // regions
                     switch (object_num) {
                     case 0: // delete
-                        
+                        for (i in 1...regions.length) {
+                            var r = regions[i];
+                            if (r != null && r.visible && wx >= r.x && wx <= r.x+r.width && wy >= r.y && wy <= r.y+r.height) {
+                                r.visible = false;
+                            }
+                        }
                     case 1: // draw
                         regionMap.setID(tx,ty,++numRegions);
-                        regions[numRegions] = new Quad(TILE_HALF_WIDTH,TILE_HALF_WIDTH,REGION_COLOR);
+                        connections.push([]);
+                        regions[++numRegions] = new Quad(TILE_HALF_WIDTH,TILE_HALF_WIDTH,REGION_COLOR);
                         regions[numRegions].alpha = .25;
-                        regions[numRegions].x = tx * TILE_HALF_WIDTH;
-                        regions[numRegions].y = ty * TILE_HALF_WIDTH;
+                        regions[numRegions].x = wx;
+                        regions[numRegions].y = wy;
                         cur_region = new Point(tx,ty);
                         Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, defRegion);
                     }
                 case 2: // link regions
+                    if (REGION_SELECTED) {
+                        for (i in 1...regions.length) {
+                            var r = regions[i];
+                            if (r!= null && r.visible && wx >= r.x && wx <= r.x+r.width && wy >= r.y && wy <= r.y+r.height) {
+                                switch (object_num) {
+                                case 0: // delete
+                                    for (c in connections[selected_region]) {
+                                        if (c.reg == i) {
+                                            connections[selected_region].remove(c);
+                                        }
+                                    }
+                                case 1,2,3,4:
+                                    connections[selected_region].push({reg : i, flag : object_num});
+                                }
+                            }
+                        }
+                        REGION_SELECTED = false;
+                        regions[selected_region].alpha = .25;
+                    } else {
+                        for (i in 1...regions.length) {
+                            var r = regions[i];
+                            if (r!= null && r.visible && wx >= r.x && wx <= r.x+r.width && wy >= r.y && wy <= r.y+r.height) {
+                                REGION_SELECTED = true;
+                                selected_region = i;
+                                regions[selected_region].alpha = .5;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -278,6 +317,27 @@ class LevelEditorScreen extends IGameScreen {
                     level.parallax.push("assets/img/" + item);
                 }
             }
+            // fill in region information
+            level.nregions = numRegions;
+            level.regionLists = new IntMap<Region>();
+            for (i in 1...regions.length) {
+                var r = regions[i];
+                if (r!= null && r.visible) {
+                    var reg = new Region(i);
+                    reg.position = new Point((r.x + r.width/2) * TILE_HALF_WIDTH,(r.y + r.height/2) * TILE_HALF_WIDTH);
+                    level.regionLists.set(i,reg);
+                }
+            }
+            for (r in level.regionLists) {
+                var conns = connections[r.id];
+                if (conns!= null && conns.length > 0) {
+                    for (c in conns) {
+                        r.addNeighbor(level.regionLists.get(c.reg),c.flag);
+                        level.regionLists.set(r.id,r);
+                    }
+                }
+            }
+
             screenController.removeChildren();
             screenController.loadedLevel = level;
             screenController.switchToScreen(2);
@@ -312,6 +372,10 @@ class LevelEditorScreen extends IGameScreen {
         }
         numRegions = level.nregions;
         regionMap.tmap = level.regions;
+        for (r in level.regionLists) {
+            // regions[r.id] = new Quad(1, 1, REGION_COLOR);
+            // regions[r.id].alpha = .25;
+        }
 
         cameraY = LEVEL_HEIGHT - cameraHalfHeight;
 
@@ -395,9 +459,11 @@ class LevelEditorScreen extends IGameScreen {
         env_item[0].push("Remove Enemy");
         env_item[1].push("Remove Region");
         env_item[1].push("Draw Region");
-        env_item[2].push("Remove");
-        env_item[2].push("Walk");
-        env_item[2].push("Jump");
+        env_item[2].push("Clear");
+        env_item[2].push("Walk Left");
+        env_item[2].push("Walk Right");
+        env_item[2].push("Jump Left");
+        env_item[2].push("Jump Right");
 
         Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
         Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
@@ -438,10 +504,10 @@ class LevelEditorScreen extends IGameScreen {
         }
 
         for (r in regions) {
-            if (r != null && r.x >= cameraX - cameraHalfWidth && r.x + r.width <= cameraX + cameraHalfWidth &&
+            if (r != null && r.visible && r.x >= cameraX - cameraHalfWidth && r.x + r.width <= cameraX + cameraHalfWidth &&
                 r.y + r.height >= cameraY - cameraHalfHeight && r.y <= cameraY + cameraHalfHeight) {
                 var rr = new Quad(r.width,r.height,REGION_COLOR);
-                rr.alpha = 0.25;
+                rr.alpha = r.alpha;
                 rr.x = r.x - cameraX + cameraHalfWidth + BOX_WIDTH;
                 rr.y = r.y - cameraY + cameraHalfHeight;
                 screenController.addChild(rr);
