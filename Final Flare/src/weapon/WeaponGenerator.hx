@@ -7,7 +7,6 @@ import graphics.SpriteSheetRegistry;
 import haxe.ds.ArraySort;
 import haxe.ds.ObjectMap;
 import haxe.ds.StringMap;
-import haxe.macro.Expr.Position;
 import openfl.display.Bitmap;
 import starling.display.DisplayObject;
 import openfl.geom.Matrix;
@@ -24,12 +23,14 @@ import weapon.projectile.ProjectileData;
 import weapon.WeaponData.FiringMode;
 import weapon.WeaponData.ProjectileOrigin;
 import weapon.WeaponGenerator.WeaponBuildWorkspace;
+import weapon.WeaponPart.DamagePolygonData;
 import weapon.WeaponPart.ProjectileExitData;
 
 class WeaponBuildWorkspace {
     public var accuracyModifier:Float = 1.0; // (Closer to 0 is more accurate)
     public var velocityMultiplier:Float = 1.0; // (Multiplies the velocities of all projectiles)
     public var schemes:Array<ColorScheme> = [];
+    public var additionalDamage:Int = 0;
     
     public function new() {
         // Empty
@@ -37,7 +38,7 @@ class WeaponBuildWorkspace {
 }
 
 class WeaponGenerator {
-    public static inline var GUN_SCALE:Float = 64.0;
+    public static inline var GUN_SCALE:Float = 48.0;
     
     // Alpha mask levels for color generation
     public static var ALPHA_LEVEL_TRUE_COLOR:UInt = 101;
@@ -70,6 +71,8 @@ class WeaponGenerator {
         for (po in d.projectileOrigins) {
             po.exitAngle *= w.accuracyModifier;
             po.velocity *= w.velocityMultiplier;
+            po.projectileData.damage += w.additionalDamage;
+            po.projectileData.damageFriendly += w.additionalDamage;
             po.transform.tx /= GUN_SCALE;
             po.transform.ty /= -GUN_SCALE;
         }
@@ -77,12 +80,11 @@ class WeaponGenerator {
         return d;
     }
     private static function buildTransforms(l:WeaponLayer, w:WeaponBuildWorkspace, parent:Matrix):Void {
-        l.wsTransform = parent.clone();
-        l.wsTransform.translate(-l.part.offX, -l.part.offY);
+        l.wsTransform = new Matrix(1, 0, 0, 1, -l.part.offX, -l.part.offY);
+        l.wsTransform.concat(parent);
         for (c in l.children) {
-            var ct:Matrix = l.wsTransform.clone();
-            var wpc:WeaponPartChild = l.part.children[c.first];
-            ct.concat(wpc.offset);
+            var ct:Matrix = l.part.children[c.first].offset.clone();
+            ct.concat(l.wsTransform);
             buildTransforms(c.second, w, ct);
         }
     }
@@ -106,9 +108,8 @@ class WeaponGenerator {
                     var exitData:ProjectileExitData = p.value;
                     
                     // Calculate exit location of the projectile
-                    var bulletExitTransform:Matrix = new Matrix(exitData.dirX, exitData.dirY, -exitData.dirY, exitData.dirX);
+                    var bulletExitTransform:Matrix = new Matrix(exitData.dirX, exitData.dirY, -exitData.dirY, exitData.dirX, exitData.offX, exitData.offY);
                     bulletExitTransform.concat(l.wsTransform);
-                    bulletExitTransform.translate(exitData.offX, exitData.offY);
                     
                     for (cl in l.children) {
                         if (cl.second.part.type == WeaponPartType.PROJECTILE) {
@@ -122,6 +123,24 @@ class WeaponGenerator {
                             d.projectileOrigins.push(po);
                         }
                     }
+                case WeaponPropertyType.DAMAGE_POLYGON:
+                    var damagePolyData:DamagePolygonData = p.value;
+                    
+                    var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_MELEE);
+                    pd.damage = damagePolyData.damage;
+                    pd.damageFriendly = 0;
+                    pd.hitFriendly = false;
+                    pd.timer = damagePolyData.timeActive;
+                    pd.damageWidth = damagePolyData.width;
+                    pd.damageHeight = damagePolyData.height;
+                    
+                    var po:ProjectileOrigin = new ProjectileOrigin();
+                    po.exitAngle = 0;
+                    po.velocity = 0;
+                    po.transform = new Matrix(1, 0, 0, 1, damagePolyData.offX, damagePolyData.offY);
+                    po.transform.concat(l.wsTransform);
+                    po.projectileData = pd;
+                    d.projectileOrigins.push(po);
                     
                 case WeaponPropertyType.RELOAD_TIME:
                     d.reloadTime += p.value;
@@ -129,6 +148,8 @@ class WeaponGenerator {
                     d.usesPerActivation += p.value;
                 case WeaponPropertyType.USE_CAPACITY:
                     d.useCapacity += p.value;
+                case WeaponPropertyType.DAMAGE_INCREASE:
+                    w.additionalDamage += p.value;
                 default:
                     // Unknown or unused property
             }
@@ -178,10 +199,19 @@ class WeaponGenerator {
         var layers:Array<WeaponLayer> = [];
         traverseLayersToList(data.layer, layers);
         for (l in layers) {
-            if (l.wsTransform.tx < min.x) min.x = l.wsTransform.tx;
-            if (l.wsTransform.ty < min.y) min.y = l.wsTransform.ty;
-            if (l.wsTransform.tx + l.part.w > max.x) max.x = l.wsTransform.tx + l.part.w;
-            if (l.wsTransform.ty + l.part.h > max.y) max.y = l.wsTransform.ty + l.part.h;
+            // Get min and max points of the piece
+            var boxPoints:Array<Point> = [
+                l.wsTransform.transformPoint(new Point(0, 0)),
+                l.wsTransform.transformPoint(new Point(l.part.w, 0)),
+                l.wsTransform.transformPoint(new Point(0, l.part.h)),
+                l.wsTransform.transformPoint(new Point(l.part.w, l.part.h))
+            ];
+            for (p in boxPoints) {
+                min.x = Math.min(min.x, p.x);
+                min.y = Math.min(min.y, p.y);
+                max.x = Math.max(max.x, p.x);
+                max.y = Math.max(max.y, p.y);
+            }
         }
         
         var bmp:BitmapData = new BitmapData(Std.int(max.x - min.x), Std.int(max.y - min.y), true, 0x00000000);
@@ -193,7 +223,9 @@ class WeaponGenerator {
                 // TODO: Add somewhere else
             }
             else {
-                bmp.draw(bmpTMP, new Matrix(1, 0, 0, 1, l.wsTransform.tx - min.x, l.wsTransform.ty - min.y), null, null, null, false);
+                var translated:Matrix = l.wsTransform.clone();
+                translated.translate(-min.x, -min.y);
+                bmp.draw(bmpTMP, translated, null, null, null, false);
             }
         }
         
@@ -242,11 +274,17 @@ class WeaponGenerator {
     }
     private static function generateOne(params:WeaponGenParams):WeaponData {
         // Get a base layer
-        var baseParts:List<WeaponPart> = Lambda.filter(PartRegistry.parts, function(p:WeaponPart):Bool { 
-            return allowsCost(p, params) && Lambda.exists(p.properties, function(wp:WeaponProperty):Bool { return wp.type == WeaponPropertyType.IS_BASE && wp.value; });
-        });
-        if (baseParts == null || baseParts.length < 1) return null;
-        var basePart:WeaponPart = randomFromList(baseParts);
+        var baseParts:Array<WeaponPart> = [];
+        for (part in PartRegistry.parts) {
+            if (!allowsCost(part, params)) continue;
+            
+            var prop:WeaponProperty = Lambda.find(part.properties, function(wp:WeaponProperty):Bool { return wp.type == WeaponPropertyType.IS_BASE; } );
+            if (prop == null) continue;
+            
+            for (i in 0...prop.value) baseParts.push(part);
+        }
+        if (baseParts.length < 1) return null;
+        var basePart:WeaponPart = randomFromArray(baseParts);
         subtractCost(basePart, params);
         var baseLayer:WeaponLayer = new WeaponLayer(basePart.name);
 
@@ -377,28 +415,6 @@ class WeaponGenerator {
         if (weapons.length < 1) return null;
         
         return randomFromArray(weapons);
-        
-        // TODO: Generate a real gun
-        //var test:WeaponLayer = new WeaponLayer("Receiver.Conventional", [
-            //new Pair(0, new WeaponLayer("Barrel.Conventional", [
-                //new Pair(0, new WeaponLayer("Magazine.Conventional")),
-                //new Pair(1, new WeaponLayer("Stock.Conventional")),
-                //(switch (params.shadynessPoints) {
-                    //case 0:
-                        //new Pair(2, new WeaponLayer("Projectile.Bullet"));
-                    //case 1:
-                        //new Pair(2, new WeaponLayer("Projectile.Grenade"));
-                    //case 2:
-                        //new Pair(2, new WeaponLayer("Projectile.Flare"));
-                    //default:
-                        //new Pair(2, new WeaponLayer("Projectile.Melee"));
-                //})
-            //])),
-            //new Pair(1, new WeaponLayer("Grip.Conventional"))
-        //]);
-        //
-        //var data:WeaponData = WeaponGenerator.buildFromParts(test);
-        //return data;
     }
 
     public static function generateInitialWeapons():Array<WeaponData> {
@@ -436,8 +452,7 @@ class WeaponGenerator {
         l = new WeaponLayer("Receiver.Conventional", [
             new Pair(0, new WeaponLayer("Barrel.Launcher", [
                 new Pair(0, new WeaponLayer("Magazine.Conventional")),
-                new Pair(1, new WeaponLayer("Stock.Conventional")),
-                new Pair(2, new WeaponLayer("Projectile.Grenade"))
+                new Pair(1, new WeaponLayer("Projectile.Grenade"))
             ])),
             new Pair(1, new WeaponLayer("Grip.Conventional"))
         ]);
@@ -460,8 +475,7 @@ class WeaponGenerator {
         l = new WeaponLayer("Receiver.Conventional", [
             new Pair(0, new WeaponLayer("Barrel.Launcher", [
                 new Pair(0, new WeaponLayer("Magazine.Conventional")),
-                new Pair(1, new WeaponLayer("Stock.Conventional")),
-                new Pair(2, new WeaponLayer("Projectile.Flare"))
+                new Pair(1, new WeaponLayer("Projectile.Flare"))
             ])),
             new Pair(1, new WeaponLayer("Grip.Conventional"))
         ]);

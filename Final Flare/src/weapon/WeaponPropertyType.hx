@@ -17,8 +17,10 @@ enum WeaponPropertyType {
     BURST_PAUSE; // Float
     BURST_COUNT; // Int
     PROJECTILE_DATA; // ProjectileOrigin Data
+    DAMAGE_POLYGON; // Polygon Data
     EXIT_INFORMATION; // Contains angle, velocity, and origin and direction
     PROJECTILE_VELOCITY_MULTIPLIER; // Float
     ACCURACY_MODIFIER; // Float
     IS_BASE; // Bool
+    DAMAGE_INCREASE; // Int
 }

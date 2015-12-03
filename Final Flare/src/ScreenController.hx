@@ -54,7 +54,7 @@ class ScreenController extends Sprite {
                 case Keyboard.F6:
                     switchToScreen(3);
                 case Keyboard.NUMPAD_5:
-                    CodeLevelEditor.run(1);
+                    CodeLevelEditor.run(-1);
                 // case Keyboard.F7:
                 //     switchToScreen(1);
                 case Keyboard.F8:
@@ -81,7 +81,7 @@ class ScreenController extends Sprite {
         for (screen in screens) screen.build();
         if (activeScreen != null) {
             activeScreen.onEntry(dt);
-        }
+        }        
     }
     
     public function switchToScreen(id:Int):Void {
@@ -89,6 +89,10 @@ class ScreenController extends Sprite {
     }
 
     private function update(e:Dynamic = null):Void {
+        if (!Composer.isMusicPlaying) {
+            Composer.playMusicTrack("Menu" + Std.string(Std.int(Math.random() * 3 + 1))); // TODO: Just tell composer to play menu music
+        }
+        
         // Update game time
         dt.elapsed = FRAME_TIME;
         dt.total += dt.elapsed;

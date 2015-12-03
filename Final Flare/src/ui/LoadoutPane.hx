@@ -27,6 +27,8 @@ class LoadoutPane extends UIPane
     private var secondSelectedSprite:Sprite;
     private var thirdSelectedSprite:Sprite;
     
+    public var selected:Array<String> = new Array<String>();
+    
     private var numSelected:Int = 0;  //Logic stuff
     
 
@@ -44,18 +46,23 @@ class LoadoutPane extends UIPane
             tx:60,
             ty:120,
             font:"BitFont",
-            size:20,
-            color:0x0,
+            size:50,
+            color:0xFFFFFF,
             bold:false,
             hAlign:HAlign.CENTER,
             vAlign:VAlign.CENTER
         };
         
         char1 = new UICharacter();
+        char1.character = "Man";
         char2 = new UICharacter();
+        char2.character = "Wolf";
         char3 = new UICharacter();
+        char3.character = "Robot";
         char4 = new UICharacter();
+        char4.character = "SteamGirl";
         char5 = new UICharacter();
+        char5.character = "Sandman";
         
         this.add(char1, 24, 0);
         this.add(char2, char1.bounds.x + char1.width + 24, 0);
@@ -102,12 +109,15 @@ class LoadoutPane extends UIPane
                 this.addChild(firstSelectedSprite);
                 i.queuePos = 1;
                 numSelected++;
+                selected.push(i.character);
+                
             case 1:
                 if (i.queuePos == 0) {
                     secondSelectedSprite.transformationMatrix.translate(i.bounds.x + i.width/2 - secondSelectedSprite.width/2, i.bounds.y - secondSelectedSprite.height);
                     this.addChild(secondSelectedSprite);
                     i.queuePos = 2;
                     numSelected++;
+                    selected.push(i.character);
                 }
                 else {
                     adjustCharSelect(i, i.queuePos);
@@ -118,6 +128,7 @@ class LoadoutPane extends UIPane
                     this.addChild(thirdSelectedSprite);
                     i.queuePos = 3;
                     numSelected++;
+                    selected.push(i.character);
                 }
                 else {
                     adjustCharSelect(i, i.queuePos);
@@ -145,6 +156,7 @@ class LoadoutPane extends UIPane
                
                 firstSelectedSprite.transformationMatrix.translate( -x1, -y1);
                 this.removeChild(firstSelectedSprite);
+                selected.remove(b.character);
                 b.queuePos = 0;
                 
                 numSelected--;
@@ -154,6 +166,7 @@ class LoadoutPane extends UIPane
                 var y2 = secondSelectedSprite.bounds.y;
                 secondSelectedSprite.transformationMatrix.translate( -x2, -y2);
                 this.removeChild(secondSelectedSprite);
+                selected.remove(b.character);
                 b.queuePos = 0;
                 numSelected--;
 
@@ -177,6 +190,7 @@ class LoadoutPane extends UIPane
                 var y3 = thirdSelectedSprite.bounds.y;
                 thirdSelectedSprite.transformationMatrix.translate(-x3,-y3);
                 this.removeChild(thirdSelectedSprite);
+                selected.remove(b.character);
                 numSelected--; 
                 
                 b.queuePos = 0;

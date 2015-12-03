@@ -31,6 +31,7 @@ class Weapon {
     private var burstCooldown:Float = 0;
     private var usesPerformed:Int = 0;
     private var burstsLeft:Int = 0;
+    private var hasShot:Bool = false;
     
     public function new(e:Entity, d:WeaponData) {
         entity = e;
@@ -104,15 +105,16 @@ class Weapon {
                 // We cannot fire right now
                 shotCooldown -= dt;
             }
-            else {
+            else if(!hasShot) {
                 // Fire bullets
                 fireBullets(s, dt - shotCooldown);
+                hasShot = true;
                 usesPerformed += data.usesPerActivation;
                 
                 // Place on cooldown
                 dt -= shotCooldown;
                 shotCooldown = Math.max(0, data.activationCooldown - dt);
-                
+
                 // Check for reload
                 if ((usesPerformed + data.usesPerActivation) > data.useCapacity) {
                     reloadTimeLeft = Math.max(0, data.reloadTime - dt);
@@ -125,7 +127,8 @@ class Weapon {
         else {
             // Keep updating the cooldown
             shotCooldown = Math.max(0, shotCooldown - dt);
-        }
+            hasShot = false;
+       }
     }
     private function updateBurst(triggerPressed:Bool, dt:Float, s:GameState):Void {
         if (burstsLeft > 0) {
@@ -143,6 +146,7 @@ class Weapon {
                     // Place on cooldown
                     dt -= burstCooldown;
                     burstCooldown = data.burstPause;
+                    burstsLeft--;
                     
                     // Check for reload
                     if ((usesPerformed + data.usesPerActivation) > data.useCapacity) {

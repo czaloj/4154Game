@@ -42,6 +42,8 @@ class ProjectileData {
 
     // Melee information
     public var damageShape:B2Shape = null;
+    public var damageWidth:Float = 0;
+    public var damageHeight:Float = 0;
 
     public function new(t:Int) {
         constructionType = t;

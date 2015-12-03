@@ -96,6 +96,7 @@ class GameState {
     public var timeMultiplier:Float = 1.0; // Can be used to speed-up or slow-down the state simulation
 	public var markedtime:Float;
     // Game object information
+    public var charList:Array<String> = new Array<String>();
     public var player:Entity;
     public var entities:Array<Entity> = new Array<Entity>();
     public var entitiesNonNull:EntityNonNullList;
@@ -117,7 +118,7 @@ class GameState {
 
     // Scoring information
     public var score:Int = 0;
-    public var scoreThreshold:Int = 5;
+    public var scoreThreshold:Int = 20;
     
     public var victory:Bool;
     public var gameOver:Bool;

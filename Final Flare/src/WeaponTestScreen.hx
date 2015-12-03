@@ -44,8 +44,8 @@ class WeaponTestScreen extends IGameScreen {
         
         weaponSprite.x = 400;
         weaponSprite.y = 225;
-        weaponSprite.scaleX *= 320;
-        weaponSprite.scaleY *= -320;
+        weaponSprite.scaleX *= 32 * 7;
+        weaponSprite.scaleY *= -32 * 7;
         screenController.addChild(weaponSprite);
     }
     override public function onExit(gameTime:GameTime):Void {

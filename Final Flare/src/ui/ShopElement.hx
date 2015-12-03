@@ -19,24 +19,29 @@ class ShopElement extends DisplayObjectContainer
     private var plus10:Button;
     private var minus10:Button;
     private var numberBox:Sprite;
-    private var allocated:Int;
+    private var allocated:Int = 0;
     
-    public function new() 
+    public var string:String;
+    public var tf:TextField;
+    
+    public function new(s:String, p:Int) 
     {
         super();
-        init();
+        init(s, p);
     }
     
-    public function init() {
+    public function init(s:String, p:Int) {
         
+        string = s;
+        allocated = p;
         var uif = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         
         //Set up formatting stuff
         var btf:ButtonTextFormat = {
-            tx:16,
-            ty:16,
+            tx:32,
+            ty:32,
             font:"BitFont",
-            size:16,
+            size:30,
             color:0xFFFFFF,
             bold:false,
             hAlign:HAlign.CENTER,
@@ -56,19 +61,23 @@ class ShopElement extends DisplayObjectContainer
         };
         
         
-        minus1 = uif.createButton(16, 16, "-1", btf, true);
-        minus10 = uif.createButton(16, 16, "-10", btf, true);
-        plus1 = uif.createButton(16, 16, "+1", btf, true);
-        plus10 = uif.createButton(16, 16, "+10", btf2, false);
+        minus1 = uif.createButton(24, 24, "-1", btf, false);
+        minus10 = uif.createButton(24, 24, "-10", btf, false);
+        plus1 = uif.createButton(24, 24, "+1", btf, false);
+        plus10 = uif.createButton(24, 24, "+10", btf, false);
         
         numberBox = new Sprite();
+        tf  = new TextField(270, 40, s + Std.string(allocated), "BitFont", 40, 0xFFFFFF, false);
+        tf.hAlign = HAlign.CENTER;
+        tf.vAlign = VAlign.CENTER;
+        numberBox.addChild(tf);
         
-        minus1.transformationMatrix.translate(0, numberBox.height/2);
-        minus10.transformationMatrix.translate(28, numberBox.height / 2);
-        plus1.transformationMatrix.translate(56, numberBox.height / 2);
-        plus1.transformationMatrix.translate(84, numberBox.height/2);
+        minus1.transformationMatrix.translate(50, 0);
+        minus10.transformationMatrix.translate(0, 0);
+        plus1.transformationMatrix.translate(400, 0);
+        plus10.transformationMatrix.translate(450, 0);
+        numberBox.transformationMatrix.translate(110, 0); 
 
-        
         this.addChild(minus1);
         minus1.bEvent.add(minusOne);
         this.addChild(minus10);
@@ -79,12 +88,12 @@ class ShopElement extends DisplayObjectContainer
         plus10.bEvent.add(plusTen);
         this.addChild(numberBox);
         
-        var tf:TextField = new TextField(30, 30, "0", "BitFont", 12, 0x0, false);
-        numberBox.addChild(tf);
+
     }
     
     private function allocate(value:Int) {
-        allocated = (allocated + value);    
+        allocated = (allocated + value);
+        tf.text = string + Std.string(allocated);
     }
     
     private function minusOne() {

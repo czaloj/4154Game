@@ -5,6 +5,7 @@ import weapon.WeaponGenerator;
 
 class PlayerData {
     private var so:SharedObject;
+    public var selectedChars:Array<String> = new Array<String>();
     public var weapons(get, never):Array<WeaponData>;
     public var points(get, set):Int;
 	public var mostRecentScore:Int;
