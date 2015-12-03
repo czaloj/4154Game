@@ -112,6 +112,7 @@ class GameplayScreen extends IGameScreen {
         if (state.gameOver) {
             screenController.playerData.mostRecentScore = state.score;
             screenController.playerData.mostRecentVictory = state.victory;
+			FFLog.recordEvent(95, state.score+", " + state.victory);//score, victory at end of game
             screenController.switchToScreen(5);
         }
     }
