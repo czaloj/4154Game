@@ -137,7 +137,7 @@ class LevelCreator {
         
         Spawner.createPlayer(state.entities[0], state.charList[0], state.player.position.x, state.player.position.y);
         Spawner.createPlayer(state.entities[1], state.charList[1], 0, 0);
-        Spawner.createPlayer(state.entities[2], state.charList[3], 0, 0);
+        Spawner.createPlayer(state.entities[2], state.charList[2], 0, 0);
 
         // Disable all but the first character
         for (i in 1...5) {
