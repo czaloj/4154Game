@@ -43,7 +43,7 @@ class Region
 
 
     public function getDirection(dst:Region, s:GameState) {
-        if (dst != null) {
+        if ((dst != null)&&(s.pathTbl.exists(this.id))&&(s.pathTbl.get(this.id).exists(dst.id))) {
             return s.pathTbl.get(this.id).get(dst.id);
         } else {
             return 0;
