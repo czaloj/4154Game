@@ -21,4 +21,5 @@ enum WeaponPropertyType {
     PROJECTILE_VELOCITY_MULTIPLIER; // Float
     ACCURACY_MODIFIER; // Float
     IS_BASE; // Bool
+    DAMAGE_INCREASE; // Int
 }
