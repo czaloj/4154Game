@@ -13,8 +13,10 @@ class EnemyType
     public var maxMoveSpeed: Float;
     public var groundAcceleration: Float;
     public var airAcceleration: Float;
+    public var attackFrom: Float;
+    public var standFrom: Float;
 
-    public function new(cooldown:Int, damageT:Int, hp: Int, hdOffset:B2Vec2, maxSpeed: Float, gndAcc: Float, airAcc: Float) {
+    public function new(cooldown:Int, damageT:Int, hp: Int, hdOffset:B2Vec2, maxSpeed: Float, gndAcc: Float, airAcc: Float, attFrom: Float, stFrom:Float) {
         spawnCooldown = cooldown;
         damageType = damageT;
         health = hp;
@@ -22,6 +24,8 @@ class EnemyType
         maxMoveSpeed = maxSpeed;
         groundAcceleration = gndAcc;
         airAcceleration = airAcc;
+        attackFrom = attFrom;
+        standFrom = stFrom;
 
     }
     public static function make( id:String ) {
@@ -40,7 +44,11 @@ class EnemyType
                 //groundAcceleration
                 0.8,
                 //airAcceleration
-                0.3);
+                0.3,
+                //attackFrom
+                5,
+                //standFrom
+                3);
             case "Shooter": new game.EnemyType(
                 //spawnCooldown
                 360,
@@ -55,7 +63,11 @@ class EnemyType
                 //groundAcceleration
                 0.9,
                 //airAcceleration
-                0.3);
+                0.3,
+                //attackFrom
+                10,
+                //standFrom
+                10);
             case "Tank": new game.EnemyType(
                 //spawnCooldown
                 360,
@@ -66,11 +78,15 @@ class EnemyType
                 //headOffset
                 new B2Vec2(0, 0.6),
                 //maxMoveSpeed
-                5,
+                4,
                 //groundAcceleration
                 0.6,
                 //airAcceleration
-                0.3);
+                0.3,
+                //attackFrom
+                2,
+                //standFrom
+                1);
             default: throw 'unknown enemy type!';
         }
     }

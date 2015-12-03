@@ -27,16 +27,19 @@ import starling.text.TextField;
 
 
 class MenuScreen extends IGameScreen {
-    public static inline var CAMERA_LERP_SPEED:Float = 0.1;
+    public static inline var LERP_SPEED:Float = .02;
+    public static var ZERO:Point = new Point(0, 0);
     
-    // Camera parameters
-    public var camera:Sprite = new Sprite();
-    public var origin:Sprite = new Sprite();
+    //Current position of camera
+    public var currentMin:Point = new Point();
+    public var currentMax:Point = new Point();
     
-    public var cameraX(get, set):Float;
-    public var cameraY(get, set):Float;
-    public var cameraScale(get, set):Float;
+    //Distance to translate each frame
+    public var delta:Point = new Point();
     
+    //Total distance to translate before transistionDone is marked as true
+    public var distance:Point = new Point();
+    public var transitionDone:Bool = true;
     
     //UIPanes
     private var mainMenu:UIPane;
@@ -52,29 +55,6 @@ class MenuScreen extends IGameScreen {
         super(sc);
     }
     
-    public function get_cameraX():Float {
-        return -origin.x;
-    }
-    public function set_cameraX(v:Float):Float {
-        origin.x = -v;
-        return v;
-    }
-    public function get_cameraY():Float {
-        return -origin.y;
-    }
-    public function set_cameraY(v:Float):Float {
-        origin.y = -v;
-        return v;
-    }
-    public function get_cameraScale():Float {
-        return camera.scaleX;
-    }
-    public function set_cameraScale(v:Float):Float {
-        camera.scaleX = v;
-        camera.scaleY = -v;
-        return v;
-    }
-    
     override public function build():Void {
         // Empty
     }
@@ -86,9 +66,11 @@ class MenuScreen extends IGameScreen {
         screenController.playerData = new PlayerData("Player"); // TODO: Allow others to play?        
         uif = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         
-        init();
-
+        currentMin.setTo(0, 0);
+        currentMax.setTo(800, 450);
         
+        initPanes();
+
         FFLog.recordMenuStart();
 
         // TODO: This is so badly hardcoded
@@ -125,38 +107,14 @@ class MenuScreen extends IGameScreen {
     }
 
     override public function update(gameTime:GameTime):Void {
-        // Cristian Camera Code ~please work
-        var levelWidth:Float = 1920;
-        var levelHeight:Float = 1080;
-        var cameraHalfWidth = screenController.stage.stageWidth / (2 * cameraScale);
-        var cameraHalfHeight = screenController.stage.stageHeight / (2 * cameraScale);
-        
-        // Center camera on player and constrict to level bounds
-        var targetX:Float = (1.0 - CAMERA_LERP_SPEED) * cameraX + CAMERA_LERP_SPEED * origin.x;
-        var targetY:Float = (1.0 - CAMERA_LERP_SPEED) * cameraY + CAMERA_LERP_SPEED * origin.y;
-        cameraX = targetX;
-        cameraY = targetY;
+        updateCamera();
+
     }
 
     override public function draw(gameTime:GameTime):Void {
         // Empty
     }
 
-    public function init():Void {
-        
-        camera.addChild(origin);
-        
-        // Default camera
-        cameraX = 0;
-        cameraY = 0;
-        cameraScale = 32;
-        
-        screenController.addChild(camera);
-        screenController.addChild(origin);
-        
-        initPanes();
-    }
-    
     /* The main menu is separate from the background. The init function adds the background
      * to the stae and creates the mainMenuPane, which has homePane, levelSelectPane, and
      * loadoutPane as children */
@@ -247,29 +205,41 @@ class MenuScreen extends IGameScreen {
     
     //TODO
     //Transitions the screen to a rectangle and zooms appropriately
-    public function transitionTo(min:Point, max:Point) {
-        
+    public function transitionToRect(min:Point, max:Point) {
+           distance = min.subtract(currentMin);
+           delta.setTo(( -distance.x * LERP_SPEED), -distance.y * LERP_SPEED);
+           currentMin = min;
+           transitionDone = false;
+    }
+    
+    public function updateCamera():Void {
+        if (!transitionDone) {
+            mainMenu.transformationMatrix.translate(delta.x, delta.y);
+            backGround.transformationMatrix.translate(delta.x, delta.y);
+            distance = distance.add(delta);
+            trace("(" + distance.x + "," + distance.y + ")");
+            if (distance.equals(ZERO)) { 
+                transitionDone = true;
+            }            
+        }
     }
     
     private function transitionToHome():Void {
-        backGround.transformationMatrix.translate(1000, 125);
-        mainMenu.transformationMatrix.translate(1000, 125);
+        var min = new Point(0, 0);
+        var max = new Point(800, 450);
+        transitionToRect(min, max);
     }
 
     private function transitionToLevelSelect():Void {
-        //backGround.transformationMatrix.translate(-1000, -125);
-        //mainMenu.transformationMatrix.translate(-1000, -125);
-        var timer = 100;
-        while (timer > 0) {
-            origin.x += 10;
-            origin.y += 1.25;
-            timer--;
-        }
+        var min = new Point(1000, 125);
+        var max = new Point(1800, 575);
+        transitionToRect(min, max);
     }
 
     private function transitionToLoadout():Void {
-        backGround.transformationMatrix.translate(0, -475);
-        mainMenu.transformationMatrix.translate(0, -475);
+        var min = new Point(1000, 600);
+        var max = new Point(1800, 1050);
+        transitionToRect(min, max);
     }
     
     //TODO change to BroadcastEvent1 with a string argument for level

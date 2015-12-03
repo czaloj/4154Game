@@ -125,9 +125,7 @@ class CodeLevelEditor {
                     new Spawner("Shooter", 1.5, 10),
                     new Spawner("Shooter", 48.5, 10)
                 ];
-                
         }
-
         
         // Post compute
         lvl.nregions = 0;

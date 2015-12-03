@@ -26,13 +26,13 @@ class AIController {
         entity.useWeapon =  false;
         entity.targetX = state.player.position.x;
         entity.targetY = state.player.position.y;
-
+        var eType = EnemyType.make(entity.id);
         //movement
         var direction = findPlayer(entity, state);
         switch (direction) {
             //same region
             case 0:
-                if (Math.pow(state.player.position.x - entity.position.x, 2) > 0.1) {
+                if (Math.pow(state.player.position.x - entity.position.x, 2) > Math.pow(eType.standFrom, 2)) {
                     entity.direction = entity.position.x > state.player.position.x ? -1 : 1;
                 }
             case Region.LEFT:
@@ -47,7 +47,7 @@ class AIController {
                 entity.up = true;
         }
         //attack
-        if (Math.pow(state.player.position.x - entity.position.x,2) + Math.pow(state.player.position.y - entity.position.y, 2) <= 4) {
+        if (Math.pow(state.player.position.x - entity.position.x,2) + Math.pow(state.player.position.y - entity.position.y, 2) <= Math.pow(eType.attackFrom, 2)) {
             entity.useWeapon = true;
         }
     }
