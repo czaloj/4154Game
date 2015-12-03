@@ -182,6 +182,10 @@ class MenuScreen extends IGameScreen {
             screenController.removeChild(bg);
             screenController.switchToScreen(3);
         });
+        tutorialButton.bEvent.add(function():Void {
+            screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/tutorial.lvl");
+            screenController.switchToScreen(2); 
+        });
         shopButton.bEvent.add(transitionToShop);
         
         //Initialize UIPane and add buttons

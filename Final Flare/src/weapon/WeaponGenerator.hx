@@ -274,11 +274,17 @@ class WeaponGenerator {
     }
     private static function generateOne(params:WeaponGenParams):WeaponData {
         // Get a base layer
-        var baseParts:List<WeaponPart> = Lambda.filter(PartRegistry.parts, function(p:WeaponPart):Bool { 
-            return allowsCost(p, params) && Lambda.exists(p.properties, function(wp:WeaponProperty):Bool { return wp.type == WeaponPropertyType.IS_BASE && wp.value; });
-        });
-        if (baseParts == null || baseParts.length < 1) return null;
-        var basePart:WeaponPart = randomFromList(baseParts);
+        var baseParts:Array<WeaponPart> = [];
+        for (part in PartRegistry.parts) {
+            if (!allowsCost(part, params)) continue;
+            
+            var prop:WeaponProperty = Lambda.find(part.properties, function(wp:WeaponProperty):Bool { return wp.type == WeaponPropertyType.IS_BASE; } );
+            if (prop == null) continue;
+            
+            for (i in 0...prop.value) baseParts.push(part);
+        }
+        if (baseParts.length < 1) return null;
+        var basePart:WeaponPart = randomFromArray(baseParts);
         subtractCost(basePart, params);
         var baseLayer:WeaponLayer = new WeaponLayer(basePart.name);
 
@@ -446,8 +452,7 @@ class WeaponGenerator {
         l = new WeaponLayer("Receiver.Conventional", [
             new Pair(0, new WeaponLayer("Barrel.Launcher", [
                 new Pair(0, new WeaponLayer("Magazine.Conventional")),
-                new Pair(1, new WeaponLayer("Stock.Conventional")),
-                new Pair(2, new WeaponLayer("Projectile.Grenade"))
+                new Pair(1, new WeaponLayer("Projectile.Grenade"))
             ])),
             new Pair(1, new WeaponLayer("Grip.Conventional"))
         ]);
@@ -470,8 +475,7 @@ class WeaponGenerator {
         l = new WeaponLayer("Receiver.Conventional", [
             new Pair(0, new WeaponLayer("Barrel.Launcher", [
                 new Pair(0, new WeaponLayer("Magazine.Conventional")),
-                new Pair(1, new WeaponLayer("Stock.Conventional")),
-                new Pair(2, new WeaponLayer("Projectile.Flare"))
+                new Pair(1, new WeaponLayer("Projectile.Flare"))
             ])),
             new Pair(1, new WeaponLayer("Grip.Conventional"))
         ]);
