@@ -220,7 +220,7 @@ class MenuScreen extends IGameScreen {
             ty:35,
             font:"BitFont",
             size:50,
-            color:0xFFFFFF;
+            color:0xFFFFFF,
             bold:false,
             hAlign:HAlign.CENTER,
             vAlign:VAlign.CENTER
