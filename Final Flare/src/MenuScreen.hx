@@ -143,8 +143,8 @@ class MenuScreen extends IGameScreen {
             tx:150,
             ty:50,
             font:"BitFont",
-            size:20,
-            color:0x0,
+            size:40,
+            color:0xFFFFFF,
             bold:false,
             hAlign:HAlign.CENTER,
             vAlign:VAlign.CENTER
@@ -195,8 +195,8 @@ class MenuScreen extends IGameScreen {
             tx:100,
             ty:35,
             font:"BitFont",
-            size:20,
-            color:0x0,
+            size:50,
+            color:0x07FF,
             bold:false,
             hAlign:HAlign.CENTER,
             vAlign:VAlign.CENTER
@@ -218,12 +218,14 @@ class MenuScreen extends IGameScreen {
         shopPane.add(evolutionInputBox);
         shopPane.add(shadynessInputBox);
         shopPane.add(historicalInputBox);
-        shopPane.transform.matrix.translate(SHOP_POS.x, SHOP_POS.y);
+        trace(shopPane.);
+        shopPane.transform.matrix.translate(0, 600);
+        trace(shopPane.x);
+
         
         mainMenu = new UIPane();
         mainMenu.add(homePane, HOME_POS.x, HOME_POS.y);
         mainMenu.add(levelSelectPane, LEVEL_SELECT_POS.x, LEVEL_SELECT_POS.y);
-        trace(LOADOUT_POS.toString());
         mainMenu.add(loadoutPane, LOADOUT_POS.x, LOADOUT_POS.y);
         
         screenController.addChild(mainMenu);
