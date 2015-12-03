@@ -37,8 +37,8 @@ class LevelSelectPane extends UIPane
             tx:100,
             ty:35,
             font:"BitFont",
-            size:20,
-            color:0x0,
+            size:50,
+            color:0xFFFFFF,
             bold:false,
             hAlign:HAlign.CENTER,
             vAlign:VAlign.CENTER

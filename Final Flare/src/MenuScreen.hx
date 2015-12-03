@@ -15,6 +15,7 @@ import openfl.text.TextFieldAutoSize;
 import openfl.text.TextFieldType;
 import openfl.text.TextFormat;
 import openfl.text.TextFormatAlign;
+import ui.ShopElement;
 import ui.ShopPane;
 import ui.UISpriteFactory;
 import ui.Button;
@@ -34,11 +35,17 @@ import starling.text.TextField;
 
 class MenuScreen extends IGameScreen {
     public static inline var LERP_SPEED:Float = .02;
-    public static var HOME_POS:Point = new Point(0, 0);
-    public static var LEVEL_SELECT_POS = new Point(1000, 125);
-    public static var LOADOUT_POS = new Point(1000, 600);
-    public static var SHOP_POS:Point = new Point(0, 600);
     public static var ZERO:Point = new Point(0, 0); 
+    
+    public static var HOME_POS_MIN:Point = new Point(30, 609);
+    public static var HOME_POS_MAX:Point = new Point(829, 1058);
+    public static var LEVEL_SELECT_POS_MIN:Point = new Point(22, 17);
+    public static var LEVEL_SELECT_POS_MAX:Point = new Point(956, 542);
+    public static var LOADOUT_POS_MIN:Point = new Point(1045, 163);
+    public static var LOADOUT_POS_MAX:Point = new Point(1844, 612);
+    public static var SHOP_POS_MIN:Point = new Point(1399, 791);
+    public static var SHOP_POS_MAX:Point = new Point(1874, 1058);
+ 
     
     //Current position of camera
     public var currentMin:Point = new Point();
@@ -46,6 +53,7 @@ class MenuScreen extends IGameScreen {
     
     //Distance to translate each frame
     public var delta:Point = new Point();
+    public var deltaScale:Point = new Point();
     
     //Total distance to translate before transistionDone is marked as true
     public var distance:Point = new Point();
@@ -81,6 +89,10 @@ class MenuScreen extends IGameScreen {
         delta.setTo(0, 0);
         distance.setTo(0, 0);
         initPanes();
+        mainMenu.transformationMatrix.translate(-HOME_POS_MIN.x, -HOME_POS_MIN.y);
+        backGround.transformationMatrix.translate( -HOME_POS_MIN.x, -HOME_POS_MIN.y);
+        currentMin = HOME_POS_MIN;
+        currentMax = HOME_POS_MAX;
 
         FFLog.recordMenuStart();
 
@@ -112,7 +124,6 @@ class MenuScreen extends IGameScreen {
     }
 
     override public function onExit(gameTime:GameTime):Void {
-        trace("hi");
         screenController.removeChild(backGround);
         screenController.removeChild(mainMenu);
         FFLog.recordMenuEnd();
@@ -209,14 +220,49 @@ class MenuScreen extends IGameScreen {
         //INIT SHOP PANE
         shopPane = new UIPane();
         
-        var evolution = new ui.ShopElement();
-        shopPane.add(evolution);
+        //Set up formatting stuff
+        var shopBTF:ButtonTextFormat = {
+            tx:200,
+            ty:35,
+            font:"BitFont",
+            size:50,
+            color:0xFFFFFF,
+            bold:false,
+            hAlign:HAlign.CENTER,
+            vAlign:VAlign.CENTER
+        };
+        
+        var btf:ButtonTextFormat = {
+            tx:100,
+            ty:35,
+            font:"BitFont",
+            size:50,
+            color:0xFFFFFF,
+            bold:false,
+            hAlign:HAlign.CENTER,
+            vAlign:VAlign.CENTER
+        };
+        
+        //Add UI elements
+        var evolution = new ui.ShopElement("Evolution Points: ", 2000);
+        var shadiness = new ui.ShopElement("Shadiness Points: ", 2000);
+        var historical = new ShopElement("Historical Points: ", 2000);
+        confirmButton = uif.createButton(200, 35, "GENERATE WEAPON", shopBTF, false);
+        var menuButton = uif.createButton(100, 35, "MAIN MENU", btf, false);
+        //confirmButton.bEvent.add(generateWeapon); 
+        menuButton.bEvent.add(transitionToHome);
+        
+        shopPane.add(evolution, 400 - evolution.width/2, 120);
+        shopPane.add(shadiness, 400 - shadiness.width/2, 205);
+        shopPane.add(historical, 400 - historical.width / 2, 280);
+        shopPane.add(confirmButton, 400 - confirmButton.width / 2, 375);
+        shopPane.add(menuButton, 25, 25);
 
         mainMenu = new UIPane();
-        mainMenu.add(homePane, HOME_POS.x, HOME_POS.y);
-        mainMenu.add(levelSelectPane, LEVEL_SELECT_POS.x, LEVEL_SELECT_POS.y);
-        mainMenu.add(loadoutPane, LOADOUT_POS.x, LOADOUT_POS.y);
-        mainMenu.add(shopPane, SHOP_POS.x, SHOP_POS.y);
+        mainMenu.add(homePane, HOME_POS_MIN.x, HOME_POS_MIN.y);
+        mainMenu.add(levelSelectPane, LEVEL_SELECT_POS_MIN.x, LEVEL_SELECT_POS_MIN.y);
+        mainMenu.add(loadoutPane, LOADOUT_POS_MIN.x, LOADOUT_POS_MIN.y);
+        mainMenu.add(shopPane, SHOP_POS_MIN.x, SHOP_POS_MIN.y);
         
         screenController.addChild(mainMenu);
 
@@ -224,7 +270,7 @@ class MenuScreen extends IGameScreen {
     
     //TODO
     //Transitions the screen to a rectangle and zooms appropriately
-    public function transitionToRect(min:Point/*, max:Point*/) {
+    public function transitionToRect(min:Point, max:Point) {
            distance = min.subtract(currentMin);
            delta.setTo(( -distance.x * LERP_SPEED), -distance.y * LERP_SPEED);
            currentMin = min;
@@ -236,7 +282,10 @@ class MenuScreen extends IGameScreen {
             mainMenu.transformationMatrix.translate(delta.x, delta.y);
             backGround.transformationMatrix.translate(delta.x, delta.y);
             distance = distance.add(delta);
-            if (distance.equals(ZERO)) { 
+            trace(distance.toString());
+            if (Math.abs(distance.x) < .2 || Math.abs(distance.y) < .2) { 
+                mainMenu.transformationMatrix.translate(-distance.x, -distance.y);
+                backGround.transformationMatrix.translate(-distance.x, -distance.y);
                 transitionDone = true;
             }            
         }
@@ -264,19 +313,19 @@ class MenuScreen extends IGameScreen {
     }
     
     private function transitionToHome():Void {
-        transitionToRect(HOME_POS.clone());
+        transitionToRect(HOME_POS_MIN.clone(), HOME_POS_MAX.clone());
     }
 
     private function transitionToLevelSelect():Void {
-        transitionToRect(LEVEL_SELECT_POS.clone());
+        transitionToRect(LEVEL_SELECT_POS_MIN.clone(), LEVEL_SELECT_POS_MAX.clone());
     }
 
     private function transitionToLoadout():Void {
-        transitionToRect(LOADOUT_POS.clone());
+        transitionToRect(LOADOUT_POS_MIN.clone(), LOADOUT_POS_MAX.clone());
     }
     
     private function transitionToShop():Void {
-        transitionToRect(SHOP_POS.clone());
+        transitionToRect(SHOP_POS_MIN.clone(), SHOP_POS_MAX.clone());
     }
     
     //TODO change to BroadcastEvent1 with a string argument for level
