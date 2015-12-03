@@ -133,14 +133,15 @@ class LevelCreator {
             new Entity(),
             new Entity(),
             new Entity(),
+            new Entity(),
+            new Entity(),
         ];
         
-        //Fixed?
         Spawner.createPlayer(state.entities[0], "Man", state.player.position.x, state.player.position.y);
         Spawner.createPlayer(state.entities[1], "Wolf", 0, 0);
         Spawner.createPlayer(state.entities[2], "Robot", 0, 0);
         Spawner.createPlayer(state.entities[3], "SteamGirl", 0, 0);
-        Spawner.createPlayer(state.entities[4], "Sandman", 0, 0);
+        Spawner.createPlayer(state.entities[4], "SandMan", 0, 0);
 
         // Disable all but the first character
         for (i in 1...5) {

@@ -16,7 +16,6 @@ import openfl.text.TextFieldType;
 import openfl.text.TextFormat;
 import openfl.text.TextFormatAlign;
 import ui.ShopElement;
-import ui.ShopPane;
 import ui.UISpriteFactory;
 import ui.Button;
 import ui.Button.ButtonTextFormat;
@@ -175,7 +174,7 @@ class MenuScreen extends IGameScreen {
         //Add button functions
         playButton.bEvent.add(transitionToLevelSelect);
         tutorialButton.bEvent.add(function():Void {
-            screenController.playerData.selectedChars = ["Man", "Wolf", "Robot", "SteamGirl", "Sandman"];
+            //screenController.playerData.selectedChars = ["Man", "Wolf", "Robot"];
             screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/tutorial.lvl");
             screenController.switchToScreen(2);
         });
