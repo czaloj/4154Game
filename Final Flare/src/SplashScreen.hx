@@ -70,7 +70,7 @@ class SplashScreen extends IGameScreen {
         var btf:ButtonTextFormat = {
             tx:150,
             ty:75,
-            font:"Verdana", 
+            font:"BitFont", 
             size:20, 
             color:0x0, 
             bold:false, 

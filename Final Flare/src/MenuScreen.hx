@@ -211,9 +211,9 @@ class MenuScreen extends IGameScreen {
         //INIT SHOP PANE
         shopPane = new ShopPane();
         
-        var evolutionInputBox = createInputTextField(30, 50, 100, 100, "Verdana", 24, 0x000000, true, 0xffffff);
-        var shadynessInputBox = createInputTextField(30, 50, 100, 200, "Verdana", 24, 0x000000, true, 0xffffff);
-        var historicalInputBox = createInputTextField(30, 50, 100, 300, "Verdana", 24, 0x000000, true, 0xffffff);   
+        var evolutionInputBox = createInputTextField(30, 50, 100, 100, "BitFont", 24, 0x000000, true, 0xffffff);
+        var shadynessInputBox = createInputTextField(30, 50, 100, 200, "BitFont", 24, 0x000000, true, 0xffffff);
+        var historicalInputBox = createInputTextField(30, 50, 100, 300, "BitFont", 24, 0x000000, true, 0xffffff);   
         
         shopPane.add(evolutionInputBox);
         shopPane.add(shadynessInputBox);

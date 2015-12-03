@@ -42,7 +42,7 @@ class Button extends DisplayObjectContainer {
      * @param hitTestState The initial value for the SimpleButton hitTest state.
      * @param tog          True if button stays in downState after being pressed. False if the button goes back to upState
      */
-    public function new (upState:Sprite = null, overState:Sprite = null, downState:Sprite = null, hitTestState:Sprite = null, text:String = null, btf:ButtonTextFormat = null, tog:Bool) {
+    public function new (upState:Sprite = null, overState:Sprite = null, downState:Sprite = null, hitTestState:Sprite = null, text:String = null, btf:ButtonTextFormat = null, tog:Bool = false ) {
         super();
         customData = 0;
         clicked = false;

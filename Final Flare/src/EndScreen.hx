@@ -37,15 +37,14 @@ class EndScreen extends IGameScreen {
         backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/TitleScreen.png")));
         screenController.addChild(backGround);
         addStartButton();
-		trace(screenController.playerData.mostRecentScore);
         addScoreTextField();
-		
+        
        
     }
     
     override public function onExit(gameTime:GameTime):Void {
         screenController.removeChild(startButton);
-		screenController.removeChild(myText);
+        screenController.removeChild(myText);
         screenController.removeChild(backGround);
     }
     
@@ -60,24 +59,19 @@ class EndScreen extends IGameScreen {
         // Empty
     }
     private function addScoreTextField() {
-		
-	
-    myText= new TextField(300,300,(screenController.playerData.mostRecentVictory?"Victory":"Defeat")+"\n\nFinal Score: " + screenController.playerData.mostRecentScore,"Verdana", 50,0xFF0000,true);
-    myText.x = 250;
-    myText.y = 75;
-
-	
-    //myText.text = (screenController.playerData.mostRecentVictory?"Victory":"Defeat")+"\n\nFinal Score: " + screenController.playerData.mostRecentScore;
-   // myText.width = 640;
-   // myText.height = 200;
+        
     
+    //myText= new TextField(300,300,(screenController.playerData.mostRecentVictory?"Victory":"Defeat")+"\n\nFinal Score: " + screenController.playerData.mostRecentScore,"Verdana", 50,0xFF0000,true);
+    //myText.x = 250;
+    //myText.y = 75;
+
     screenController.addChild(myText);   
     //flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME,function(_) FontsTutorial.onEnterFrame());
   
-		
-		
-		
-	}
+        
+        
+        
+    }
     private function addStartButton() 
     {
         //Create button from UISpriteFactory
