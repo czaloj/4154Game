@@ -274,19 +274,19 @@ class MenuScreen extends IGameScreen {
     }
     
     private function transitionToHome():Void {
-        transitionToRect(HOME_POS);
+        transitionToRect(HOME_POS.clone());
     }
 
     private function transitionToLevelSelect():Void {
-        transitionToRect(LEVEL_SELECT_POS);
+        transitionToRect(LEVEL_SELECT_POS.clone());
     }
 
     private function transitionToLoadout():Void {
-        transitionToRect(LOADOUT_POS);
+        transitionToRect(LOADOUT_POS.clone());
     }
     
     private function transitionToShop():Void {
-        transitionToRect(SHOP_POS);
+        transitionToRect(SHOP_POS.clone());
     }
     
     //TODO change to BroadcastEvent1 with a string argument for level
