@@ -108,10 +108,10 @@ class MenuScreen extends IGameScreen {
         screenController.levelModifiers.characterWeapons = [
             initialWeapons[0],
             initialWeapons[1],
-            initialWeapons[0],
-            initialWeapons[1],
+            initialWeapons[2],
+            initialWeapons[3],
             initialWeapons[0], // For testing only
-            initialWeapons[2]
+            initialWeapons[4]
         ];
         var weaponParams:WeaponGenParams = new WeaponGenParams();
         weaponParams.evolutionPoints = 500;
