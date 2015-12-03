@@ -137,6 +137,7 @@ class MenuScreen extends IGameScreen {
 
     override public function update(gameTime:GameTime):Void {
         updateCamera();
+        trace(loadoutPane.selected.toString());
 
     }
 
@@ -348,6 +349,12 @@ class MenuScreen extends IGameScreen {
     
     //TODO change to BroadcastEvent1 with a string argument for level
     private function startLevel():Void {
+        var i = 0;
+        while (i < loadoutPane.selected.length) {
+            screenController.playerData.selectedChars.push((loadoutPane.selected[i]));
+            i++;
+        }
+        
         switch levelSelectPane.selectedLevel {
             case 0:
                 screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/easy.lvl");
