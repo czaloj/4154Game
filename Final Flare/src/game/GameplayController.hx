@@ -260,9 +260,9 @@ class GameplayController {
 						state.victory = false;
 						state.gameOver = true;
 				}
-				if (entity.id == "Boss" || entity.id2 == "Boss") {
+				if (entity.id == "Boss" ){//|| entity.id2 == "Boss") {
 						state.victory = true;
-						state.
+						state.gameOver = true;
 				}
                 deletingEntities.push(entity);
             }
