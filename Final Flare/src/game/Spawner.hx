@@ -67,6 +67,7 @@ class Spawner {
         e.width = 0.8;
         e.height = 1.9;
         e.headOffset.set(0, 0.6);
+        e.weaponOffset.set(0.2, 0.2);
         e.maxMoveSpeed = 7;
         e.groundAcceleration = 0.9;
         e.airAcceleration = 0.3;
@@ -100,6 +101,7 @@ class Spawner {
         e.width = 0.9;
         e.height = 1.9;
         e.headOffset.setV(enemyInfo.headOffset);
+        e.weaponOffset.setV(enemyInfo.weaponOffset);
         e.maxMoveSpeed = enemyInfo.maxMoveSpeed;
         e.groundAcceleration = enemyInfo.groundAcceleration;
         e.airAcceleration = enemyInfo.airAcceleration;

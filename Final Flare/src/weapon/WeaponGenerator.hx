@@ -40,7 +40,7 @@ class WeaponBuildWorkspace {
 }
 
 class WeaponGenerator {
-    public static inline var GUN_SCALE:Float = 64.0;
+    public static inline var GUN_SCALE:Float = 48.0;
     
     // Alpha mask levels for color generation
     public static var ALPHA_LEVEL_TRUE_COLOR:UInt = 101;

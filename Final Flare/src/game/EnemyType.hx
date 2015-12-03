@@ -10,17 +10,19 @@ class EnemyType
     public var damageType:Int;
     public var health: Int;
     public var headOffset:B2Vec2 = new B2Vec2();
+    public var weaponOffset:B2Vec2 = new B2Vec2();
     public var maxMoveSpeed: Float;
     public var groundAcceleration: Float;
     public var airAcceleration: Float;
     public var attackFrom: Float;
     public var standFrom: Float;
 
-    public function new(cooldown:Int, damageT:Int, hp: Int, hdOffset:B2Vec2, maxSpeed: Float, gndAcc: Float, airAcc: Float, attFrom: Float, stFrom:Float) {
+    public function new(cooldown:Int, damageT:Int, hp: Int, hdOffset:B2Vec2, wOff:B2Vec2, maxSpeed: Float, gndAcc: Float, airAcc: Float, attFrom: Float, stFrom:Float) {
         spawnCooldown = cooldown;
         damageType = damageT;
         health = hp;
         headOffset.setV(hdOffset);
+        weaponOffset.setV(wOff);
         maxMoveSpeed = maxSpeed;
         groundAcceleration = gndAcc;
         airAcceleration = airAcc;
@@ -39,6 +41,7 @@ class EnemyType
                 50,
                 //headOffset
                 new B2Vec2(0, 0.6),
+                new B2Vec2(0.3, 0.0),
                 //maxMoveSpeed
                 6,
                 //groundAcceleration
@@ -58,6 +61,7 @@ class EnemyType
                 50,
                 //headOffset
                 new B2Vec2(0, 0.6),
+                new B2Vec2(0.4, 0.2),
                 //maxMoveSpeed
                 7,
                 //groundAcceleration
@@ -77,6 +81,7 @@ class EnemyType
                 250,
                 //headOffset
                 new B2Vec2(0, 0.6),
+                new B2Vec2(0.4, 0.2),
                 //maxMoveSpeed
                 4,
                 //groundAcceleration
@@ -96,6 +101,7 @@ class EnemyType
                 1500,
                 //headOffset
                 new B2Vec2(0, 0.6),
+                new B2Vec2(0.4, 0.2),
                 //maxMoveSpeed
                 3,
                 //groundAcceleration
