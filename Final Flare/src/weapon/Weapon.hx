@@ -143,6 +143,7 @@ class Weapon {
                     // Place on cooldown
                     dt -= burstCooldown;
                     burstCooldown = data.burstPause;
+                    burstsLeft--;
                     
                     // Check for reload
                     if ((usesPerformed + data.usesPerActivation) > data.useCapacity) {

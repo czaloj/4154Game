@@ -5,6 +5,7 @@ import haxe.ds.StringMap;
 import openfl.geom.Matrix;
 import weapon.projectile.Projectile;
 import weapon.projectile.ProjectileData;
+import weapon.WeaponPart.DamagePolygonData;
 import weapon.WeaponPart.ProjectileExitData;
 import weapon.WeaponData.FiringMode;
 
@@ -38,6 +39,11 @@ class PartRegistry {
         new ColorScheme(0xffdddddd, 0xff0043e0, 0xff001284, 0, 0, 1, 1),
         new ColorScheme(0xff101010, 0xff303030, 0xff500000, 0, 0, 1, 1)
     ];
+    private static var SCHEMES_METALLIC:Array<ColorScheme> = [
+        new ColorScheme(0xffc3c3c3, 0xffaaaaaa, 0xff404040, 0, 0, 1, 1),
+        new ColorScheme(0xff874200, 0xff032150, 0xff888888, 0, 0, 1, 1),
+        new ColorScheme(0xffe01010, 0xff201010, 0xffbbcc00, 0, 0, 1, 1)
+    ];
     
     private static function rotated(m:Matrix, a:Float):Matrix {
         var mr:Matrix = new Matrix();
@@ -61,6 +67,35 @@ class PartRegistry {
                     new WeaponProperty(WeaponPropertyType.IS_BASE, true),
                     new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Conventional"),
                     SCHEMES_GENERIC
+                ]),
+            
+            new WeaponPart(
+                "Handle.Simple",
+                WeaponPartType.RECEIVER,
+                5, 0, 0,
+                35, 2,
+                4, 11,
+                2, 6,
+                [
+                    new WeaponPartChild(new Matrix(1, 0, 0, 1, 2, 0), true, [requirementPart(WeaponPartType.BARREL), requirementSubclass(["Melee"])]),
+                    new WeaponProperty(WeaponPropertyType.IS_BASE, true),
+                    new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Melee"),
+                    SCHEMES_METALLIC
+                ]),
+                
+            new WeaponPart(
+                "Handle.Ergonomic",
+                WeaponPartType.RECEIVER,
+                45, 0, 0,
+                44, 2,
+                8, 15,
+                4, 8,
+                [
+                    new WeaponPartChild(new Matrix(1, 0, 0, 1, 4, 0), true, [requirementPart(WeaponPartType.BARREL), requirementSubclass(["Melee"])]),
+                    new WeaponProperty(WeaponPropertyType.IS_BASE, true),
+                    new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Melee"),
+                    new WeaponProperty(WeaponPropertyType.DAMAGE_INCREASE, 7),
+                    SCHEMES_METALLIC
                 ]),
                 
             new WeaponPart(
@@ -94,7 +129,7 @@ class PartRegistry {
                     new WeaponPartChild(new Matrix(1, 0, 0, 1, 0, 0), true, [requirementPart(WeaponPartType.PROJECTILE), requirementSubclass(["Bullet"])]),
                     new WeaponProperty(WeaponPropertyType.EXIT_INFORMATION, new ProjectileExitData(62, 5.5, 1, 0, 0.3, 2400)),
                     new WeaponProperty(WeaponPropertyType.USES_PER_ACTIVATION, 1),
-                    new WeaponProperty(WeaponPropertyType.ACTIVATION_COOLDOWN, 0.35),
+                    new WeaponProperty(WeaponPropertyType.ACTIVATION_COOLDOWN, 0.85),
                     new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Generic"),
                     new WeaponProperty(WeaponPropertyType.FIRING_MODE, FiringMode.BURST),
                     new WeaponProperty(WeaponPropertyType.BURST_COUNT, 3),
@@ -214,21 +249,49 @@ class PartRegistry {
                 ]),
                 
             new WeaponPart(
-                "Projectile.Melee",
-                WeaponPartType.PROJECTILE,
+                "Club.Ragged",
+                WeaponPartType.BARREL,
                 80, 0, 0,
-                1017, 5,
-                7, 7,
-                4, 4,
+                214, 1,
+                8, 25,
+                4, 25,
                 [
-                    new WeaponProperty(WeaponPropertyType.PROJECTILE_DATA, { 
-                        var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_MELEE);
-                        pd.damage = 10;
-                        pd.damageFriendly = 0;
-                        pd;
-                    }),
+                    new WeaponProperty(WeaponPropertyType.DAMAGE_POLYGON, new DamagePolygonData(4, 12, 0.4, 1.0, 10, 0.2)),
+                    new WeaponProperty(WeaponPropertyType.USES_PER_ACTIVATION, 0),
+                    new WeaponProperty(WeaponPropertyType.ACTIVATION_COOLDOWN, 0.5),
+                    new WeaponProperty(WeaponPropertyType.FIRING_MODE, FiringMode.AUTOMATIC),
                     new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Melee")
                 ]),
+                
+            new WeaponPart(
+                "Club.Nightstick",
+                WeaponPartType.BARREL,
+                200, 0, 0,
+                225, 1,
+                4, 28,
+                2, 28,
+                [
+                    new WeaponProperty(WeaponPropertyType.DAMAGE_POLYGON, new DamagePolygonData(2, 12, 0.3, 1.2, 15, 0.1)),
+                    new WeaponProperty(WeaponPropertyType.USES_PER_ACTIVATION, 0),
+                    new WeaponProperty(WeaponPropertyType.ACTIVATION_COOLDOWN, 0.3),
+                    new WeaponProperty(WeaponPropertyType.FIRING_MODE, FiringMode.AUTOMATIC),
+                    new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Melee")
+                ]),
+                
+            new WeaponPart(
+                "Sword.Excavator",
+                WeaponPartType.BARREL,
+                600, 0, 0,
+                232, 1,
+                28, 74,
+                14, 68,
+                [
+                    new WeaponProperty(WeaponPropertyType.DAMAGE_POLYGON, new DamagePolygonData(2, 12, 1.0, 2.0, 40, 0.5)),
+                    new WeaponProperty(WeaponPropertyType.USES_PER_ACTIVATION, 0),
+                    new WeaponProperty(WeaponPropertyType.ACTIVATION_COOLDOWN, 0.7),
+                    new WeaponProperty(WeaponPropertyType.FIRING_MODE, FiringMode.AUTOMATIC),
+                    new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Melee")
+                ])
         ];
         
         var m:StringMap<WeaponPart> = new StringMap<WeaponPart>();

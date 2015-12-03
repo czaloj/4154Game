@@ -9,22 +9,28 @@ import game.GameState;
 
 class MeleeProjectile extends Projectile {
     public var body:B2Body;
+    public var timeDelayed:Float = 0;
+    
     public function new(d:ProjectileData, e:Entity) {
         super(d, e);
     }
 
     override public function buildBehavior():Void {
+        timeDelayed = data.timer;
         fUpdate = updateSimple;
     }
+    public function updateDelay(dt:Float, s:GameState):Void {
+        timeDelayed -= dt;
+        if (timeDelayed < 0) fUpdate = updateSimple;
+    }
     public function updateSimple(dt:Float, s:GameState):Void {
-        velocity.y += data.gravityAcceleration * dt;
-
         var d = new DamagePolygon();
         setupDamage(d);
         d.x = position.x;
         d.y = position.y;
-        d.width = 2;
-        d.height = 0.6;
+        
+        d.width = data.damageWidth;
+        d.height = data.damageHeight;
 
         s.damage.push(d);
         killFlag = true;

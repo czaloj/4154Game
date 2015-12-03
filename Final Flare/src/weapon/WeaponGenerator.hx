@@ -25,6 +25,7 @@ import weapon.projectile.ProjectileData;
 import weapon.WeaponData.FiringMode;
 import weapon.WeaponData.ProjectileOrigin;
 import weapon.WeaponGenerator.WeaponBuildWorkspace;
+import weapon.WeaponPart.DamagePolygonData;
 import weapon.WeaponPart.ProjectileExitData;
 
 class WeaponBuildWorkspace {
@@ -109,9 +110,8 @@ class WeaponGenerator {
                     var exitData:ProjectileExitData = p.value;
                     
                     // Calculate exit location of the projectile
-                    var bulletExitTransform:Matrix = new Matrix(exitData.dirX, exitData.dirY, -exitData.dirY, exitData.dirX);
+                    var bulletExitTransform:Matrix = new Matrix(exitData.dirX, exitData.dirY, -exitData.dirY, exitData.dirX, exitData.offX, exitData.offY);
                     bulletExitTransform.concat(l.wsTransform);
-                    bulletExitTransform.translate(exitData.offX, exitData.offY);
                     
                     for (cl in l.children) {
                         if (cl.second.part.type == WeaponPartType.PROJECTILE) {
@@ -125,6 +125,24 @@ class WeaponGenerator {
                             d.projectileOrigins.push(po);
                         }
                     }
+                case WeaponPropertyType.DAMAGE_POLYGON:
+                    var damagePolyData:DamagePolygonData = p.value;
+                    
+                    var pd:ProjectileData = new ProjectileData(ProjectileData.TYPE_MELEE);
+                    pd.damage = damagePolyData.damage;
+                    pd.damageFriendly = 0;
+                    pd.hitFriendly = false;
+                    pd.timer = damagePolyData.timeActive;
+                    pd.damageWidth = damagePolyData.width;
+                    pd.damageHeight = damagePolyData.height;
+                    
+                    var po:ProjectileOrigin = new ProjectileOrigin();
+                    po.exitAngle = 0;
+                    po.velocity = 0;
+                    po.transform = new Matrix(1, 0, 0, 1, damagePolyData.offX, damagePolyData.offY);
+                    po.transform.concat(l.wsTransform);
+                    po.projectileData = pd;
+                    d.projectileOrigins.push(po);
                     
                 case WeaponPropertyType.RELOAD_TIME:
                     d.reloadTime += p.value;

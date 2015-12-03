@@ -2,6 +2,7 @@ package weapon;
 
 import game.ColorScheme;
 import openfl.Assets;
+import openfl.geom.Point;
 import openfl.Lib;
 import starling.display.Sprite;
 import starling.events.Event;
@@ -31,6 +32,23 @@ class ProjectileExitData {
         
         angle = a;
         velocity = v;
+    }
+}
+class DamagePolygonData {
+    public var offX:Float;
+    public var offY:Float;
+    public var width:Float;
+    public var height:Float;
+    public var damage:Int;
+    public var timeActive:Float;
+    
+    public function new(x:Float, y:Float, w:Float, h:Float, damage:Int, t:Float) {
+        offX = x;
+        offY = y;
+        width = w;
+        height = h;
+        this.damage = damage;
+        timeActive = t;
     }
 }
 
