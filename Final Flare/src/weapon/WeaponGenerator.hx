@@ -4,6 +4,7 @@ import game.ColorScheme;
 import game.damage.DamageBullet;
 import game.damage.DamageExplosion;
 import graphics.SpriteSheetRegistry;
+import haxe.ds.ArraySort;
 import haxe.ds.ObjectMap;
 import haxe.ds.StringMap;
 import haxe.macro.Expr.Position;
@@ -86,6 +87,10 @@ class WeaponGenerator {
         }
     }
     private static function traverseProperties(l:WeaponLayer, d:WeaponData, w:WeaponBuildWorkspace):Void {
+        d.evolutionCost += l.part.costEvolution;
+        d.shadynessCost += l.part.costShadyness;
+        d.historicalCost += l.part.costHistorical;
+        
         w.schemes = w.schemes.concat(l.part.schemes);
         for (p in l.part.properties) {
             switch (p.type) {
@@ -205,31 +210,195 @@ class WeaponGenerator {
         for (c in l.children) traverseLayersToList(c.second, a);
     }
     
-    public static function generate(params:WeaponGenParams):WeaponData {
-        // TODO: Generate a real gun
-        var test:WeaponLayer = new WeaponLayer("Receiver.Conventional", [
-            new Pair(0, new WeaponLayer("Barrel.Conventional", [
-                new Pair(0, new WeaponLayer("Magazine.Conventional")),
-                new Pair(1, new WeaponLayer("Stock.Conventional")),
-                (switch (params.shadynessPoints) {
-                    case 0:
-                        new Pair(2, new WeaponLayer("Projectile.Bullet"));
-                    case 1:
-                        new Pair(2, new WeaponLayer("Projectile.Grenade"));
-                    case 2:
-                        new Pair(2, new WeaponLayer("Projectile.Flare"));
-                    default:
-                        new Pair(2, new WeaponLayer("Projectile.Melee"));
-                })
-            ])),
-            new Pair(1, new WeaponLayer("Grip.Conventional"))
-        ]);
+    private static function allowsCost(p:WeaponPart, params:WeaponGenParams):Bool {
+        return p.costEvolution <= params.evolutionPoints && p.costHistorical <= params.historicalPoints && p.costShadyness <= params.shadynessPoints;
+    }
+    private static function subtractCost(p:WeaponPart, params:WeaponGenParams):Void {
+        params.evolutionPoints -= p.costEvolution;
+        params.historicalPoints -= p.costHistorical;
+        params.shadynessPoints -= p.costShadyness;
+    }
+    private static function randomFromArray<T>(l:Array<T>):T {
+        return l[Std.int(Math.random() * l.length)];
+    }
+    private static function randomFromList<T>(l:List<T>):T {
+        var i:Int = Std.int(Math.random() * l.length);
+        for (v in l) {
+            if (i <= 0) return v;
+            i--;
+        }
+        return null;
+    }
+    private static function satisfyingPart(p:WeaponPartChild, params:WeaponGenParams):WeaponPart {
+        var parts:List<WeaponPart> = Lambda.filter(PartRegistry.parts, function(part:WeaponPart):Bool { 
+            if (!allowsCost(part, params)) return false;
+            for (r in p.requirements) {
+                if (!r(part)) return false;
+            }
+            return true;
+        });
+        if (parts == null || parts.length < 1) return null;
+        return randomFromList(parts);
+    }
+    private static function generateOne(params:WeaponGenParams):WeaponData {
+        // Get a base layer
+        var baseParts:List<WeaponPart> = Lambda.filter(PartRegistry.parts, function(p:WeaponPart):Bool { 
+            return allowsCost(p, params) && Lambda.exists(p.properties, function(wp:WeaponProperty):Bool { return wp.type == WeaponPropertyType.IS_BASE && wp.value; });
+        });
+        if (baseParts == null || baseParts.length < 1) return null;
+        var basePart:WeaponPart = randomFromList(baseParts);
+        subtractCost(basePart, params);
+        var baseLayer:WeaponLayer = new WeaponLayer(basePart.name);
+
+
+        // Begin adding parts
+        var optionalParts:Array<Dynamic> = [];
         
-        var data:WeaponData = WeaponGenerator.buildFromParts(test);
-        data.evolutionCost = params.evolutionPoints;
-        data.historicalCost = params.historicalPoints;
-        data.shadynessCost = params.shadynessPoints;
+        // Finalize required parts
+        if (!finalizeRequirements(baseLayer, params)) return null;
+        
+        // Maybe add additional parts
+        var passes:Int = 5;
+        while (Math.random() > 0.5 && passes > 0) {
+            passes--;
+            if (getAllOptional(params, baseLayer, optionalParts)) {
+                // Shuffle
+                for (i in (0...optionalParts.length)) {
+                    var ai:Int = Std.int(Math.random() * optionalParts.length);
+                    var bi:Int = Std.int(Math.random() * optionalParts.length);
+                    var buf = optionalParts[ai];
+                    optionalParts[ai] = optionalParts[bi];
+                    optionalParts[bi] = buf;
+                }
+                
+                // Add a random amount of parts
+                var randomCount:Int = Std.int(Math.random() * (optionalParts.length + 1));
+                for (i in 0...randomCount) {
+                    var parent:WeaponLayer = optionalParts[i].parent;
+                    var child:WeaponPartChild = optionalParts[i].child;
+                    
+                    var newPart:WeaponPart = satisfyingPart(child, params);
+                    if (newPart == null) continue;
+                    
+                    // Make sure this layer is finalized before it can be added
+                    var newLayer:WeaponLayer = new WeaponLayer(newPart.name);
+                    if (finalizeRequirements(newLayer, params)) {
+                        subtractCost(newPart, params);
+                        parent.children.push(new Pair(optionalParts[i].offset, newLayer));
+                    }
+                }
+            }
+        }
+        
+        var data:WeaponData = WeaponGenerator.buildFromParts(baseLayer);
         return data;
+    }
+    private static function finalizeRequirements(baseLayer:WeaponLayer, params:WeaponGenParams):Bool {
+        var oe:Int = params.evolutionPoints;
+        var os:Int = params.shadynessPoints;
+        var oh:Int = params.historicalPoints;
+        
+        var requiredParts:Array<Dynamic> = [];
+        while (getAllRequired(params, baseLayer, requiredParts)) {
+            for (requirement in requiredParts) {
+                var parent:WeaponLayer = requirement.parent;
+                var child:WeaponPartChild = requirement.child;
+                
+                var newPart:WeaponPart = satisfyingPart(child, params);
+                if (newPart == null) {
+                    // We've run out of points, reset data
+                    params.evolutionPoints = oe;
+                    params.shadynessPoints = os;
+                    params.historicalPoints = oh;
+                    return false;
+                }
+                
+                subtractCost(newPart, params);
+                parent.children.push(new Pair(requirement.offset, new WeaponLayer(newPart.name)));
+            }
+            
+            requiredParts = [];
+        }
+        
+        return true;
+    }
+    private static function getAllRequired(params:WeaponGenParams, l:WeaponLayer, listRequired:Array<Dynamic>):Bool {
+        traverse(l, function(wl:WeaponLayer):Void {
+            var i:Int = 0;
+            for (wc in wl.part.children) {
+                if (!Lambda.exists(wl.children, function(p):Bool { return p.first == i; } )) {
+                    if (wc.isRequired) {
+                        listRequired.push( {
+                            parent:wl,
+                            child:wc,
+                            offset:i
+                        });
+                    }
+                }
+                i++;
+            }
+        });
+        return listRequired.length > 0;
+    }
+    private static function getAllOptional(params:WeaponGenParams, l:WeaponLayer, listOptional:Array<Dynamic>):Bool {
+        traverse(l, function(wl:WeaponLayer):Void {
+            var i:Int = 0;
+            for (wc in wl.part.children) {
+                if (!Lambda.exists(wl.children, function(p):Bool { return p.first == i; } )) {
+                    if (!wc.isRequired) {
+                        listOptional.push( {
+                            parent:wl,
+                            child:wc,
+                            offset:i
+                        });
+                    }
+                }
+                i++;
+            }
+        });
+        return listOptional.length > 0;
+    }
+    private static function traverse(l:WeaponLayer, f:WeaponLayer->Void) {
+        f(l);
+        for (c in l.children) traverse(c.second, f);
+    }
+    public static function generate(params:WeaponGenParams):WeaponData {
+        var tries:Int = 20;
+        var weapons:Array<WeaponData> = [];
+        while (tries > 0) {
+            var pCopy:WeaponGenParams = new WeaponGenParams();
+            pCopy.evolutionPoints = params.evolutionPoints;
+            pCopy.shadynessPoints = params.shadynessPoints;
+            pCopy.historicalPoints = params.historicalPoints;
+            var newWeapon:WeaponData = generateOne(pCopy);
+            if (newWeapon != null) weapons.push(newWeapon);
+            tries--;
+        }
+        if (weapons.length < 1) return null;
+        
+        return randomFromArray(weapons);
+        
+        // TODO: Generate a real gun
+        //var test:WeaponLayer = new WeaponLayer("Receiver.Conventional", [
+            //new Pair(0, new WeaponLayer("Barrel.Conventional", [
+                //new Pair(0, new WeaponLayer("Magazine.Conventional")),
+                //new Pair(1, new WeaponLayer("Stock.Conventional")),
+                //(switch (params.shadynessPoints) {
+                    //case 0:
+                        //new Pair(2, new WeaponLayer("Projectile.Bullet"));
+                    //case 1:
+                        //new Pair(2, new WeaponLayer("Projectile.Grenade"));
+                    //case 2:
+                        //new Pair(2, new WeaponLayer("Projectile.Flare"));
+                    //default:
+                        //new Pair(2, new WeaponLayer("Projectile.Melee"));
+                //})
+            //])),
+            //new Pair(1, new WeaponLayer("Grip.Conventional"))
+        //]);
+        //
+        //var data:WeaponData = WeaponGenerator.buildFromParts(test);
+        //return data;
     }
 
     public static function generateInitialWeapons():Array<WeaponData> {
