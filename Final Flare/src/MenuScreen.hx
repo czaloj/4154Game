@@ -209,7 +209,7 @@ class MenuScreen extends IGameScreen {
         //INIT SHOP PANE
         shopPane = new UIPane();
         
-        var evolution = new ui.ShopElement();
+        var evolution = new ui.ShopElement("Evolution Points: ", 2000);
         shopPane.add(evolution);
 
         mainMenu = new UIPane();
