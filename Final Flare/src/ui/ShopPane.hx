@@ -11,7 +11,7 @@ class ShopPane extends Sprite {
         super();
     }
     
-    public function add(object:DisplayObject, tx:Float = 0, ty:Float = 0) {
+    public function add(object:Sprite, tx:Float = 0, ty:Float = 0) {
         object.transform.matrix.translate(tx, ty);
         this.addChild(object);
     }

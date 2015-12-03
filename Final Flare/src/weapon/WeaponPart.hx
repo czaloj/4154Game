@@ -39,11 +39,16 @@ class WeaponPart {
     // The name of the part
     public var name:String;
     public var type:WeaponPartType;
+
+    // The cost of the part
+    public var costEvolution:Int;
+    public var costShadyness:Int;
+    public var costHistorical:Int;
     
     // A list of possible names and color schemes
     public var names(default, null):Array<PartName>;
     public var schemes(default, null):Array<ColorScheme>;
-
+    
     // Texture rectangle in pixels
     public var sx:Int;
     public var sy:Int;
@@ -63,6 +68,7 @@ class WeaponPart {
     public function new(
         n:String,
         pt:WeaponPartType,
+        ce:Int, cs:Int, ch:Int,
         sx:Int, sy:Int,
         w:Int, h:Int,
         offX:Int, offY:Int,
@@ -70,6 +76,10 @@ class WeaponPart {
         ) {
         name = n;
         type = pt;
+        costEvolution = ce;
+        costShadyness = cs;
+        costHistorical = ch;
+        
         // Texture properties
         this.sx = sx;
         this.sy = sy;

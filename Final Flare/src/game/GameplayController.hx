@@ -179,6 +179,9 @@ class GameplayController {
         updateTime(gameTime);
         // TODO: Super old logging code, excise
         count20 -= 1;
+		if (count20 % 300 == 0) {
+			FFLog.recordEvent(17, s.player.position.x +", " + s.player.position.y);
+		}
         if (count20 <= 0)
         {
             count20 = 1200;
@@ -188,10 +191,10 @@ class GameplayController {
                 str += ent.position.x + ", "+ ent.position.y+", ";
             }
             FFLog.recordEvent(8, str + state.time.total);
-			FFLog.recordEvent(17, s.player.position.x +", " + s.player.position.y);
+            
         }
         // TODO: Spawner shouldn't need reference to this
-		
+        
         Spawner.spawn(state, state.time);
 
         // Update looking directions
@@ -205,7 +208,7 @@ class GameplayController {
                         applyEventSpawn(state, cast(event, GameEventSpawn));
                     case GameEvent.TYPE_FLARE:
                         applyEventFlare(state, cast(event, GameEventFlare));
-						FFLog.recordEvent(4, state.player.position.x + ", " + state.player.position.y + ", " +  state.time.total);
+                        FFLog.recordEvent(4, state.player.position.x + ", " + state.player.position.y + ", " +  state.time.total);
                 }
             }
             state.gameEvents = [];
@@ -256,14 +259,14 @@ class GameplayController {
         // Other game logic
         for (entity in state.entitiesNonNull) {
             if (entity.isDead) {
-				if (entity.team == Entity.TEAM_PLAYER) {
-						state.victory = false;
-						state.gameOver = true;
-				}
-				if (entity.id == "Boss" ){//|| entity.id2 == "Boss") {
-						state.victory = true;
-						state.gameOver = true;
-				}
+                if (entity.team == Entity.TEAM_PLAYER) {
+                        state.victory = false;
+                       
+                }
+                if (entity.id == "Boss" ){//|| entity.id2 == "Boss") {
+                        state.victory = true;
+                        state.gameOver = true;
+                }
                 deletingEntities.push(entity);
             }
         }

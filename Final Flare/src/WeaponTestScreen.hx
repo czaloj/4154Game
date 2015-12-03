@@ -5,6 +5,7 @@ import starling.display.DisplayObject;
 import starling.display.Sprite;
 import weapon.WeaponData;
 import weapon.Weapon;
+import weapon.WeaponGenParams;
 import weapon.WeaponLayer;
 import weapon.WeaponGenerator;
 
@@ -36,13 +37,15 @@ class WeaponTestScreen extends IGameScreen {
             new Pair(1, new WeaponLayer("Grip.Conventional"))
         ]);
         
-        data = WeaponGenerator.buildFromParts(test);
+        var params:WeaponGenParams = new WeaponGenParams();
+        params.evolutionPoints = 1000;
+        data = WeaponGenerator.generate(params);
         weaponSprite = WeaponGenerator.buildSprite(data, Assets.getBitmapData("assets/img/Guns.png"));
         
         weaponSprite.x = 400;
         weaponSprite.y = 225;
-        weaponSprite.scaleX *= 80;
-        weaponSprite.scaleY *= -80;
+        weaponSprite.scaleX *= 320;
+        weaponSprite.scaleY *= -320;
         screenController.addChild(weaponSprite);
     }
     override public function onExit(gameTime:GameTime):Void {

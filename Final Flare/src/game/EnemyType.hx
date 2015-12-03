@@ -87,7 +87,7 @@ class EnemyType
                 2,
                 //standFrom
                 1);
-			case "Boss": new game.EnemyType(
+            case "Boss": new game.EnemyType(
                 //spawnCooldown
                 360,
                 //damageType
@@ -106,7 +106,7 @@ class EnemyType
                 2,
                 //standFrom
                 1);
-				
+                
             default: throw 'unknown enemy type!';
         }
     }

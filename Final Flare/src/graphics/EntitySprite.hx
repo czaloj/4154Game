@@ -26,9 +26,9 @@ class EntitySprite extends Sprite {
         super();
         data = e;
         if (data == null)
-		{
-			data = new EntityRenderData("Grunt");
-		}
+        {
+            data = new EntityRenderData("Grunt");
+        }
        head = new StaticSprite(s, data.entityType + EntityRenderData.SPRITE_HEAD);
         head.width = data.widthHead;
         head.height = data.heightHead;

@@ -13,46 +13,46 @@ class Spawner {
 
     public var id:String; // Identifying tag
     public var position:Point = new Point(); // Spawner position
-	public var turnedOn:Bool;
-	public var id2:String; //trolly shit not necessary
+    public var turnedOn:Bool;
+    public var id2:String; //trolly shit not necessary
     public function new(id:String = null, x:Float = 0, y:Float = 0) {
         this.id = id;
         position.x = x;
         position.y = y;
-		
+        
     }
     public static function spawn(state: GameState, gameTime:GameTime) {
         // TODO: Use advanced spawning logic
         // TODO: factor in difficulty
         var spawnCount:Int = 0;
-		
+        
         for (spawner in state.spawners) {
-			if (state.score < state.scoreThreshold) {
-					spawner.turnedOn = true;
-			}
-			if (state.score > state.scoreThreshold) {
-				spawner.turnedOn = false;
-			}
-			if (!state.bossFought &&state.score>state.scoreThreshold) {
-				state.spawners[0].id2 = "Boss";
-				state.spawners[0].turnedOn = true;
-				state.spawners[0].id = "Boss";
-			}
+            if (state.score < state.scoreThreshold) {
+                    spawner.turnedOn = true;
+            }
+            if (state.score > state.scoreThreshold) {
+                spawner.turnedOn = false;
+            }
+            if (!state.bossFought &&state.score>state.scoreThreshold) {
+                state.spawners[0].id2 = "Boss";
+                state.spawners[0].turnedOn = true;
+                state.spawners[0].id = "Boss";
+            }
             if ((state.entities.length + spawnCount - 5) < 100) {
                 var type = EnemyType.make(spawner.id);
                 if (spawner.turnedOn&&(gameTime.frame % (Math.max(5,type.spawnCooldown - 50 * Std.int(Math.log(state.score)))) == 0)) {
                     state.gameEvents.push(new GameEventSpawn(spawner.position.x, spawner.position.y, spawner.id));
                     spawnCount++;
-					if (spawner.id == "Boss"||spawner.id2 =="Boss")
-					{
-						state.spawners[0].turnedOn = false;
-						state.bossFought = true;
-					}
+                    if (spawner.id == "Boss"||spawner.id2 =="Boss")
+                    {
+                        state.spawners[0].turnedOn = false;
+                        state.bossFought = true;
+                    }
                 }
             }
         }
     }
-	
+    
 
     public static function createPlayer(e:Entity, type:String, x:Float, y:Float):Void {
         e.id = type;

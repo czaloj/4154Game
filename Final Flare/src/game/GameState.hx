@@ -94,7 +94,7 @@ class GameState {
     // Time-keeping information
     public var time:GameTime = new GameTime();
     public var timeMultiplier:Float = 1.0; // Can be used to speed-up or slow-down the state simulation
-
+	public var markedtime:Float;
     // Game object information
     public var player:Entity;
     public var entities:Array<Entity> = new Array<Entity>();
@@ -117,11 +117,11 @@ class GameState {
 
     // Scoring information
     public var score:Int = 0;
-	public var scoreThreshold:Int = 5;
-	
-	public var victory:Bool;
-	public var gameOver:Bool;
-	public var bossFought:Bool = false;
+    public var scoreThreshold:Int = 5;
+    
+    public var victory:Bool;
+    public var gameOver:Bool;
+    public var bossFought:Bool = false;
     public var comboMultiplier:Int = 1; // How much score is multiplied before being applied to the total score
     public var comboPercentComplete:Float = 0.0; // Ratio of how many points left until the next combo level (0-1)
 
