@@ -44,7 +44,8 @@ class ScreenController extends Sprite {
             new MenuScreen(this),
             new GameplayScreen(this),
             new LevelEditorScreen(this),
-            new WeaponTestScreen(this)
+            new WeaponTestScreen(this),
+            new EndScreen(this)
         ];
         activeScreen = screens[0];
         

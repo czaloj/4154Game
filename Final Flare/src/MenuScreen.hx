@@ -3,37 +3,43 @@ package;
 import game.GameLevel;
 import game.MenuLevelModifiers;
 import haxe.Unserializer;
-import openfl.events.Event;
 import flash.net.FileReference;
 import flash.utils.ByteArray;
+import openfl._legacy.display.HybridStage;
+import openfl.display.Sprite;
+import openfl.events.Event;
 import openfl.geom.Point;
-import starling.display.Image;
-import ui.LoadoutPane;
-import ui.UICharacter;
+import openfl.Assets;
+import openfl.text.TextField;
+import openfl.text.TextFieldAutoSize;
+import openfl.text.TextFieldType;
+import openfl.text.TextFormat;
+import openfl.text.TextFormatAlign;
+import ui.ShopPane;
+import ui.UISpriteFactory;
+import ui.Button;
+import ui.Button.ButtonTextFormat;
 import ui.UIPane;
 import ui.LevelSelectPane;
+import ui.LoadoutPane;
+import ui.UICharacter;
 import weapon.WeaponData;
 import weapon.WeaponGenerator;
 import weapon.WeaponGenParams;
-import ui.Button;
-import ui.Button.ButtonTextFormat;
-import ui.UISpriteFactory;
-import openfl.Assets;
-import starling.display.Sprite;
+import starling.core.Starling;
+import starling.display.Image;
 import starling.textures.Texture;
 import starling.utils.HAlign;
 import starling.utils.VAlign;
 import starling.text.TextField;
 
-
 class MenuScreen extends IGameScreen {
     public static inline var LERP_SPEED:Float = .02;
-    public static var ZERO:Point = new Point(0, 0);
-    
     public static var HOME_POS:Point = new Point(0, 0);
     public static var LEVEL_SELECT_POS = new Point(1000, 125);
     public static var LOADOUT_POS = new Point(1000, 600);
     public static var SHOP_POS:Point = new Point(0, 600);
+    public static var ZERO:Point = new Point(0, 0); 
     
     //Current position of camera
     public var currentMin:Point = new Point();
@@ -51,7 +57,7 @@ class MenuScreen extends IGameScreen {
     private var homePane:UIPane; //This didn't need any special functionality so it's a generic pane
     private var levelSelectPane:LevelSelectPane;
     private var loadoutPane:LoadoutPane;
-    private var shopPane:UIPane;
+    private var shopPane:ShopPane;
 
     private var uif:UISpriteFactory;  //Buttons are created from UISpriteFactory    
     private var backGround:Image;     //Background
@@ -73,8 +79,8 @@ class MenuScreen extends IGameScreen {
         uif = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         
         currentMin.setTo(0, 0);
-        currentMax.setTo(800, 450);
-        
+        delta.setTo(0, 0);
+        distance.setTo(0, 0);
         initPanes();
 
         FFLog.recordMenuStart();
@@ -107,8 +113,10 @@ class MenuScreen extends IGameScreen {
     }
 
     override public function onExit(gameTime:GameTime):Void {
+        trace("hi");
         screenController.removeChild(backGround);
         screenController.removeChild(mainMenu);
+        Starling.current.nativeOverlay.removeChild(shopPane);
         FFLog.recordMenuEnd();
     }
 
@@ -155,6 +163,7 @@ class MenuScreen extends IGameScreen {
             screenController.removeChild(bg);
             screenController.switchToScreen(3);
         });
+        shopButton.bEvent.add(transitionToShop);
         
         //Initialize UIPane and add buttons
         homePane = new UIPane();
@@ -199,15 +208,27 @@ class MenuScreen extends IGameScreen {
         
         loadoutPane.add(confirmButton, 400 - confirmButton.width / 2, 375);
         
+        //INIT SHOP PANE
+        shopPane = new ShopPane();
+        
+        var evolutionInputBox = createInputTextField(30, 50, 100, 100, "BitFont", 24, 0x000000, true, 0xffffff);
+        var shadynessInputBox = createInputTextField(30, 50, 100, 200, "BitFont", 24, 0x000000, true, 0xffffff);
+        var historicalInputBox = createInputTextField(30, 50, 100, 300, "BitFont", 24, 0x000000, true, 0xffffff);   
+        
+        shopPane.add(evolutionInputBox);
+        shopPane.add(shadynessInputBox);
+        shopPane.add(historicalInputBox);
+        shopPane.transform.matrix.translate(SHOP_POS.x, SHOP_POS.y);
+        
         mainMenu = new UIPane();
         mainMenu.add(homePane, HOME_POS.x, HOME_POS.y);
         mainMenu.add(levelSelectPane, LEVEL_SELECT_POS.x, LEVEL_SELECT_POS.y);
+        trace(LOADOUT_POS.toString());
         mainMenu.add(loadoutPane, LOADOUT_POS.x, LOADOUT_POS.y);
         
         screenController.addChild(mainMenu);
-        
-        //INIT SHOP PANE
-        shopPane = new UIPane();
+        Starling.current.nativeOverlay.addChild(shopPane);
+
     }
     
     //TODO
@@ -223,6 +244,7 @@ class MenuScreen extends IGameScreen {
         if (!transitionDone) {
             mainMenu.transformationMatrix.translate(delta.x, delta.y);
             backGround.transformationMatrix.translate(delta.x, delta.y);
+            Starling.current.nativeOverlay.transform.matrix.translate(delta.x, delta.y);
             distance = distance.add(delta);
             if (distance.equals(ZERO)) { 
                 transitionDone = true;
@@ -230,20 +252,41 @@ class MenuScreen extends IGameScreen {
         }
     }
     
+    private function createInputTextField(height:Float, width:Float, x:Float = 0, y:Float = 0, font:String, fontSize:Float, fontColor:UInt, bg:Bool, bgColor:UInt = null):Sprite {
+        var sprite:Sprite = new Sprite();
+        
+        // Create default text format
+        var textFormat:TextFormat = new TextFormat(font, fontSize, fontColor);
+        textFormat.align = TextFormatAlign.CENTER;
+
+        // Create default text format
+        var tf = new openfl.text.TextField();
+        tf.height = height;
+        tf.width = width;
+        tf.x = x;
+        tf.y = y;
+        tf.defaultTextFormat = textFormat;
+        tf.type = TextFieldType.INPUT;
+        tf.background = bg;
+        tf.backgroundColor = bgColor;
+        sprite.addChild(tf);
+        return sprite;
+    }
+    
     private function transitionToHome():Void {
-        transitionToRect(HOME_POS);
+        transitionToRect(HOME_POS.clone());
     }
 
     private function transitionToLevelSelect():Void {
-        transitionToRect(LEVEL_SELECT_POS);
+        transitionToRect(LEVEL_SELECT_POS.clone());
     }
 
     private function transitionToLoadout():Void {
-        transitionToRect(LOADOUT_POS);
+        transitionToRect(LOADOUT_POS.clone());
     }
     
     private function transitionToShop():Void {
-        transitionToRect(SHOP_POS);
+        transitionToRect(SHOP_POS.clone());
     }
     
     //TODO change to BroadcastEvent1 with a string argument for level

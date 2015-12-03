@@ -36,7 +36,7 @@ class LevelSelectPane extends UIPane
         var btf:ButtonTextFormat = {
             tx:100,
             ty:35,
-            font:"Verdana",
+            font:"BitFont",
             size:20,
             color:0x0,
             bold:false,

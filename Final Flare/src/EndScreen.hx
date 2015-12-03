@@ -6,6 +6,7 @@ import starling.display.DisplayObject;
 import starling.display.Image;
 import ui.Button;
 import ui.Button.ButtonTextFormat;
+import ui.UIPane;
 import ui.UISpriteFactory;
 import openfl.Assets;
 import starling.display.Sprite;
@@ -14,12 +15,13 @@ import starling.utils.HAlign;
 import starling.utils.VAlign;
 import starling.text.TextField;
 
-class SplashScreen extends IGameScreen {
+
+class EndScreen extends IGameScreen {
     private var backGround:Image;  //Background
     private var startButton:Button;
     private var mousePosX:Float;
     private var mousePosY:Float;
-    
+    private var myText:TextField;
     public function new(sc:ScreenController) {
         super(sc);
     }
@@ -32,15 +34,17 @@ class SplashScreen extends IGameScreen {
     }
     
     override public function onEntry(gameTime:GameTime):Void {
-        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/accurateBack.png")));
+        backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/TitleScreen.png")));
         screenController.addChild(backGround);
         addStartButton();
+        addScoreTextField();
         
-        Composer.playMusicTrack("Menu1"); // TODO: Just tell composer to play menu music
+       
     }
     
     override public function onExit(gameTime:GameTime):Void {
         screenController.removeChild(startButton);
+        screenController.removeChild(myText);
         screenController.removeChild(backGround);
     }
     
@@ -54,7 +58,20 @@ class SplashScreen extends IGameScreen {
     override public function draw(gameTime:GameTime):Void {
         // Empty
     }
+    private function addScoreTextField() {
+        
     
+    //myText= new TextField(300,300,(screenController.playerData.mostRecentVictory?"Victory":"Defeat")+"\n\nFinal Score: " + screenController.playerData.mostRecentScore,"Verdana", 50,0xFF0000,true);
+    //myText.x = 250;
+    //myText.y = 75;
+
+    screenController.addChild(myText);   
+    //flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME,function(_) FontsTutorial.onEnterFrame());
+  
+        
+        
+        
+    }
     private function addStartButton() 
     {
         //Create button from UISpriteFactory
@@ -73,8 +90,8 @@ class SplashScreen extends IGameScreen {
         };
 
         //Create Button and position it
-        startButton = uif.createButton(200, 66, "START GAME", btf, false);  
-        startButton.transformationMatrix.translate(400 - startButton.width / 2, 300);
+        startButton = uif.createButton(200, 66, "Main Menu", btf, false);  
+        startButton.transformationMatrix.translate(550, 325);
         
         screenController.addChild(startButton);
     }

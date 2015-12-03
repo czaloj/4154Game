@@ -59,23 +59,23 @@ class AIController {
         var y:Float = entity.position.y;
         entity.targetX = state.player.position.x;
         entity.targetY = state.player.position.y;
-		if (y ==target.y)//< target.y+.05 && y > target.y-.05)
-		{
-			entity.controlDefault = true;
-		}
-		if(entity.controlDefault){ //simply looks for player. hopefully this is only true if player is on same level or a level that can be fallen to from current one
-			entity.direction = x > target.x ? -1 : 1;
-		}
-		entity.count++;
-					if (entity.count % 17 == 0) {
-						if (x == entity.prevX) {
-							entity.controlDefault = false;
-							entity.direction *= -1;
-						}
-						entity.prevX = x;
-					}
+        if (y ==target.y)//< target.y+.05 && y > target.y-.05)
+        {
+            entity.controlDefault = true;
+        }
+        if(entity.controlDefault){ //simply looks for player. hopefully this is only true if player is on same level or a level that can be fallen to from current one
+            entity.direction = x > target.x ? -1 : 1;
+        }
+        entity.count++;
+                    if (entity.count % 17 == 0) {
+                        if (x == entity.prevX) {
+                            entity.controlDefault = false;
+                            entity.direction *= -1;
+                        }
+                        entity.prevX = x;
+                    }
 
-		var prevX:Float = x;
+        var prevX:Float = x;
         var count:Int = 1;
 
         if (Math.abs(state.player.position.x - x) <= 2) {
@@ -86,57 +86,57 @@ class AIController {
         }
         entity.up = false;
         //if (entity.isGrounded) {
-			if(y < entity.yProblem -.05) { //return controls to default
-					entity.controlDefault = true;
-				}
+            if(y < entity.yProblem -.05) { //return controls to default
+                    entity.controlDefault = true;
+                }
             if (y>target.y+.05) {
-				if (x < target.x+.1 && x > target.x -.1 && entity.get_isGrounded()) {
-					entity.yProblem = y;
-					entity.prevX = x;
-					entity.count = 1;
-					entity.direction = x<20? 1:-1;
-					entity.controlDefault = false;
-				}
+                if (x < target.x+.1 && x > target.x -.1 && entity.get_isGrounded()) {
+                    entity.yProblem = y;
+                    entity.prevX = x;
+                    entity.count = 1;
+                    entity.direction = x<20? 1:-1;
+                    entity.controlDefault = false;
+                }
 
-				/*if(!(y < entity.yProblem -.05)) {
-					entity.count++;
-					if (entity.count % 17 == 0) {
-						if (x == entity.prevX) {
-							controlDefault = false;
-							entity.direction *= -1;
-						}
-						entity.prevX = x;
-					}
+                /*if(!(y < entity.yProblem -.05)) {
+                    entity.count++;
+                    if (entity.count % 17 == 0) {
+                        if (x == entity.prevX) {
+                            controlDefault = false;
+                            entity.direction *= -1;
+                        }
+                        entity.prevX = x;
+                    }
 
 
-				}*/
+                }*/
 
             }
             if (y < target.y-.05) {
 
                 var displacement = x - findPlatformAbove(state, Std.int(x), Std.int(y));
-				if(x < target.x+.05 && x > target.x -.05 ){
-					entity.direction = displacement < 0 ? -1:1;
-					entity.controlDefault = false;
+                if(x < target.x+.05 && x > target.x -.05 ){
+                    entity.direction = displacement < 0 ? -1:1;
+                    entity.controlDefault = false;
 
-				}
-				entity.count++;
-				if (entity.count % 17 == 0) {
-					if (x==entity.prevX) {
-							entity.direction *= -1;
-						}
-						entity.prevX = x;
-					}
+                }
+                entity.count++;
+                if (entity.count % 17 == 0) {
+                    if (x==entity.prevX) {
+                            entity.direction *= -1;
+                        }
+                        entity.prevX = x;
+                    }
                 if (displacement == 0) {
-					entity.controlDefault = false;
+                    entity.controlDefault = false;
                 }
                 else if (displacement > 5) {
 
-					return;
+                    return;
                 }
                 else if (displacement < -5) {
-					//entity.direction = -1;
-					return;
+                    //entity.direction = -1;
+                    return;
                 }
                 else {
                     entity.up = true;

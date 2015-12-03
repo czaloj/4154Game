@@ -6,6 +6,7 @@ import game.Region;
 import graphics.SpriteSheetRegistry;
 import haxe.ds.IntMap;
 import openfl.Lib;
+import openfl.Assets;
 import openfl.geom.Point;
 import openfl.ui.Keyboard;
 import openfl.events.Event;
@@ -14,6 +15,8 @@ import openfl.events.KeyboardEvent;
 import starling.utils.Color;
 import starling.text.TextField;
 import starling.display.Quad;
+import starling.display.Image;
+import starling.textures.Texture;
 import flash.net.FileReference;
 
 class LevelEditorScreen extends IGameScreen {
@@ -71,9 +74,11 @@ class LevelEditorScreen extends IGameScreen {
     private var env_item:Array<Array<String>> = [[],[],[]];
     
     private var cur_region:Point;
-    private var regions:Array<Quad> = [];
+    private var regions:Array<Quad> = [null];
     private var connections:Array<Array<Dynamic>> = [[]];
     private var selected_region:Int = 0;
+    private var walkArrow:Texture = Texture.fromBitmapData(Assets.getBitmapData("assets/WalkArrow.png"));
+    private var jumpArrow:Texture = Texture.fromBitmapData(Assets.getBitmapData("assets/JumpArrow.png"));
     private var REGION_SELECTED:Bool = false;
 
     private var TILE_SHEET_SET:Bool = false;
@@ -171,7 +176,7 @@ class LevelEditorScreen extends IGameScreen {
                     case 1: // draw
                         regionMap.setID(tx,ty,++numRegions);
                         connections.push([]);
-                        regions[++numRegions] = new Quad(TILE_HALF_WIDTH,TILE_HALF_WIDTH,REGION_COLOR);
+                        regions[numRegions] = new Quad(TILE_HALF_WIDTH,TILE_HALF_WIDTH,REGION_COLOR);
                         regions[numRegions].alpha = .25;
                         regions[numRegions].x = wx;
                         regions[numRegions].y = wy;
@@ -324,7 +329,9 @@ class LevelEditorScreen extends IGameScreen {
                 var r = regions[i];
                 if (r!= null && r.visible) {
                     var reg = new Region(i);
-                    reg.position = new Point((r.x + r.width/2) * TILE_HALF_WIDTH,(r.y + r.height/2) * TILE_HALF_WIDTH);
+                    reg.minPoint = new Point((r.x) / TILE_HALF_WIDTH,(r.y) / TILE_HALF_WIDTH);
+                    reg.maxPoint = new Point((r.x + r.width) / TILE_HALF_WIDTH,(r.y + r.height) / TILE_HALF_WIDTH);
+                    reg.position = new Point((r.x + r.width/2) / TILE_HALF_WIDTH,(r.y + r.height/2) / TILE_HALF_WIDTH);
                     level.regionLists.set(i,reg);
                 }
             }
@@ -373,8 +380,15 @@ class LevelEditorScreen extends IGameScreen {
         numRegions = level.nregions;
         regionMap.tmap = level.regions;
         for (r in level.regionLists) {
-            // regions[r.id] = new Quad(1, 1, REGION_COLOR);
-            // regions[r.id].alpha = .25;
+            regions[r.id] = new Quad(r.minPoint.x+r.maxPoint.x,r.minPoint.y+r.maxPoint.y,REGION_COLOR);
+            regions[r.id].x = r.minPoint.x;
+            regions[r.id].y = r.minPoint.y;
+            regions[r.id].alpha = .25;
+
+            connections[r.id] = [];
+            for (n in r.neighbors) {
+                connections[r.id].push({reg:n.region, flag:n.direction});
+            }
         }
 
         cameraY = LEVEL_HEIGHT - cameraHalfHeight;
@@ -503,7 +517,8 @@ class LevelEditorScreen extends IGameScreen {
             drawSpawner(i.position,Color.RED);
         }
 
-        for (r in regions) {
+        for (i in 1...regions.length) {
+            var r = regions[i];
             if (r != null && r.visible && r.x >= cameraX - cameraHalfWidth && r.x + r.width <= cameraX + cameraHalfWidth &&
                 r.y + r.height >= cameraY - cameraHalfHeight && r.y <= cameraY + cameraHalfHeight) {
                 var rr = new Quad(r.width,r.height,REGION_COLOR);
@@ -511,6 +526,47 @@ class LevelEditorScreen extends IGameScreen {
                 rr.x = r.x - cameraX + cameraHalfWidth + BOX_WIDTH;
                 rr.y = r.y - cameraY + cameraHalfHeight;
                 screenController.addChild(rr);
+
+                for (c in connections[i]) {
+                    var r1 = new Point(r.x + r.width/2, r.y + r.height/2);
+                    var rrr = regions[c.reg];
+                    var r2 = new Point(rrr.x + rrr.width/2, rrr.y + rrr.height/2);
+                    switch c.flag {
+                    case 1,2: // walk
+                        var arrow = new Image(walkArrow);
+                        arrow.rotation = Math.abs(c.flag-2) * Math.PI;
+                        arrow.x = r1.x > r2.x ? r1.x - arrow.width/2 : r2.x - arrow.width/2;
+                        arrow.x += -cameraX + cameraHalfWidth + BOX_WIDTH;
+                        arrow.x += c.flag == Region.RIGHT ? -arrow.width : 0;
+                        arrow.x = Math.max(0,arrow.x);
+                        var overlap = Math.max(r1.y,r2.y);
+                        arrow.y = overlap + (Math.min(r.y+r.height,rrr.y+rrr.height) - overlap)/2;
+                        arrow.y += -cameraY + cameraHalfHeight;
+                        arrow.y += c.flag == Region.LEFT ? 0 : -2*arrow.height;
+                        arrow.y = Math.max(0,arrow.y);
+                        screenController.addChild(arrow);
+                    case 3,4: // jump
+                        var arrow = new Image(jumpArrow);
+                        arrow.rotation = Math.abs(c.flag-4) * Math.PI;
+                        var x = Math.abs(r1.x - r2.x);
+                        var y = Math.abs(r1.y - r2.y);
+                        var rot = Math.tan(y/x);
+                        if ((r1.x > r2.x && r1.y > r2.y)||(r1.x < r2.x && r1.y < r2.y)) {
+                            arrow.rotation += rot;
+                        } else arrow.rotation -= rot;
+                        arrow.x = r1.x > r2.x ? r1.x - arrow.width/2 : r2.x - arrow.width/2;
+                        arrow.x += -cameraX + cameraHalfWidth + BOX_WIDTH;
+                        arrow.x += c.flag == Region.JUMP_RIGHT ? -arrow.width : 0;
+                        // arrow.x -= arrow.width;
+                        arrow.x = Math.max(0,arrow.x);
+                        var overlap = Math.max(r1.y,r2.y);
+                        arrow.y = overlap + (Math.min(r.y+r.height,rrr.y+rrr.height) - overlap)/2;
+                        arrow.y += -cameraY + cameraHalfHeight;
+                        arrow.y += c.flag == Region.JUMP_LEFT ? 0 : -arrow.height;
+                        arrow.y = Math.max(0,arrow.y);
+                        screenController.addChild(arrow);
+                    }
+                }
             }
         }
     }

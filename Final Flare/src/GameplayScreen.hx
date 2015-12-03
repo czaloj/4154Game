@@ -100,6 +100,11 @@ class GameplayScreen extends IGameScreen {
 
         // Update game logic
         gameplayController.update(state, gameTime);
+        if (state.gameOver) {
+            //screenController.playerData.mostRecentScore = state.score;
+            //screenController.playerData.mostRecentVictory = state.victory;
+            //screenController.switchToScreen(5);
+        }
     }
     override function draw(gameTime:GameTime):Void {
         // Update game renderering
