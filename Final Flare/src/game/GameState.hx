@@ -94,7 +94,7 @@ class GameState {
     // Time-keeping information
     public var time:GameTime = new GameTime();
     public var timeMultiplier:Float = 1.0; // Can be used to speed-up or slow-down the state simulation
-
+	public var markedtime:Float;
     // Game object information
     public var player:Entity;
     public var entities:Array<Entity> = new Array<Entity>();
