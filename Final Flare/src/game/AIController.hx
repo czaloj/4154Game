@@ -2,7 +2,7 @@ package game;
 
 import game.GameState;
 import game.Region;
-
+import game.PhysicsController;
 class AIController {
     public static inline var VIEW_LOOKAHEAD:Float = 1000.0;
     public static inline var VIEW_LOOK_TIME:Float = 2.0;
@@ -47,7 +47,7 @@ class AIController {
                 entity.up = true;
         }
         //attack
-        if (Math.pow(state.player.position.x - entity.position.x,2) + Math.pow(state.player.position.y - entity.position.y, 2) <= Math.pow(eType.attackFrom, 2)) {
+        if (Math.pow(state.player.position.x - entity.position.x, 2) + Math.pow(state.player.position.y - entity.position.y, 2) <= Math.pow(eType.attackFrom, 2)) {
             entity.useWeapon = true;
         }
     }
@@ -188,7 +188,11 @@ class AIController {
         var y:Float = entity.position.y;
         var region:Region = state.regionLists.get(toRegion(x, y, state));
         var playerRegion: Region = state.regionLists.get(toRegion(target.x, target.y, state));
-        return region.getDirection(playerRegion, state);
+        if (region != null) {
+            return region.getDirection(playerRegion, state);
+        } else {
+            return 0;
+        }
      }
 
      public static function toRegion(x:Float, y:Float, state:GameState) {
