@@ -71,7 +71,7 @@ class MenuScreen extends IGameScreen {
 
     private var uif:UISpriteFactory;  //Buttons are created from UISpriteFactory    
     private var backGround:Image;     //Background
-    private var confirmButton:Button; //For squad select pane
+    private var generateButton:Button; //For squad select pane
     
     public function new(sc:ScreenController) {
         super(sc);
@@ -220,14 +220,14 @@ class MenuScreen extends IGameScreen {
             ty:35,
             font:"BitFont",
             size:50,
-            color:0x07FF,
+            color:0xFFFFFF;
             bold:false,
             hAlign:HAlign.CENTER,
             vAlign:VAlign.CENTER
         };
 
         //Create confirm button and add functionality
-        confirmButton = uif.createButton(100, 35, "CONFIRM", loadoutBTF, false);
+        var confirmButton = uif.createButton(100, 35, "CONFIRM", loadoutBTF, false);
         confirmButton.bEvent.add(startLevel);
         
         loadoutPane.add(confirmButton, 400 - confirmButton.width / 2, 375);
@@ -259,18 +259,23 @@ class MenuScreen extends IGameScreen {
         };
         
         //Add UI elements
-        var evolution = new ui.ShopElement("Evolution Points: ", 2000);
-        var shadiness = new ui.ShopElement("Shadiness Points: ", 2000);
-        var historical = new ShopElement("Historical Points: ", 2000);
-        confirmButton = uif.createButton(200, 35, "GENERATE WEAPON", shopBTF, false);
+        var evolution = new ui.ShopElement("Evolution Points: ", screenController.playerData.points);
+        var shadiness = new ui.ShopElement("Shadiness Points: ", 0);
+        var historical = new ShopElement("Historical Points: ", 0);
+        
+        //Hard coding button disables because apparantly we don't havee 3 kinds of points
+        shadiness.disable();
+        historical.disable();
+
+        generateButton = uif.createButton(200, 35, "GENERATE WEAPON", shopBTF, false);
         var menuButton = uif.createButton(100, 35, "MAIN MENU", btf, false);
-        //confirmButton.bEvent.add(generateWeapon); 
         menuButton.bEvent.add(transitionToHome);
+        //generateButton.bEvent.add(generateWeapon);
         
         shopPane.add(evolution, 400 - evolution.width/2, 120);
         shopPane.add(shadiness, 400 - shadiness.width/2, 205);
         shopPane.add(historical, 400 - historical.width / 2, 280);
-        shopPane.add(confirmButton, 400 - confirmButton.width / 2, 375);
+        shopPane.add(generateButton, 400 - generateButton.width / 2, 375);
         shopPane.add(menuButton, 25, 25);
 
         mainMenu = new UIPane();
@@ -279,6 +284,7 @@ class MenuScreen extends IGameScreen {
         mainMenu.add(loadoutPane, LOADOUT_POS_MIN.x, LOADOUT_POS_MIN.y);
         mainMenu.add(shopPane, TEMP_MIN.x, TEMP_MIN.y);
         
+
         screenController.addChild(mainMenu);
 
     }
@@ -368,4 +374,28 @@ class MenuScreen extends IGameScreen {
         }
         screenController.switchToScreen(2);
     }
+    
+    /*public function generateWeapon() {
+        var p = (cast(shopPane.getChildByName("historical"), ShopElement));
+        screenController.playerData.points -= p;
+        var test = new WeaponLayer("Receiver.Conventional", [
+            new Pair(0, new WeaponLayer("Barrel.Conventional", [
+                new Pair(0, new WeaponLayer("Magazine.Conventional")),
+                new Pair(1, new WeaponLayer("Stock.Conventional")),
+                new Pair(2, new WeaponLayer("Projectile.Bullet"))
+            ])),
+            new Pair(1, new WeaponLayer("Grip.Conventional"))
+        ]);
+        
+        var params:WeaponGenParams = new WeaponGenParams();
+        params.evolutionPoints = p;
+        data = WeaponGenerator.generate(params);
+        weaponSprite = WeaponGenerator.buildSprite(data, Assets.getBitmapData("assets/img/Guns.png"));
+        
+        weaponSprite.x = 400;
+        weaponSprite.y = 225;
+        weaponSprite.scaleX *= 32 * 7;
+        weaponSprite.scaleY *= -32 * 7;
+        screenController.addChild(weaponSprite);
+    }*/
 }
