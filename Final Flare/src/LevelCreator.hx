@@ -135,6 +135,7 @@ class LevelCreator {
             new Entity(),
             new Entity(),
             new Entity(),
+            new Entity()
         ];
         
         Spawner.createPlayer(state.entities[0], "Man", state.player.position.x, state.player.position.y);

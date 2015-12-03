@@ -435,17 +435,25 @@ class WeaponGenerator {
         ]);
         w = buildFromParts(l);
         w.name = "M34 Sport Rifle";
-        w.colorScheme = new ColorScheme(0xffff0000, 0xff00ff00, 0xff0000ff, 0, 0, 1, 1);
         w.evolutionCost = 0;
         w.historicalCost = 0;
         w.shadynessCost = 0;
-        w.firingMode = FiringMode.AUTOMATIC;
-        w.useCapacity = 34;
-        w.usesPerActivation = 1;
-        w.reloadTime = 2.4;
-        w.activationCooldown = 0.15;
-        w.burstPause = 0;
-        w.burstCount = 0;
+        weapons.push(w);
+        
+        // Rifle
+        l = new WeaponLayer("Receiver.Conventional", [
+            new Pair(0, new WeaponLayer("Barrel.HighVelocity", [
+                new Pair(0, new WeaponLayer("Magazine.Conventional")),
+                new Pair(1, new WeaponLayer("Stock.Conventional")),
+                new Pair(2, new WeaponLayer("Projectile.Bullet"))
+            ])),
+            new Pair(1, new WeaponLayer("Grip.Conventional"))
+        ]);
+        w = buildFromParts(l);
+        w.name = "M34 Death Rifle";
+        w.evolutionCost = 0;
+        w.historicalCost = 0;
+        w.shadynessCost = 0;
         weapons.push(w);
 
         // Grenade launcher
@@ -458,17 +466,23 @@ class WeaponGenerator {
         ]);
         w = buildFromParts(l);
         w.name = "Junk'n'Chuck";
-        w.colorScheme = new ColorScheme(0xffff0000, 0xff00ff00, 0xff0000ff, 0, 0, 1, 1);
         w.evolutionCost = 0;
         w.historicalCost = 0;
         w.shadynessCost = 0;
-        w.firingMode = FiringMode.SINGLE;
-        w.useCapacity = 6;
-        w.usesPerActivation = 1;
-        w.reloadTime = 4.0;
-        w.activationCooldown = 1.0;
-        w.burstPause = 0;
-        w.burstCount = 0;
+        weapons.push(w);
+        
+        // Pistol
+        l = new WeaponLayer("Receiver.Conventional", [
+            new Pair(0, new WeaponLayer("Barrel.Pistol", [
+                new Pair(0, new WeaponLayer("Projectile.Bullet"))
+            ])),
+            new Pair(1, new WeaponLayer("Grip.Conventional"))
+        ]);
+        w = buildFromParts(l);
+        w.name = "Western Law";
+        w.evolutionCost = 0;
+        w.historicalCost = 0;
+        w.shadynessCost = 0;
         weapons.push(w);
 
         // Flare gun
@@ -481,17 +495,9 @@ class WeaponGenerator {
         ]);
         w = buildFromParts(l);
         w.name = "Rescue Flare Gun";
-        w.colorScheme = new ColorScheme(0xffff0000, 0xff00ff00, 0xff0000ff, 0, 0, 1, 1);
         w.evolutionCost = 0;
         w.historicalCost = 0;
         w.shadynessCost = 0;
-        w.firingMode = FiringMode.SINGLE;
-        w.useCapacity = 1;
-        w.usesPerActivation = 1;
-        w.reloadTime = 10.0;
-        w.activationCooldown = 0.15;
-        w.burstPause = 0;
-        w.burstCount = 0;
         w.projectileOrigins[0].velocity = 10;
         weapons.push(w);
 
