@@ -43,19 +43,20 @@ class MenuScreen extends IGameScreen {
     public static var LEVEL_SELECT_POS_MAX:Point = new Point(956, 542);
     public static var LOADOUT_POS_MIN:Point = new Point(1045, 163);
     public static var LOADOUT_POS_MAX:Point = new Point(1844, 612);
-    public static var SHOP_POS_MIN:Point = new Point(1399, 791);
-    public static var SHOP_POS_MAX:Point = new Point(1874, 1058);
+    public static var TEMP_MIN:Point = new Point(880, 629);
+    public static var TEMP_MAX:Point = new Point(1680, 1079);
+    //public static var SHOP_POS_MIN:Point = new Point(1399, 791);
+    //public static var SHOP_POS_MAX:Point = new Point(1874, 1058);
  
     
     //Current position of camera
     public var currentMin:Point = new Point();
     public var currentMax:Point = new Point();
-    public var oldWindow:Point = new Point();
+    public var currentWindow:Point = new Point();
     public var window:Point = new Point();
     
     //Distance to translate each frame
     public var delta:Point = new Point();
-    public var oldScale:Point = new Point();
     public var deltaScale:Point = new Point();
     
     //Total distance to translate before transistionDone is marked as true
@@ -90,7 +91,6 @@ class MenuScreen extends IGameScreen {
         
         currentMin.setTo(0, 0);
         currentMax.setTo(800, 450);
-        oldScale.setTo(1, 1);
         delta.setTo(0, 0);
         distance.setTo(0, 0);
         initPanes();
@@ -98,6 +98,7 @@ class MenuScreen extends IGameScreen {
         backGround.transformationMatrix.translate( -HOME_POS_MIN.x, -HOME_POS_MIN.y);
         currentMin = HOME_POS_MIN;
         currentMax = HOME_POS_MAX;
+        currentWindow.setTo(currentMax.x - currentMin.x, currentMax.y - currentMin.y);
 
         FFLog.recordMenuStart();
 
@@ -172,6 +173,10 @@ class MenuScreen extends IGameScreen {
 
         //Add button functions
         playButton.bEvent.add(transitionToLevelSelect);
+        tutorialButton.bEvent.add(function():Void {
+            screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/tutorial.lvl");
+            screenController.switchToScreen(2);
+        });
         levelEditorButton.bEvent.add(function():Void {
             var bg = screenController.getChildByName("backGround");
             screenController.removeChild(bg);
@@ -267,7 +272,7 @@ class MenuScreen extends IGameScreen {
         mainMenu.add(homePane, HOME_POS_MIN.x, HOME_POS_MIN.y);
         mainMenu.add(levelSelectPane, LEVEL_SELECT_POS_MIN.x, LEVEL_SELECT_POS_MIN.y);
         mainMenu.add(loadoutPane, LOADOUT_POS_MIN.x, LOADOUT_POS_MIN.y);
-        mainMenu.add(shopPane, SHOP_POS_MIN.x, SHOP_POS_MIN.y);
+        mainMenu.add(shopPane, TEMP_MIN.x, TEMP_MIN.y);
         
         screenController.addChild(mainMenu);
 
@@ -277,17 +282,15 @@ class MenuScreen extends IGameScreen {
     //Transitions the screen to a rectangle and zooms appropriately
     public function transitionToRect(min:Point, max:Point) {
         distance = min.subtract(currentMin);
-        delta.setTo(( -distance.x * LERP_SPEED), -distance.y * LERP_SPEED);
-        
-        oldWindow.setTo(currentMax.x - currentMin.x, currentMax.y - currentMin.y);
+        delta.setTo(( -distance.x * LERP_SPEED), ( -distance.y * LERP_SPEED));
+        currentWindow.setTo(currentMax.x - currentMin.x, currentMax.y - currentMin.y);
         window.setTo(max.x - min.x, max.y - min.y);
+        deltaScale.setTo(currentWindow.x / window.x, currentWindow.y / window.y);
         
-        deltaScale.setTo(oldWindow.x / window.x, oldWindow.y / window.y);
-        oldScale.setTo(1 / deltaScale.x, 1 / deltaScale.y);
         
         currentMin = min;
         currentMax = max;
-        
+
         transitionDone = false;
     }
     
@@ -295,18 +298,13 @@ class MenuScreen extends IGameScreen {
         if (!transitionDone) {
             mainMenu.transformationMatrix.translate(delta.x, delta.y);
             backGround.transformationMatrix.translate(delta.x, delta.y);
-            
-           
             distance = distance.add(delta);
-            trace(distance.toString());
-            if (Math.abs(distance.x) < .2 || Math.abs(distance.y) < .2) { 
-                mainMenu.transformationMatrix.translate(-distance.x, -distance.y);
+            if (Math.abs(distance.x) < .2 || Math.abs(distance.y) < .2) {
+                //backGround.transformationMatrix.scale(deltaScale.x, deltaScale.y);
+                mainMenu.transformationMatrix.translate( -distance.x, -distance.y);
                 backGround.transformationMatrix.translate( -distance.x, -distance.y);
-                backGround.transformationMatrix.scale(oldScale.x, oldScale.y);
-                backGround.transformationMatrix.scale(deltaScale.x, deltaScale.y);
-                oldScale.setTo(1 , 1);
-                
                 transitionDone = true;
+
             }            
         }
     }
@@ -345,17 +343,15 @@ class MenuScreen extends IGameScreen {
     }
     
     private function transitionToShop():Void {
-        transitionToRect(SHOP_POS_MIN.clone(), SHOP_POS_MAX.clone());
+        transitionToRect(TEMP_MIN.clone(), TEMP_MAX.clone());
     }
     
     //TODO change to BroadcastEvent1 with a string argument for level
     private function startLevel():Void {
         switch levelSelectPane.selectedLevel {
             case 0:
-                screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/tutorial.lvl");
-            case 1:
                 screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/easy.lvl");
-            case 2:
+            case 1:
                 screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/medium.lvl");
             default:
         }

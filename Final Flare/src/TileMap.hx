@@ -50,6 +50,8 @@ class TileMap {
     }
 
     public function setFullTile(x:Int,y:Int,tileID:Int):Void {
+        x -= x % 2;
+        y -= y % 2;
         setID(x,y,tileID);
         setID(x+1,y,-tileID);
         setID(x,y+1,-tileID);
