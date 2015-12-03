@@ -1,6 +1,13 @@
 package;
 
 import lime.system.BackgroundWorker;
+import openfl.Lib.current;
+import openfl.Assets;
+import openfl.text.TextField;
+import openfl.text.TextFieldAutoSize;
+import openfl.text.TextFieldType;
+import openfl.text.TextFormat;
+import openfl.text.TextFormatAlign;
 import sound.Composer;
 import starling.display.DisplayObject;
 import starling.display.Image;
@@ -8,12 +15,10 @@ import ui.Button;
 import ui.Button.ButtonTextFormat;
 import ui.UIPane;
 import ui.UISpriteFactory;
-import openfl.Assets;
 import starling.display.Sprite;
 import starling.textures.Texture;
 import starling.utils.HAlign;
 import starling.utils.VAlign;
-import starling.text.TextField;
 
 class SplashScreen extends IGameScreen {
     private var backGround:Image;  //Background
@@ -36,7 +41,7 @@ class SplashScreen extends IGameScreen {
         backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/TitleScreen.png")));
         screenController.addChild(backGround);
         addStartButton();
-        
+
         Composer.playMusicTrack("Menu" + Std.string(Std.int(Math.random() * 3 + 1))); // TODO: Just tell composer to play menu music
     }
     
