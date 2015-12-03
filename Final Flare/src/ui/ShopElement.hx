@@ -19,6 +19,7 @@ class ShopElement extends DisplayObjectContainer
     private var plus10:Button;
     private var minus10:Button;
     private var numberBox:Sprite;
+    private var maxAlloc:Int = 0;
     private var allocated:Int = 0;
     
     public var string:String;
@@ -33,7 +34,8 @@ class ShopElement extends DisplayObjectContainer
     public function init(s:String, p:Int) {
         
         string = s;
-        allocated = p;
+        allocated = 0;
+        maxAlloc = p;
         var uif = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         
         //Set up formatting stuff
@@ -91,8 +93,17 @@ class ShopElement extends DisplayObjectContainer
 
     }
     
+    public function disable() {
+        minus1.enabled = false;
+        minus10.enabled = false;
+        plus1.enabled = false;
+        plus10.enabled = false;
+    }
+    
     private function allocate(value:Int) {
         allocated = (allocated + value);
+        if (allocated > maxAlloc) { allocated = maxAlloc; }
+        if (allocated < 0) { allocated = 0; } 
         tf.text = string + Std.string(allocated);
     }
     

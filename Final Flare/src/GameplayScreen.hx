@@ -30,7 +30,7 @@ class GameplayScreen extends IGameScreen {
     private var gameplayController:game.GameplayController;
     private var aiController:game.AIController;
     private var renderer:Renderer;
-    public var inputController:game.InputController;
+    public  var inputController:game.InputController;
     private var debugPhysicsView:Sprite;
     private var gameUI:GameUI;
     private var uiSheet:UISpriteFactory;
@@ -51,7 +51,7 @@ class GameplayScreen extends IGameScreen {
 
         state = new game.GameState();
         
-        state.charList = screenController.playerData.selectedChars.copy();
+        //state.charList = screenController.playerData.selectedChars.copy();
         
         
         inputController = new game.InputController();
