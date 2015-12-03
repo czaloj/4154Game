@@ -90,7 +90,8 @@ class CodeLevelEditor {
                     "assets/img/Refinery/P1.png",
                     "assets/img/Refinery/P2.png",
                     "assets/img/Refinery/P3.png",
-                    "assets/img/Refinery/P4.png"
+                    "assets/img/Refinery/P4.png",
+                    "assets/img/TutorialText.png",
                 ];
         }
 
