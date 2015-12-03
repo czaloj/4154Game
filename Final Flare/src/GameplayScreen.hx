@@ -100,10 +100,19 @@ class GameplayScreen extends IGameScreen {
 
         // Update game logic
         gameplayController.update(state, gameTime);
+		if (!state.player.isDead) {
+				state.markedtime = 0;
+		}
+		if (state.player.isDead) {
+			state.markedtime++;
+			if (state.markedtime > 240) {
+				state.gameOver = true;
+			}
+		}
         if (state.gameOver) {
-            //screenController.playerData.mostRecentScore = state.score;
-            //screenController.playerData.mostRecentVictory = state.victory;
-            //screenController.switchToScreen(5);
+            screenController.playerData.mostRecentScore = state.score;
+            screenController.playerData.mostRecentVictory = state.victory;
+            screenController.switchToScreen(5);
         }
     }
     override function draw(gameTime:GameTime):Void {
