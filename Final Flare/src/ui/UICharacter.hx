@@ -54,8 +54,8 @@ class UICharacter extends DisplayObjectContainer
         };
         
         charButton = uif.createButton(59, 119, "", btf, true);
-        prevButton = uif.createButton(0, 0, "", btf2, false);
-        nextButton = uif.createButton(0, 0, "", btf2, false);
+        prevButton = uif.createButton(8, 8, "", btf2, false);
+        nextButton = uif.createButton(8, 8, "", btf2, false);
         
         prevButton.transformationMatrix.translate(0, 193);
         charButton.transformationMatrix.translate(28, 50);

@@ -26,7 +26,6 @@ import ui.UICharacter;
 import weapon.WeaponData;
 import weapon.WeaponGenerator;
 import weapon.WeaponGenParams;
-import starling.core.Starling;
 import starling.display.Image;
 import starling.textures.Texture;
 import starling.utils.HAlign;
@@ -57,7 +56,7 @@ class MenuScreen extends IGameScreen {
     private var homePane:UIPane; //This didn't need any special functionality so it's a generic pane
     private var levelSelectPane:LevelSelectPane;
     private var loadoutPane:LoadoutPane;
-    private var shopPane:ShopPane;
+    private var shopPane:UIPane;
 
     private var uif:UISpriteFactory;  //Buttons are created from UISpriteFactory    
     private var backGround:Image;     //Background
@@ -116,7 +115,6 @@ class MenuScreen extends IGameScreen {
         trace("hi");
         screenController.removeChild(backGround);
         screenController.removeChild(mainMenu);
-        Starling.current.nativeOverlay.removeChild(shopPane);
         FFLog.recordMenuEnd();
     }
 
@@ -209,27 +207,18 @@ class MenuScreen extends IGameScreen {
         loadoutPane.add(confirmButton, 400 - confirmButton.width / 2, 375);
         
         //INIT SHOP PANE
-        shopPane = new ShopPane();
+        shopPane = new UIPane();
         
-        var evolutionInputBox = createInputTextField(30, 50, 100, 100, "BitFont", 24, 0x000000, true, 0xffffff);
-        var shadynessInputBox = createInputTextField(30, 50, 100, 200, "BitFont", 24, 0x000000, true, 0xffffff);
-        var historicalInputBox = createInputTextField(30, 50, 100, 300, "BitFont", 24, 0x000000, true, 0xffffff);   
-        
-        shopPane.add(evolutionInputBox);
-        shopPane.add(shadynessInputBox);
-        shopPane.add(historicalInputBox);
-        trace(shopPane.);
-        shopPane.transform.matrix.translate(0, 600);
-        trace(shopPane.x);
+        var evolution = new ui.ShopElement();
+        shopPane.add(evolution);
 
-        
         mainMenu = new UIPane();
         mainMenu.add(homePane, HOME_POS.x, HOME_POS.y);
         mainMenu.add(levelSelectPane, LEVEL_SELECT_POS.x, LEVEL_SELECT_POS.y);
         mainMenu.add(loadoutPane, LOADOUT_POS.x, LOADOUT_POS.y);
+        mainMenu.add(shopPane, SHOP_POS.x, SHOP_POS.y);
         
         screenController.addChild(mainMenu);
-        Starling.current.nativeOverlay.addChild(shopPane);
 
     }
     
@@ -246,7 +235,6 @@ class MenuScreen extends IGameScreen {
         if (!transitionDone) {
             mainMenu.transformationMatrix.translate(delta.x, delta.y);
             backGround.transformationMatrix.translate(delta.x, delta.y);
-            Starling.current.nativeOverlay.transform.matrix.translate(delta.x, delta.y);
             distance = distance.add(delta);
             if (distance.equals(ZERO)) { 
                 transitionDone = true;
