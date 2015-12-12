@@ -14,13 +14,13 @@ import starling.display.DisplayObjectContainer;
 class ShopElement extends DisplayObjectContainer
 {
 
-    private var plus1:Button;
-    private var minus1:Button;
     private var plus10:Button;
     private var minus10:Button;
+    private var plus100:Button;
+    private var minus100:Button;
     private var numberBox:Sprite;
-    private var maxAlloc:Int = 0;
-    private var allocated:Int = 0;
+    private static var maxAlloc:Int = 1000;
+    public var allocated:Int;
     
     public var string:String;
     public var tf:TextField;
@@ -35,7 +35,6 @@ class ShopElement extends DisplayObjectContainer
         
         string = s;
         allocated = 0;
-        maxAlloc = p;
         var uif = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         
         //Set up formatting stuff
@@ -63,10 +62,10 @@ class ShopElement extends DisplayObjectContainer
         };
         
         
-        minus1 = uif.createButton(24, 24, "-1", btf, false);
         minus10 = uif.createButton(24, 24, "-10", btf, false);
-        plus1 = uif.createButton(24, 24, "+1", btf, false);
+        minus100 = uif.createButton(24, 24, "-100", btf, false);
         plus10 = uif.createButton(24, 24, "+10", btf, false);
+        plus100 = uif.createButton(24, 24, "+100", btf, false);
         
         numberBox = new Sprite();
         tf  = new TextField(270, 40, s + Std.string(allocated), "BitFont", 40, 0xFFFFFF, false);
@@ -74,51 +73,58 @@ class ShopElement extends DisplayObjectContainer
         tf.vAlign = VAlign.CENTER;
         numberBox.addChild(tf);
         
-        minus1.transformationMatrix.translate(50, 0);
-        minus10.transformationMatrix.translate(0, 0);
-        plus1.transformationMatrix.translate(400, 0);
-        plus10.transformationMatrix.translate(450, 0);
+        minus10.transformationMatrix.translate(50, 0);
+        minus100.transformationMatrix.translate(0, 0);
+        plus10.transformationMatrix.translate(400, 0);
+        plus100.transformationMatrix.translate(450, 0);
         numberBox.transformationMatrix.translate(110, 0); 
 
-        this.addChild(minus1);
-        minus1.bEvent.add(minusOne);
         this.addChild(minus10);
         minus10.bEvent.add(minusTen);
-        this.addChild(plus1);
-        plus1.bEvent.add(plusOne);
+        this.addChild(minus100);
+        minus100.bEvent.add(minusHundred);
         this.addChild(plus10);
         plus10.bEvent.add(plusTen);
+        this.addChild(plus100);
+        plus100.bEvent.add(plusHundred);
         this.addChild(numberBox);
         
 
     }
     
     public function disable() {
-        minus1.enabled = false;
         minus10.enabled = false;
-        plus1.enabled = false;
+        minus100.enabled = false;
         plus10.enabled = false;
+        plus100.enabled = false;
     }
     
-    private function allocate(value:Int) {
-        allocated = (allocated + value);
+    public function enable() {
+        minus10.enabled = true;
+        minus100.enabled = true;
+        plus10.enabled = true;
+        plus100.enabled = true;
+    }
+    
+    public function allocate(value:Int) {
+        allocated = allocated + value;
         if (allocated > maxAlloc) { allocated = maxAlloc; }
         if (allocated < 0) { allocated = 0; } 
         tf.text = string + Std.string(allocated);
     }
     
-    private function minusOne() {
-        allocate(-1);
-    }
-    private function plusOne() {
-        allocate(1);
-    }
-    
     private function minusTen() {
         allocate(-10);
     }
-    
     private function plusTen() {
         allocate(10);
+    }
+    
+    private function minusHundred() {
+        allocate(-100);
+    }
+    
+    private function plusHundred() {
+        allocate(100);
     }    
 }

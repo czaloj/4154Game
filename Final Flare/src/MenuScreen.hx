@@ -5,7 +5,6 @@ import game.MenuLevelModifiers;
 import haxe.Unserializer;
 import flash.net.FileReference;
 import flash.utils.ByteArray;
-import openfl._legacy.display.HybridStage;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.geom.Point;
@@ -16,6 +15,7 @@ import openfl.text.TextFieldType;
 import openfl.text.TextFormat;
 import openfl.text.TextFormatAlign;
 import ui.ShopElement;
+import ui.ShopResult;
 import ui.UISpriteFactory;
 import ui.Button;
 import ui.Button.ButtonTextFormat;
@@ -24,8 +24,10 @@ import ui.LevelSelectPane;
 import ui.LoadoutPane;
 import ui.UICharacter;
 import weapon.WeaponData;
-import weapon.WeaponGenerator;
+import weapon.Weapon;
 import weapon.WeaponGenParams;
+import weapon.WeaponLayer;
+import weapon.WeaponGenerator;
 import starling.display.Image;
 import starling.textures.Texture;
 import starling.utils.HAlign;
@@ -68,6 +70,11 @@ class MenuScreen extends IGameScreen {
     private var levelSelectPane:LevelSelectPane;
     private var loadoutPane:LoadoutPane;
     private var shopPane:UIPane;
+    private var shopResult:ShopResult;
+    private var points:ShopElement;
+    private var evolution:ShopElement;
+    private var historical:ShopElement;
+    private var shadiness:ShopElement;
 
     private var uif:UISpriteFactory;  //Buttons are created from UISpriteFactory    
     private var backGround:Image;     //Background
@@ -85,7 +92,8 @@ class MenuScreen extends IGameScreen {
     }
 
     override public function onEntry(gameTime:GameTime):Void {
-        screenController.playerData = new PlayerData("Player"); // TODO: Allow others to play?        
+        screenController.playerData = new PlayerData("Player"); // TODO: Allow others to play?
+        screenController.playerData.points = 1000;
         uif = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         
         currentMin.setTo(0, 0);
@@ -136,8 +144,14 @@ class MenuScreen extends IGameScreen {
 
     override public function update(gameTime:GameTime):Void {
         updateCamera();
-
-
+        if (evolution.allocated < 100) {
+            generateButton.enabled = false;
+            generateButton.currentState = generateButton.downState;
+        }
+        else { 
+            generateButton.enabled = true; 
+            generateButton.currentState = generateButton.upState;
+        }
     }
 
     override public function draw(gameTime:GameTime):Void {
@@ -220,7 +234,7 @@ class MenuScreen extends IGameScreen {
             ty:35,
             font:"BitFont",
             size:50,
-            color:0xFFFFFF;
+            color:0xFFFFFF,
             bold:false,
             hAlign:HAlign.CENTER,
             vAlign:VAlign.CENTER
@@ -259,9 +273,9 @@ class MenuScreen extends IGameScreen {
         };
         
         //Add UI elements
-        var evolution = new ui.ShopElement("Evolution Points: ", screenController.playerData.points);
-        var shadiness = new ui.ShopElement("Shadiness Points: ", 0);
-        var historical = new ShopElement("Historical Points: ", 0);
+        evolution = new ui.ShopElement("Evolution Points: ", screenController.playerData.points);
+        shadiness = new ui.ShopElement("Shadiness Points: ", 0);
+        historical = new ShopElement("Historical Points: ", 0);
         
         //Hard coding button disables because apparantly we don't havee 3 kinds of points
         shadiness.disable();
@@ -270,7 +284,7 @@ class MenuScreen extends IGameScreen {
         generateButton = uif.createButton(200, 35, "GENERATE WEAPON", shopBTF, false);
         var menuButton = uif.createButton(100, 35, "MAIN MENU", btf, false);
         menuButton.bEvent.add(transitionToHome);
-        //generateButton.bEvent.add(generateWeapon);
+        generateButton.bEvent.add(generateWeapon);
         
         shopPane.add(evolution, 400 - evolution.width/2, 120);
         shopPane.add(shadiness, 400 - shadiness.width/2, 205);
@@ -375,27 +389,38 @@ class MenuScreen extends IGameScreen {
         screenController.switchToScreen(2);
     }
     
-    /*public function generateWeapon() {
-        var p = (cast(shopPane.getChildByName("historical"), ShopElement));
+    public function generateWeapon() {
+        var p  = evolution.allocated;
+        var dif = (screenController.playerData.points - p);
         screenController.playerData.points -= p;
-        var test = new WeaponLayer("Receiver.Conventional", [
-            new Pair(0, new WeaponLayer("Barrel.Conventional", [
-                new Pair(0, new WeaponLayer("Magazine.Conventional")),
-                new Pair(1, new WeaponLayer("Stock.Conventional")),
-                new Pair(2, new WeaponLayer("Projectile.Bullet"))
-            ])),
-            new Pair(1, new WeaponLayer("Grip.Conventional"))
-        ]);
-        
-        var params:WeaponGenParams = new WeaponGenParams();
-        params.evolutionPoints = p;
-        data = WeaponGenerator.generate(params);
-        weaponSprite = WeaponGenerator.buildSprite(data, Assets.getBitmapData("assets/img/Guns.png"));
-        
-        weaponSprite.x = 400;
-        weaponSprite.y = 225;
-        weaponSprite.scaleX *= 32 * 7;
-        weaponSprite.scaleY *= -32 * 7;
-        screenController.addChild(weaponSprite);
-    }*/
+        if (p >= 100 && dif >= 0) {
+            generateButton.enabled = false;
+            historical.disable();
+            var test = new WeaponLayer("Receiver.Conventional", [
+               new Pair(0, new WeaponLayer("Barrel.Conventional", [
+                   new Pair(0, new WeaponLayer("Magazine.Conventional")),
+                   new Pair(1, new WeaponLayer("Stock.Conventional")),
+                   new Pair(2, new WeaponLayer("Projectile.Bullet"))
+               ])),
+               new Pair(1, new WeaponLayer("Grip.Conventional"))
+            ]);
+            
+            var params:WeaponGenParams = new WeaponGenParams();
+            params.evolutionPoints = p;
+            var data = WeaponGenerator.generate(params);
+            var weaponSprite = WeaponGenerator.buildSprite(data, Assets.getBitmapData("assets/img/Guns.png"));
+            weaponSprite.scaleX *= 32 * 5;
+            weaponSprite.scaleY *= -32 * 5;
+            shopResult = new ShopResult(weaponSprite);
+            shopResult.button.bEvent.add(function():Void {
+                shopPane.removeChild(shopResult);
+                historical.enable();
+                generateButton.enabled = true;
+                
+            });
+            screenController.playerData.weapons.push(data);
+            shopPane.add(shopResult, 400 - shopResult.width / 2, 225 - shopResult.height / 2);
+            evolution.allocate(-p);
+        }
+    }
 }

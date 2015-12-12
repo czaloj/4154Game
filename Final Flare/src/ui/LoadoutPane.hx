@@ -84,19 +84,19 @@ class LoadoutPane extends UIPane
         }
         
         firstSelectedSprite = new Sprite();
-        var tf1:TextField = new TextField(30, 30, "1", "BitFont", 20, 0xFFFFFF, true);
+        var tf1:TextField = new TextField(30, 30, "1", "BitFont", 30, 0xFFFFFF, true);
         tf1.hAlign = HAlign.CENTER;
         tf1.vAlign = VAlign.CENTER;
         firstSelectedSprite.addChild(tf1);
         
         secondSelectedSprite = new Sprite();
-        var tf2:TextField = new TextField(30, 30, "2", "BitFont", 20, 0xFFFFFF, true);
+        var tf2:TextField = new TextField(30, 30, "2", "BitFont", 30, 0xFFFFFF, true);
         tf2.hAlign = HAlign.CENTER;
         tf2.vAlign = VAlign.CENTER;
         secondSelectedSprite.addChild(tf2);
         
         thirdSelectedSprite = new Sprite();
-        var tf3:TextField = new TextField(30, 30, "3", "BitFont", 20, 0xFFFFFF, true);
+        var tf3:TextField = new TextField(30, 30, "3", "BitFont", 30, 0xFFFFFF, true);
         tf3.hAlign = HAlign.CENTER;
         tf3.vAlign = VAlign.CENTER;
         thirdSelectedSprite.addChild(tf3);
