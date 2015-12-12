@@ -11,7 +11,7 @@ import starling.utils.VAlign;
 
 class LevelSelectPane extends UIPane
 {
-    private static var MAX_LEVEL:Int = 9;
+    private static var MAX_LEVEL:Int = 2;
     public var selectedLevel:Int;
     
     //Buttons

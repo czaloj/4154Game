@@ -19,7 +19,7 @@ class ShopElement extends DisplayObjectContainer
     private var plus100:Button;
     private var minus100:Button;
     private var numberBox:Sprite;
-    private static var maxAlloc:Int = 1000;
+    public var maxAlloc:Int;
     public var allocated:Int;
     
     public var string:String;
@@ -35,6 +35,7 @@ class ShopElement extends DisplayObjectContainer
         
         string = s;
         allocated = 0;
+        maxAlloc = p;
         var uif = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         
         //Set up formatting stuff
