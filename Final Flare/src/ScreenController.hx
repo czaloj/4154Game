@@ -63,7 +63,7 @@ class ScreenController extends Sprite {
                     WeaponGenerator.composeLayers();
                 case Keyboard.NUMPAD_0:
                     if (playerData != null) playerData.reset();
-                case Keyboard.NUMPAD_4:
+                case Keyboard.F10:
                     switchToScreen(4);
             }
         });
