@@ -3,6 +3,7 @@ package weapon;
 import game.ColorScheme;
 import game.damage.DamageBullet;
 import game.damage.DamageExplosion;
+import graphics.PositionalAnimator;
 import graphics.SpriteSheetRegistry;
 import haxe.ds.ArraySort;
 import haxe.ds.ObjectMap;
@@ -76,6 +77,20 @@ class WeaponGenerator {
             po.transform.tx /= GUN_SCALE;
             po.transform.ty /= -GUN_SCALE;
         }
+        
+        // TODO: Add real stuff
+        d.sfxReload = "Reload2";
+        d.animFire = new PositionalAnimator(false);
+        d.animFire.addFrame(0, 0, 0, 0.2);
+        d.animFire.addFrame(-0.2, 0, 0, 0.2);
+        d.animFire.readdFrame(0);
+        d.animFire.scaleToTime(d.getShotTime());
+        d.animReload = new PositionalAnimator(false);
+        d.animReload.addFrame(0, 0, 0, 0.2);
+        d.animReload.addFrame(0.1, 0, Math.PI * 0.5, 0.6);
+        d.animReload.addFrame(0.1, 0, Math.PI * 0.5, 0.1);
+        d.animReload.readdFrame(0);
+        d.animReload.scaleToTime(d.reloadTime);
         
         return d;
     }

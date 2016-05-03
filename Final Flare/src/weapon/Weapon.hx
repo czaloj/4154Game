@@ -3,7 +3,8 @@ package weapon;
 import game.EntityBase;
 import game.GameState;
 import game.Entity;
-import graphics.IGameVisualizer;
+import graphics.PositionalAnimator;
+import graphics.Renderer;
 import sound.Composer;
 import weapon.projectile.LargeProjectile;
 import game.PhysicsController;
@@ -18,7 +19,8 @@ import weapon.WeaponData.ProjectileOrigin;
 
 class Weapon {
     public static var phys:PhysicsController; // TODO: Remove ASAP
-    public static var vis:IGameVisualizer; // TODO: Remove ASAP
+    public static var vis:Renderer; // TODO: Remove ASAP
+    
     public static inline var RELOAD_OFF_X:Float = 0.6;
     public static inline var RELOAD_OFF_Y:Float = 1.5;
     
@@ -85,12 +87,7 @@ class Weapon {
                     shotCooldown = data.activationCooldown;
                     
                     // Check for reload
-                    if ((usesPerformed + data.usesPerActivation) > data.useCapacity) {
-                        reloadTimeLeft = Math.max(0, data.reloadTime - dt);
-                        vis.onReload(entity, RELOAD_OFF_X, RELOAD_OFF_Y, reloadTimeLeft);
-                        Composer.playEffect("Reload2");
-                        return;
-                    }
+                    if (checkReload(dt)) return;
                 }
             }
         }
@@ -116,12 +113,7 @@ class Weapon {
                 shotCooldown = Math.max(0, data.activationCooldown - dt);
 
                 // Check for reload
-                if ((usesPerformed + data.usesPerActivation) > data.useCapacity) {
-                    reloadTimeLeft = Math.max(0, data.reloadTime - dt);
-                    vis.onReload(entity, RELOAD_OFF_X, RELOAD_OFF_Y, reloadTimeLeft);
-                    Composer.playEffect("Reload2");
-                    return;
-                }
+                if (checkReload(dt)) return;
             }
         }
         else {
@@ -149,12 +141,7 @@ class Weapon {
                     burstsLeft--;
                     
                     // Check for reload
-                    if ((usesPerformed + data.usesPerActivation) > data.useCapacity) {
-                        reloadTimeLeft = Math.max(0, data.reloadTime - dt);
-                        vis.onReload(entity, RELOAD_OFF_X, RELOAD_OFF_Y, reloadTimeLeft);
-                        Composer.playEffect("Reload2");
-                        return;
-                    }
+                    if (checkReload(dt)) return;
                 }
             }
         }
@@ -172,6 +159,15 @@ class Weapon {
             shotCooldown = Math.max(0, shotCooldown - dt);
         }
     }
+    private function checkReload(dt:Float):Bool {
+        if ((usesPerformed + data.usesPerActivation) > data.useCapacity) {
+            reloadTimeLeft = Math.max(0, data.reloadTime - dt);
+            vis.onReload(entity, RELOAD_OFF_X, RELOAD_OFF_Y, reloadTimeLeft);
+            Composer.playEffect(data.sfxReload);
+            return true;
+        }
+        return false;
+    }
     
     private function fireBullets(s:GameState, timeOut:Float):Void {
         var gunOrigin:Matrix = new Matrix();
@@ -184,6 +180,7 @@ class Weapon {
         
         var pOrigin:Point = new Point();
         var pDirection:Point = new Point(1, 0);
+        vis.fireWeapon(entity);
         
         for (po in data.projectileOrigins) {
             // Obtain a random firing angle

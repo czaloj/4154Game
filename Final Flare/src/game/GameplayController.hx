@@ -15,7 +15,7 @@ import game.PhysicsController.PhysicsContactBody;
 import game.PhysicsController.PhysicsUserData;
 import game.PhysicsController.PhysicsUserDataType;
 import game.PhysicsController.RayCastInfo;
-import graphics.IGameVisualizer;
+import graphics.Renderer;
 import openfl.display.Sprite;
 import openfl.geom.Point;
 import openfl.media.SoundChannel;
@@ -37,12 +37,11 @@ class GameplayController {
     private var debugPhysicsView:Sprite;
     private var deletingEntities:Array<Entity> = [];
     private var deletingProjectiles:Array<Projectile> = [];
-    var count20:Int;
 
     private var comboCooldownDelay:Float = COMBO_COOLDOWN_DELAY;
     private var flaresReceived:Int = 0;
 
-    private var vis:IGameVisualizer;
+    private var vis:Renderer;
 
     public function new() {
         // Empty
@@ -50,33 +49,36 @@ class GameplayController {
 
     public function init(s:GameState):Void {
         state = s;
-        count20 = 1200;
         Region.initPathTable(s);
+        
         // Initialize physics from loaded GameState
         Weapon.phys = physicsController;
         physicsController.init(state);
         physicsController.initPlatforms(state);
 
-        // Give all the players weapons
-        for (i in 0...5) {
+        // Initialize players
+        for (i in 0...Entity.COUNT_PLAYERS) {
             if (state.entities[i] != null) {
+                // Add physics only at this point
                 physicsController.initEntity(state.entities[i]);
+                
+                // Give all the players weapons
                 if (state.characterWeapons[i] != null) {
                     state.entities[i].weapon = new Weapon(state.entities[i], state.characterWeapons[i]);
                 }
-                state.entities[i].flareGun = new Weapon(state.entities[i], state.characterWeapons[5]);
+                state.entities[i].flareGun = new Weapon(state.entities[i], state.characterWeapons[Entity.COUNT_PLAYERS]);
             }
         }
 
         // We begin with the first player
         state.player = state.entities[0];
     }
-    public function setVisualizer(v:IGameVisualizer):Void {
+    
+    public function setVisualizer(v:Renderer):Void {
         vis = v;
         Weapon.vis = vis;
         vis.onEntityAdded(state, state.player);
     }
-
     public function initDebug(debugPhysicsView:Sprite):Void {
         // Create a debug view of the physics world
         debugPhysicsView.x = ScreenController.SCREEN_WIDTH / 2;
@@ -88,21 +90,28 @@ class GameplayController {
         physicsController.renderDebug();
     }
 
+    // This entity now becomes enabled as part of the game
     private function enableEntity(e:Entity):Void {
         e.enabled = true;
         vis.onEntityAdded(state, e);
         e.body.setActive(true);
     }
+    // This entity no longer takes part of the game
     private function disableEntity(e:Entity):Void {
         e.enabled = false;
         vis.onEntityRemoved(state, e);
         e.body.setActive(false);
-        e.position.set(-10, -10);
+        
+        // Just in case
+        e.position.set(-1000, -1000);
     }
+    
+    // Callback function once an enemy is killed
     private function onEnemyKilled(e:Entity):Void {
         addScore(1, e.position.x, e.position.y);
         addCombo(1.0);
-        disableEntity(e);
+        
+        // Completely kill the enemy
         physicsController.onEntityRemoved(state, e);
         state.entities.remove(e);
     }
@@ -177,24 +186,8 @@ class GameplayController {
     public function update(s:GameState, gameTime:GameTime):Void {
         state = s;
         updateTime(gameTime);
-        // TODO: Super old logging code, excise
-        count20 -= 1;
-		if (count20 % 300 == 0) {
-			FFLog.recordEvent(17, s.player.position.x +", " + s.player.position.y);
-		}
-        if (count20 <= 0)
-        {
-            count20 = 1200;
-            var str:String;
-            str = "";
-            for (ent in s.entitiesNonNull) {
-                str += ent.position.x + ", "+ ent.position.y+", ";
-            }
-            FFLog.recordEvent(8, str + state.time.total);
-            
-        }
+
         // TODO: Spawner shouldn't need reference to this
-        
         Spawner.spawn(state, state.time);
 
         // Update looking directions
@@ -282,10 +275,8 @@ class GameplayController {
         // Destroy all dead things
         if (deletingEntities.length > 0) {
             for (entity in deletingEntities) {
-                if (entity.team == Entity.TEAM_PLAYER) {
-                    disableEntity(entity);
-                }
-                else {
+                disableEntity(entity);
+                if (entity.team == Entity.TEAM_ENEMY) {
                     onEnemyKilled(entity);
                 }
             }

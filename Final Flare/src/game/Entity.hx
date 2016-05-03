@@ -15,6 +15,7 @@ import weapon.Weapon;
 class Entity extends EntityBase {
     public static inline var TEAM_PLAYER:Int = 0;
     public static inline var TEAM_ENEMY:Int = 1;
+    public static inline var COUNT_PLAYERS:Int = 5;
 
     public var id:String; // Identifying tag
 
@@ -32,12 +33,11 @@ class Entity extends EntityBase {
     public var groundAcceleration:Float = 1.0;
     public var airAcceleration:Float = 1.0;
     
-    //pathfinding
+    // Pathfinding
     public var controlDefault:Bool = true;
     public var yProblem:Float;
     public var count:Int;
     public var prevX:Float;
-    
     
     // Other Logical information
     public var team:Int;

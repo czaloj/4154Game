@@ -1,6 +1,7 @@
 package weapon;
 
 import game.ColorScheme;
+import graphics.PositionalAnimator;
 import weapon.projectile.LargeProjectile;
 import weapon.projectile.BulletProjectile;
 import openfl.geom.Matrix;
@@ -53,8 +54,24 @@ class WeaponData {
     public var burstPause:Float = 0;
     public var burstCount:Int = 0;
     
+    // Visualization information
+    public var animFire:PositionalAnimator = null;
+    public var animReload:PositionalAnimator = null;
+    public var sfxReload:String = "Reload2";
+    
     // The root weapon layer
     public var layer:WeaponLayer = null;
+    
+    public function getShotTime():Float {
+        switch (firingMode) {
+            case FiringMode.BURST:
+                return burstPause;
+            case FiringMode.SINGLE:
+                return 0.5;
+            default:
+                return activationCooldown;
+        }
+    }
     
     public function new() {
         // Empty

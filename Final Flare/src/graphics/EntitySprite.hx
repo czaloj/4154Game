@@ -14,6 +14,7 @@ class EntitySprite extends Sprite {
     public var data:EntityRenderData;
     public var headCenter:Sprite;
     public var weaponCenter:Sprite;
+    public var weapon:DisplayObject;
     public var head:StaticSprite;
     public var bodyRest:AnimatedSprite;
     public var bodyRun:AnimatedSprite;
@@ -70,6 +71,7 @@ class EntitySprite extends Sprite {
         }
     }
     public function setWeapon(w:DisplayObject) {
+        weapon = w;
         weaponCenter.removeChildren();
         weaponCenter.addChild(w);
     }

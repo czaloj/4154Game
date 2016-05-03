@@ -88,7 +88,7 @@ class GameState {
     public var pathTbl:IntMap<IntMap<Int>> = new IntMap<IntMap<Int>>();
 
     // Weapons used in the level
-    public var characterWeapons:Array<WeaponData>;
+    public var characterWeapons:Array<WeaponData>; // The first 5 weapons correspond to the weapons the players receive, the sixth is the flare gun used between all the players
     public var enemyWeapons:Array<WeaponData>;
 
     // Time-keeping information

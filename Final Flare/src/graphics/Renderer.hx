@@ -28,7 +28,7 @@ import starling.textures.Texture;
 import weapon.projectile.Projectile;
 import weapon.WeaponGenerator;
 
-class Renderer implements IGameVisualizer {
+class Renderer {
     public static inline var PLAYER_WIDTH:Float = 0.9;
     public static inline var PLAYER_HEIGHT:Float = 1.9;
     public static inline var CAMERA_DEBUG_MOVE_SPEED:Float = 5.0;
@@ -63,6 +63,9 @@ class Renderer implements IGameVisualizer {
     private var maskSprite:Sprite;
     private var rtBackground:RenderTexture;
     private var rtForeground:RenderTexture;
+    
+    // Animations that are currently playing
+    private var animations:Array<Pair<PositionalAnimator, DisplayObject>> = [];
 
     // Particles
     private var tracers:TracerList;
@@ -208,6 +211,14 @@ class Renderer implements IGameVisualizer {
         icon.x = ox;
         icon.y = oy;
         reloadIcons.push(icon);
+        
+        e.weapon.data.animReload.resetTime(0);
+        animations.push(new Pair<PositionalAnimator, DisplayObject>(e.weapon.data.animReload, eSprite.weapon));
+    }
+    public function fireWeapon(e:Entity):Void {
+        var eSprite:EntitySprite = entityTbl.get(e);
+        e.weapon.data.animFire.resetTime(0);
+        animations.push(new Pair<PositionalAnimator, DisplayObject>(e.weapon.data.animFire, eSprite.weapon));
     }
     public function addBulletTrail(sx:Float, sy:Float, ex:Float, ey:Float, duration:Float):Void {
         tracers.add(sx, sy, ex - sx, ey - sy, 0.04, duration, 0xffff00, (1 / 60) / duration);
@@ -449,6 +460,8 @@ class Renderer implements IGameVisualizer {
     }
 
     public function update(s:game.GameState):Void {
+        var dt:Float = 1.0 / 60.0;
+        
         // TODO: Update sprite positions from entities
         for (o in entityTbl.keys()) {
             var sprite:EntitySprite = entityTbl.get(o);
@@ -494,6 +507,15 @@ class Renderer implements IGameVisualizer {
             if (!icon.isAlive) icon.parent.removeChild(icon);
             return icon.isAlive;
         });
+        
+        // Update animations
+        var newAnimations:Array<Pair<PositionalAnimator, DisplayObject>> = [];
+        for (animPair in animations) {
+            if (!animPair.first.update(dt, animPair.second)) {
+                newAnimations.push(animPair);
+            }
+        }
+        animations = newAnimations;
 
         // Apply screen-shake
         if (screenShakeOffset.length > 0.01) {
@@ -513,6 +535,6 @@ class Renderer implements IGameVisualizer {
         }
 
         // Update particles
-        tracers.update(1.0 / 60.0);
+        tracers.update(dt);
     }
 }

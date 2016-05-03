@@ -19,11 +19,13 @@ class ProjectileData {
     public static inline var TYPE_LARGE = 2;
     public static inline var TYPE_FLARE = 3;
     public static inline var TYPE_MELEE = 4;
+    
     // The projectiles that this one can spawn either after X time, X collisions, or some other predication
     public var children:Array<ProjectileChildData> = [];
 
     public var constructionType:Int = TYPE_BULLET;
 
+    // Damage values performed to enemies and friendly units
     public var damage:Int = 1;
     public var damageFriendly:Int = 1;
     public var hitFriendly:Bool = false;
