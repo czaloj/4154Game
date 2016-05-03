@@ -151,7 +151,7 @@ class MenuScreen extends IGameScreen {
         }
         else { 
             generateButton.enabled = true; 
-            generateButton.currentState = upState;
+            generateButton.currentState = generateButton.upState;
         }
     }
 
