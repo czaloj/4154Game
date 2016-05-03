@@ -15,6 +15,18 @@ class PartRegistry {
             return p.type == t;
         }
     }
+    public static function requirementReqChildrenLessThanOrEqual(v:Int):WeaponPart->Bool {
+        return function(p:WeaponPart):Bool {
+            var pCC = Lambda.find(p.properties, function(sc:WeaponProperty):Bool { return sc.type == WeaponPropertyType.CHILDREN_REQUIRED; });
+            return pCC.value <= v;
+        }
+    }
+    public static function requirementTotalChildrenLessThanOrEqual(v:Int):WeaponPart->Bool {
+        return function(p:WeaponPart):Bool {
+            var pCC = Lambda.find(p.properties, function(sc:WeaponProperty):Bool { return sc.type == WeaponPropertyType.TOTAL_CHILDREN; });
+            return pCC.value <= v;
+        }
+    }
     public static function requirementSubclass(classes:Array<String>, blackList:Bool = false):WeaponPart->Bool {
         return function(p:WeaponPart):Bool {
             var c:Int = Lambda.count(p.properties, function(p:WeaponProperty):Bool {
@@ -37,12 +49,21 @@ class PartRegistry {
     private static var SCHEMES_GENERIC:Array<ColorScheme> = [
         new ColorScheme(0xffb3b3b3, 0xff663300, 0xff1aff1a, 0, 0, 1, 1),
         new ColorScheme(0xffdddddd, 0xff0043e0, 0xff001284, 0, 0, 1, 1),
-        new ColorScheme(0xff101010, 0xff303030, 0xff500000, 0, 0, 1, 1)
+        new ColorScheme(0xff101010, 0xff303030, 0xff500000, 0, 0, 1, 1),
+        new ColorScheme(0xff830404, 0xff220000, 0xff6d5d5d, 0, 0, 1, 1),
+        new ColorScheme(0xffd196ef, 0xffd2cbd5, 0xff241a29, 0, 0, 1, 1),
+        new ColorScheme(0xff7b9f99, 0xff1a4566, 0xff08f996, 0, 0, 1, 1),
+        new ColorScheme(0xff202020, 0xffd1e304, 0xff46020a, 0, 0, 1, 1),
+        new ColorScheme(0xff494949, 0xffb962cf, 0xffffa1ee, 0, 0, 1, 1),
+        new ColorScheme(0xffa0631c, 0xff887122, 0xff666666, 0, 0, 1, 1),
+        new ColorScheme(0xffc9b338, 0xffac9124, 0xffd09e17, 0, 0, 1, 1),
     ];
     private static var SCHEMES_METALLIC:Array<ColorScheme> = [
         new ColorScheme(0xffc3c3c3, 0xffaaaaaa, 0xff404040, 0, 0, 1, 1),
         new ColorScheme(0xff874200, 0xff032150, 0xff888888, 0, 0, 1, 1),
-        new ColorScheme(0xffe01010, 0xff201010, 0xffbbcc00, 0, 0, 1, 1)
+        new ColorScheme(0xffe01010, 0xff201010, 0xffbbcc00, 0, 0, 1, 1),
+        new ColorScheme(0xffc9b338, 0xffac9124, 0xffd09e17, 0, 0, 1, 1),
+        new ColorScheme(0xff202020, 0xffd1e304, 0xff46020a, 0, 0, 1, 1),
     ];
     
     private static function rotated(m:Matrix, a:Float):Matrix {
@@ -165,12 +186,31 @@ class PartRegistry {
                 13, 8,
                 [
                     new WeaponPartChild(new Matrix(1, 0, 0, 1, 17, 15), true, [requirementPart(WeaponPartType.MAGAZINE)]),
-                    new WeaponPartChild(new Matrix(1, 0, 0, 1, 0, 0), false, [requirementPart(WeaponPartType.PROJECTILE), requirementSubclass(["LargeProjectile"])]),
+                    new WeaponPartChild(new Matrix(1, 0, 0, 1, 0, 0), true, [requirementPart(WeaponPartType.PROJECTILE), requirementSubclass(["LargeProjectile"])]),
                     new WeaponProperty(WeaponPropertyType.EXIT_INFORMATION, new ProjectileExitData(41, 7, 1, 0, 0.6, 30)),
                     new WeaponProperty(WeaponPropertyType.USES_PER_ACTIVATION, 1),
                     new WeaponProperty(WeaponPropertyType.ACTIVATION_COOLDOWN, 0.5),
                     new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Generic"),
                     new WeaponProperty(WeaponPropertyType.FIRING_MODE, FiringMode.SINGLE)
+                ]),
+                
+            new WeaponPart(
+                "Barrel.DildoRocket",
+                WeaponPartType.BARREL,
+                400, 0, 0,
+                84, 75,
+                72, 20,
+                21, 15,
+                [
+                    new WeaponPartChild(new Matrix(1, 0, 0, 1, 37, 19), false, [requirementPart(WeaponPartType.MAGAZINE)]),
+                    new WeaponPartChild(new Matrix(1, 0, 0, 1, 0, 0), true, [requirementPart(WeaponPartType.PROJECTILE), requirementSubclass(["LargeProjectile"])]),
+                    new WeaponProperty(WeaponPropertyType.EXIT_INFORMATION, new ProjectileExitData(49, 11, 1, 0, 0.8, 50)),
+                    new WeaponProperty(WeaponPropertyType.USES_PER_ACTIVATION, 1),
+                    new WeaponProperty(WeaponPropertyType.ACTIVATION_COOLDOWN, 0.25),
+                    new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Generic"),
+                    new WeaponProperty(WeaponPropertyType.FIRING_MODE, FiringMode.AUTOMATIC),
+                    new WeaponProperty(WeaponPropertyType.USE_CAPACITY, 10),
+                    new WeaponProperty(WeaponPropertyType.DAMAGE_INCREASE, 20)
                 ]),
                 
             new WeaponPart(
@@ -205,6 +245,31 @@ class PartRegistry {
                 [
                     new WeaponProperty(WeaponPropertyType.RELOAD_TIME, 2.4),
                     new WeaponProperty(WeaponPropertyType.USE_CAPACITY, 36),
+                ]),
+                
+            new WeaponPart(
+                "Magazine.Extended",
+                WeaponPartType.MAGAZINE,
+                80, 0, 0,
+                95, 40,
+                12, 14,
+                2, 0,
+                [
+                    new WeaponPartChild(new Matrix(1, 0, 0, 1, 2, 12), true, [requirementPart(WeaponPartType.MAGAZINE), requirementTotalChildrenLessThanOrEqual(0)]),
+                    new WeaponProperty(WeaponPropertyType.USE_CAPACITY, 12),
+                    new WeaponProperty(WeaponPropertyType.RELOAD_TIME, 0.2),
+                ]),
+                
+            new WeaponPart(
+                "Magazine.DoubleSplit",
+                WeaponPartType.MAGAZINE,
+                100, 0, 0,
+                115, 40,
+                21, 29,
+                5, 0,
+                [
+                    new WeaponPartChild(rotated(new Matrix(1, 0, 0, 1, 15, 16), Math.PI  / 3), true, [requirementPart(WeaponPartType.MAGAZINE), requirementTotalChildrenLessThanOrEqual(1)]),
+                    new WeaponPartChild(rotated(new Matrix(1, 0, 0, 1, 15, 28), Math.PI  / 3), true, [requirementPart(WeaponPartType.MAGAZINE), requirementTotalChildrenLessThanOrEqual(1)]),
                 ]),
                 
             new WeaponPart(
