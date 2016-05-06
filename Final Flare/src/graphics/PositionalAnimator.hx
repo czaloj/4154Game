@@ -20,7 +20,7 @@ class PAFrame {
 }
 
 class PositionalAnimator {
-    private var chain:Array<PAFrame> = [];
+    public var chain:Array<PAFrame> = [];
     private var time:Float = 0;
     private var timeInAnimation:Float = 0;
     private var totalTime:Float = 0;

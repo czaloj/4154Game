@@ -86,15 +86,13 @@ class MenuScreen extends IGameScreen {
     }
 
     override public function build():Void {
-        // Empty
+        screenController.playerData = new PlayerData("Player"); // TODO: Allow others to play?
     }
     override public function destroy():Void {
         // Empty
     }
 
     override public function onEntry(gameTime:GameTime):Void {
-        screenController.playerData = new PlayerData("Player"); // TODO: Allow others to play?
-        screenController.playerData.points = 1000;
         uif = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
 
         currentMin.setTo(0, 0);
@@ -149,7 +147,7 @@ class MenuScreen extends IGameScreen {
             generateButton.enabled = false;
             generateButton.currentState = generateButton.downState;
         }
-        else { 
+        else {
             generateButton.enabled = true; 
             generateButton.currentState = generateButton.upState;
         }
@@ -402,14 +400,6 @@ class MenuScreen extends IGameScreen {
         if (p >= 100 && dif >= 0) {
             generateButton.enabled = false;
             evolution.disable();
-            var test = new WeaponLayer("Receiver.Conventional", [
-               new Pair(0, new WeaponLayer("Barrel.Conventional", [
-                   new Pair(0, new WeaponLayer("Magazine.Conventional")),
-                   new Pair(1, new WeaponLayer("Stock.Conventional")),
-                   new Pair(2, new WeaponLayer("Projectile.Bullet"))
-               ])),
-               new Pair(1, new WeaponLayer("Grip.Conventional"))
-            ]);
             
             var params:WeaponGenParams = new WeaponGenParams();
             params.evolutionPoints = p;

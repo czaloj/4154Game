@@ -63,6 +63,7 @@ class Composer {
     }
     
     public static function playMusicTrack(name:String):SoundChannel {
+        return null; // TODO: Allow music
         var s:Sound = sounds.get(name);
         var channel:SoundChannel = s.play(0, 0, transformMusic);
         channel.addEventListener(Event.SOUND_COMPLETE, function(e:Event):Void {

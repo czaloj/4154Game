@@ -4,10 +4,15 @@ import weapon.WeaponData;
 import weapon.WeaponGenerator;
 
 class PlayerData {
+    // The cached player data
     private var so:SharedObject;
-    public var selectedChars:Array<String> = new Array<String>();
+    
+    // Weapons the player has unlocked
     public var weapons(get, never):Array<WeaponData>;
     public var points(get, set):Int;
+    
+    // Record-keeping values
+    public var selectedChars:Array<String> = new Array<String>();
 	public var mostRecentScore:Int;
 	public var mostRecentVictory:Bool;
     
@@ -20,9 +25,16 @@ class PlayerData {
     }
     
     private function generateDefault(v:Dynamic) {
+        // Have a flag cookie
         v.init = true;
+
+        // Initial player setup
         v.weapons = WeaponGenerator.generateInitialWeapons();
         v.points = 1000;
+        
+        // Fill temps
+        v.mostRecentScore = 0;
+        v.mostRecentVictory = false;
     }
     public function reset():Void {
         so.clear();
