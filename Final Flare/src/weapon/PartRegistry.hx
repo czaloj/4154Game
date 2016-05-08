@@ -1,6 +1,7 @@
 package weapon;
 
 import game.ColorScheme;
+import graphics.PositionalAnimator;
 import haxe.ds.StringMap;
 import openfl.geom.Matrix;
 import weapon.projectile.Projectile;
@@ -8,6 +9,8 @@ import weapon.projectile.ProjectileData;
 import weapon.WeaponPart.DamagePolygonData;
 import weapon.WeaponPart.ProjectileExitData;
 import weapon.WeaponData.FiringMode;
+
+typedef AnimationData = Pair<KeyframeTimeline, Array<PAFrame>>;
 
 class PartRegistry {
     public static function requirementPart(t:WeaponPartType):WeaponPart->Bool {
@@ -66,6 +69,51 @@ class PartRegistry {
         new ColorScheme(0xff202020, 0xffd1e304, 0xff46020a, 0, 0, 1, 1),
     ];
     
+    public static var ANIMATIONS:StringMap<AnimationData> = {
+        var m:StringMap<AnimationData> = new StringMap<AnimationData>();
+        // No animation
+        m.set("None", new AnimationData(
+            new KeyframeTimeline([1.0]),
+            [
+                new PAFrame(0.0, 0.0, 0.0),
+                new PAFrame(0.0, 0.0, 0.0)
+            ]
+        ));
+        
+        // Firing animations
+        m.set("Fire.Pushback", new AnimationData(
+            new KeyframeTimeline([0.2, 0.2]),
+            [
+                new PAFrame(0.0, 0.0, 0.0),
+                new PAFrame(-0.2, 0.0, 0.0),
+                new PAFrame(0.0, 0.0, 0.0)
+            ]
+        ));
+        m.set("Melee.Hitdown", new AnimationData(
+            new KeyframeTimeline([0.1, 0.3, 0.2]),
+            [
+                new PAFrame(0.0, 0.0, 0.0),
+                new PAFrame(-0.2, 0.1, 0.3),
+                new PAFrame(0.1, 0.-0.4, -Math.PI * 0.6),
+                new PAFrame(0.0, 0.0, 0.0)
+            ]
+        ));
+        
+        // Reloading animations
+        m.set("Reload.Upsweep", new AnimationData(
+            new KeyframeTimeline([0.2, 0.6, 0.1]),
+            [
+                new PAFrame(0.0, 0.0, 0.0),
+                new PAFrame(0.1, 0.0, Math.PI * 0.5),
+                new PAFrame(0.1, 0.0, Math.PI * 0.5),
+                new PAFrame(0.0, 0.0, 0.0)
+            ]
+        ));
+        m;
+    };
+    
+    
+    
     private static function rotated(m:Matrix, a:Float):Matrix {
         var mr:Matrix = new Matrix();
         mr.rotate(-a);
@@ -101,6 +149,7 @@ class PartRegistry {
                     new WeaponPartChild(new Matrix(1, 0, 0, 1, 2, 0), true, [requirementPart(WeaponPartType.BARREL), requirementSubclass(["Melee"])]),
                     new WeaponProperty(WeaponPropertyType.IS_BASE, 1),
                     new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Melee"),
+                    new WeaponProperty(WeaponPropertyType.ANIMATION_RELOAD, "None"),
                     SCHEMES_METALLIC
                 ]),
                 
@@ -116,6 +165,7 @@ class PartRegistry {
                     new WeaponProperty(WeaponPropertyType.IS_BASE, 1),
                     new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Melee"),
                     new WeaponProperty(WeaponPropertyType.DAMAGE_INCREASE, 7),
+                    new WeaponProperty(WeaponPropertyType.ANIMATION_RELOAD, "None"),
                     SCHEMES_METALLIC
                 ]),
                 
@@ -134,7 +184,9 @@ class PartRegistry {
                     new WeaponProperty(WeaponPropertyType.USES_PER_ACTIVATION, 1),
                     new WeaponProperty(WeaponPropertyType.ACTIVATION_COOLDOWN, 0.15),
                     new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Generic"),
-                    new WeaponProperty(WeaponPropertyType.FIRING_MODE, FiringMode.AUTOMATIC)
+                    new WeaponProperty(WeaponPropertyType.FIRING_MODE, FiringMode.AUTOMATIC),
+                    new WeaponProperty(WeaponPropertyType.ANIMATION_FIRE, "Fire.Pushback"),
+                    new WeaponProperty(WeaponPropertyType.ANIMATION_RELOAD, "Reload.Upsweep"),
                 ]),
                 
             new WeaponPart(
@@ -154,6 +206,8 @@ class PartRegistry {
                     new WeaponProperty(WeaponPropertyType.FIRING_MODE, FiringMode.SINGLE),
                     new WeaponProperty(WeaponPropertyType.RELOAD_TIME, 1.2),
                     new WeaponProperty(WeaponPropertyType.USE_CAPACITY, 6),
+                    new WeaponProperty(WeaponPropertyType.ANIMATION_FIRE, "Fire.Pushback"),
+                    new WeaponProperty(WeaponPropertyType.ANIMATION_RELOAD, "Reload.Upsweep"),
                 ]),
                 
             new WeaponPart(
@@ -174,7 +228,9 @@ class PartRegistry {
                     new WeaponProperty(WeaponPropertyType.FIRING_MODE, FiringMode.BURST),
                     new WeaponProperty(WeaponPropertyType.BURST_COUNT, 3),
                     new WeaponProperty(WeaponPropertyType.BURST_PAUSE, 0.05),
-                    new WeaponProperty(WeaponPropertyType.DAMAGE_INCREASE, 5)
+                    new WeaponProperty(WeaponPropertyType.DAMAGE_INCREASE, 5),
+                    new WeaponProperty(WeaponPropertyType.ANIMATION_FIRE, "Fire.Pushback"),
+                    new WeaponProperty(WeaponPropertyType.ANIMATION_RELOAD, "Reload.Upsweep"),
                 ]),
                 
             new WeaponPart(
@@ -191,7 +247,9 @@ class PartRegistry {
                     new WeaponProperty(WeaponPropertyType.USES_PER_ACTIVATION, 1),
                     new WeaponProperty(WeaponPropertyType.ACTIVATION_COOLDOWN, 0.5),
                     new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Generic"),
-                    new WeaponProperty(WeaponPropertyType.FIRING_MODE, FiringMode.SINGLE)
+                    new WeaponProperty(WeaponPropertyType.FIRING_MODE, FiringMode.SINGLE),
+                    new WeaponProperty(WeaponPropertyType.ANIMATION_FIRE, "Fire.Pushback"),
+                    new WeaponProperty(WeaponPropertyType.ANIMATION_RELOAD, "Reload.Upsweep"),
                 ]),
                 
             new WeaponPart(
@@ -210,7 +268,9 @@ class PartRegistry {
                     new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Generic"),
                     new WeaponProperty(WeaponPropertyType.FIRING_MODE, FiringMode.AUTOMATIC),
                     new WeaponProperty(WeaponPropertyType.USE_CAPACITY, 10),
-                    new WeaponProperty(WeaponPropertyType.DAMAGE_INCREASE, 20)
+                    new WeaponProperty(WeaponPropertyType.DAMAGE_INCREASE, 20),
+                    new WeaponProperty(WeaponPropertyType.ANIMATION_FIRE, "Fire.Pushback"),
+                    new WeaponProperty(WeaponPropertyType.ANIMATION_RELOAD, "Reload.Upsweep"),
                 ]),
                 
             new WeaponPart(
@@ -341,9 +401,11 @@ class PartRegistry {
                 [
                     new WeaponProperty(WeaponPropertyType.DAMAGE_POLYGON, new DamagePolygonData(4, 12, 0.4, 1.0, 10, 0.2)),
                     new WeaponProperty(WeaponPropertyType.USES_PER_ACTIVATION, 0),
-                    new WeaponProperty(WeaponPropertyType.ACTIVATION_COOLDOWN, 0.5),
+                    new WeaponProperty(WeaponPropertyType.ACTIVATION_COOLDOWN, 1.5),
+                    new WeaponProperty(WeaponPropertyType.RELOAD_TIME, 0.5),
                     new WeaponProperty(WeaponPropertyType.FIRING_MODE, FiringMode.AUTOMATIC),
-                    new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Melee")
+                    new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Melee"),
+                    new WeaponProperty(WeaponPropertyType.ANIMATION_FIRE, "Melee.Hitdown"),
                 ]),
                 
             new WeaponPart(
@@ -356,9 +418,11 @@ class PartRegistry {
                 [
                     new WeaponProperty(WeaponPropertyType.DAMAGE_POLYGON, new DamagePolygonData(2, 12, 0.3, 1.2, 15, 0.1)),
                     new WeaponProperty(WeaponPropertyType.USES_PER_ACTIVATION, 0),
-                    new WeaponProperty(WeaponPropertyType.ACTIVATION_COOLDOWN, 0.3),
+                    new WeaponProperty(WeaponPropertyType.ACTIVATION_COOLDOWN, 1.2),
+                    new WeaponProperty(WeaponPropertyType.RELOAD_TIME, 0.3),
                     new WeaponProperty(WeaponPropertyType.FIRING_MODE, FiringMode.AUTOMATIC),
-                    new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Melee")
+                    new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Melee"),
+                    new WeaponProperty(WeaponPropertyType.ANIMATION_FIRE, "Melee.Hitdown"),
                 ]),
                 
             new WeaponPart(
@@ -371,9 +435,11 @@ class PartRegistry {
                 [
                     new WeaponProperty(WeaponPropertyType.DAMAGE_POLYGON, new DamagePolygonData(2, 12, 1.0, 2.0, 40, 0.5)),
                     new WeaponProperty(WeaponPropertyType.USES_PER_ACTIVATION, 0),
-                    new WeaponProperty(WeaponPropertyType.ACTIVATION_COOLDOWN, 0.7),
+                    new WeaponProperty(WeaponPropertyType.ACTIVATION_COOLDOWN, 1.7),
+                    new WeaponProperty(WeaponPropertyType.RELOAD_TIME, 1.2),
                     new WeaponProperty(WeaponPropertyType.FIRING_MODE, FiringMode.AUTOMATIC),
-                    new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Melee")
+                    new WeaponProperty(WeaponPropertyType.SUB_CLASS, "Melee"),
+                    new WeaponProperty(WeaponPropertyType.ANIMATION_FIRE, "Melee.Hitdown"),
                 ])
         ];
         

@@ -15,6 +15,7 @@ import openfl.geom.Point;
 import starling.display.Image;
 import starling.display.Sprite;
 import starling.textures.Texture;
+import weapon.PartRegistry.AnimationData;
 import weapon.projectile.LargeProjectile;
 import weapon.projectile.BulletProjectile;
 import openfl.display.BitmapData;
@@ -32,6 +33,8 @@ class WeaponBuildWorkspace {
     public var velocityMultiplier:Float = 1.0; // (Multiplies the velocities of all projectiles)
     public var schemes:Array<ColorScheme> = [];
     public var additionalDamage:Int = 0;
+    public var animFires:Array<String> = [];
+    public var animReloads:Array<String> = [];
     
     public function new() {
         // Empty
@@ -63,6 +66,14 @@ class WeaponGenerator {
         // Choose random color scheme
         d.colorScheme = w.schemes[Std.int(Math.random() * w.schemes.length)];
         
+        // Create animations
+        var animData:AnimationData = PartRegistry.ANIMATIONS.get(w.animFires[Std.int(Math.random() * w.animFires.length)]);
+        d.animFire = new PositionalAnimator(animData.first, animData.second, false);
+        d.animFire.scaleToTime(d.getShotTime());
+        animData = PartRegistry.ANIMATIONS.get(w.animReloads[Std.int(Math.random() * w.animReloads.length)]);
+        d.animReload = new PositionalAnimator(animData.first, animData.second, false);
+        d.animReload.scaleToTime(d.reloadTime);
+        
         // Make sure absurd values don't pop up
         d.reloadTime = Math.max(0, d.reloadTime);
         d.useCapacity = Std.int(Math.max(0.1, d.useCapacity));
@@ -80,18 +91,6 @@ class WeaponGenerator {
         
         // TODO: Add real stuff
         d.sfxReload = "Reload2";
-        d.animFire = new PositionalAnimator(false);
-        d.animFire.addFrame(0, 0, 0, 0.2);
-        d.animFire.addFrame(-0.2, 0, 0, 0.2);
-        d.animFire.readdFrame(0);
-        d.animFire.scaleToTime(d.getShotTime());
-        d.animReload = new PositionalAnimator(false);
-        d.animReload.addFrame(0, 0, 0, 0.2);
-        d.animReload.addFrame(0.1, 0, Math.PI * 0.5, 0.6);
-        d.animReload.addFrame(0.1, 0, Math.PI * 0.5, 0.1);
-        d.animReload.readdFrame(0);
-        d.animReload.scaleToTime(d.reloadTime);
-        
         return d;
     }
     private static function buildTransforms(l:WeaponLayer, w:WeaponBuildWorkspace, parent:Matrix):Void {
@@ -165,6 +164,10 @@ class WeaponGenerator {
                     d.useCapacity += p.value;
                 case WeaponPropertyType.DAMAGE_INCREASE:
                     w.additionalDamage += p.value;
+                case WeaponPropertyType.ANIMATION_FIRE:
+                    w.animFires.push(p.value);
+                case WeaponPropertyType.ANIMATION_RELOAD:
+                    w.animReloads.push(p.value);                    
                 default:
                     // Unknown or unused property
             }

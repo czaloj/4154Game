@@ -23,4 +23,8 @@ enum WeaponPropertyType {
     ACCURACY_MODIFIER; // Float
     IS_BASE; // Bool
     DAMAGE_INCREASE; // Int
+    
+    // Feedback information
+    ANIMATION_RELOAD; // String
+    ANIMATION_FIRE; // String
 }

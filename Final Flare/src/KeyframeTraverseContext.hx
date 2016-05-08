@@ -2,7 +2,7 @@ package;
 
 class KeyframeTraverseContext {
     private var timeline:KeyframeTimeline;
-    private var looping:Bool;
+    public var looping:Bool;
     
     private var time:Float;
     private var index:Int;
