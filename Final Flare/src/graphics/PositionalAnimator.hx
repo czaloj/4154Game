@@ -8,32 +8,24 @@ class PAFrame {
     public var yOff:Float;
     public var rotation:Float;
     
-    // Amount of time this frame takes
-    public var time:Float;
-    
-    public function new(x:Float, y:Float, r:Float, t:Float) {
+    public function new(x:Float, y:Float, r:Float) {
         xOff = x;
         yOff = y;
         rotation = r;
-        time = t;
     }
 }
 
 class PositionalAnimator {
     public var chain:Array<PAFrame> = [];
     private var time:Float = 0;
-    private var timeInAnimation:Float = 0;
-    private var totalTime:Float = 0;
-    private var index:Int = 0;
-    private var isLooped:Bool;
     
     public function new(looping:Bool = true) {
         isLooped = looping;
     }
     
-    public function addFrame(x:Float, y:Float, r:Float, t:Float):Void {
+    public function addFrame(x:Float, y:Float, r:Float):Void {
         if (chain.length > 0) totalTime += chain[chain.length - 1].time;
-        chain.push(new PAFrame(x, y, r, t));
+        chain.push(new PAFrame(x, y, r));
     }
     public function readdFrame(i:Int):Void {
         totalTime += chain[chain.length - 1].time;
