@@ -1,25 +1,46 @@
 package ui;
+import graphics.PositionalAnimator;
 import starling.display.DisplayObject;
 import starling.display.Sprite;
+import starling.events.Event;
 
-/**
- * ...
- * @author ...
- */
 class PanelSprite extends Sprite {
     public var child:DisplayObject;
+    private var timeline:KeyframeTimeline;
+    private var animator:PositionalAnimator;
+    private var state:Float = 0;
 
-    public function new(d:DisplayObject) {
-        addChild(d);
+    public function new(d:DisplayObject, intervals:Array<Float>, transforms:Array<PAFrame>) {
+        super();
+        child = d;
+        addChild(child);
+        
+        timeline = new KeyframeTimeline(intervals);
+        animator = new PositionalAnimator(timeline, transforms, false);
+        
+        addEventListener(Event.ADDED_TO_STAGE, onAddStage);
+        addEventListener(Event.REMOVED_FROM_STAGE, onRemoveStage);
     }
     
-    public function beginPath():Void {
-        
+    private function onAddStage(e:Event = null):Void {
+        animator.resetTime(0);
+        state = 1;
+        addEventListener(Event.ENTER_FRAME, onUpdate);
     }
-    public function addPoint():Void {
-        
+    private function onRemoveStage(e:Event = null):Void {
+        removeEventListener(Event.ENTER_FRAME, onUpdate);
     }
-    public function endPath():Void {
-        
+    private function onUpdate(e:Event = null):Void {
+        var reachEnd:Bool = animator.update(ScreenController.FRAME_TIME * state, child);
+        if (state < 0 && reachEnd) {
+            stage.removeChild(this);
+        }
+    }
+    
+    public function extend():Void {
+        state = 1;
+    }
+    public function retract():Void {
+        state = -1;
     }
 }

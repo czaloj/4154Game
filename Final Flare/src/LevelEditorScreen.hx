@@ -77,8 +77,8 @@ class LevelEditorScreen extends IGameScreen {
     private var regions:Array<Quad> = [null];
     private var connections:Array<Array<Dynamic>> = [[]];
     private var selected_region:Int = 0;
-    private var walkArrow:Texture = Texture.fromBitmapData(Assets.getBitmapData("assets/WalkArrow.png"));
-    private var jumpArrow:Texture = Texture.fromBitmapData(Assets.getBitmapData("assets/JumpArrow.png"));
+    private var walkArrow:Texture = Texture.fromBitmapData(Assets.getBitmapData("assets/img/LevelEditor/WalkArrow.png"));
+    private var jumpArrow:Texture = Texture.fromBitmapData(Assets.getBitmapData("assets/img/LevelEditor/JumpArrow.png"));
     private var REGION_SELECTED:Bool = false;
 
     private var TILE_SHEET_SET:Bool = false;

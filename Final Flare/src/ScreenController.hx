@@ -8,8 +8,11 @@ import openfl.ui.Keyboard;
 import sound.Composer;
 import starling.display.Sprite;
 import starling.events.Event;
+import starling.textures.Texture;
 import ui.FontLoader;
+import ui.UISpriteFactory;
 import weapon.WeaponGenerator;
+import openfl.Assets;
 
 class ScreenController extends Sprite {
     public static var FRAME_TIME:Float = 1.0 / 60.0;
@@ -30,6 +33,7 @@ class ScreenController extends Sprite {
     public var playerData:PlayerData = null;
     public var loadedLevel:GameLevel = null; // The level that has been loaded in by the menu
     public var levelModifiers:MenuLevelModifiers = null; // Additional modification to a level
+    public var uif:UISpriteFactory = null;
     
     public function new() {
         super();
@@ -76,6 +80,7 @@ class ScreenController extends Sprite {
         // Load persistent assets
         FontLoader.loadFonts();
         Composer.loadTracks();
+        uif = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
         
         // Create the screens
         for (screen in screens) screen.build();

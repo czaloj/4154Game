@@ -163,7 +163,7 @@ class MenuScreen extends IGameScreen {
     private function initPanes():Void {
         //Add the background
         backGround = new Image(Texture.fromBitmapData(Assets.getBitmapData("assets/img/MenuScreens.png")));
-        screenController.addChild(backGround);
+        screenController.addChildAt(backGround, 0);
 
         //INIT HOME PANE
         //Set up formatting stuff
