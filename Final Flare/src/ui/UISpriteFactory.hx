@@ -99,6 +99,8 @@ class UISpriteFactory {
         var sprite = new Sprite();
 
         //Create regions from sprite sheet
+        sx -= 16;
+        sy -= 16;
         addScaledChildSprite("Region.Center", sprite, 8, 8, sx, sy);
         addChildSprite("Region.TopLeft", sprite, 0, 0);
         addScaledChildSprite("Region.Top", sprite, 8, 0, sx, 1);
@@ -115,6 +117,8 @@ class UISpriteFactory {
         var sprite = new Sprite();
 
         //Create regions from sprite sheet
+        sx -= 16;
+        sy -= 16;
         addScaledChildSprite("Region.Hover.Center", sprite, 8, 8, sx, sy);
         addChildSprite("Region.Hover.TopLeft", sprite, 0, 0);
         addScaledChildSprite("Region.Hover.Top", sprite, 8, 0, sx, 1);
@@ -129,9 +133,10 @@ class UISpriteFactory {
     }
     public function createButtonPressed(sx:Float, sy:Float):Sprite {
         var sprite = new Sprite();
-        addScaledChildSprite("Region.Center", sprite, 8, 8, sx, sy);
 
         //Create regions from sprite sheet
+        sx -= 16;
+        sy -= 16;
         addScaledChildSprite("Region.Press.Center", sprite, 8, 8, sx, sy);
         addChildSprite("Region.Press.TopLeft", sprite, 0, 0);
         addScaledChildSprite("Region.Press.Top", sprite, 8, 0, sx, 1);

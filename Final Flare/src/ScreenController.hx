@@ -11,6 +11,10 @@ import starling.events.Event;
 import starling.textures.Texture;
 import ui.FontLoader;
 import ui.UISpriteFactory;
+import weapon.WeaponData;
+import weapon.Weapon;
+import weapon.WeaponGenParams;
+import weapon.WeaponLayer;
 import weapon.WeaponGenerator;
 import openfl.Assets;
 
@@ -45,8 +49,10 @@ class ScreenController extends Sprite {
         // Startup on the splash screen
         screens = [
             new SplashScreen(this),
-            new MenuScreen(this),
+            new MainMenuScreen(this),
+            new LevelSelectScreen(this),
             new GameplayScreen(this),
+            new ShopScreen(this),
             new LevelEditorScreen(this),
             new WeaponTestScreen(this),
             new EndScreen(this)
@@ -81,6 +87,33 @@ class ScreenController extends Sprite {
         FontLoader.loadFonts();
         Composer.loadTracks();
         uif = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
+        
+        // TODO: Load player data
+        playerData = new PlayerData("Player");
+        levelModifiers = new MenuLevelModifiers();
+        var initialWeapons:Array<WeaponData> = WeaponGenerator.generateInitialWeapons();
+        levelModifiers.characterWeapons = [
+            initialWeapons[0],
+            initialWeapons[1],
+            initialWeapons[2],
+            initialWeapons[3],
+            initialWeapons[0], // For testing only
+            initialWeapons[4]
+        ];
+        var weaponParams:WeaponGenParams = new WeaponGenParams();
+        weaponParams.evolutionPoints = 500;
+        weaponParams.shadynessPoints = 0;
+        weaponParams.historicalPoints = 0;
+        levelModifiers.enemyWeapons = [WeaponGenerator.generate(weaponParams)];
+        weaponParams.evolutionPoints = 1000;
+        weaponParams.shadynessPoints = 40;
+        levelModifiers.enemyWeapons.push(WeaponGenerator.generate(weaponParams));
+        levelModifiers.enemyWeapons.push(WeaponGenerator.generate(weaponParams));
+        weaponParams.evolutionPoints = 2000;
+        weaponParams.shadynessPoints = 100;
+        weaponParams.historicalPoints = 80;
+        levelModifiers.enemyWeapons.push(WeaponGenerator.generate(weaponParams));
+        levelModifiers.enemyWeapons.push(WeaponGenerator.generate(weaponParams));
         
         // Create the screens
         for (screen in screens) screen.build();

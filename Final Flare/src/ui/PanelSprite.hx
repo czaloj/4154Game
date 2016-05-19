@@ -1,6 +1,8 @@
 package ui;
 import graphics.PositionalAnimator;
+import lime.graphics.console.VertexOutput;
 import starling.display.DisplayObject;
+import starling.display.DisplayObjectContainer;
 import starling.display.Sprite;
 import starling.events.Event;
 
@@ -33,10 +35,19 @@ class PanelSprite extends Sprite {
     private function onUpdate(e:Event = null):Void {
         var reachEnd:Bool = animator.update(ScreenController.FRAME_TIME * state, child);
         if (state < 0 && reachEnd) {
-            stage.removeChild(this);
+            mParent.removeChild(this);
         }
     }
     
+    public function readdTo(m:DisplayObjectContainer):Void {
+        if (mParent != null) {
+            animator.resetTime(0);
+            extend();
+        }
+        else {
+            m.addChild(this);
+        }
+    }
     public function extend():Void {
         state = 1;
     }

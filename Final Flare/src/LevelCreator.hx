@@ -153,7 +153,7 @@ class LevelCreator {
         state.characterWeapons = mod.characterWeapons.copy();
         state.enemyWeapons = mod.enemyWeapons.copy();
 
-        var bmpGuns:BitmapData = Assets.getBitmapData("assets/img/Gun.png");
+        var bmpGuns:BitmapData = Assets.getBitmapData("assets/img/Guns.png");
         var bmpConvertedGuns:BitmapData = new BitmapData(bmpGuns.width, bmpGuns.height * 1);
         var cs:Array<ColorScheme> = [
             new ColorScheme(0xffff0000, 0xff00ff00, 0xff0000ff, 0, 0, 1, 1)
