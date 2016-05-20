@@ -229,12 +229,12 @@ class SpriteSheetRegistry {
     public static function getCharacterSheet():SpriteSheet {
         // TODO: Determine the correct data
         return new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Characters.png")), [
-            new TileRegion( "Man.Head", 750, 0, 18, 18),
+            new TileRegion( "Man.Head", 749, 0, 19, 18),
             new StripRegion("Man.Rest", 0,   0, 30, 40, 1, 5,  5),
             new StripRegion("Man.Run",  150, 0, 30, 40, 1, 12, 12),
             new StripRegion("Man.Jump", 510, 0, 30, 40, 1, 8,  8),
             
-            new TileRegion( "Wolf.Head", 750, 40, 18, 18),
+            new TileRegion( "Wolf.Head", 749, 37, 25, 22),
             new StripRegion("Wolf.Rest", 0,   40, 30, 40, 1, 5,  5),
             new StripRegion("Wolf.Run",  150, 40, 30, 40, 1, 12, 12),
             new StripRegion("Wolf.Jump", 510, 40, 30, 40, 1, 8,  8),
@@ -244,7 +244,7 @@ class SpriteSheetRegistry {
             new StripRegion("Robot.Run",  150, 80, 30, 40, 1, 12, 12),
             new StripRegion("Robot.Jump", 510, 80, 30, 40, 1, 8,  8),
 
-            new TileRegion( "SteamGirl.Head", 750, 120, 18, 18),
+            new TileRegion( "SteamGirl.Head", 749, 119, 23, 24),
             new StripRegion("SteamGirl.Rest", 0,   120, 30, 40, 1, 5,  5),
             new StripRegion("SteamGirl.Run",  150, 120, 30, 40, 1, 12, 12),
             new StripRegion("SteamGirl.Jump", 510, 120, 30, 40, 1, 8,  8),
