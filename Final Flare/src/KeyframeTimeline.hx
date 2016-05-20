@@ -11,10 +11,12 @@ class KeyframeTimeline {
     }
     
     public function new(intervals:Array<Float>) {
-        this.intervals = intervals.copy();
-        accumulations = [0.0];
-        for (i in 1...(this.intervals.length + 1)) {
-            accumulations.push(accumulations[i - 1] + this.intervals[i - 1]);
+        if (intervals != null) {
+            this.intervals = intervals.copy();
+            accumulations = [0.0];
+            for (i in 1...(this.intervals.length + 1)) {
+                accumulations.push(accumulations[i - 1] + this.intervals[i - 1]);
+            }
         }
     }
     

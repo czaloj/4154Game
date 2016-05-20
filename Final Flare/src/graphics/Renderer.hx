@@ -296,7 +296,6 @@ class Renderer {
             if (wi == null) continue;
             pack.weaponTextures.set(wi, WeaponGenerator.buildSprite(wi, bmpGunData));
         }
-        bmpGunData.dispose();
     }
     public function dispose():Void {
         tilesForeground.dispose();

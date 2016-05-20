@@ -46,6 +46,10 @@ class EndScreen extends IGameScreen {
         screenController.lastKnownState = null;
         screenController.playerData.mostRecentScore = state.score;
         screenController.playerData.mostRecentVictory = state.victory;
+        screenController.playerData.pointsEvolution += state.accumulatedEvolution;
+        screenController.playerData.pointsHistorical += state.accumulatedHistorical;
+        screenController.playerData.pointsShadyness += state.accumulatedShadyness;
+        screenController.playerData.save();
         FFLog.recordEvent(95, state.score + ", " + state.victory); //score, victory at end of game
         
         addStartButton();

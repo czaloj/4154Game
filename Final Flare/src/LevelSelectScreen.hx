@@ -15,6 +15,8 @@ import openfl.Assets;
 import ui.Button;
 import ui.GunVisualizer;
 import ui.PanelSprite;
+import weapon.WeaponGenerator;
+import weapon.WeaponGenParams;
 
 class LevelSelectScreen extends IGameScreen{
     private var textureBackground:Texture;
@@ -23,6 +25,7 @@ class LevelSelectScreen extends IGameScreen{
 
     private var btnBack:Button;
     private var transitionButtons:Array<PanelSprite>;
+    private var btnPlay:Button;
     
     private var btnNext:starling.display.Button;
     private var btnPrevious:starling.display.Button;
@@ -77,6 +80,10 @@ class LevelSelectScreen extends IGameScreen{
         btnBack = createButton(0, Starling.current.stage.stageHeight - 50, 0, 50, "Back", 0.1);
         btnBack.bEvent.add(function():Void {
             screenController.switchToScreen(1);
+        });
+        btnPlay = createButton(Starling.current.stage.stageWidth - 160, Starling.current.stage.stageHeight - 50, 0, 50, "Play", 0.2);
+        btnPlay.bEvent.add(function():Void {
+            playLevel();
         });
         
         options = new Sprite();
@@ -175,5 +182,27 @@ class LevelSelectScreen extends IGameScreen{
        weaponIndices[weaponTabIndex] = (weaponIndices[weaponTabIndex] + (screenController.playerData.weapons.length - 1)) % screenController.playerData.weapons.length;
        screenController.levelModifiers.characterWeapons[weaponTabIndex] = screenController.playerData.weapons[weaponIndices[weaponTabIndex]];
        weaponVis.view(screenController.levelModifiers.characterWeapons[weaponTabIndex], bmpWeapons);
+    }
+    private function playLevel():Void {
+        screenController.loadedLevel = LevelCreator.loadLevelFromFile([
+            "assets/level/easy.lvl"
+        ][Std.int(Math.random() * 1)]);
+        
+        var weaponParams:WeaponGenParams = new WeaponGenParams();
+        weaponParams.evolutionPoints = 500;
+        weaponParams.shadynessPoints = 0;
+        weaponParams.historicalPoints = 0;
+        screenController.levelModifiers.enemyWeapons = [WeaponGenerator.generate(weaponParams)];
+        weaponParams.evolutionPoints = 1000;
+        weaponParams.shadynessPoints = 40;
+        screenController.levelModifiers.enemyWeapons.push(WeaponGenerator.generate(weaponParams));
+        screenController.levelModifiers.enemyWeapons.push(WeaponGenerator.generate(weaponParams));
+        weaponParams.evolutionPoints = 2000;
+        weaponParams.shadynessPoints = 100;
+        weaponParams.historicalPoints = 80;
+        screenController.levelModifiers.enemyWeapons.push(WeaponGenerator.generate(weaponParams));
+        screenController.levelModifiers.enemyWeapons.push(WeaponGenerator.generate(weaponParams));
+        
+        screenController.switchToScreen(3);
     }
 }

@@ -8,10 +8,14 @@ import openfl.geom.Matrix;
 import openfl.geom.Point;
 import weapon.projectile.ProjectileData;
 
-enum FiringMode {
-    SINGLE;
-    BURST;
-    AUTOMATIC;
+class FiringMode {
+    public static var SINGLE:Int = 0;
+    public static var BURST:Int = 1;
+    public static var AUTOMATIC:Int = 2;
+    
+    public function new() {
+        
+    }
 }
 
 class ProjectileOrigin {
@@ -46,7 +50,7 @@ class WeaponData {
     
     
     // Information for firing logic
-    public var firingMode:FiringMode = FiringMode.SINGLE;
+    public var firingMode:Int = FiringMode.SINGLE;
     public var useCapacity:Int = 0;
     public var usesPerActivation:Int = 0;
     public var reloadTime:Float = 0;

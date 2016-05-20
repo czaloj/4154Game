@@ -19,6 +19,7 @@ import weapon.WeaponPartType;
 import weapon.WeaponProperty;
 import weapon.WeaponPropertyType;
 import weapon.WeaponPartChild;
+import graphics.PositionalAnimator;
 
 class Main extends Sprite {
     private static inline var PROGRAM_TYPE:Int = 0;
@@ -37,6 +38,10 @@ class Main extends Sprite {
         AMFConnection.registerClassAlias("weapon.ProjectileData", ProjectileData);
         AMFConnection.registerClassAlias("weapon.ProjectileChildData", ProjectileChildData);
         AMFConnection.registerClassAlias("weapon.ProjectileExitData", ProjectileExitData);
+        AMFConnection.registerClassAlias("graphics.PositionalAnimator", PositionalAnimator);
+        AMFConnection.registerClassAlias("KeyframeTimeline", KeyframeTimeline);
+        AMFConnection.registerClassAlias("KeyframeTraverseContext", KeyframeTraverseContext);
+        AMFConnection.registerClassAlias("PAFrame", PAFrame);
         AMFConnection.registerClassAlias("Pair", Pair);
         AMFConnection.registerClassAlias("openfl.geom.Matrix", Matrix);
         AMFConnection.registerClassAlias("game.ColorScheme", ColorScheme);

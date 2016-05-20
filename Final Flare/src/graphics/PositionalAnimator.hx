@@ -24,7 +24,7 @@ class PositionalAnimator {
     public function new(kt:KeyframeTimeline, frames:Array<PAFrame>, looping:Bool = true) {
         timeline = kt;
         ktc = new KeyframeTraverseContext(kt, looping);
-        chain = frames.copy();
+        if(frames != null) chain = frames.copy();
     }
     
     /**
