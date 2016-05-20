@@ -7,6 +7,7 @@ import openfl.display.BitmapData;
 import starling.core.Starling;
 import starling.display.Image;
 import starling.display.Sprite;
+import starling.events.Event;
 import starling.textures.Texture;
 import starling.utils.HAlign;
 import starling.utils.VAlign;
@@ -23,8 +24,8 @@ class LevelSelectScreen extends IGameScreen{
     private var btnBack:Button;
     private var transitionButtons:Array<PanelSprite>;
     
-    private var btnNext:Button;
-    private var btnPrevious:Button;
+    private var btnNext:starling.display.Button;
+    private var btnPrevious:starling.display.Button;
     
     private var options:Sprite;
     private var btnGuns:Array<Button>;
@@ -108,6 +109,24 @@ class LevelSelectScreen extends IGameScreen{
         weaponSelector = screenController.uif.getTile("WeaponSelection");
         weaponSelector.x = -3;
         options.addChild(weaponSelector);
+        
+        btnPrevious = new starling.display.Button(
+            screenController.uif.getSubtexture("LS.Previous.Normal"), "", 
+            screenController.uif.getSubtexture("LS.Previous.Hover"),
+            screenController.uif.getSubtexture("LS.Previous.Press")
+        );
+        btnPrevious.addEventListener(Event.TRIGGERED, function(e:Event):Void { cyclePreviousWeapon(); } );
+        btnPrevious.y = weaponVis.y + weaponVis.height;
+        options.addChild(btnPrevious);
+        btnNext = new starling.display.Button(
+            screenController.uif.getSubtexture("LS.Next.Normal"), "", 
+            screenController.uif.getSubtexture("LS.Next.Hover"),
+            screenController.uif.getSubtexture("LS.Next.Press")
+        );
+        btnNext.addEventListener(Event.TRIGGERED, function(e:Event):Void { cycleNextWeapon(); } );
+        btnNext.y = weaponVis.y + weaponVis.height;
+        btnNext.x = btnPrevious.x + btnPrevious.width;
+        options.addChild(btnNext);
     }
     override public function destroy():Void {
         textureBackground.dispose();

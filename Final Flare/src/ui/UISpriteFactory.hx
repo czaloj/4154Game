@@ -115,7 +115,13 @@ class UISpriteFactory {
             // Menu-related stuff
             new TileRegion("WeaponSelection", 0, 500, 68, 56),
             new TileRegion("WeaponVis.Background", 50, 250, 300, 250),
-            new TileRegion("WeaponVisualization", 804, 396, 220, 180)
+            new TileRegion("WeaponVisualization", 804, 396, 220, 180),
+            new TileRegion("LS.Previous.Normal", 72, 22, 46, 22),
+            new TileRegion("LS.Previous.Hover", 72, 44, 46, 22),
+            new TileRegion("LS.Previous.Press", 72, 66, 46, 22),
+            new TileRegion("LS.Next.Normal", 118, 22, 46, 22),
+            new TileRegion("LS.Next.Hover", 118, 44, 46, 22),
+            new TileRegion("LS.Next.Press", 118, 66, 46, 22),
         ]);
     }
 
