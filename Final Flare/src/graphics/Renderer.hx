@@ -1,9 +1,13 @@
 package graphics;
 
+import game.Coin;
 import game.GameState;
 import game.Entity;
 import openfl.Assets;
+import openfl.display.Bitmap;
+import openfl.display.BitmapData;
 import openfl.geom.Matrix;
+import starling.utils.Color;
 import weapon.projectile.BulletProjectile;
 import game.World;
 import graphics.particles.TracerList;
@@ -26,6 +30,7 @@ import starling.display.Stage;
 import starling.textures.RenderTexture;
 import starling.textures.Texture;
 import weapon.projectile.Projectile;
+import weapon.WeaponData;
 import weapon.WeaponGenerator;
 
 class Renderer {
@@ -150,14 +155,14 @@ class Renderer {
         }
         entityTbl.set(o, sprite);
         
-        var wi:DisplayObject = WeaponGenerator.buildSprite(o.weapon.data, Assets.getBitmapData("assets/img/Guns.png"));
+        var wi:Pair<Texture, Point> = pack.weaponTextures.get(o.weapon.data);
         
         //var wi:AnimatedSprite = new AnimatedSprite(pack.gun, pack.weaponMapping.get(o.weapon.data), 1);
         //wi.scaleX /= 64;
         //wi.scaleY /= 64;
         //wi.y = 0.2;
         //wi.x = -0.2;
-        sprite.setWeapon(wi);
+        sprite.setWeapon(WeaponGenerator.makeWeaponSprite(wi.first, wi.second));
     }
     public function onEntityRemoved(s:game.GameState, o:game.Entity):Void {
         var e:EntitySprite = entityTbl.get(o);
@@ -227,7 +232,17 @@ class Renderer {
         screenShakeOffset.x += x;
         screenShakeOffset.y += y;
     }
-
+    public function addCoin(c:Coin, r:Float) {
+        var as:AnimatedSprite = new AnimatedSprite(pack.particles, "Coin.Evolution", 5);
+        as.x = -r;
+        as.y = -r;
+        as.width = r * 2;
+        as.height = r * 2;
+        as.color = Color.YELLOW;
+        c.addChild(as);
+        hierarchy.particlesBottom.addChild(c);
+    }
+    
     private function load(state:game.GameState):Void {
         // Generate environment geometry
         tilesForeground = new QuadBatch();
@@ -273,8 +288,26 @@ class Renderer {
 
         tracers = new TracerList();
         hierarchy.projectiles.addChild(tracers);
+        
+        // Create all the gun textures
+        var bmpGunData:BitmapData = Assets.getBitmapData("assets/img/Guns.png");
+        pack.weaponTextures = new ObjectMap<WeaponData, Pair<Texture, Point>>();
+        for (wi in [].concat(state.characterWeapons).concat(state.enemyWeapons)) {
+            if (wi == null) continue;
+            pack.weaponTextures.set(wi, WeaponGenerator.buildSprite(wi, bmpGunData));
+        }
+        bmpGunData.dispose();
     }
-
+    public function dispose():Void {
+        tilesForeground.dispose();
+        tilesBackground.dispose();
+        tracers.dispose();
+        rtForeground.dispose();
+        rtBackground.dispose();
+        for (t in pack.weaponTextures) t.first.dispose();
+        hierarchy.removeFromParent();
+    }
+    
     /** Tilemap generation code **/
     private function getDisconnected(s:GameState, array:Array<Int>, tID:Int, x:Int, y:Int, ts:Int):Int {
         var l:Int = x - ts;

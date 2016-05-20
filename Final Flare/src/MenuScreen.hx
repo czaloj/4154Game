@@ -272,7 +272,7 @@ class MenuScreen extends IGameScreen {
         };
 
         //Add UI elements
-        evolution = new ui.ShopElement("Evolution Points: ", screenController.playerData.points);
+        evolution = new ui.ShopElement("Evolution Points: ", screenController.playerData.pointsEvolution);
         shadiness = new ui.ShopElement("Shadiness Points: ", 0);
         historical = new ShopElement("Historical Points: ", 0);
         
@@ -395,8 +395,8 @@ class MenuScreen extends IGameScreen {
     
     public function generateWeapon() {
         var p  = evolution.allocated;
-        var dif = (screenController.playerData.points - p);
-        screenController.playerData.points -= p;
+        var dif = (screenController.playerData.pointsEvolution - p);
+        screenController.playerData.pointsEvolution -= p;
         if (p >= 100 && dif >= 0) {
             generateButton.enabled = false;
             evolution.disable();

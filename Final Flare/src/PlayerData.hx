@@ -1,5 +1,8 @@
 package;
+import haxe.Serializer;
+import haxe.Unserializer;
 import openfl.net.SharedObject;
+import openfl.net.SharedObjectFlushStatus;
 import weapon.WeaponData;
 import weapon.WeaponGenerator;
 
@@ -9,7 +12,9 @@ class PlayerData {
     
     // Weapons the player has unlocked
     public var weapons(get, never):Array<WeaponData>;
-    public var points(get, set):Int;
+    public var pointsEvolution(get, set):Int;
+    public var pointsHistorical(get, set):Int;
+    public var pointsShadyness(get, set):Int;
     
     // Record-keeping values
     public var selectedChars:Array<String> = new Array<String>();
@@ -30,7 +35,9 @@ class PlayerData {
 
         // Initial player setup
         v.weapons = WeaponGenerator.generateInitialWeapons();
-        v.points = 1000;
+        v.pointsEvolution = 1000;
+        v.pointsHistorical = 100;
+        v.pointsShadyness = 100;
         
         // Fill temps
         v.mostRecentScore = 0;
@@ -39,15 +46,34 @@ class PlayerData {
     public function reset():Void {
         so.clear();
         generateDefault(so.data);
+        save();
+    }
+    public function save():Void {
         so.flush();
     }
-
-    public function get_points():Int {
-        return so.data.points;
+    
+    public function get_pointsEvolution():Int {
+        return so.data.pointsEvolution;
     }
-    public function set_points(v:Int):Int {
-        so.data.points = v;
-        return so.data.points;
+    public function set_pointsEvolution(v:Int):Int {
+        so.data.pointsEvolution = v;
+        return so.data.pointsEvolution;
+    }
+    
+    public function get_pointsHistorical():Int {
+        return so.data.pointsHistorical;
+    }
+    public function set_pointsHistorical(v:Int):Int {
+        so.data.pointsHistorical = v;
+        return so.data.pointsHistorical;
+    }
+    
+    public function get_pointsShadyness():Int {
+        return so.data.pointsShadyness;
+    }
+    public function set_pointsShadyness(v:Int):Int {
+        so.data.pointsShadyness = v;
+        return so.data.pointsShadyness;
     }
     
     public function get_weapons():Array<WeaponData> {

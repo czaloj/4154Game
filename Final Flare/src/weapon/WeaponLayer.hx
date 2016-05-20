@@ -10,7 +10,7 @@ class WeaponLayer {
     // Locations to which the children tie and the children themselves
     public var children:Array<Pair<Int, WeaponLayer>> = [];
     
-    public var wsTransform:Matrix; // Tranformation of this part in the weapon's space
+    public var wsTransform:Matrix = new Matrix(); // Tranformation of this part in the weapon's space
     
     public function new(n:String, c:Array<Pair<Int, WeaponLayer>> = null) {
         part = PartRegistry.parts.get(n);

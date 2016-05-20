@@ -206,10 +206,7 @@ class WeaponGenerator {
         
         return pd;
     }
-    
-    public static function buildSprite(data:WeaponData, bmpGuns:BitmapData):DisplayObject {
-        var sprite:Sprite = new Sprite();
-        
+    public static function buildSprite(data:WeaponData, bmpGuns:BitmapData):Pair<Texture, Point> {
         // Get the fitting rectangle of the gun
         var min:Point = new Point(1000, 1000);
         var max:Point = new Point(-1000, -1000);
@@ -247,17 +244,21 @@ class WeaponGenerator {
             }
         }
         
-        sprite.scaleX = 1 / GUN_SCALE;
-        sprite.scaleY = 1 / -GUN_SCALE;
-        var image:Image = new Image(Texture.fromBitmapData(bmp));
-        image.x = min.x;
-        image.y = min.y;
-        sprite.addChild(image);
-        return sprite;
+        return new Pair<Texture, Point>(Texture.fromBitmapData(bmp), min);
     }
     private static function traverseLayersToList(l:WeaponLayer, a:Array<WeaponLayer>):Void {
         a.push(l);
         for (c in l.children) traverseLayersToList(c.second, a);
+    }
+    public static function makeWeaponSprite(t:Texture, p:Point):DisplayObject {
+        var sprite:Sprite = new Sprite();
+        sprite.scaleX = 1 / GUN_SCALE;
+        sprite.scaleY = 1 / -GUN_SCALE;
+        var image:Image = new Image(t);
+        image.x = p.x;
+        image.y = p.y;
+        sprite.addChild(image);
+        return sprite;
     }
     
     private static function allowsCost(p:WeaponPart, params:WeaponGenParams):Bool {
@@ -347,6 +348,7 @@ class WeaponGenerator {
         }
         
         var data:WeaponData = WeaponGenerator.buildFromParts(baseLayer);
+        data.name = "A Gun";
         return data;
     }
     private static function finalizeRequirements(baseLayer:WeaponLayer, params:WeaponGenParams):Bool {

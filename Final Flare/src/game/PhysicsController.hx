@@ -32,6 +32,7 @@ enum PhysicsUserDataType {
     ENTITY;
     PLATFORM;
     PROJECTILE;
+    PICKUP;
 }
 typedef PhysicsUserData = Pair<PhysicsUserDataType, Dynamic>;
 
@@ -228,7 +229,29 @@ class PhysicsController extends B2ContactListener {
         fixtureMain.SetUserData(new PhysicsUserData(PhysicsUserDataType.PROJECTILE, p));
         p.body.setLinearVelocity(new B2Vec2(vx, vy));
     }
+    public function initCoin(c:Coin, x:Float, y:Float, r:Float):Void {
+        // Create body
+        var bodyDef:B2BodyDef = new B2BodyDef();
+        bodyDef.position.set(x, y);
+        bodyDef.type = B2Body.b2_dynamicBody;
+        bodyDef.allowSleep = true;
+        bodyDef.fixedRotation = true;
+        c.body = world.createBody(bodyDef);
 
+        // Create collision information
+        var shape:B2CircleShape = new B2CircleShape(r);
+        var fixtureDef:B2FixtureDef = new B2FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.friction = 0.3;
+        fixtureDef.density = 0.3;
+        fixtureDef.restitution = 0.8;
+        fixtureDef.filter = FILTER_ENEMY_PROJECTILE.copy();
+        c.fixture = c.body.createFixture(fixtureDef);
+
+        // Set initial entity data to the body
+        c.fixture.SetUserData(new PhysicsUserData(PhysicsUserDataType.PICKUP, c));
+    }
+    
     public function update(dt:Float) {
         world.step(dt, 5, 3);
         world.clearForces();

@@ -176,12 +176,12 @@ class Button extends DisplayObjectContainer {
                             currentState = downState; 
                             clicked = true;
                             bEvent.invoke();
-                            bEvent1.invoke(cast(this.parent, UICharacter));
+                            //bEvent1.invoke(cast(this.parent, UICharacter));
                         }
                         else if (currentState == downState) { 
                             switchState(overState);
                             currentState = upState;
-                            bEvent1.invoke(cast(this.parent, UICharacter));
+                            //bEvent1.invoke(cast(this.parent, UICharacter));
                             clicked = false;
                         }
                     case TouchPhase.HOVER:

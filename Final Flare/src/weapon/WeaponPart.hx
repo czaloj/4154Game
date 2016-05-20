@@ -111,7 +111,7 @@ class WeaponPart {
         schemes = [];
         properties = [];
         properties.push(new WeaponProperty(WeaponPropertyType.PART_TYPE, pt));
-        addToThis(def);
+        if(def != null) addToThis(def);
         properties.push(new WeaponProperty(WeaponPropertyType.TOTAL_CHILDREN, children.length));
         var requiredChildren:Int = 0;
         for (c in children) if (c.isRequired) requiredChildren++;

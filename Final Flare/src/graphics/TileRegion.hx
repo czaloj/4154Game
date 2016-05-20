@@ -1,6 +1,8 @@
 package graphics;
 
 import starling.display.Image;
+import openfl.geom.Rectangle;
+import starling.textures.SubTexture;
 
 class TileRegion {
     // Name of the tile
@@ -58,5 +60,8 @@ class TileRegion {
             i.setTexCoordsTo(2, xMin, yMax);
             i.setTexCoordsTo(3, xMax, yMax);
         }
+    }
+    public function getSubTextureRegion():Rectangle {
+        return new Rectangle(sourceX, sourceY, width, height);
     }
 }

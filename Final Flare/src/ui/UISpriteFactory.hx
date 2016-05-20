@@ -6,6 +6,8 @@ import graphics.StaticSprite;
 import graphics.StripRegion;
 import graphics.TileRegion;
 import starling.display.Sprite;
+import openfl.geom.Rectangle;
+import starling.textures.SubTexture;
 import starling.textures.Texture;
 import ui.Button.ButtonTextFormat;
 
@@ -65,6 +67,29 @@ class UISpriteFactory {
             // Arrow
             new TileRegion("Arrow", 98, 0, 8, 8),
             
+            // Number Input
+            new TileRegion("NI.Plus1.Normal", 0, 22, 24, 32),
+            new TileRegion("NI.Plus1.Hover", 24, 22, 24, 32),
+            new TileRegion("NI.Plus1.Press", 48, 22, 24, 32),
+            new TileRegion("NI.Plus2.Normal", 0, 54, 24, 32),
+            new TileRegion("NI.Plus2.Hover", 24, 54, 24, 32),
+            new TileRegion("NI.Plus2.Press", 48, 54, 24, 32),
+            new TileRegion("NI.Plus3.Normal", 0, 86, 24, 32),
+            new TileRegion("NI.Plus3.Hover", 24, 86, 24, 32),
+            new TileRegion("NI.Plus3.Press", 48, 86, 24, 32),
+            new TileRegion("NI.Minus1.Normal", 0, 118, 24, 32),
+            new TileRegion("NI.Minus1.Hover", 24, 118, 24, 32),
+            new TileRegion("NI.Minus1.Press", 48, 118, 24, 32),
+            new TileRegion("NI.Minus2.Normal", 0, 150, 24, 32),
+            new TileRegion("NI.Minus2.Hover", 24, 150, 24, 32),
+            new TileRegion("NI.Minus2.Press", 48, 150, 24, 32),
+            new TileRegion("NI.Minus3.Normal", 0, 182, 24, 32),
+            new TileRegion("NI.Minus3.Hover", 24, 182, 24, 32),
+            new TileRegion("NI.Minus3.Press", 48, 182, 24, 32),
+            new TileRegion("NI.PointText", 0, 214, 50, 96),
+            new TileRegion("NI.Top", 50, 214, 494, 36),
+            new TileRegion("NI.TopGreen", 171, 229, 370, 18),
+            
             // Unique UI pieces
             new TileRegion("Background", 0, 0, 800, 450),
 
@@ -84,7 +109,13 @@ class UISpriteFactory {
             new TileRegion("EnemyHealthBar.Main", 1023, 1023, 1, 1),
             new TileRegion("EnemyHealthBar.Strip", 1023, 1023, 1, 1),
             
-            new TileRegion("Pixel", 1023, 1023, 1, 1)
+            // The pixel
+            new TileRegion("Pixel", 1023, 1023, 1, 1),
+            
+            // Menu-related stuff
+            new TileRegion("WeaponSelection", 0, 500, 68, 56),
+            new TileRegion("WeaponVis.Background", 50, 250, 300, 250),
+            new TileRegion("WeaponVisualization", 804, 396, 220, 180)
         ]);
     }
 
@@ -93,6 +124,10 @@ class UISpriteFactory {
     }
     public function getAnimation(s:String, delay:Int = 1):AnimatedSprite {
         return new AnimatedSprite(sheet, s, delay, false);
+    }
+    public function getSubtexture(s:String):SubTexture {
+        var region:TileRegion = sheet.getTile(s);
+        return new SubTexture(sheet.texture, region.getSubTextureRegion(), false);
     }
 
     public function createButtonUp(sx:Float, sy:Float):Sprite {

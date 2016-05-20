@@ -72,14 +72,14 @@ class MainMenuScreen extends IGameScreen {
             screenController.loadedLevel = LevelCreator.loadLevelFromFile("assets/level/tutorial.lvl");
 
             // Create tutorial scenario
-            var initialWeapons:Array<WeaponData> = WeaponGenerator.generateInitialWeapons();
+            var pd:PlayerData = screenController.playerData;
             screenController.levelModifiers.characterWeapons = [
-                initialWeapons[0],
-                initialWeapons[1],
-                initialWeapons[2],
-                initialWeapons[3],
-                initialWeapons[0], // For testing only
-                initialWeapons[4]
+                pd.weapons[0],
+                pd.weapons[1],
+                pd.weapons[2],
+                pd.weapons[3],
+                pd.weapons[0], // For testing only
+                pd.weapons[4]
             ];
             var weaponParams:WeaponGenParams = new WeaponGenParams();
             weaponParams.evolutionPoints = 500;

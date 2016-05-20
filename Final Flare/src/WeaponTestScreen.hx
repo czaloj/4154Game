@@ -1,8 +1,10 @@
 package;
 
 import openfl.Assets;
+import openfl.geom.Point;
 import starling.display.DisplayObject;
 import starling.display.Sprite;
+import starling.textures.Texture;
 import weapon.WeaponData;
 import weapon.Weapon;
 import weapon.WeaponGenParams;
@@ -40,7 +42,8 @@ class WeaponTestScreen extends IGameScreen {
         var params:WeaponGenParams = new WeaponGenParams();
         params.evolutionPoints = 1000;
         data = WeaponGenerator.generate(params);
-        weaponSprite = WeaponGenerator.buildSprite(data, Assets.getBitmapData("assets/img/Guns.png"));
+        var wi:Pair<Texture, Point> = WeaponGenerator.buildSprite(data, Assets.getBitmapData("assets/img/Guns.png"));
+        weaponSprite = WeaponGenerator.makeWeaponSprite(wi.first, wi.second);
         
         weaponSprite.x = 400;
         weaponSprite.y = 225;

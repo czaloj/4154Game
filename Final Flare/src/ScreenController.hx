@@ -1,6 +1,7 @@
 package;
 
 import game.GameLevel;
+import game.GameState;
 import game.MenuLevelModifiers;
 import openfl.events.KeyboardEvent;
 import openfl.Lib;
@@ -36,6 +37,7 @@ class ScreenController extends Sprite {
     
     public var playerData:PlayerData = null;
     public var loadedLevel:GameLevel = null; // The level that has been loaded in by the menu
+    public var lastKnownState:GameState = null; // Last known state passed to the end screen
     public var levelModifiers:MenuLevelModifiers = null; // Additional modification to a level
     public var uif:UISpriteFactory = null;
     
@@ -54,8 +56,8 @@ class ScreenController extends Sprite {
             new GameplayScreen(this),
             new ShopScreen(this),
             new LevelEditorScreen(this),
-            new WeaponTestScreen(this),
-            new EndScreen(this)
+            new EndScreen(this),
+            new WeaponTestScreen(this)
         ];
         activeScreen = screens[0];
         
@@ -93,12 +95,12 @@ class ScreenController extends Sprite {
         levelModifiers = new MenuLevelModifiers();
         var initialWeapons:Array<WeaponData> = WeaponGenerator.generateInitialWeapons();
         levelModifiers.characterWeapons = [
-            initialWeapons[0],
-            initialWeapons[1],
-            initialWeapons[2],
-            initialWeapons[3],
-            initialWeapons[0], // For testing only
-            initialWeapons[4]
+            playerData.weapons[0],
+            playerData.weapons[1],
+            playerData.weapons[2],
+            playerData.weapons[3],
+            playerData.weapons[0], // For testing only
+            playerData.weapons[4]
         ];
         var weaponParams:WeaponGenParams = new WeaponGenParams();
         weaponParams.evolutionPoints = 500;

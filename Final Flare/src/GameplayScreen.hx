@@ -40,7 +40,7 @@ class GameplayScreen extends IGameScreen {
     }
 
     override function build():Void {
-        uiSheet = new UISpriteFactory(Texture.fromBitmapData(Assets.getBitmapData("assets/img/UI.png")));
+        uiSheet = screenController.uif;
     }
     override function destroy():Void {
         // Empty
@@ -95,6 +95,7 @@ class GameplayScreen extends IGameScreen {
         Lib.current.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
         screenController.removeChild(gameUI);
         Lib.current.stage.removeChild(debugPhysicsView);
+        renderer.dispose();
     }
 
     override function update(gameTime:GameTime):Void {
@@ -104,20 +105,11 @@ class GameplayScreen extends IGameScreen {
 
         // Update game logic
         gameplayController.update(state, gameTime);
-		if (!state.player.isDead) {
-				state.markedtime = 0;
-		}
-		if (state.player.isDead) {
-			state.markedtime++;
-			if (state.markedtime > 240) {
-				state.gameOver = true;
-			}
-		}
+        
+        // Go to results when game is over
         if (state.gameOver) {
-            screenController.playerData.mostRecentScore = state.score;
-            screenController.playerData.mostRecentVictory = state.victory;
-			FFLog.recordEvent(95, state.score+", " + state.victory);//score, victory at end of game
-            screenController.switchToScreen(5);
+            screenController.lastKnownState = state;
+            screenController.switchToScreen(6);
         }
     }
     override function draw(gameTime:GameTime):Void {

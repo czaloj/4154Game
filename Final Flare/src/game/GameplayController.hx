@@ -101,15 +101,15 @@ class GameplayController {
         e.enabled = false;
         vis.onEntityRemoved(state, e);
         e.body.setActive(false);
-        
-        // Just in case
-        e.position.set(-1000, -1000);
     }
     
     // Callback function once an enemy is killed
     private function onEnemyKilled(e:Entity):Void {
         addScore(1, e.position.x, e.position.y);
         addCombo(1.0);
+        
+        // TODO: Generate the correct coins
+        createCoin(e.position.x, e.position.y, 10, 0, 0);
         
         // Completely kill the enemy
         physicsController.onEntityRemoved(state, e);
@@ -158,6 +158,10 @@ class GameplayController {
                     handleProjectilePlatform(contact, cast(object1.second, Projectile));
                 case [PhysicsUserDataType.PLATFORM, PhysicsUserDataType.PROJECTILE]:
                     handleProjectilePlatform(contact, cast(object2.second, Projectile));
+                case [PhysicsUserDataType.ENTITY, PhysicsUserDataType.PICKUP]:
+                    handleEntityPickup(cast(object1.second, Entity), cast(object2.second, Coin));
+                case [PhysicsUserDataType.PICKUP, PhysicsUserDataType.ENTITY]:
+                    handleEntityPickup(cast(object2.second, Entity), cast(object1.second, Coin));
                 default:
                     // No match found here
             }
@@ -182,7 +186,20 @@ class GameplayController {
     private function handleProjectilePlatform(c:PhysicsContact, p:Projectile):Void {
         p.fOnHit(state);
     }
-
+    private function handleEntityPickup(e:Entity, c:Coin):Void {
+        // Add coin values to level buffer
+        state.accumulatedEvolution += c.valueEvolution;
+        state.accumulatedHistorical += c.valueHistorical;
+        state.accumulatedShadyness += c.valueShadyness;
+        
+        // Destroy the coin
+        c.body.DestroyFixture(c.fixture);
+        physicsController.world.destroyBody(c.body);
+        c.removeFromParent();
+        
+        // TODO: Add some feedback
+    }
+    
     public function update(s:GameState, gameTime:GameTime):Void {
         state = s;
         updateTime(gameTime);
@@ -253,12 +270,11 @@ class GameplayController {
         for (entity in state.entitiesNonNull) {
             if (entity.isDead) {
                 if (entity.team == Entity.TEAM_PLAYER) {
-                        state.victory = false;
-                       
+                    state.victory = false;
                 }
                 if (entity.id == "Boss" ){//|| entity.id2 == "Boss") {
-                        state.victory = true;
-                        state.gameOver = true;
+                    state.victory = true;
+                    state.gameOver = true;
                 }
                 deletingEntities.push(entity);
             }
@@ -294,6 +310,9 @@ class GameplayController {
 
         // Update current score for other modules to interface with it
         updateScoring();
+        
+        // It's game over if a player does not spawn in 4 seconds
+        state.gameOver = state.gameOver || (state.player.isDead && (state.markedtime > 240));
     }
     public function updateTime(gameTime:GameTime):Void {
         state.time.elapsed = gameTime.elapsed * state.timeMultiplier;
@@ -301,6 +320,7 @@ class GameplayController {
 
         // Frame must always increase by 1, no matter the multiplier
         state.time.frame += 1;
+        state.markedtime = state.player.isDead ? (state.markedtime + 1) : 0;
 
         // Update flare information
         state.flareCountdown -= state.time.elapsed;
@@ -387,6 +407,12 @@ class GameplayController {
         }
     }
 
+    private function createCoin(x:Float, y:Float, e:Int, h:Int, s:Int) {
+        var c:Coin = new Coin(e, h, s);
+        physicsController.initCoin(c, x, y, 0.2);
+        vis.addCoin(c, 0.2);
+    }
+    
     // Application of game events
     public function applyEventSpawn(state:GameState, e:GameEventSpawn):Void {
         var enemy:Entity = new Entity();
@@ -395,11 +421,11 @@ class GameplayController {
         if (state.enemyWeapons[0] != null) {
             switch (e.entity) {
                 case "Grunt":
-                    enemy.weapon = new Weapon(enemy, state.enemyWeapons[3]);
-                case "Shooter":
                     enemy.weapon = new Weapon(enemy, state.enemyWeapons[0]);
+                case "Shooter":
+                    enemy.weapon = new Weapon(enemy, state.enemyWeapons[1]);
                 case "Tank":
-                    enemy.weapon = new Weapon(enemy, state.enemyWeapons[3]);
+                    enemy.weapon = new Weapon(enemy, state.enemyWeapons[2]);
                 default:
                     enemy.weapon = new Weapon(enemy, state.enemyWeapons[0]);
             }

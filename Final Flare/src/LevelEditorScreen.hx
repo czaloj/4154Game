@@ -73,7 +73,7 @@ class LevelEditorScreen extends IGameScreen {
     
     private var env_item:Array<Array<String>> = [[],[],[]];
     
-    private var cur_region:Point;
+    private var cur_region:Point = new Point(0, 0);
     private var regions:Array<Quad> = [null];
     private var connections:Array<Array<Dynamic>> = [[]];
     private var selected_region:Int = 0;
@@ -346,7 +346,7 @@ class LevelEditorScreen extends IGameScreen {
             for (i in 0...layer_item[0].length) {
                 var item = layer_item[0][i];
                 if (item != "Add Layer") {
-                    level.parallax.push("assets/img/" + item);
+                    level.parallax.push("assets/img/" + level.environmentType + "/" + item);
                 }
             }
             // fill in region information
@@ -374,7 +374,7 @@ class LevelEditorScreen extends IGameScreen {
 
             screenController.removeChildren();
             screenController.loadedLevel = level;
-            screenController.switchToScreen(2);
+            screenController.switchToScreen(3);
         }
         if (e.keyCode == Keyboard.F5) {
             var fileRef:FileReference = new FileReference();

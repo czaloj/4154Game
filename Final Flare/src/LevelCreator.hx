@@ -113,6 +113,11 @@ class LevelCreator {
             renderPack.parallax.push(Texture.fromBitmapData(Assets.getBitmapData(f, false)));
         }
 
+        renderPack.particles = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Particles.png")), [
+            new StripRegion("Coin.Evolution", 0, 0, 15, 15, 1, 6, 6),
+            new StripRegion("Coin.Historical", 0, 30, 15, 15, 1, 6, 6),
+            new StripRegion("Coin.Shadyness", 0, 15, 15, 15, 1, 6, 6)
+        ]);
         //TODO: unhardcode
         renderPack.projectiles = new SpriteSheet(Texture.fromBitmapData(Assets.getBitmapData("assets/img/Bullet.png")), [
             new StripRegion("Bullet.Fly", 0, 0, 5, 10, 1, 1, 1)

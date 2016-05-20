@@ -1,11 +1,11 @@
 package;
 
 class KeyframeTraverseContext {
-    private var timeline:KeyframeTimeline;
+    public var timeline:KeyframeTimeline;
     public var looping:Bool;
     
-    private var time:Float;
-    private var index:Int;
+    public var time:Float;
+    public var index:Int;
     
     public var left(get, never):Int;
     public var right(get, never):Int;
